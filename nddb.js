@@ -1,4 +1,4 @@
-(function (exports, node) {
+(function (exports, JSU) {
 	
 	/**
 	 * 
@@ -19,8 +19,6 @@
 	 * TODO: update and delete methods
 	 * 
 	 */
-	
-	Utils = node.Utils;
 	
 	/**
 	 * Expose constructors
@@ -69,8 +67,8 @@
 	};	
 	
 	NDDB.prototype.cloneSettings = function () {
-		var o = Utils.clone(this.options);
-		o.D = Utils.clone(this.D);
+		var o = JSU.clone(this.options);
+		o.D = JSU.clone(this.D);
 		return o;
 	};	
 	
@@ -154,7 +152,7 @@
 				raiseError(d,op,value);
 			}
 			
-			if (!Utils.in_array(op, ['>','>=','>==','<', '<=', '<==', '!=', '!==', '=', '==', '==='])) {
+			if (!JSU.in_array(op, ['>','>=','>==','<', '<=', '<==', '!=', '!==', '=', '==', '==='])) {
 				NDDB.log('Query error. Invalid operator detected: ' + op, 'WARN');
 				return false;
 			}
@@ -196,7 +194,7 @@
 		
 		var func = function (elem) {
 			try {	
-				if (Utils.eval(comparator(elem, value) + op + 0, elem)) {
+				if (JSU.eval(comparator(elem, value) + op + 0, elem)) {
 					return elem;
 				}
 			}
@@ -218,7 +216,7 @@
 	
 	NDDB.prototype.join = function (key1, key2, pos, select) {
 		// Construct a better comparator function
-		// than the generic Utils.equals
+		// than the generic JSU.equals
 //		if (key1 === key2 && 'undefined' !== typeof this.D[key1]) {
 //			var comparator = function(o1,o2) {
 //				if (this.D[key1](o1,o2) === 0) return true;
@@ -226,9 +224,9 @@
 //			}
 //		}
 //		else {
-//			var comparator = Utils.equals;
+//			var comparator = JSU.equals;
 //		}
-		return this._join(key1, key2, Utils.equals, pos, select);
+		return this._join(key1, key2, JSU.equals, pos, select);
 	};
 	
 	NDDB.prototype.concat = function (key1, key2, pos) {		
@@ -240,18 +238,18 @@
 		var out = [];
 		for (var i=0; i < this.db.length; i++) {
 			try {
-				var foreign_key = Utils.eval('this.'+key1, this.db[i]);
+				var foreign_key = JSU.eval('this.'+key1, this.db[i]);
 				if ('undefined' !== typeof foreign_key) { 
 					for (var j=0; j < this.db.length; j++) {
 						if (i === j) continue;
 						try {
-							var key = Utils.eval('this.'+key2, this.db[j]);
+							var key = JSU.eval('this.'+key2, this.db[j]);
 							if ('undefined' !== typeof key) { 
 								if (comparator(foreign_key, key)) {
 									// Inject the matched obj into the
 									// reference one
-									var o = Utils.clone(this.db[i]);
-									var o2 = (select) ? Utils.subobj(this.db[j], select) : this.db[j];
+									var o = JSU.clone(this.db[i]);
+									var o2 = (select) ? JSU.subobj(this.db[j], select) : this.db[j];
 									o[pos] = o2;
 									out.push(o);
 								}
@@ -275,7 +273,7 @@
 	
 	
 	NDDB._getValues = function (o, key) {		
-		return Utils.eval('this.' + key, o);
+		return JSU.eval('this.' + key, o);
 	};
 		
 //	NDDB._getKeyValues = function (o, key) {
@@ -285,11 +283,11 @@
 //	};
 	
 	NDDB._getValuesArray = function (o, key) {		
-		return Utils.obj2KeyedArray(Utils.eval('this.' + key, o));
+		return JSU.obj2KeyedArray(JSU.eval('this.' + key, o));
 	};
 	
 	NDDB._getKeyValuesArray = function (o, key) {
-		return [key].concat(Utils.obj2KeyedArray(Utils.eval('this.' + key, o)));
+		return [key].concat(JSU.obj2KeyedArray(JSU.eval('this.' + key, o)));
 	};
 	
 	NDDB.prototype.fetch = function (key, array) {
@@ -300,12 +298,12 @@
 		switch (array) {
 			case 'VALUES':
 				var func = (key) ? NDDB._getValuesArray : 
-								   Utils.obj2Array;
+								   JSU.obj2Array;
 				
 				break;
 			case 'KEY_VALUES':
 				var func = (key) ? NDDB._getKeyValuesArray :
-								   Utils.obj2KeyedArray;
+								   JSU.obj2KeyedArray;
 				break;
 				
 			default: // results are not 
@@ -350,16 +348,16 @@
 	NDDB.prototype._split = function (o, key) {		
 				
 		if ('object' !== typeof o[key]) {
-			return Utils.clone(o);;
+			return JSU.clone(o);;
 		}
 		
 		var out = [];
-		var model = Utils.clone(o);
+		var model = JSU.clone(o);
 		model[key] = {};
 		
 		var splitValue = function (value) {
 			for (var i in value) {
-				var copy = Utils.clone(model);
+				var copy = JSU.clone(model);
 				if (value.hasOwnProperty(i)) {
 					if ('object' === typeof value[i]) {
 						out = out.concat(splitValue(value[i]));
@@ -388,7 +386,7 @@
 		var count = 0;
 		for (var i=0; i < this.db.length; i++) {
 			try {
-				var tmp = Utils.eval('this.' + key, this.db[i]);
+				var tmp = JSU.eval('this.' + key, this.db[i]);
 				if ('undefined' !== typeof tmp) {
 					count++;
 				}
@@ -402,7 +400,7 @@
 		var sum = 0;
 		for (var i=0; i < this.db.length; i++) {
 			try {
-				var tmp = Utils.eval('this.' + key, this.db[i]);
+				var tmp = JSU.eval('this.' + key, this.db[i]);
 				if (!isNaN(tmp)) {
 					sum += tmp;
 				}
@@ -417,7 +415,7 @@
 		var count = 0;
 		for (var i=0; i < this.db.length; i++) {
 			try {
-				var tmp = Utils.eval('this.' + key, this.db[i]);
+				var tmp = JSU.eval('this.' + key, this.db[i]);
 				if (!isNaN(tmp)) { 
 					//NDDB.log(tmp);
 					sum += tmp;
@@ -433,7 +431,7 @@
 		var min = false;
 		for (var i=0; i < this.db.length; i++) {
 			try {
-				var tmp = Utils.eval('this.' + key, this.db[i]);
+				var tmp = JSU.eval('this.' + key, this.db[i]);
 				if (!isNaN(tmp) && (tmp < min || min === false)) {
 					min = tmp;
 				}
@@ -447,7 +445,7 @@
 		var max = false;
 		for (var i=0; i < this.db.length; i++) {
 			try {
-				var tmp = Utils.eval('this.' + key, this.db[i]);
+				var tmp = JSU.eval('this.' + key, this.db[i]);
 				if (!isNaN(tmp) && (tmp > max || max === false)) {
 					max = tmp;
 				}
@@ -464,18 +462,18 @@
 		var outs = [];
 		for (var i=0; i < this.db.length; i++) {
 			try {
-				var el = Utils.eval('this.' + key, this.db[i]);
+				var el = JSU.eval('this.' + key, this.db[i]);
 			}
 			catch(e) {
 				NDDB.log('Malformed key ' + key);
 				return false;
 			};
 						
-			if (!Utils.in_array(el,groups)) {
+			if (!JSU.in_array(el,groups)) {
 				groups.push(el);
 				
 				var out = this.filter(function (elem) {
-					if (Utils.equals(Utils.eval('this.' + key, elem),el)) {
+					if (JSU.equals(JSU.eval('this.' + key, elem),el)) {
 						return this;
 					}
 				});
@@ -491,6 +489,7 @@
 	};
 	
 })(
-	'undefined' != typeof node ? node : module.exports
-  , 'undefined' != typeof node ? node : module.parent.exports
+		
+	'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
+  , 'undefined' != typeof JSU ? JSU : module.parent.exports.JSU
 );
