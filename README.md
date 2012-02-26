@@ -6,10 +6,23 @@ NDDB provides a simple, lightweight NO-SQL database for node.js and the browser.
 
 ## Usage
 
+Create an instance of NDDB
+
+    var NDDB = require('NDDB').NDDB;
+    var db = new NDDB();
+    
+Retrieve the database size
+
+    var db_size = db.size();
 
 ## Advanced commands
 
+# Test
 
+NDDB relies on [mocha](http://visionmedia.github.com/mocha/) and [should.js](http://github.com/visionmedia/should.js) for testing.
+
+    $ npm install # will load all necessary dependencies
+    $ make test # will run the test suite against nddb.js
 
 ## License
 
