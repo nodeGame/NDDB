@@ -62,9 +62,6 @@
 	// Expose constructors
 	exports.NDDB = NDDB;
 	
-	// NDDB version
-	NDDB.version = 0.4.1;
-	
 	// Stdout redirect
 	NDDB.log = console.log;
 	
