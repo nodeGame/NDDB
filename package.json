@@ -7,7 +7,9 @@
   "licenses": [
     { "type": "GPL" }
   ],
-  "dependencies": {},
+  "dependencies": {
+    "JSUS": ">= 0.1.0"
+  },
   "engines": { "node":  ">=0.2.3" },
   "main": "nddb.js",
   "repository": {
