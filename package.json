@@ -10,10 +10,17 @@
   "dependencies": {
     "JSUS": ">= 0.1.0"
   },
+  "devDependencies": {
+    "mocha": ">= 0.3.0",
+    "should": ">= 0.5.1"
+  },
   "engines": { "node":  ">=0.2.3" },
   "main": "nddb.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/nodeGame/NDDB.git"
+  },
+  "scripts": {
+    "test": "make test"
   }
 }
