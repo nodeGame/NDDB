@@ -12,16 +12,20 @@
 	 * the corresponding comparator function is called, and the database
 	 * is updated.
 	 * 
+	 * 
+	 * Additional features are: methods chaining, tagging, and iteration 
+	 * through the items.
+	 * 
 	 * NDDB is work in progress. Currently, the following methods are
-	 * implemented"
+	 * implemented:
 	 * 
 	 * 	1. Sorting and selecting:
 	 * 
-	 *  	- select, sort, reverse, last, first, limit, shuffle
+	 *  	- select, sort, reverse, last, first, limit, shuffle*
 	 *  
 	 *  2. Advanced operations
 	 *  
-	 *  	- split, join, concat
+	 *  	- split*, join, concat
 	 *  
 	 *  3. Custom callbacks
 	 *  
@@ -39,7 +43,7 @@
 	 *  
 	 *  	- diff, intersect
 	 *  
-	 *  7. Tagging
+	 *  7. Tagging*
 	 *  
 	 *  	- tag
 	 *  
@@ -47,11 +51,12 @@
 	 *  
 	 *  	- fetch
 	 *  
-	 *  
-	 *   Allows methods chaining for selection queries. 
-	 *   Internal pointer to last inserted entry.
+	 *  9. Updating
 	 *   
-	 *  - Update must be performed manually after a selection.
+	 *  	- Update must be performed manually after a selection.
+	 * 
+	 * * = experimental
+	 * 
 	 * 
 	 * See README.md for help.
 	 * 
@@ -74,8 +79,10 @@
 	function NDDB (options, db) {				
 		var options = options || {};
 		
-		this.D = {};			// The n-dimensional container for comparator functions
-		this.nddb_pointer = 0;	// Pointer for iterating along all the elements
+		this.db = [];					// The actual database
+		this.D = {};					// The n-dimensional container for comparator functions
+		this.nddb_pointer = 0;			// Pointer for iterating along all the elements
+		this.tags = options.tags || {};	// Tags pointing to id in the databases
 		
 		this.options = options;
 		NDDB.log = options.log || NDDB.log;
@@ -91,9 +98,7 @@
 		this.auto_sort =  ('undefined' !== typeof options.auto_sort) ? options.auto_sort
 																	 : false;
 		
-		this.tags = options.tags || {};	
-		this.db = this.import(db);	// The actual database
-		console.log(this);
+		this.import(db);	
 	};
 	
 	///////////
@@ -175,6 +180,7 @@
 	 */
 	NDDB.prototype.import = function (db) {
 		if (!db) return [];
+		if (!this.db) this.db = [];
 		this.db = this.db.concat(this._masqueradeDB(db));
 		this._autoUpdate();
 	};
@@ -426,6 +432,20 @@
 		return this.filter(func);
 	};
 
+	/**
+	 * Creates a copy of the current database limited only to 
+	 * the first N entries, where N is the passed parameter.
+	 * 
+	 * Negative N selects starting from the end of the database.
+	 * 
+	 */
+	NDDB.prototype.limit = function (limit) {
+		if (limit === 0) return this.breed();
+		var db = (limit > 0) ? this.db.slice(0, limit) :
+							   this.db.slice(limit);
+		
+		return this.breed(db);
+	};
 		
 	/**
 	 * Reverses the order of all the entries in the database
@@ -441,7 +461,7 @@
 	 * criteria:
 	 *  
 	 *  - globalCompare function, if no parameter is passed 
-	 *  - one of the dimension, if a string of
+	 *  - one of the dimension, if a string is passed
 	 *  - a custom comparator function 
 	 * 
 	 * A reference to the current NDDB object is returned, so that
@@ -686,6 +706,33 @@
 		return this.breed(out);
 	};
 	
+	/**
+	 * Splits an object along a specified dimension, and returns 
+	 * all the copies in an array.
+	 *  
+	 * It creates as many new objects as the number of properties 
+	 * contained in the specified dimension. The object are identical,
+	 * but for the given dimension, which was split. E.g.
+	 * 
+	 *  var o = { a: 1,
+	 *  		  b: {c: 2,
+	 *  			  d: 3
+	 *  		  },
+	 *  		  e: 4
+	 *  };
+	 *  
+	 *  becomes
+	 *  
+	 *  [{ a: 1,
+	 *     b: {c: 2},
+	 *     e: 4
+	 *  },
+	 *  { a: 1,
+	 *    b: {d: 3},
+	 *    e: 4
+	 *  }];
+	 * 
+	 */
 	NDDB.prototype._split = function (o, key) {		
 		
 		if ('object' !== typeof o[key]) {
@@ -715,11 +762,22 @@
 		return splitValue(o[key]);
 	};
 	
+	/**
+	 * Splits all the entries in the database containing
+	 * the passed dimension. 
+	 * 
+	 * New entries are created and a new NDDB object is
+	 * breeded to allows method chaining.
+	 * 
+	 * @see NDDB._split
+	 * 
+	 */
 	NDDB.prototype.split = function (key) {	
 		var out = [];
-		for (var i=0; i<this.db.length;i++) {
+		for (var i=0; i < this.db.length;i++) {
 			out = out.concat(this._split(this.db[i], key));
 		}
+		//console.log(out);
 		return this.breed(out);
 	};
 	
@@ -727,37 +785,42 @@
 	// Fetching
 	///////////
 	
-	NDDB._getValues = function (o, key) {		
-		return JSUS.eval('this.' + key, o);
-	};
-	
-	NDDB._getValuesArray = function (o, key) {		
-		return JSUS.obj2KeyedArray(JSUS.eval('this.' + key, o));
-	};
-	
-	NDDB._getKeyValuesArray = function (o, key) {
-		return [key].concat(JSUS.obj2KeyedArray(JSUS.eval('this.' + key, o)));
-	};
-	
-	NDDB.prototype.fetch = function (key, array) {
+	/**
+	 * 
+	 * 
+	 * 
+	 * If the second parameter is set to TRUE, values are 
+	 * returned as elements of arrays, instead  
+	 * 
+	 */
+	NDDB.prototype._fetch = function (key, array) {
 		
-//		NDDB.log(key);
-//		NDDB.log(array);
+		function getValues (o, key) {		
+			return JSUS.getNestedValue(key, o);
+		};
 		
+		function getValuesArray (o, key) {		
+			return JSUS.obj2KeyedArray(JSUS.getNestedValue(key, o));
+		};
+		
+		function getKeyValuesArray (o, key) {
+			return key.split('.').concat(JSUS.obj2KeyedArray(JSUS.getNestedValue(key, o)));
+		};
+				
 		switch (array) {
 			case 'VALUES':
-				var func = (key) ? NDDB._getValuesArray : 
+				var func = (key) ? getValuesArray : 
 								   JSUS.obj2Array;
 				
 				break;
 			case 'KEY_VALUES':
-				var func = (key) ? NDDB._getKeyValuesArray :
+				var func = (key) ? getKeyValuesArray :
 								   JSUS.obj2KeyedArray;
 				break;
 				
 			default: // results are not 
-				if (!key)  return this.db;
-				var func = NDDB._getValues;  	  
+				if (!key) return this.db;
+				var func = getValues;  	  
 		}
 		
 		var out = [];	
@@ -765,26 +828,64 @@
 			out.push(func.call(this.db[i], this.db[i], key));
 		}	
 		
-		//NDDB.log(out);
 		return out;
+	}
+	
+	/**
+	 * Fetches all the entries in the database and returns 
+	 * them in a array. 
+	 * 
+	 * If a key parameter is passed, only the values of the property
+	 * named as the key are returned, otherwise the whole entry 
+	 * is returned as it is. E.g.:
+	 * 
+	 * var nddb = new NDDB();
+	 * nddb.import([{a:1,
+	 * 				 b:{c:2}
+	 * 				 d:3
+	 * 			  }];
+	 * 
+	 * nddb.fetch('b'); // [{c:2}];
+	 * nddb.fetch('d'); // [3];
+	 * 
+	 * No further chaining is permitted after fetching.
+	 * 
+	 * @see NDDB._fetch
+	 * @see NDDB.fetchValues
+	 * @see NDDB.fetchKeyValues
+	 * 
+	 */
+	NDDB.prototype.fetch = function (key) {
+		return this._fetch(key, true);
 	};
 	
+	/**
+	 * Fetches all the values from all the entries in 
+	 * the database and returns them in a array.
+	 * 
+	 * If a key parameter is passed, only the values of the property
+	 * named as the key are returned, otherwise the whole entry 
+	 * is exploded, and its values returned in a array.  E.g.:
+	 * 
+	 * var nddb = new NDDB();
+	 * nddb.import([{a:1,
+	 * 				 b:{c:2}
+	 * 				 d:3
+	 * 			  }];
+	 * 
+	 * nddb.fetch('b'); // [{c:2}];
+	 * nddb.fetch('d'); // [3];
+	 * 
+	 * 
+	 */
 	NDDB.prototype.fetchValues = function (key) {
-		return this.fetch(key, 'VALUES');
+		return this._fetch(key, 'VALUES');
 	};
 	
 	NDDB.prototype.fetchKeyValues = function (key) {
-		return this.fetch(key, 'KEY_VALUES');
+		return this._fetch(key, 'KEY_VALUES');
 	};
-			
-	NDDB.prototype.limit = function (limit) {
-		if (limit === 0) return this.breed();
-		var db = (limit > 0) ? this.db.slice(0, limit) :
-							   this.db.slice(limit);
-		
-		return this.breed(db);
-	};
-	
+				
 	NDDB.prototype.groupBy = function (key) {
 		if (!key) return this.db;
 		
@@ -827,8 +928,6 @@
 	 * Returns the total count of all the entries 
 	 * in the database containing the specified key. 
 	 * 
-	 * @TODO: use JSUS.getNestedValue instead 
-	 * 
 	 * If key is undefined, the size of the databse is returned.
 	 * 
 	 * @see NDDB.size
@@ -853,8 +952,6 @@
 	 * Returns the total sum of the values of all the entries 
 	 * in the database containing the specified key. 
 	 * 
-	 * @TODO: use JSUS.getNestedValue instead
-	 * 
 	 * Non numeric values are ignored. 
 	 * 
 	 */
@@ -862,7 +959,7 @@
 		var sum = 0;
 		for (var i=0; i < this.db.length; i++) {
 			try {
-				var tmp = JSUS.eval('this.' + key, this.db[i]);
+				var tmp = JSUS.getNestedValue(key, this.db[i]);
 				if (!isNaN(tmp)) {
 					sum += tmp;
 				}
@@ -876,9 +973,8 @@
 	 * Returns the average of the values of all the entries 
 	 * in the database containing the specified key. 
 	 * 
-	 * @TODO: use JSUS.getNestedValue instead
-	 * 
-	 * Entries with non numeric values are ignored. 
+	 * Entries with non numeric values are ignored, and excluded
+	 * from the computation of the mean.
 	 * 
 	 */
 	NDDB.prototype.mean = function (key) {
@@ -902,8 +998,6 @@
 	 * Returns the min of the values of all the entries 
 	 * in the database containing the specified key. 
 	 * 
-	 * @TODO: use JSUS.getNestedValue instead
-	 * 
 	 * Entries with non numeric values are ignored. 
 	 * 
 	 */
@@ -924,8 +1018,6 @@
 	/**
 	 * Returns the max of the values of all the entries 
 	 * in the database containing the specified key. 
-	 * 
-	 * @TODO: use JSUS.getNestedValue instead
 	 * 
 	 * Entries with non numeric values are ignored. 
 	 * 
@@ -966,7 +1058,7 @@
 		}
 		if (nddb.length === 0) return this;
 		var that = this;
-		return this.filter(function(el){
+		return this.filter(function(el) {
 			for (var i=0; i < nddb.length; i++) {
 				if (that.globalCompare(el,nddb[i]) === 0) {
 					return false;
