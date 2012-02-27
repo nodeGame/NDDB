@@ -93,6 +93,7 @@
 		
 		this.tags = options.tags || {};	
 		this.db = this.import(db);	// The actual database
+		console.log(this);
 	};
 	
 	///////////
@@ -232,7 +233,6 @@
 	 * 
 	 */
 	NDDB.prototype.d = function (d, comparator) {
-		return this.d(d, comparator);
 		if (!d || !comparator) {
 			NDDB.log('Cannot set empty property or empty comparator', 'ERR');
 			return false;
