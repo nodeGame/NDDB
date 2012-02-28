@@ -1,7 +1,6 @@
 (function (exports, JSUS) {
 	
 	/**
-	 * Status of the documentation: incomplete. 
 	 * 
 	 * NDDB provides a simple, lightweight, NO-SQL object database 
 	 * for node.js and the browser. It depends on JSUS.
@@ -14,7 +13,7 @@
 	 * 
 	 * 
 	 * Additional features are: methods chaining, tagging, and iteration 
-	 * through the items.
+	 * through the entries.
 	 * 
 	 * NDDB is work in progress. Currently, the following methods are
 	 * implemented:
@@ -23,35 +22,39 @@
 	 * 
 	 *  	- select, sort, reverse, last, first, limit, shuffle*
 	 *  
-	 *  2. Advanced operations
-	 *  
-	 *  	- split*, join, concat
-	 *  
-	 *  3. Custom callbacks
+	 *  2. Custom callbacks
 	 *  
 	 *  	- map, forEach, filter
 	 *  
-	 *  4. Statistics operator
+	 *  3. Deletion
+	 *  
+	 *  	- delete, clear
+	 *  
+	 *  4. Advanced operations
+	 *  
+	 *  	- split*, join, concat
+	 *  
+	 *  5. Fetching
+	 *  
+	 *  	- fetch, fetchArray, fetchKeyArray
+	 *  
+	 *  6. Statistics operator
 	 *  
 	 *  	- size, count, max, min, mean
 	 *  
-	 *  5. Iterator
-	 *  
-	 *  	- previous, next, first, last
-	 *  
-	 *  6. Diff
+	 *  7. Diff
 	 *  
 	 *  	- diff, intersect
 	 *  
-	 *  7. Tagging*
+	 *  8. Iterator
+	 *  
+	 *  	- previous, next, first, last
+	 *
+	 *  9. Tagging*
 	 *  
 	 *  	- tag
-	 *  
-	 *  8. Fetching
-	 *  
-	 *  	- fetch
-	 *  
-	 *  9. Updating
+	 *  	   
+	 *  10. Updating
 	 *   
 	 *  	- Update must be performed manually after a selection.
 	 * 
@@ -561,9 +564,9 @@
 		return out;
 	};
 	
-	///////////
-	// Deletion
-	///////////
+	//////////////
+	// 3. Deletion
+	//////////////
 	
 	/**
 	 * Removes all entries from the database.  
@@ -609,8 +612,8 @@
 	};	
 	
 	/////////////////////////
-	// Advanced operations
-	////////////////////////
+	// 4. Advanced operations
+	/////////////////////////
 	
 	/**
 	 * Performs a *left* join across all the entries of the database
@@ -781,16 +784,19 @@
 		return this.breed(out);
 	};
 	
-	///////////
-	// Fetching
-	///////////
+	//////////////
+	// 5. Fetching
+	//////////////
 	
 	/**
+	 * Performs the fetching of the entries according to the
+	 * specified parameters. 
 	 * 
+	 * @api private
 	 * 
-	 * 
-	 * If the second parameter is set to TRUE, values are 
-	 * returned as elements of arrays, instead  
+	 * @see NDDB.fetch
+	 * @see NDDB.fetchArray
+	 * @see NDDB.fetchKeyArray
 	 * 
 	 */
 	NDDB.prototype._fetch = function (key, array) {
@@ -799,12 +805,18 @@
 			return JSUS.getNestedValue(key, o);
 		};
 		
-		function getValuesArray (o, key) {		
-			return JSUS.obj2KeyedArray(JSUS.getNestedValue(key, o));
+		function getValuesArray (o, key) {
+			var el = JSUS.getNestedValue(key, o);
+			if ('undefined' !== typeof el) {
+				return JSUS.obj2KeyedArray(el);
+			}
 		};
 		
 		function getKeyValuesArray (o, key) {
-			return key.split('.').concat(JSUS.obj2KeyedArray(JSUS.getNestedValue(key, o)));
+			var el = JSUS.getNestedValue(key, o);
+			if ('undefined' !== typeof el) {
+				return key.split('.').concat(JSUS.obj2KeyedArray(el));
+			}
 		};
 				
 		switch (array) {
@@ -825,7 +837,8 @@
 		
 		var out = [];	
 		for (var i=0; i < this.db.length; i++) {
-			out.push(func.call(this.db[i], this.db[i], key));
+			var el = func.call(this.db[i], this.db[i], key);
+			if ('undefined' !== typeof el) out.push(el);
 		}	
 		
 		return out;
@@ -835,24 +848,26 @@
 	 * Fetches all the entries in the database and returns 
 	 * them in a array. 
 	 * 
-	 * If a key parameter is passed, only the values of the property
-	 * named as the key are returned, otherwise the whole entry 
-	 * is returned as it is. E.g.:
+	 * If a second key parameter is passed, only the value of 
+	 * the property named after the key are returned, otherwise  
+	 * the whole entry is returned as it is. E.g.:
+	 * 
 	 * 
 	 * var nddb = new NDDB();
 	 * nddb.import([{a:1,
-	 * 				 b:{c:2}
+	 * 				 b:{c:2},
 	 * 				 d:3
-	 * 			  }];
+	 * 			  }]);
 	 * 
-	 * nddb.fetch('b'); // [{c:2}];
-	 * nddb.fetch('d'); // [3];
+	 * nddb.fetch();	// [ {a: 1, b: {c: 2}, d: 3} ] 
+	 * nddb.fetch('b'); // [ {c: 2} ];
+	 * nddb.fetch('d'); // [ 3 ];
 	 * 
 	 * No further chaining is permitted after fetching.
 	 * 
 	 * @see NDDB._fetch
-	 * @see NDDB.fetchValues
-	 * @see NDDB.fetchKeyValues
+	 * @see NDDB.fetchArray
+	 * @see NDDB.fetchKeyArray
 	 * 
 	 */
 	NDDB.prototype.fetch = function (key) {
@@ -860,51 +875,94 @@
 	};
 	
 	/**
-	 * Fetches all the values from all the entries in 
-	 * the database and returns them in a array.
+	 * Fetches all the entries in the database, transforms them into 
+	 * one-dimensional array by exploding all nested values, and returns
+	 * them into an array.
 	 * 
-	 * If a key parameter is passed, only the values of the property
-	 * named as the key are returned, otherwise the whole entry 
+	 * If a second key parameter is passed, only the value of the property
+	 * named after the key is returned, otherwise the whole entry 
 	 * is exploded, and its values returned in a array.  E.g.:
 	 * 
 	 * var nddb = new NDDB();
 	 * nddb.import([{a:1,
-	 * 				 b:{c:2}
+	 * 				 b:{c:2},
 	 * 				 d:3
-	 * 			  }];
+	 * 			  }]);
 	 * 
-	 * nddb.fetch('b'); // [{c:2}];
-	 * nddb.fetch('d'); // [3];
+	 * nddb.fetchArray();	 // [ [ 1, 2, 3 ] ]
+	 * nddb.fetchArray('b'); // [ ['c', 2 ] ]
+	 * nddb.fetchArray('d'); // [ [ 3 ] ];
 	 * 
+	 * 
+	 */
+	NDDB.prototype.fetchArray = function (key) {
+		return this._fetch(key, 'VALUES');
+	};
+	
+	/**
+	 * Exactly as NDDB.fetchArray, but also the keys are added to the
+	 * returned values. E.g.
+	 * 
+	 * var nddb = new NDDB();
+	 * nddb.import([{a:1,
+	 * 				 b:{c:2},
+	 * 				 d:3
+	 * 			  }]);
+	 * 
+	 * nddb.fetchArray();	    // [ [ 'a', 1, 'c', 2, 'd', 3 ] ]
+	 * nddb.fetchKeyArray('b'); // [ [ 'b', 'c', 2 ] ] 
+	 * nddb.fetchArray('d');    // [ [ 'd', 3 ] ]
+	 * 
+	 * @see NDDB.fetchArray
+	 */
+	NDDB.prototype.fetchKeyArray = function (key) {
+		return this._fetch(key, 'KEY_VALUES');
+	};
+	
+	/**
+	 * @deprecated
+	 * @see NDDB.fetchArray
 	 * 
 	 */
 	NDDB.prototype.fetchValues = function (key) {
 		return this._fetch(key, 'VALUES');
 	};
 	
+	/**
+	 * @deprecated
+	 * @see NDDB.fetchKeyArray
+	 */
 	NDDB.prototype.fetchKeyValues = function (key) {
 		return this._fetch(key, 'KEY_VALUES');
 	};
 				
+	/**
+	 * Splits the entries in the database in subgroups,
+	 * each of them formed up by element which have the
+	 * same value along the specified dimension. An array
+	 * of NDDB instances is returned, therefore no direct 
+	 * method chaining is allowed afterwards. 
+	 * 
+	 * Entries containing undefined values in the specified
+	 * dimension will be skipped 
+	 * 
+	 */
 	NDDB.prototype.groupBy = function (key) {
 		if (!key) return this.db;
 		
 		var groups = [];
 		var outs = [];
 		for (var i=0; i < this.db.length; i++) {
-			try {
-				var el = JSUS.eval('this.' + key, this.db[i]);
-			}
-			catch(e) {
-				NDDB.log('groupBy malformed key: ' + key, 'ERR');
-				return false;
-			};
-						
-			if (!JSUS.in_array(el,groups)) {
+			var el = JSUS.getNestedValue(key, this.db[i]);
+			if ('undefined' === typeof el) continue;
+			
+			// Creates a new group and add entries
+			// into it
+			if (!JSUS.in_array(el, groups)) {
 				groups.push(el);
 				
 				var out = this.filter(function (elem) {
-					if (JSUS.equals(JSUS.eval('this.' + key, elem),el)) {
+					if (JSUS.equals(JSUS.getNestedValue(key, elem),el)) {
 						return this;
 					}
 				});
@@ -920,9 +978,9 @@
 	};	
 	
 	
-	/////////////
-	// Statistics
-	/////////////
+	////////////////
+	// 6. Statistics
+	////////////////
 	
 	/**
 	 * Returns the total count of all the entries 
@@ -1036,9 +1094,9 @@
 		return max;
 	};
 		
-	///////
-	// Diff
-	///////
+	//////////
+	// 7. Diff
+	/////////
 	
 	/**
 	 * Performs a diff of the entries in the database and the database
@@ -1093,9 +1151,9 @@
 		});
 	};
 	
-	///////////
-	// Iterator
-	///////////
+	/////////////
+	// 8 Iterator
+	////////////
 	
 	/**
 	 * Returns the entry in the database, at which 
@@ -1174,9 +1232,9 @@
 		return undefined;
 	};
 	
-	//////////
-	// Tagging
-	//////////
+	/////////////
+	// 9. Tagging
+	/////////////
 	
 	/**
 	 * Registers a tag associated to an internal id.
