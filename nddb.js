@@ -111,6 +111,8 @@
 	/**
 	 * Default function used for sorting
 	 * 
+	 * Elements are sorted according to their internal id,
+	 * 
 	 */
 	NDDB.prototype.globalCompare = function(o1, o2) {
 		if (!o1 && !o2) return 0;
