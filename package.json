@@ -1,7 +1,7 @@
 {
   "name": "NDDB",
   "description": "Javascript lightweight N-dimensional database",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "keywords": [ "db" ],
   "author": "Stefano Balietti <futur.dorko@gmail.com>",
   "licenses": [
