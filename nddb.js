@@ -84,7 +84,6 @@
 		
 		this.db = [];					// The actual database
 		this.D = {};					// The n-dimensional container for comparator functions
-		this.nddb_pointer = 0;			// Pointer for iterating along all the elements
 		this.tags = options.tags || {};	// Tags pointing to id in the databases
 		
 		this.options = options;
@@ -93,7 +92,7 @@
 		if ('undefined' !== typeof options.parentDB) {
 			this.parentDB = options.parentDB;
 		}	
-		this.nddb_pointer = options.nddb_pointer;
+		this.nddb_pointer = options.nddb_pointer || 0; // Pointer for iterating along all the elements
 		this.auto_update_pointer = ('undefined' !== typeof options.auto_update_pointer) ?
 										options.auto_update_pointer
 									:	false;
@@ -365,6 +364,8 @@
 	 *  The selection is returned as a new NDDB object, on which further operations 
 	 *  can be chained. In order to get the actual entries of the db, it is necessary
 	 *  to fetch the values.
+	 *  
+	 *  TODO: take multiple queries as input 
 	 *  
 	 *  @see NDDB.fetch()
 	 *  @see NDDB.fetchValues()
