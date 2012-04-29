@@ -110,13 +110,15 @@
     /**
      * Default function used for sorting
      * 
-     * Elements are sorted according to their internal id,
+     * Elements are sorted according to their internal id 
+     * (FIFO). 
      * 
      */
     NDDB.prototype.globalCompare = function(o1, o2) {
         if (!o1 && !o2) return 0;
-        if (!o1) return -1;
-        if (!o2) return 1;    
+        if (!o2) return -1;  
+        if (!o1) return 1;
+        
         if (o1.nddbid < o2.nddbid) return -1;
         if (o1.nddbid > o2.nddbid) return 1;
         return 0;

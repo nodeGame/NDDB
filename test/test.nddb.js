@@ -223,31 +223,82 @@ describe('Iterator', function() {
 		});
 	});
 	
+	// TODO test auto_update
+	
 });
 
 describe('NDDB sorting', function(){
 
-	
-	  describe('Default sorting', function() {  
-		  it('should not change the order of the elements (it sorts by nddbid)', function(){
-			  console.log(db.db);
-			  db.sort();
-			  console.log(db.db);
-			  db.sort().first().should.equal(items[0]);
-			  
-			  
+	describe('#sort()', function() {  
+		it('should not change the order of the elements (it sorts by nddbid)', function(){
+			db.sort().first().should.equal(items[0]);
+			db.last().should.equal(items[4]);
        	});
-       });
+		
+	});
+	  
+	describe('#reverse()', function() {  
+		it('should reverse the order of the elements (it sorts by nddbid)', function(){
+			db.reverse().first().should.equal(items[4]);
+			db.last().should.equal(items[0]);
+		});
+   	});
 	         
-	         //console.log('Default sort');
-	         //var out = nddb.sort();
-	         //console.log(out.toString());
-	         //
-	         //
-	         //console.log('Reverse');
-	         //out = nddb.reverse();
-	         //console.log(out.toString());
-	         //
+	describe('#sort(\'year\')', function() {  
+		it('should have Manet first', function() {
+			db.sort('year');
+			var f = db.first();
+			f.should.have.property('painter', 'Manet');
+			f.should.have.property('year', 1863);
+		});
+		
+		it('should have Dali\'s Portrait of Paul Eluard last', function() {
+			var l = db.last();
+			l.should.have.property('painter', 'Dali');
+			l.should.have.property('title', 'Portrait of Paul Eluard');
+		});
+   	});  
+	
+	describe('#sort(\'title\')', function() {  
+		it('should have Dali\'s Barcelonese Mannequin first', function() {
+			db.sort('title');
+			var f = db.first();
+			f.should.have.property('painter', 'Dali');
+			f.should.have.property('title', 'Barcelonese Mannequin');
+		});
+		
+		it('should have Monet\'s Wheatstacks (End of Summer) last', function() {
+			var l = db.last();
+			l.should.have.property('painter', 'Monet');
+			l.should.have.property('title', 'Wheatstacks (End of Summer)');
+		});
+   	});
+	
+	describe('#sort([\'painter\', \'portrait\'])', function() {  
+		it('should have Dali\'s Portrait of Paul Eluard first', function() {
+			db.sort(['painter', 'portrait']);
+			
+			console.log(db.db);
+			
+			var f = db.first();
+			f.should.have.property('painter', 'Dali');
+			//f.should.have.property('title', 'Portrait of Paul Eluard');
+		});
+		
+		it('should have Dali\'s Barcelonese Mannequin second', function() {
+			var s = db.next();
+			s.should.have.property('painter', 'Dali');
+			//s.should.have.property('title', 'Barcelonese Mannequin');
+		});
+		
+		it('should have Monet\'s Wheatstacks (End of Summer) last', function() {
+			var l = db.last();
+			l.should.have.property('painter', 'Monet');
+			l.should.have.property('title', 'Wheatstacks (End of Summer)');
+		});
+   	});
+	
+	
 	         //console.log('Sort by Player');
 	         //nddb.sort('player');
 	         //console.log(out.toString());
