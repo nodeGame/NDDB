@@ -228,10 +228,14 @@ describe('Iterator', function() {
 describe('NDDB sorting', function(){
 
 	
-	  describe('Default sorting', function() {
-		  
-        it('should not change the order of the elements (it sorts by nddbid)', function(){
-       	  db.first().should.equal(items[0]);
+	  describe('Default sorting', function() {  
+		  it('should not change the order of the elements (it sorts by nddbid)', function(){
+			  console.log(db.db);
+			  db.sort();
+			  console.log(db.db);
+			  db.sort().first().should.equal(items[0]);
+			  
+			  
        	});
        });
 	         
