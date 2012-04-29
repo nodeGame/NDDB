@@ -49,40 +49,40 @@ describe('NDDB Basic Operations:', function() {
 	        year: 1907
 	};
 	
-    describe('An empty database', function(){
-        it('should return size 0 when querying an empty DB', function(){
+    describe('An empty database', function() {
+        it('should return size 0 when querying an empty DB', function() {
             db.size().should.equal(0);
         });
     });
     
-    describe('Insert an object', function(){
-        before(function(){
+    describe('#insert()', function() {
+        before(function() {
             db.insert(element);
         });
-        it('should return size 1 after having inserted an object', function(){
+        it('should return size 1 after having inserted an object', function() {
             db.size().should.equal(1);
         });
     });
     
-    describe('Get current element', function(){
-        it('should return the previously inserted element', function(){
+    describe('#get()', function() {
+        it('should return the previously inserted element', function() {
         	db.get().should.equal(element);
         });
       });
       
-	  describe('get next element', function(){
-	    it('should return false when there is only one element', function(){
+	  describe('#next()', function() {
+	    it('should return false when there is only one element', function() {
 	    	db.next().should.equal(false);
 	    });
 	  });
 	  
-	  describe('get previous element', function(){
-	    it('should return false when there is only one element', function(){
+	  describe('#previous()', function() {
+	    it('should return false when there is only one element', function() {
 	    	db.previous().should.equal(false);
 	    });
 	  });
 	  
-	  describe('get unexisting element (index out of bound)', function(){
+	  describe('get unexisting element (index out of bound)', function() {
 	    it('should return false', function(){
 	    	db.get(1).should.equal(false);
 	    });
@@ -97,11 +97,11 @@ describe('NDDB Basic Operations:', function() {
 	    });
 	  });
 	  
-	  describe('Insert a collection of object', function(){
-	        before(function(){
+	  describe('Insert a collection of object', function() {
+	        before(function() {
 	            db.import(items);
 	        });
-	        it('should return size 5 after having imported an object collection', function(){
+	        it('should return size 5 after having imported an object collection', function() {
 	            db.size().should.equal(5);
 	        });
 	    });
@@ -109,17 +109,120 @@ describe('NDDB Basic Operations:', function() {
 });
 
 describe('Iterator', function() {
-	describe('calling first()', function(){
-	    it(' should return the first element of the inserted collection', function(){
-	        db.first().should.equal(items[0]);
-	    });
-	});
 	
-	describe('calling last()', function(){
-	    it(' should return the last element of the inserted collection', function(){
+	describe('#last()', function() {
+	    it('should return the last element of the previously inserted collection', function() {
 	        db.last().should.equal(items[4]);
 	    });
+	    
+	    it('should move nddb_pointer to 0', function() {
+    		db.nddb_pointer.should.equal(4);
+    	});
 	});
+	
+	describe('#first()', function() {
+	    it('should return the first element of the inserted collection', function() {
+	        db.first().should.equal(items[0]);
+	    });
+	    
+    	it('should reset nddb_pointer to 0', function() {
+    		db.nddb_pointer.should.equal(0);
+    	});
+	});
+	
+	describe('#next()', function() {
+	    it('should return the next element in the database', function() {
+	        db.next().should.equal(items[1]);
+	    });
+	    
+    	it('should move nddb_pointer to 1', function() {
+    		db.nddb_pointer.should.equal(1);
+    	});
+	});
+	
+	describe('#get()', function() {
+
+		it('should return the current element (nddbid = 1)', function() {
+	        db.get().should.equal(items[1]);
+	    });
+	    
+    	it('the returned element should have nddbid equal to 1', function() {
+    		db.get().nddbid.should.equal(1);
+    	});
+	});
+	
+	describe('calling 3 times next() in a row', function() {
+		
+		before(function() {
+			db.next();
+			db.next();
+		})
+		
+	    it('should return the last element of the collection', function() {
+	    	db.next().should.equal(items[4]);
+	    });
+	    
+	    it('should make get() to return the last element of the collection', function() {
+	    	db.get().should.equal(items[4]);
+	    });
+	    
+	    it('should move nddb_pointer to 4', function() {
+    		db.nddb_pointer.should.equal(4);
+    	});
+	    
+	    it('should make get() equivalent to last()', function() {
+	    	db.get().should.equal(db.last());
+	    });
+	    
+	});
+	
+	describe('#next() when we are already at the last position of the db', function() {
+		it('should return false', function() {
+			 db.next().should.equal(false);
+		});
+	});
+	
+	describe('#previous() when we are already at the last position of the db', function() {
+		it('should return false', function() {
+			 db.previous().should.equal(items[3]);
+		});
+		
+		it('should move nddb_pointer to 3', function() {
+    		db.nddb_pointer.should.equal(3);
+    	});
+	});
+	
+	describe('calling 3 times previous() in a row', function() {
+		
+		before(function() {
+			db.previous();
+			db.previous();
+		})
+		
+	    it('should return the first element of the collection', function() {
+	    	db.previous().should.equal(items[0]);
+	    });
+	    
+	    it('should make get() to return the last element of the collection', function() {
+	    	db.get().should.equal(items[0]);
+	    });
+	    
+	    it('should move nddb_pointer to 0', function() {
+    		db.nddb_pointer.should.equal(0);
+    	});
+	    
+	    it('should make get() equivalent to first()', function() {
+	    	db.get().should.equal(db.first());
+	    });
+	    
+	});
+	
+	describe('#previous() when we are already at the last position of the db', function() {
+		it('should return false', function() {
+			 db.previous().should.equal(false);
+		});
+	});
+	
 });
 
 describe('NDDB sorting', function(){
@@ -193,10 +296,7 @@ describe('NDDB sorting', function(){
 	         //console.log(nddb.fetch());
 
 	        
-	    	// TODO add another element to test nddb_pointer
-	    	//    it('should reset nddb_pointer to 0', function(){
-	    	//   	db.nddb_pointer.should.equal(0);
-	    	//    });
+
 
 	
 	
