@@ -102,10 +102,11 @@
         
         this.import(db);   
         
+        var that = this;
         Object.defineProperty(this, 'length', {
         	set: function(){},
         	get: function(){
-        		return this.db.length;
+        		return that.db.length;
         	},
         	configurable: true
     	});
@@ -155,6 +156,29 @@
         var db = db || this.db;
         o.__proto__ = JSUS.clone(o.__proto__);
         o.__proto__.nddbid = db.length;
+        return o;
+    };
+    
+    /**
+     * Adds a special id into the __proto__ object of 
+     * the object
+     * 
+     * @api private
+     */
+    NDDB.prototype._masquerade = function (o, db) {
+        if (!o) return false;
+        // TODO: check this
+        if ('undefined' !== typeof o.nddbid) return o;
+        var db = db || this.db;
+        
+        Object.defineProperty(o, 'nddbid', {
+        	value: db.length,
+        	//set: function(){},
+        	configurable: true
+    	});
+        
+        //o.__proto__ = JSUS.clone(o.__proto__);
+        //o.__proto__.nddbid = db.length;
         return o;
     };
 
@@ -282,15 +306,15 @@
 //            NDDB.log('1' + o1);
 //            NDDB.log('2' + o2);
             if (!o1 && !o2) return 0;
-            if (!o1) return -1;
-            if (!o2) return 1;        
+            if (!o1) return 1;
+            if (!o2) return -1;        
             var v1 = JSUS.getNestedValue(d,o1);
             var v2 = JSUS.getNestedValue(d,o2);
 //            NDDB.log(v1);
 //            NDDB.log(v2);
             if (!v1 && !v2) return 0;
-            if (!v1) return -1;
-            if (!v2) return 1;
+            if (!v1) return 1;
+            if (!v2) return -1;
             if (v1 > v2) return 1;
             if (v2 > v1) return -1;
             return 0;
@@ -591,14 +615,14 @@
       if (this.db.length === 0) return this;
       if (this.parentDB) {
           for (var i=0; i < this.db.length; i++) {
-              var idx = this.db[i].__proto__.nddbid - i;
+              var idx = this.db[i].nddbid - i;
               this.parentDB.splice(idx,1);
           };
           // TODO: we could make it with only one for loop
           // we loop on parent db and check whether the id is in the array
           // at the same time we decrement the nddbid depending on i
           for (var i=0; i < this.parentDB.length; i++) {
-              this.parentDB[i].__proto__.nddbid = i;
+              this.parentDB[i].nddbid = i;
           };
       }
       this.db = [];

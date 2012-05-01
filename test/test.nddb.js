@@ -41,6 +41,16 @@ var items = [
              }
 ];
 
+
+//var nddb = new NDDB({}, items);
+//
+//nddb.forEach(function(e){
+//	console.log(e);
+//	console.log(e.nddbid);
+//});
+//
+//ewdwe
+
 describe('NDDB Basic Operations:', function() {
     
 	var element = {
@@ -121,7 +131,7 @@ describe('Iterator', function() {
 	        db.last().should.equal(items[4]);
 	    });
 	    
-	    it('should move nddb_pointer to 0', function() {
+	    it('should move nddb_pointer to 4', function() {
     		db.nddb_pointer.should.equal(4);
     	});
 	});
@@ -282,19 +292,16 @@ describe('NDDB sorting', function(){
 	
 	describe('#sort([\'painter\', \'portrait\'])', function() {  
 		it('should have Dali\'s Portrait of Paul Eluard first', function() {
-			db.sort(['painter', 'portrait']);
-			
-			console.log(db.db);
-			
+			db.sort(['painter', 'portrait']);			
 			var f = db.first();
 			f.should.have.property('painter', 'Dali');
-			//f.should.have.property('title', 'Portrait of Paul Eluard');
+			f.should.have.property('title', 'Portrait of Paul Eluard');
 		});
 		
 		it('should have Dali\'s Barcelonese Mannequin second', function() {
 			var s = db.next();
 			s.should.have.property('painter', 'Dali');
-			//s.should.have.property('title', 'Barcelonese Mannequin');
+			s.should.have.property('title', 'Barcelonese Mannequin');
 		});
 		
 		it('should have Monet\'s Wheatstacks (End of Summer) last', function() {
