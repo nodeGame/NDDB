@@ -100,7 +100,16 @@
         this.auto_sort =  ('undefined' !== typeof options.auto_sort) ? options.auto_sort
                                                                      : false;
         
-        this.import(db);    
+        this.import(db);   
+        
+        Object.defineProperty(this, 'length', {
+        	set: function(){},
+        	get: function(){
+        		return this.db.length;
+        	},
+        	configurable: true
+    	});
+        
     };
     
     ///////////
@@ -127,6 +136,7 @@
     /**
      * Returns the size of the database
      * 
+     * @deprecated: use this.length property instead
      */
     NDDB.prototype.size = function() {
         return this.db.length 
@@ -742,7 +752,7 @@
     NDDB.prototype._split = function (o, key) {        
         
         if ('object' !== typeof o[key]) {
-            return JSUS.clone(o);;
+            return JSUS.clone(o);
         }
         
         var out = [];

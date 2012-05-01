@@ -55,6 +55,12 @@ describe('NDDB Basic Operations:', function() {
         });
     });
     
+    describe('An empty database', function() {
+        it('should return size 0 when querying an empty DB', function() {
+            db.length.should.equal(0);
+        });
+    });
+    
     describe('#insert()', function() {
         before(function() {
             db.insert(element);
