@@ -1190,7 +1190,9 @@
      */
     NDDB.prototype.get = function (pos) {
         var pos = pos || this.nddb_pointer;
-        if (pos < 0 || pos > (this.db.length-1)) return false;
+        if (pos < 0 || pos > (this.db.length-1)) {
+        	return false;
+        }
         return this.db[pos];
     };
         
@@ -1204,7 +1206,7 @@
      */
     NDDB.prototype.next = function () {
         var el = NDDB.prototype.get.call(this, ++this.nddb_pointer);
-        if ('undefined' === typeof el) this.nddb_pointer--;
+        if (!el) this.nddb_pointer--;
         return el;
     };
     
@@ -1218,7 +1220,7 @@
      */
     NDDB.prototype.previous = function () {
         var el = NDDB.prototype.get.call(this, --this.nddb_pointer);
-        if ('undefined' === typeof el) this.nddb_pointer++;
+        if (!el) this.nddb_pointer++;
         return el;
     };
     
