@@ -150,23 +150,8 @@
      * @api private
      */
     NDDB.prototype._masquerade = function (o, db) {
-        if (!o) return false;
-        // TODO: check this
-        if (o.__proto__.nddbid) return o;
-        var db = db || this.db;
-        o.__proto__ = JSUS.clone(o.__proto__);
-        o.__proto__.nddbid = db.length;
-        return o;
-    };
-    
-    /**
-     * Adds a special id into the __proto__ object of 
-     * the object
-     * 
-     * @api private
-     */
-    NDDB.prototype._masquerade = function (o, db) {
-        if (!o) return false;
+        if ('undefined' === typeof o) return false;
+        
         // TODO: check this
         if ('undefined' !== typeof o.nddbid) return o;
         var db = db || this.db;
@@ -230,7 +215,7 @@
      * 
      */
     NDDB.prototype.insert = function (o) {
-        if (!o) return;
+        if ('undefined' === typeof o) return;
         this.db.push(this._masquerade(o));
         this._autoUpdate();
     };
@@ -312,9 +297,9 @@
             var v2 = JSUS.getNestedValue(d,o2);
 //            NDDB.log(v1);
 //            NDDB.log(v2);
-            if (!v1 && !v2) return 0;
-            if (!v1) return 1;
-            if (!v2) return -1;
+            if ('undefined' === typeof v1 && 'undefined' === typeof v2) return 0;
+            if ('undefined' === typeof v1) return 1;
+            if ('undefined' === typeof v2) return -1;
             if (v1 > v2) return 1;
             if (v2 > v1) return -1;
             return 0;
@@ -1219,7 +1204,7 @@
      */
     NDDB.prototype.next = function () {
         var el = NDDB.prototype.get.call(this, ++this.nddb_pointer);
-        if (!el) this.nddb_pointer--;
+        if ('undefined' === typeof el) this.nddb_pointer--;
         return el;
     };
     
@@ -1233,7 +1218,7 @@
      */
     NDDB.prototype.previous = function () {
         var el = NDDB.prototype.get.call(this, --this.nddb_pointer);
-        if (!el) this.nddb_pointer++;
+        if ('undefined' === typeof el) this.nddb_pointer++;
         return el;
     };
     
@@ -1298,7 +1283,7 @@
      * @status: experimental
      */
     NDDB.prototype.resolveTag = function (tag) {
-        if (!tag) return false;
+        if ('undefined' === typeof tag) return false;
         return this.tags[tag];
     };
     
