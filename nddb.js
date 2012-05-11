@@ -125,9 +125,9 @@
      * 
      */
     NDDB.prototype.globalCompare = function(o1, o2) {
-        if (!o1 && !o2) return 0;
-        if (!o2) return -1;  
-        if (!o1) return 1;
+        if ('undefined' === typeof o1 && 'undefined' === typeof o2) return 0;
+        if ('undefined' === typeof o2) return -1;  
+        if ('undefined' === typeof o1) return 1;
         
         if (o1.nddbid < o2.nddbid) return -1;
         if (o1.nddbid > o2.nddbid) return 1;
@@ -305,9 +305,9 @@
         return ('undefined' !== typeof this.D[d]) ? this.D[d] : function (o1, o2) {
 //            NDDB.log('1' + o1);
 //            NDDB.log('2' + o2);
-            if (!o1 && !o2) return 0;
-            if (!o1) return 1;
-            if (!o2) return -1;        
+            if ('undefined' === typeof o1 && 'undefined' === typeof o2) return 0;
+            if ('undefined' === typeof o1) return 1;
+            if ('undefined' === typeof o2) return -1;        
             var v1 = JSUS.getNestedValue(d,o1);
             var v2 = JSUS.getNestedValue(d,o2);
 //            NDDB.log(v1);
