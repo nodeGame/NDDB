@@ -25,7 +25,6 @@ for (var i=0;i<clients.length;i++) {
 	}
 }
 
-
 describe('Testing native NDDB statistics', function(){
 	
 	describe('#mean()', function(){
