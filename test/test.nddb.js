@@ -181,7 +181,7 @@ describe('Iterator', function() {
 			db.next();
 			db.next();
 			db.next();
-		})
+		});
 		
 	    it('should return the last element of the collection', function() {
 	    	db.next().should.equal(items[(items.length-1)]);
