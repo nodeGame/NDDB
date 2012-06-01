@@ -67,6 +67,8 @@
      * 
      */
     
+
+	
     // Expose constructors
     exports.NDDB = NDDB;
     
@@ -82,8 +84,10 @@
     function NDDB (options, db) {                
         var options = options || {};
         
-        this.db = [];                    // The actual database
+        this.db = [];                   // The default database
         this.D = {};                    // The n-dimensional container for comparator functions
+        this.H = {};
+        
         this.tags = options.tags || {};    // Tags pointing to id in the databases
         
         this.options = options;
@@ -200,8 +204,11 @@
     NDDB.prototype.import = function (db) {
         if (!db) return [];
         if (!this.db) this.db = [];
-        this.db = this.db.concat(this._masqueradeDB(db));
-        this._autoUpdate();
+        for (var i = 0; i < db.length; i++) {
+            this.insert(db[i]);
+        }
+        //this.db = this.db.concat(this._masqueradeDB(db));
+        //this._autoUpdate();
     };
     
     /**
@@ -210,7 +217,15 @@
      */
     NDDB.prototype.insert = function (o) {
         if ('undefined' === typeof o) return;
-        this.db.push(this._masquerade(o));
+        var o = this._masquerade(o);
+        
+        if (JSUS.isEmpty(this.H)) {
+        	this.db.push(o);	
+    	}
+        else {
+        	this.hashIt(o);
+        }
+        
         this._autoUpdate();
     };
     
@@ -300,6 +315,60 @@
         };    
     };
     
+    NDDB.prototype.isReservedWord = function (key) {
+    	return (this[key]) ? true : false; 
+    };
+    
+    NDDB.prototype.h = function (key, func) {
+    	if ('undefined' === typeof key) {
+    		NDDB.log('Cannot hash empty key', 'ERR');
+    		return false;
+    	}
+    	
+    	func = func || Object.toString;
+    	
+    	if (this.isReservedWord(key)) {
+    		var str = 'A reserved word have been selected as an index. ';
+    		str += 'Please select another one: ' + key;
+    		NDDB.log(str, 'ERR');
+    		return false;
+    	}
+    	
+    	this.H[key] = func;
+    	
+    	this[key] = {};
+    	
+    	return true;
+    };
+    
+    
+    
+    NDDB.prototype.hashIt = function(o) {
+    	if (!o) return false;
+    
+    	var h = null;
+    	var id = null;
+    	var hashes = [];
+    	
+    	for (var key in this.H) {
+    		if (this.H.hasOwnProperty(key)) {
+	    		if (o.hasOwnProperty(key)) {
+    				
+	    			h = this.H[key];	    			
+	    			hash = h(o);
+
+    				if ('undefined' === typeof hash) {
+    					continue;
+    				}
+    				
+    				if (!this[key][hash]) {
+    					this[key][hash] = new NDDB();
+    				}
+    				this[key][hash].insert(o);
+    			}
+    		}
+    	}
+    };
     
     //////////////////////
     // 1. Sort and Select
