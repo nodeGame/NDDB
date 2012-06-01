@@ -69,7 +69,7 @@ describe('NDDB Basic Operations:', function() {
 	
     describe('An empty database', function() {
         it('should return size 0 when querying an empty DB', function() {
-            db.size().should.equal(0);
+            db.length.should.equal(0);
         });
     });
     
@@ -84,7 +84,7 @@ describe('NDDB Basic Operations:', function() {
             db.insert(element);
         });
         it('should return size 1 after having inserted an object', function() {
-            db.size().should.equal(1);
+            db.length.should.equal(1);
         });
     });
     
@@ -117,7 +117,7 @@ describe('NDDB Basic Operations:', function() {
 	  	    db.clear(true);
 	  	});
 	  	it('should return length 0', function() {
-	    	db.size().should.equal(0);
+	    	db.length.should.equal(0);
 	    });
 	  });
 	  
@@ -126,7 +126,7 @@ describe('NDDB Basic Operations:', function() {
 	            db.import(items);
 	        });
 	        it('should return size 6 after having imported an object collection', function() {
-	            db.size().should.equal(items.length);
+	            db.length.should.equal(items.length);
 	        });
 	    });
 	    

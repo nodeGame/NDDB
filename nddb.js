@@ -113,6 +113,9 @@
         
     };
     
+    
+    
+    
     ///////////
     // 0. Core
     //////////
@@ -132,15 +135,6 @@
         if (o1.nddbid < o2.nddbid) return -1;
         if (o1.nddbid > o2.nddbid) return 1;
         return 0;
-    };
-
-    /**
-     * Returns the size of the database
-     * 
-     * @deprecated: use this.length property instead
-     */
-    NDDB.prototype.size = function() {
-        return this.db.length 
     };
     
     /**
