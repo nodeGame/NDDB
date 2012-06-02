@@ -219,13 +219,8 @@
         if ('undefined' === typeof o) return;
         var o = this._masquerade(o);
         
-        if (JSUS.isEmpty(this.H)) {
-        	this.db.push(o);	
-    	}
-        else {
-        	this.hashIt(o);
-        }
-        
+        this.db.push(o);
+    	this.hashIt(o);
         this._autoUpdate();
     };
     
@@ -250,8 +245,11 @@
      */
     NDDB.prototype.cloneSettings = function () {
         if (!this.options) return {};
-        var o = JSUS.clone(this.options);
-        o.D = JSUS.clone(this.D);
+//        var o = JSUS.clone(this.options);
+//        o.D = JSUS.clone(this.D);
+        
+        return this.options;
+        
         // TODO: shall we include parentDB as well here?
         return o;
     };    
@@ -344,11 +342,14 @@
     
     
     NDDB.prototype.hashIt = function(o) {
-    	if (!o) return false;
+      	if (!o) return false;
+    	if (JSUS.isEmpty(this.H)) {
+    		return false;
+    	}
     
     	var h = null;
     	var id = null;
-    	var hashes = [];
+    	var hash = null;
     	
     	for (var key in this.H) {
     		if (this.H.hasOwnProperty(key)) {
@@ -364,7 +365,7 @@
     				if (!this[key][hash]) {
     					this[key][hash] = new NDDB();
     				}
-    				this[key][hash].insert(o);
+    				this[key][hash].db.push(o);
     			}
     		}
     	}
@@ -609,7 +610,7 @@
      * @see NDDB.breed()
      * 
      */
-    NDDB.prototype.filter = function (func) {
+    NDDB.prototype.filter= function (func) {
         return this.breed(this.db.filter(func));
     };
     
@@ -642,9 +643,11 @@
         if (arguments.length === 0) return;
         var func = arguments[0];
         var out = [];
+        var o = undefined;
         for (var i=0; i < this.db.length; i++) {
             arguments[0] = this.db[i];
-            out.push(func.apply(this, arguments));
+            o = func.apply(this, arguments);
+            if (o) out.push();
         }
         return out;
     };
@@ -665,6 +668,7 @@
           for (var i=0; i < this.db.length; i++) {
               var idx = this.db[i].nddbid - i;
               this.parentDB.splice(idx,1);
+              delete this.db[i];
           };
           // TODO: we could make it with only one for loop
           // we loop on parent db and check whether the id is in the array
@@ -673,6 +677,7 @@
               this.parentDB[i].nddbid = i;
           };
       }
+     
       this.db = [];
       return this;
     };    

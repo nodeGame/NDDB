@@ -321,60 +321,6 @@ describe('NDDB sorting', function(){
 			l.should.have.property('title', 'Wheatstacks (End of Summer)');
 		});
    	});
-	
-	
-//	         //console.log('Sort by Player');
-//	         //nddb.sort('player');
-//	         //console.log(out.toString());
-//	         //
-//	         //console.log('Sort by State');
-//	         //out = nddb.sort('state');
-//	         //console.log(out.toString());
-//	         //
-//	         //console.log('Sort by Key');
-//	         //out = nddb.sort('key');
-//	         //console.log(out.toString());
-//
-//	         //console.log('Get by value');
-//	         //out = nddb.sort('value');
-//	         //console.log(out.toString());
-//
-//	       //  console.log('Select Key');
-//	       //  out = nddb.select('key','=','x');
-//	       //  console.log(out.toString());
-//
-//	         //console.log('Select !Key');
-//	         //out = nddb.select('key','!=','x');
-//	         //console.log(out.toString());
-//	         //
-//	         //console.log('Select State');
-//	         //out = nddb.select('state','>', new GameState({state: 1}));
-//	         //console.log(out.toString());
-//
-//	         //console.log('Join State');
-//	         //out = nddb.join('state','state', 'joined');
-//	         //console.log(out.fetch());
-//
-//	         //console.log('Join State Selective');
-//	         //out = nddb.join('state','state', 'joined', ['key']);
-//	         ////console.log(out.fetch());
-//	         //
-//	         //console.log('Get First');
-//	         //console.log(out.first());
-//	         //
-//	         //console.log('Get Last');
-//	         //console.log(out.last());
-//	         //
-//	         //console.log('Limit 1');
-//	         //console.log(out.limit(1));
-//	         //
-//	         //console.log('Limit -1');
-//	         //console.log(out.limit(-1));
-//
-//	         //nddb.clear(true);
-//	         //console.log(nddb.fetch());
-//
-//	
 });
 
 
