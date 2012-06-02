@@ -137,6 +137,9 @@ describe('NDDB Hashing Operations:', function() {
         });
     });
     
+    
+    
+    
 //    describe('Deleting elements should update the indexes', function() {
 //    	before(function(){
 //    		db.select('painter', '=', 'Monet').delete();

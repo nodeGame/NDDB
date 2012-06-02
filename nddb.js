@@ -100,9 +100,14 @@
         this.auto_update_pointer = ('undefined' !== typeof options.auto_update_pointer) ?
                                         options.auto_update_pointer
                                     :    false;
+           
+        this.auto_rebuild_indexes = ('undefined' !== typeof options.auto_rebuild_indexes) ?
+                                        options.auto_rebuild_indexes
+                                    :    false;
         
         this.auto_sort =  ('undefined' !== typeof options.auto_sort) ? options.auto_sort
-                                                                     : false;
+                : false;
+
         
         this.import(db);   
         
@@ -194,6 +199,10 @@
         }
         if (this.auto_sort) {
             this.sort();
+        }
+        
+        if (this.auto_rebuild_indexes) {
+            this.rebuildIndexes();
         }
     }
     
@@ -339,7 +348,19 @@
     	return true;
     };
     
-    
+    NDDB.prototype.rebuildIndexes = function() {
+    	if (JSUS.isEmpty(this.H)) {
+    		return false;
+    	} 	
+    	// Reset current indexes
+    	for (var key in this.H) {
+    		if (this.H.hasOwnProperty(key)) {
+    			this[key] = new NDDB();
+    		}
+    	}
+    	
+    	this.each(this.hashIt)
+    };
     
     NDDB.prototype.hashIt = function(o) {
       	if (!o) return false;
@@ -623,7 +644,7 @@
      * to the callback
      * 
      */
-    NDDB.prototype.forEach = function () {
+    NDDB.prototype.each = NDDB.prototype.forEach = function () {
         if (arguments.length === 0) return;
         var func = arguments[0];    
         for (var i=0; i < this.db.length; i++) {
@@ -679,6 +700,9 @@
       }
      
       this.db = [];
+      
+      this._autoUpdate();
+      
       return this;
     };    
     
@@ -693,6 +717,7 @@
     NDDB.prototype.clear = function (confirm) {
         if (confirm) {
             this.db = [];
+            this._autoUpdate();
         }
         else {
             NDDB.log('Do you really want to clear the current dataset? Please use clear(true)', 'WARN');
