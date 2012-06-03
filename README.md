@@ -255,7 +255,7 @@ NDDB relies on [mocha](http://visionmedia.github.com/mocha/) and [should.js](htt
 0.2
 
   - Introduced indexing. Indexes are created with NDDB.h() or the alias NDDB.hash()
-  - NDDB.set() was already deprecated and it has been removed. NDDB.c() or the alias NDDB.compare() should be used
+  - NDDB.set() was already deprecated and it has been removed. NDDB.c() or the alias NDDB.compare() should be used instead.
   - NDDB.init() can sets the configuration of the database
   
 ## License
