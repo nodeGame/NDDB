@@ -6,7 +6,11 @@ var util = require('util'),
     should = require('should'),
     NDDB = require('./../nddb').NDDB;
 
-var db = new NDDB();
+var db = new NDDB({
+	update: {
+		indexes: true,
+	}
+});
 
 var clients = ['a','b','c','d'];
 var states = [1,2,3,4];
@@ -69,13 +73,14 @@ var not_hashable = [
 
 var nitems = hashable.length + not_hashable.length;
 var testcase = null;
+var tmp = null;
 
 var hashPainter = function(o) {
 	if (!o) return undefined;
 	return o.painter;
 }
 
-db.h('painter',hashPainter);
+db.h('painter', hashPainter);
 
 db.import(not_hashable);
 db.import(hashable);
@@ -90,6 +95,7 @@ describe('NDDB Delete Operations:', function() {
     	});
 		after(function(){
 			testcase = null;
+			tmp = null;
 		});
     	
 		it('the selection should be empty', function() {
@@ -106,24 +112,38 @@ describe('NDDB Delete Operations:', function() {
     	
     });
 	
+	describe('Deleting elements that are indexed', function() {
+		before(function(){
+			tmp = db.length;
+			testcase = db.select('painter', '=', 'Monet');
+			testcase.delete();
+			db.rebuildIndexes();	
+		});
+		
+		it('should decrease the length of the database', function() {
+			db.length.should.be.eql(tmp - 2);
+		});
+		
+		it('should decrease the length of the index', function() {
+			db.painter.should.not.have.property('Monet');
+		});
 	
-//	describe('Delete all items', function() {
-//    	before(function(){
-//    		db.delete();
-//    	});
-//    	
-//    	it('should make db.length equal to 0', function() {
-//            db.length.should.eql(0);
-//        });
-//    	
-//        it('should make indexes length equal to 0', function() {
-//            db.painter.Monet.length.should.eql(0);
-//            db.painter.Jesus.length.should.eql(0);
-//            db.painter.Manet.length.should.eql(0);
-//            db.painter.Dali.length.should.eql(0);
-//        });
-//        
-//    });
+	});
+	
+	describe('Deleting all items', function() {
+    	before(function(){
+    		db.delete();
+    	});
+    	
+    	it('should make db.length equal to 0', function() {
+            db.length.should.eql(0);
+        });
+    	
+        it('should reset all indexes', function() {
+            db.painter.should.be.eql({});
+        });
+        
+    });
 });
 
 

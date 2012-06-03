@@ -191,7 +191,8 @@
         Object.defineProperty(o, 'nddbid', {
         	value: db.length,
         	//set: function(){},
-        	configurable: true
+        	configurable: true,
+        	writable: true,
     	});
         
         //o.__proto__ = JSUS.clone(o.__proto__);
@@ -232,6 +233,11 @@
         
         if (this.__update.indexes) {
             this.rebuildIndexes();
+        }
+        
+        // Update also parent element
+        if (this.__parent) {
+        	this.__parent._autoUpdate();
         }
     }
     
@@ -385,7 +391,7 @@
     	// Reset current indexes
     	for (var key in this.__H) {
     		if (this.__H.hasOwnProperty(key)) {
-    			this[key] = new NDDB();
+    			this[key] = {};
     		}
     	}
     	
@@ -716,11 +722,11 @@
     NDDB.prototype.delete = function () {
       if (!this.length) return this;
       
-      if (this.__parent) {
+      if (this.__parent) {    	  
           for (var i=0; i < this.db.length; i++) {
+        	  // Important: index changes as we deletes elements
               var idx = this.db[i].nddbid - i;
               this.__parent.db.splice(idx,1);
- 
           };
           // TODO: we could make it with only one for loop
           // we loop on parent db and check whether the id is in the array

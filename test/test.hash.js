@@ -140,20 +140,7 @@ describe('NDDB Hashing Operations:', function() {
     
     
     
-//    describe('Deleting elements should update the indexes', function() {
-//    	before(function(){
-//    		db.select('painter', '=', 'Monet').delete();
-//    	});
-//    	
-//    	it('should decrease the length of the database', function() {
-//    		db.length.should.be.eql(nitems - 2);
-//    	});
-//    	
-//    	it('should decrease the length of the index', function() {
-//    		db.painter.Monet.length.should.be.eql(0);
-//    	});
-//
-//    });
+
     
 //    describe('Deleting elements in the index should update the database', function() {
 //    	before(function() {
