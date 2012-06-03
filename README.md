@@ -71,18 +71,24 @@ implemented:
 
 Create an instance of NDDB
 
+```javascript
     var NDDB = require('NDDB').NDDB;
     var db = new NDDB();
+```
 
 Insert an item into the database
 
+```javascript
     db.insert({
         painter: "Picasso",
         title: "Les Demoiselles d'Avignon",
         year: 1907
     });
+```
 
 Import a collection of items
+
+```javascript
 
     var items = [
         {
@@ -114,32 +120,41 @@ Import a collection of items
     ];
     
     db.import(items);
+```
     
 Retrieve the database size
 
+```javascript
     var db_size = db.length; // 6
+ ```
     
 Select all paintings from Dali
 
+```javascript
     db.select('painter', '=', 'Dali'); // 2 items
     
 Select all portraits
 
+```javascript
     db.select('portrait'); // 1 item
     
 Select all paintings from Dali that are before 1928
 
+```javascript
     db.select('painter', '=', 'Dali')
       .select('year', '<', 1928); // 1 item
 
 Select all paintings of the beginning of XX's century
 
+```javascript
     db.select('year', '><', [1900, 1910]); // 2 items    
+```
 
 ## Advanced commands
 
 Define a global comparator function that sorts all the entries chronologically
 
+```javascript
     db.globalCompator = function (o1, o2) {
         if (o1.year < o2.year) return 1;
         if (o1.year < o2.year) return 2;
@@ -148,26 +163,34 @@ Define a global comparator function that sorts all the entries chronologically
 
 Sort all the items (global comparator function is automatically used)
 
+```javascript
     db.sort(); // Order: Manet, Monet, Monet, Picasso, Dali, Dali
+```
 
 Reverse the order of the items
 
+```javascript
     db.reverse(); // Order: Dali, Dali, Picasso, Monet, Monet, Manet
+```
 
 Define a custom comparator function for the name of the painter, which gives highest priorities to the canvases of Picasso;
-    
+
+```javascript
     db.c('painter', function (o1, o2) {
         if (o1.painter === 'Picasso') return -1;
         if (o2.painter === 'Picasso') return 1;
     }
-    
+```
+   
 Sort all the paintings by painter
 
+```javascript
     db.sort('painter'); // Picasso is always listed first
+```
 
 Define a custom index function for the name of the painter, which gives highest priorities to the canvases of Picasso;
     
-
+```javascript
     db.h('painter', function(o) {
         if (!o) return undefined;
         return o.painter;
@@ -180,20 +203,39 @@ Define a custom index function for the name of the painter, which gives highest 
     db.painter.Monet    // NDDB with 2 elements in db
     db.painter.Manet    // NDDB with 1 elements in db
     db.painter.Dali     // NDDB with 2 elements in db
+```
+  
+
+## Example of Configuration object
+
+```javascript
+
+    var logFunc = function(txt, level) {
+      if (level > 0) {
+        console.log(txt)
+      }
+    };
+
+    var options = {
+      tags:  {},          // Collection of tags
+      update: {
+        indexes:  true,   // Rebuild indexes on insert and delete 
+        sort:     true,   // Always sort the elements in the database 
+        pointer:  true,   // Iterator always points to the last insert
+      },
+      C:  {},             // Collection of comparator functions
+      H:  {},             // Collection of hashing functions
+      log: logFunc,       // Default stdout
+      nddb_pointer: 4,    // Set the pointer to element of index 4. 
+    }
     
-
-## Configuration options
-
-
-var options = {
-  tags:  {},        // Collection of tags
-  update: {
-    indexes:  true, // Rebuild indexes on insert and delete 
-    sort:     true, // Always sort the elements in the database 
-    pointer:  true, // Iterator always points to the last insert
-  },
-  C:  {},           // Collection of comparator functions
-  H:  {},           // Collection of hashing functions
+    var nddb = new NDDB(options);
+    
+    // or
+    
+    nddb = new NDDB();
+    nddb.init(options);
+```
 
 # Test
 
