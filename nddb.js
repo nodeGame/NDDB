@@ -289,14 +289,14 @@
      * 
      */
     NDDB.prototype.cloneSettings = function () {
-        if (!this.__options) return {};
-//        var o = JSUS.clone(this.options);
-//        o.D = JSUS.clone(this.__D);
+        var options = this.__options || {};
         
-        return this.__options;
+        options.H = 		this.__H;
+        options.D = 		this.__D;
+        options.tags = 		this.tags;
+        options.update = 	this.__update;
         
-        // TODO: shall we include parentDB as well here?
-        return o;
+        return JSUS.clone(options);
     };    
     
     /**
