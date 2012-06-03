@@ -241,7 +241,7 @@ Define a custom index (hash) function for the name of the painter, which splits 
     nddb.init(options);
 ```
 
-# Test
+## Test
 
 NDDB relies on [mocha](http://visionmedia.github.com/mocha/) and [should.js](http://github.com/visionmedia/should.js) for testing.
 
@@ -249,7 +249,7 @@ NDDB relies on [mocha](http://visionmedia.github.com/mocha/) and [should.js](htt
     $ npm test # will run the test suite against nddb.js
 
 
-# ChangeLog
+## ChangeLog
 
 
 0.2
