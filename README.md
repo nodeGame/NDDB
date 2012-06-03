@@ -192,7 +192,7 @@ Sort all the paintings by painter
     db.sort('painter'); // Picasso is always listed first
 ```
 
-Define a custom index function for the name of the painter, which gives highest priorities to the canvases of Picasso;
+Define a custom index (hash) function for the name of the painter, which gives highest priorities to the canvases of Picasso;
     
 ```javascript
     db.h('painter', function(o) {
