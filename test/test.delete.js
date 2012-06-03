@@ -118,6 +118,8 @@ describe('NDDB Delete Operations:', function() {
 			testcase = db.select('painter', '=', 'Monet');
 			testcase.delete();
 			db.rebuildIndexes();	
+
+			
 		});
 		
 		it('should decrease the length of the database', function() {

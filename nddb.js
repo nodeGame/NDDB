@@ -5,11 +5,15 @@
      * NDDB provides a simple, lightweight, NO-SQL object database 
      * for node.js and the browser. It depends on JSUS.
      * 
-     * Allows to define any number of comparator functions, which are 
-     * associated to any of the dimensions (i.e. properties) of the 
-     * objects stored in the database. Whenever a comparison is needed,
-     * the corresponding comparator function is called, and the database
-     * is updated.
+     * Allows to define any number of comparator and indexing functions, 
+     * which are associated to any of the dimensions (i.e. properties) of 
+     * the objects stored in the database. 
+     * 
+     * Whenever a comparison is needed, the corresponding comparator function 
+     * is called, and the database is updated.
+     * 
+     * Whenever an object is inserted that matches one of the indexing functions
+     * an hash is produced, and the element is added to one of the indexes.
      * 
      * 
      * Additional features are: methods chaining, tagging, and iteration 
@@ -18,13 +22,13 @@
      * NDDB is work in progress. Currently, the following methods are
      * implemented:
      * 
-     *     1. Sorting and selecting:
+     *  1. Sorting and selecting:
      * 
      *      - select, sort, reverse, last, first, limit, shuffle*
      *  
      *  2. Custom callbacks
      *  
-     *      - map, forEach, filter
+     *      - map, each, filter
      *  
      *  3. Deletion
      *  
@@ -57,6 +61,7 @@
      *  10. Updating
      *   
      *      - Update must be performed manually after a selection.
+     *      
      * 
      * * = experimental
      * 
@@ -92,7 +97,7 @@
         this.nddb_pointer = 0; 
         
         // Comparator functions
-        this.__D = {};
+        this.__C = {};
         // Hashing functions
         this.__H = {};
         // Auto update options
@@ -129,8 +134,16 @@
     		NDDB.log = options.log;
     	}
         
-    	if (options.D) {
-    		this.__D = options.D;
+    	if (options.C) {
+    		this.__C = options.C;
+    	}
+    	
+    	if (options.H) {
+    		this.__H = options.H;
+    	}
+    	
+    	if (options.tags) {
+    		this.tags = options.tags;
     	}
         
         if (options.nddb_pointer > 0) {
@@ -223,21 +236,23 @@
      * 
      * @api private
      */
-    NDDB.prototype._autoUpdate = function () {
-        if (this.__update.pointer) {
+    NDDB.prototype._autoUpdate = function (options) {
+    	var update = JSUS.merge(options || {}, this.__update);
+    	
+        if (update.pointer) {
             this.nddb_pointer = this.db.length-1;
         }
-        if (this.__update.sort) {
+        if (update.sort) {
             this.sort();
         }
         
-        if (this.__update.indexes) {
+        if (update.indexes) {
             this.rebuildIndexes();
         }
         
         // Update also parent element
         if (this.__parent) {
-        	this.__parent._autoUpdate();
+        	this.__parent._autoUpdate(update);
         }
     }
     
@@ -264,8 +279,14 @@
         var o = this._masquerade(o);
         
         this.db.push(o);
-    	this.hashIt(o);
-        this._autoUpdate();
+        
+        // We save time calling hashIt only
+        // on the latest inserted element
+        if (this.__update.indexes) {
+        	this.hashIt(o);
+        }
+    	// See above
+        this._autoUpdate({indexes: false});
     };
     
     /**
@@ -292,7 +313,7 @@
         var options = this.__options || {};
         
         options.H = 		this.__H;
-        options.D = 		this.__D;
+        options.C = 		this.__C;
         options.tags = 		this.tags;
         options.update = 	this.__update;
         
@@ -315,22 +336,22 @@
      * Adds a new comparator for dimension d 
      * 
      */
-    NDDB.prototype.d = function (d, comparator) {
+    NDDB.prototype.compare = NDDB.prototype.c = function (d, comparator) {
         if (!d || !comparator) {
             NDDB.log('Cannot set empty property or empty comparator', 'ERR');
             return false;
         }
-        this.__D[d] = comparator;
+        this.__C[d] = comparator;
         return true;
     };
     
-    /**
-     * Adds a new comparator for dimension d
-     * @depracated
-     */
-    NDDB.prototype.set = function (d, comparator) {
-        return this.d(d, comparator);
-    };
+//    /**
+//     * Adds a new comparator for dimension d
+//     * @depracated
+//     */
+//    NDDB.prototype.set = function (d, comparator) {
+//        return this.d(d, comparator);
+//    };
 
     /**
      * Returns the comparator function for dimension d. 
@@ -339,7 +360,11 @@
      * 
      */
     NDDB.prototype.comparator = function (d) {
-        return ('undefined' !== typeof this.__D[d]) ? this.__D[d] : function (o1, o2) {
+        if ('undefined' !== typeof this.__C[d]) {
+        	return this.__C[d]; 
+        }
+        
+        return function (o1, o2) {
 //            NDDB.log('1' + o1);
 //            NDDB.log('2' + o2);
             if ('undefined' === typeof o1 && 'undefined' === typeof o2) return 0;
@@ -358,32 +383,45 @@
         };    
     };
     
+    /**
+     * Returns TRUE if this[key] exists
+     */
     NDDB.prototype.isReservedWord = function (key) {
     	return (this[key]) ? true : false; 
     };
     
-    NDDB.prototype.h = function (key, func) {
-    	if ('undefined' === typeof key) {
-    		NDDB.log('Cannot hash empty key', 'ERR');
+    /**
+     * Adds an hashing function for the dimension d.
+     * 
+     * If no function is specified Object.toString is used.
+     * 
+     */
+    NDDB.prototype.hash = NDDB.prototype.h = function (d, func) {
+    	if ('undefined' === typeof d) {
+    		NDDB.log('Cannot hash empty dimension', 'ERR');
     		return false;
     	}
     	
     	func = func || Object.toString;
     	
-    	if (this.isReservedWord(key)) {
+    	if (this.isReservedWord(d)) {
     		var str = 'A reserved word have been selected as an index. ';
-    		str += 'Please select another one: ' + key;
+    		str += 'Please select another one: ' + d;
     		NDDB.log(str, 'ERR');
     		return false;
     	}
     	
-    	this.__H[key] = func;
+    	this.__H[d] = func;
     	
-    	this[key] = {};
+    	this[d] = {};
     	
     	return true;
     };
     
+    /**
+     * Resets and rebuilds the databases indexes defined
+     * by the hashing functions
+     */
     NDDB.prototype.rebuildIndexes = function() {
     	if (JSUS.isEmpty(this.__H)) {
     		return false;
@@ -398,6 +436,10 @@
     	this.each(this.hashIt)
     };
     
+    /**
+     * Hashes an element and adds it to one of the indexes,
+     * as defined by the hashing functions
+     */
     NDDB.prototype.hashIt = function(o) {
       	if (!o) return false;
     	if (JSUS.isEmpty(this.__H)) {
@@ -417,6 +459,10 @@
 
     				if ('undefined' === typeof hash) {
     					continue;
+    				}
+
+    				if (!this[key]) {
+    					this[key] = {};
     				}
     				
     				if (!this[key][hash]) {
@@ -776,9 +822,9 @@
     NDDB.prototype.join = function (key1, key2, pos, select) {
         // Construct a better comparator function
         // than the generic JSUS.equals
-//        if (key1 === key2 && 'undefined' !== typeof this.__D[key1]) {
+//        if (key1 === key2 && 'undefined' !== typeof this.__C[key1]) {
 //            var comparator = function(o1,o2) {
-//                if (this.__D[key1](o1,o2) === 0) return true;
+//                if (this.__C[key1](o1,o2) === 0) return true;
 //                return false;
 //            }
 //        }

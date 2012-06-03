@@ -4,11 +4,18 @@ NDDB provides a simple, lightweight NO-SQL database for node.js and the browser.
 
 ---
 
-NDDB allows to define any number of comparator functions, which are
-associated to any of the dimensions (i.e. properties) of the objects
-stored in the database. Whenever a comparison is needed, the
-corresponding comparator function is called, and the database is
-updated.
+NDDB provides a simple, lightweight, NO-SQL object database 
+for node.js and the browser. It depends on JSUS.
+
+Allows to define any number of comparator and indexing functions, 
+which are associated to any of the dimensions (i.e. properties) of 
+the objects stored in the database. 
+
+Whenever a comparison is needed, the corresponding comparator function 
+is called, and the database is updated.
+
+Whenever an object is inserted that matches one of the indexing functions
+an hash is produced, and the element is added to one of the indexes.
 
 
 Additional features are: methods chaining, tagging, and iteration 
@@ -39,7 +46,7 @@ implemented:
  
  6. Statistics operator
  
-     - size, count, max, min, mean
+     - count, max, min, mean
  
  7. Diff
  
@@ -110,7 +117,7 @@ Import a collection of items
     
 Retrieve the database size
 
-    var db_size = db.size(); // 6
+    var db_size = db.length; // 6
     
 Select all paintings from Dali
 
@@ -149,7 +156,7 @@ Reverse the order of the items
 
 Define a custom comparator function for the name of the painter, which gives highest priorities to the canvases of Picasso;
     
-    db.d('painter', function (o1, o2) {
+    db.c('painter', function (o1, o2) {
         if (o1.painter === 'Picasso') return -1;
         if (o2.painter === 'Picasso') return 1;
     }
@@ -158,6 +165,35 @@ Sort all the paintings by painter
 
     db.sort('painter'); // Picasso is always listed first
 
+Define a custom index function for the name of the painter, which gives highest priorities to the canvases of Picasso;
+    
+
+    db.h('painter', function(o) {
+        if (!o) return undefined;
+        return o.painter;
+    });
+    
+    db.rebuildIndexes();
+
+    db.length = 6;
+    db.painter.Picasso; // NDDB with 1 element in db
+    db.painter.Monet    // NDDB with 2 elements in db
+    db.painter.Manet    // NDDB with 1 elements in db
+    db.painter.Dali     // NDDB with 2 elements in db
+    
+
+## Configuration options
+
+
+var options = {
+  tags:  {},        // Collection of tags
+  update: {
+    indexes:  true, // Rebuild indexes on insert and delete 
+    sort:     true, // Always sort the elements in the database 
+    pointer:  true, // Iterator always points to the last insert
+  },
+  C:  {},           // Collection of comparator functions
+  H:  {},           // Collection of hashing functions
 
 # Test
 
