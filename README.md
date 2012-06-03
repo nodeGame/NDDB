@@ -65,7 +65,7 @@ implemented:
   
      - Update must be performed manually after a selection.
     
-* = experimental
+\* = experimental
 
 ## Usage
 
@@ -132,17 +132,20 @@ Select all paintings from Dali
 
 ```javascript
     db.select('painter', '=', 'Dali'); // 2 items
+```
     
 Select all portraits
 
 ```javascript
     db.select('portrait'); // 1 item
+```
     
 Select all paintings from Dali that are before 1928
 
 ```javascript
     db.select('painter', '=', 'Dali')
       .select('year', '<', 1928); // 1 item
+```
 
 Select all paintings of the beginning of XX's century
 
