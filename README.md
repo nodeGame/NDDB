@@ -163,6 +163,7 @@ Define a global comparator function that sorts all the entries chronologically
         if (o1.year < o2.year) return 2;
         return 0;
     };
+```
 
 Sort all the items (global comparator function is automatically used)
 
@@ -215,7 +216,7 @@ Define a custom index function for the name of the painter, which gives highest 
 
     var logFunc = function(txt, level) {
       if (level > 0) {
-        console.log(txt)
+        console.log(txt);
       }
     };
 
