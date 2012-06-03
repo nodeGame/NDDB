@@ -202,7 +202,7 @@ Define a custom index function for the name of the painter, which gives highest 
     
     db.rebuildIndexes();
 
-    db.length = 6;
+    db.length;          // 6, unchanged;
     db.painter.Picasso; // NDDB with 1 element in db
     db.painter.Monet    // NDDB with 2 elements in db
     db.painter.Manet    // NDDB with 1 elements in db
