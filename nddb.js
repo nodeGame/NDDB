@@ -81,48 +81,77 @@
      * @api public
      */
     
-    function NDDB (options, db) {                
-        var options = options || {};
+    function NDDB (options, db, parent) {                
+        options = options || {};
         
-        this.db = [];                   // The default database
-        this.D = {};                    // The n-dimensional container for comparator functions
-        this.H = {};
+        // The default database
+        this.db = [];
+        // The tags list
+        this.tags = {};					
+        // Pointer for iterating along all the elements
+        this.nddb_pointer = 0; 
         
-        this.tags = options.tags || {};    // Tags pointing to id in the databases
+        // Comparator functions
+        this.__D = {};
+        // Hashing functions
+        this.__H = {};
+        // Auto update options
+        this.__update = {};
+        // Always points to the last insert
+        this.__update.pointer 	= false;
+        // Rebuild indexes on insert and delete
+        this.__update.indexes 	= false;
+        // Always sort the elements in the database
+        this.__update.sort 		= false;
         
-        this.options = options;
-        NDDB.log = options.log || NDDB.log;
-        this.D = options.D || this.D;
-        if ('undefined' !== typeof options.parentDB) {
-            this.parentDB = options.parentDB;
-        }    
-        this.nddb_pointer = options.nddb_pointer || 0; // Pointer for iterating along all the elements
-        this.auto_update_pointer = ('undefined' !== typeof options.auto_update_pointer) ?
-                                        options.auto_update_pointer
-                                    :    false;
-           
-        this.auto_rebuild_indexes = ('undefined' !== typeof options.auto_rebuild_indexes) ?
-                                        options.auto_rebuild_indexes
-                                    :    false;
-        
-        this.auto_sort =  ('undefined' !== typeof options.auto_sort) ? options.auto_sort
-                : false;
-
-        
-        this.import(db);   
-        
-        var that = this;
         Object.defineProperty(this, 'length', {
         	set: function(){},
         	get: function(){
-        		return that.db.length;
+        		return this.db.length;
         	},
         	configurable: true
     	});
         
+        // Parent NNDB database (if chaining)
+        this.__parent = parent || undefined;
+
+        this.init(options);
+        this.import(db);   
     };
     
-    
+    /**
+     * Sets global options based on local configuration
+     */
+    NDDB.prototype.init = function(options) {
+    	this.__options = options;
+    	
+    	if (options.log) {
+    		NDDB.log = options.log;
+    	}
+        
+    	if (options.D) {
+    		this.__D = options.D;
+    	}
+        
+        if (options.nddb_pointer > 0) {
+        	this.nddb_pointer = options.nddb_pointer;
+    	}
+        
+        if (options.update) {
+	        if ('undefined' !== typeof options.update.pointer) {
+	        	this.__update.pointer = options.update.pointer;
+	        }
+	           
+	        if ('undefined' !== typeof options.update.indexes) {
+	        	this.__update.indexes = options.update.indexes;
+	        }
+	                                        
+	        if ('undefined' !== typeof options.update.sort) {
+	        	this.__update.sort = options.update.sort;
+	        }
+        }
+        
+    };
     
     
     ///////////
@@ -194,14 +223,14 @@
      * @api private
      */
     NDDB.prototype._autoUpdate = function () {
-        if (this.auto_update_pointer) {
+        if (this.__update.pointer) {
             this.nddb_pointer = this.db.length-1;
         }
-        if (this.auto_sort) {
+        if (this.__update.sort) {
             this.sort();
         }
         
-        if (this.auto_rebuild_indexes) {
+        if (this.__update.indexes) {
             this.rebuildIndexes();
         }
     }
@@ -239,11 +268,12 @@
      * 
      */
     NDDB.prototype.breed = function (db) {
-        var db = db || this.db;
+        db = db || this.db;
         var options = this.cloneSettings();
-        options.parentDB = this.db;
+        var parent = this.__parent || this;							
+        
         //In case the class was inherited
-        return new this.constructor(options, db);
+        return new this.constructor(options, db, parent);
     };
         
     /**
@@ -253,11 +283,11 @@
      * 
      */
     NDDB.prototype.cloneSettings = function () {
-        if (!this.options) return {};
+        if (!this.__options) return {};
 //        var o = JSUS.clone(this.options);
-//        o.D = JSUS.clone(this.D);
+//        o.D = JSUS.clone(this.__D);
         
-        return this.options;
+        return this.__options;
         
         // TODO: shall we include parentDB as well here?
         return o;
@@ -284,7 +314,7 @@
             NDDB.log('Cannot set empty property or empty comparator', 'ERR');
             return false;
         }
-        this.D[d] = comparator;
+        this.__D[d] = comparator;
         return true;
     };
     
@@ -303,7 +333,7 @@
      * 
      */
     NDDB.prototype.comparator = function (d) {
-        return ('undefined' !== typeof this.D[d]) ? this.D[d] : function (o1, o2) {
+        return ('undefined' !== typeof this.__D[d]) ? this.__D[d] : function (o1, o2) {
 //            NDDB.log('1' + o1);
 //            NDDB.log('2' + o2);
             if ('undefined' === typeof o1 && 'undefined' === typeof o2) return 0;
@@ -341,7 +371,7 @@
     		return false;
     	}
     	
-    	this.H[key] = func;
+    	this.__H[key] = func;
     	
     	this[key] = {};
     	
@@ -349,12 +379,12 @@
     };
     
     NDDB.prototype.rebuildIndexes = function() {
-    	if (JSUS.isEmpty(this.H)) {
+    	if (JSUS.isEmpty(this.__H)) {
     		return false;
     	} 	
     	// Reset current indexes
-    	for (var key in this.H) {
-    		if (this.H.hasOwnProperty(key)) {
+    	for (var key in this.__H) {
+    		if (this.__H.hasOwnProperty(key)) {
     			this[key] = new NDDB();
     		}
     	}
@@ -364,7 +394,7 @@
     
     NDDB.prototype.hashIt = function(o) {
       	if (!o) return false;
-    	if (JSUS.isEmpty(this.H)) {
+    	if (JSUS.isEmpty(this.__H)) {
     		return false;
     	}
     
@@ -372,11 +402,11 @@
     	var id = null;
     	var hash = null;
     	
-    	for (var key in this.H) {
-    		if (this.H.hasOwnProperty(key)) {
+    	for (var key in this.__H) {
+    		if (this.__H.hasOwnProperty(key)) {
 	    		if (o.hasOwnProperty(key)) {
     				
-	    			h = this.H[key];	    			
+	    			h = this.__H[key];	    			
 	    			hash = h(o);
 
     				if ('undefined' === typeof hash) {
@@ -684,18 +714,19 @@
      * 
      */
     NDDB.prototype.delete = function () {
-      if (this.db.length === 0) return this;
-      if (this.parentDB) {
+      if (!this.length) return this;
+      
+      if (this.__parent) {
           for (var i=0; i < this.db.length; i++) {
               var idx = this.db[i].nddbid - i;
-              this.parentDB.splice(idx,1);
-              delete this.db[i];
+              this.__parent.db.splice(idx,1);
+ 
           };
           // TODO: we could make it with only one for loop
           // we loop on parent db and check whether the id is in the array
           // at the same time we decrement the nddbid depending on i
-          for (var i=0; i < this.parentDB.length; i++) {
-              this.parentDB[i].nddbid = i;
+          for (var i=0; i < this.__parent.length; i++) {
+              this.__parent.db[i].nddbid = i;
           };
       }
      
@@ -739,9 +770,9 @@
     NDDB.prototype.join = function (key1, key2, pos, select) {
         // Construct a better comparator function
         // than the generic JSUS.equals
-//        if (key1 === key2 && 'undefined' !== typeof this.D[key1]) {
+//        if (key1 === key2 && 'undefined' !== typeof this.__D[key1]) {
 //            var comparator = function(o1,o2) {
-//                if (this.D[key1](o1,o2) === 0) return true;
+//                if (this.__D[key1](o1,o2) === 0) return true;
 //                return false;
 //            }
 //        }
