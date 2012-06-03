@@ -12,8 +12,6 @@ var clients = ['a','b','c','d'];
 var states = [1,2,3,4];
 var ids = ['z','x'];//['z','x','c','v'];
 
-//To test 0 vs undefined
-
 var hashable = [
 			 {
 				 painter: "Jesus",

@@ -71,9 +71,7 @@
      * TODO: distinct
      * 
      */
-    
 
-	
     // Expose constructors
     exports.NDDB = NDDB;
     
@@ -332,6 +330,32 @@
         return out;
     };    
         
+    /**
+     * Returns a string representation of the state
+     * of the database
+     */
+    NDDB.prototype.toString = function () {
+		var objToStr=function(o) {
+			var s='{'
+			for(x in o) {
+				s+='"'+x+'": '
+				switch(typeof(o[x])) {
+					case 'object': s+=o[x].toString(); break;
+					case 'string': s+='"'+o[x].toString()+'"'; break;
+					default: s+=o[x].toString(); break;
+				}
+				s+=', '
+			}
+			s=s.replace(/, $/,'}')
+			return s
+		}
+        var out = '['+objToStr(this.db[0])
+        for (var i=1; i< this.db.length; i++) out += ', '+objToStr(this.db[i])
+		out+=']'
+        return out;
+    };    
+    
+    
     /**
      * Adds a new comparator for dimension d 
      * 
@@ -1464,6 +1488,40 @@
         if ('undefined' === typeof tag) return false;
         return this.tags[tag];
     };
+    
+    
+ // if node
+	if ('object' === typeof module && 'function' === typeof require) {
+	    var fs = require('fs');
+	    
+	    NDDB.prototype.save = function (file, callback) {
+			file = file || this.file; // TODO check
+			fs.writeFile(file, this.toString(), 'utf-8', function(e) {
+				if (e) throw e
+				if (callback) callback();
+			});
+		};
+		
+		NDDB.prototype.load = function (file, sync, callback) {
+			file = file || this.file;
+			sync = ('undefined' !== typeof sync) ? sync : true; 
+				
+			if (sync) { 
+				var s = fs.readFileSync(file, 'utf-8');
+				this.import(JSON.parse(s.toString()));
+			}
+			else {
+				fs.readFile(file, 'utf-8', function(e, s) {
+					if (e) throw e
+					this.import(JSON.parse(s.toString()));
+					if (callback) callback();
+				});
+			}
+		};
+		
+	}
+	// end node
+    
     
 })(
     'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
