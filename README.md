@@ -248,6 +248,16 @@ NDDB relies on [mocha](http://visionmedia.github.com/mocha/) and [should.js](htt
     $ npm install # will load all necessary dependencies
     $ npm test # will run the test suite against nddb.js
 
+
+# ChangeLog
+
+
+0.2
+
+  - Introduced indexing. Indexes are created with NDDB.h() or the alias NDDB.hash()
+  - NDDB.set() was already deprecated and it has been removed. NDDB.c() or the alias NDDB.compare() should be used
+  - NDDB.init() can sets the configuration of the database
+  
 ## License
 
 Copyright (C) 2012 Stefano Balietti
