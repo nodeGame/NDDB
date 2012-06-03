@@ -28,40 +28,40 @@ implemented:
 
      - select, sort, reverse, last, first, limit, shuffle*
  
- 2. Custom callbacks
+ 1. Custom callbacks
  
      - map, forEach, filter
  
- 3. Deletion
+ 1. Deletion
  
      - delete, clear
  
- 4. Advanced operations
+ 1. Advanced operations
  
      - split*, join, concat
  
- 5. Fetching
+ 1. Fetching
  
      - fetch, fetchArray, fetchKeyArray
  
- 6. Statistics operator
+ 1. Statistics operator
  
      - count, max, min, mean
  
- 7. Diff
+ 1. Diff
  
      - diff, intersect
  
- 8. Iterator
+ 1. Iterator
  
      - previous, next, first, last
      *
 
- 9. Tagging*
+ 1. Tagging*
  
      - tag
         
- 10. Updating
+ 1. Updating
   
      - Update must be performed manually after a selection.
     
