@@ -24,44 +24,43 @@ through the entries.
 NDDB is work in progress. Currently, the following methods are
 implemented:
 
-  1. Sorting and selecting:
+  * Sorting and selecting:
 
      - select, sort, reverse, last, first, limit, shuffle*
  
-  2. Custom callbacks
+  * Custom callbacks
  
      - map, forEach, filter
  
-  3. Deletion
+  * Deletion
  
      - delete, clear
  
-  4. Advanced operations
+  * Advanced operations
  
      - split*, join, concat
  
-  5. Fetching
+  * Fetching
  
      - fetch, fetchArray, fetchKeyArray
  
-  6. Statistics operator
+  * Statistics operator
  
      - count, max, min, mean
  
-  7. Diff
+  * Diff
  
      - diff, intersect
  
-  8. Iterator
+  * Iterator
  
      - previous, next, first, last
-     *
 
-  9. Tagging*
+  * Tagging*
  
      - tag
         
-  10. Updating
+  * Updating
   
      - Update must be performed manually after a selection.
     
