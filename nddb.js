@@ -774,7 +774,7 @@
         for (var i=0; i < this.db.length; i++) {
             arguments[0] = this.db[i];
             o = func.apply(this, arguments);
-            if (o) out.push();
+            if ('undefined' !== typeof o) out.push(o);
         }
         return out;
     };
