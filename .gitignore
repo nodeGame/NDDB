@@ -4,3 +4,6 @@ node_modules/
 .settings
 test/NDDB_Test.js.old
 test/NDDB_Test.js
+/db.out
+*.out
+

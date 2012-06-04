@@ -319,8 +319,7 @@
     };    
     
     /**
-     * Returns a string representation of the state
-     * of the database
+     * Prints out the elements in the database
      */
     NDDB.prototype.toString = function () {
         var out = '';
@@ -334,24 +333,33 @@
      * Returns a string representation of the state
      * of the database
      */
-    NDDB.prototype.toString = function () {
-		var objToStr=function(o) {
-			var s='{'
-			for(x in o) {
-				s+='"'+x+'": '
-				switch(typeof(o[x])) {
-					case 'object': s+=o[x].toString(); break;
-					case 'string': s+='"'+o[x].toString()+'"'; break;
-					default: s+=o[x].toString(); break;
+    NDDB.prototype.stringify = function () {
+		var objToStr = function(o) {
+			var s = '{';
+			for (var x in o) {
+				s += '"' + x + '": ';
+				
+				switch (typeof(o[x])) {
+					case 'object': 
+						s += o[x].toString(); 
+						break;
+					case 'string': 
+						s += '"' + o[x].toString() + '"'; 
+						break;
+					default: 
+						s += o[x].toString();
+						break;
 				}
 				s+=', '
 			}
-			s=s.replace(/, $/,'}')
-			return s
+			s=s.replace(/, $/,'}');
+			return s;
 		}
-        var out = '['+objToStr(this.db[0])
-        for (var i=1; i< this.db.length; i++) out += ', '+objToStr(this.db[i])
-		out+=']'
+        var out = '['+objToStr(this.db[0]);
+        for (var i=1; i< this.db.length; i++) {
+        	out += ', ' + objToStr(this.db[i]);
+        }
+		out+=']';
         return out;
     };    
     
@@ -1495,15 +1503,21 @@
 	    var fs = require('fs');
 	    
 	    NDDB.prototype.save = function (file, callback) {
-			file = file || this.file; // TODO check
-			fs.writeFile(file, this.toString(), 'utf-8', function(e) {
+	    	if (!file) {
+	    		NDDB.log('You must specify a valid file.', 'ERR');
+	    		return false;
+	    	}
+			fs.writeFile(file, this.stringify(), 'utf-8', function(e) {
 				if (e) throw e
 				if (callback) callback();
 			});
 		};
 		
 		NDDB.prototype.load = function (file, sync, callback) {
-			file = file || this.file;
+			if (!file) {
+				NDDB.log('You must specify a valid file.', 'ERR');
+				return false;
+			}
 			sync = ('undefined' !== typeof sync) ? sync : true; 
 				
 			if (sync) { 

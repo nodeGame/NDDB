@@ -240,6 +240,21 @@ Define a custom index (hash) function for the name of the painter, which splits 
     nddb.init(options);
 ```
 
+## Save and load from file
+
+Only in the node.js environment, it is possible to save the state of the database to a file and load it afterwards.
+
+```javascript
+
+   // database created and items inserted
+   
+   db.save('./db.out');
+
+   var db2 = new NDDB();
+   db2.load('./db.out');
+```
+
+
 ## Test
 
 NDDB relies on [mocha](http://visionmedia.github.com/mocha/) and [should.js](http://github.com/visionmedia/should.js) for testing.

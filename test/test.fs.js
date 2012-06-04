@@ -79,13 +79,20 @@ db.import(hashable);
 
 var filename = './db.out';
 
+var deleteIfExist = function() {
+	if (path.existsSync(filename)) {
+		fs.unlink(filename, function (err) {
+			if (err) throw err;  
+		});
+	}
+};
+
 describe('Testing NDDB save and load functions', function(){
 	
 	describe('#save()', function(){
+		
 		before(function(){
-			fs.unlink(filename, function (err) {
-				if (err) throw err;  
-			});
+			deleteIfExist();
 			db.save(filename);
 		});
 		
@@ -98,6 +105,9 @@ describe('Testing NDDB save and load functions', function(){
 	describe('#load()', function(){
 		before(function() {
 			db2.load(filename);
+		});
+		after(function() {
+			deleteIfExist();
 		});
 		
 		it('the loaded database should be a copy of the saved one', function() {
