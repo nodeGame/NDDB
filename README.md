@@ -246,8 +246,7 @@ Only in the node.js environment, it is possible to save the state of the databas
 
 ```javascript
 
-   // database created and items inserted
-   
+   // database exists and items inserted 
    db.save('./db.out');
 
    var db2 = new NDDB();
