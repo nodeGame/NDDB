@@ -478,30 +478,27 @@
     		return false;
     	}
     
-    	var h = null;
-    	var id = null;
-    	var hash = null;
+    	var h = null,
+    		id = null,
+    		hash = null;
     	
     	for (var key in this.__H) {
     		if (this.__H.hasOwnProperty(key)) {
-	    		if (o.hasOwnProperty(key)) {
-    				
-	    			h = this.__H[key];	    			
-	    			hash = h(o);
+    			h = this.__H[key];	    			
+    			hash = h(o);
 
-    				if ('undefined' === typeof hash) {
-    					continue;
-    				}
+				if ('undefined' === typeof hash) {
+					continue;
+				}
 
-    				if (!this[key]) {
-    					this[key] = {};
-    				}
-    				
-    				if (!this[key][hash]) {
-    					this[key][hash] = new NDDB();
-    				}
-    				this[key][hash].db.push(o);
-    			}
+				if (!this[key]) {
+					this[key] = {};
+				}
+				
+				if (!this[key][hash]) {
+					this[key][hash] = new NDDB();
+				}
+				this[key][hash].insert(o);		
     		}
     	}
     };
@@ -798,27 +795,25 @@
      * 
      */
     NDDB.prototype.delete = function () {
-      if (!this.length) return this;
+    	if (!this.length) return this;
       
-      if (this.__parent) {    	  
-          for (var i=0; i < this.db.length; i++) {
-        	  // Important: index changes as we deletes elements
-              var idx = this.db[i].nddbid - i;
-              this.__parent.db.splice(idx,1);
-          };
-          // TODO: we could make it with only one for loop
-          // we loop on parent db and check whether the id is in the array
-          // at the same time we decrement the nddbid depending on i
-          for (var i=0; i < this.__parent.length; i++) {
-              this.__parent.db[i].nddbid = i;
-          };
-      }
+    	if (this.__parent) {    	  
+    		for (var i=0; i < this.db.length; i++) {
+    			// Important: index changes as we deletes elements
+    			var idx = this.db[i].nddbid - i;
+    			this.__parent.db.splice(idx,1);
+	        }
+	        // TODO: we could make it with only one for loop
+	        // we loop on parent db and check whether the id is in the array
+	        // at the same time we decrement the nddbid depending on i
+	        for (var i=0; i < this.__parent.length; i++) {
+	        	this.__parent.db[i].nddbid = i;
+	        }
+    	}
      
-      this.db = [];
-      
-      this._autoUpdate();
-      
-      return this;
+    	this.db = [];
+    	this._autoUpdate();
+    	return this;
     };    
     
     /**
