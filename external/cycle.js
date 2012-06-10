@@ -114,7 +114,7 @@ if (typeof JSON.retrocycle !== 'function') {
 //      var s = '[{"$ref":"$"}]';
 //      return JSON.retrocycle(JSON.parse(s));
 // produces an array containing a single element which is the array itself.
-        
+
         var px =
             /^\$(?:\[(?:\d+|\"(?:[^\\\"\u0000-\u001f]|\\([\\\"\/bfnrt]|u[0-9a-zA-Z]{4}))*\")\])*$/;
 
@@ -124,7 +124,7 @@ if (typeof JSON.retrocycle !== 'function') {
 // properties. When it finds one that has a value that is a path, then it
 // replaces the $ref object with a reference to the value that is found by
 // the path.
-        	
+
             var i, item, name, path;
 
             if (value && typeof value === 'object') {
@@ -134,9 +134,6 @@ if (typeof JSON.retrocycle !== 'function') {
                         if (item && typeof item === 'object') {
                             path = item.$ref;
                             if (typeof path === 'string' && px.test(path)) {
-//                            	console.log('IH: ' + path)
-//                            	var o = console.log(eval(path));
-//                            	console.log(o);
                                 value[i] = eval(path);
                             } else {
                                 rez(item);
@@ -145,20 +142,12 @@ if (typeof JSON.retrocycle !== 'function') {
                     }
                 } else {
                     for (name in value) {
-
-//                    	console.log('name')
-//                    	console.log(name);
                         if (typeof value[name] === 'object') {
                             item = value[name];
                             if (item) {
-//                            	console.log('item')
-//                            	console.log(item)
                                 path = item.$ref;
                                 if (typeof path === 'string' && px.test(path)) {
-                                	//console.log('UH: ' + path)
-//                                  console.log(path);
-                                	var o = console.log(eval(path));
-                                    value[name] = eval(path);//eval(path);
+                                    value[name] = eval(path);
                                 } else {
                                     rez(item);
                                 }
@@ -167,7 +156,6 @@ if (typeof JSON.retrocycle !== 'function') {
                     }
                 }
             }
-            
         }($));
         return $;
     };

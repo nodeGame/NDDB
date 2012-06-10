@@ -87,15 +87,15 @@ var base_cycle = {
 };
 
 var c1 = base_cycle;
-var c2 = JSUS.clone(base_cycle);
+var c2 = base_cycle;
 
-c1.aa = base_cycle;
+// TODO: referencing the whole object does not work.
+//c1.aa = base_cycle;
 c2.ac = base_cycle.c;
+c2.aa = base_cycle.b;
 
-var cycles = [c1];
+var cycles = [c1, c2];
 
-//console.log(cycles);
-//console.log(Object.prototype.toString.apply(c1.aa))
 var nitems = hashable.length + not_hashable.length;
 var testcase = null;
 var tmp = null;
@@ -155,7 +155,6 @@ var testSaveLoad = function(items) {
 	});
 };
 
-
 describe('NDDB io operations.', function(){
 	
 	describe('Cycle / Decycle.', function(){
@@ -172,9 +171,9 @@ describe('NDDB io operations.', function(){
 //			testSaveLoad(weirdos);
 //		});
 		
-//		describe('Cycles items', function(){
-//			testSaveLoad(cycles);
-//		});
+		describe('Cycles items', function(){
+			testSaveLoad(cycles);
+		});
 
 	});
 	
