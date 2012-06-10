@@ -78,6 +78,21 @@
     // Stdout redirect
     NDDB.log = console.log;
     
+    NDDB.decycle = function(e) {
+    	if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
+			e = JSON.decycle(e);
+		}
+    	return e;
+    };
+    
+    NDDB.retrocycle = function(e) {
+    	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
+			e = JSON.retrocycle(e);
+		}
+    	return e;
+    };
+    
+    
     /**
      * NDDB interface
      *
@@ -273,7 +288,7 @@
      * 
      */
     NDDB.prototype.insert = function (o) {
-        if ('undefined' === typeof o) return;
+        if ('undefined' === typeof o || o === null) return;
         var o = this._masquerade(o);
         
         this.db.push(o);
@@ -331,35 +346,51 @@
         
     /**
      * Returns a string representation of the state
-     * of the database
+     * of the database.
+     * 
+     * Cyclic objects are decycled.
+     * 
      */
     NDDB.prototype.stringify = function () {
 		var objToStr = function(o) {
-			var s = '{';
-			for (var x in o) {
-				s += '"' + x + '": ';
-				
-				switch (typeof(o[x])) {
-					case 'object': 
-						s += o[x].toString(); 
-						break;
-					case 'string': 
-						s += '"' + o[x].toString() + '"'; 
-						break;
-					default: 
-						s += o[x].toString();
-						break;
-				}
-				s+=', '
-			}
-			s=s.replace(/, $/,'}');
-			return s;
+			// Skip empty objects
+			if (JSUS.isEmpty(o)) return '{}';
+			return JSON.stringify(o);
+			// These are ignored by JSON.stringify
+//			if (o === NaN) return 'NaN';
+//			if (o === Infinity) return 'Infinity';
+//			
+//			var s = '{';
+//			for (var x in o) {
+//				s += '"' + x + '": ';
+//				
+//				switch (typeof(o[x])) {
+//					case 'undefined':
+//						break;
+//					case 'object': 
+//						s += (o[x]) ? objToStr(o[x]) : 'null'; 
+//						break;
+//					case 'string': 
+//						s += '"' + o[x].toString() + '"'; 
+//						break;
+//					default: 
+//						s += o[x].toString();
+//						break;
+//				}
+//				s+=', '
+//			}
+//			s=s.replace(/, $/,'}');
+//			return s;
 		}
-        var out = '['+objToStr(this.db[0]);
-        for (var i=1; i< this.db.length; i++) {
-        	out += ', ' + objToStr(this.db[i]);
-        }
-		out+=']';
+		
+        var out = '[';
+        this.each(function(e) {
+        	// decycle, if possible
+        	e = NDDB.decycle(e);
+        	out += objToStr(e) + ', ';
+        });
+        out = out.replace(/, $/,']');
+        
         return out;
     };    
     
@@ -1495,7 +1526,10 @@
     
  // if node
 	if ('object' === typeof module && 'function' === typeof require) {
-	    var fs = require('fs');
+	    
+		require('./external/cycle.js');		
+		var fs = require('fs');
+	    
 	    
 	    NDDB.prototype.save = function (file, callback) {
 	    	if (!file) {
@@ -1514,15 +1548,31 @@
 				return false;
 			}
 			sync = ('undefined' !== typeof sync) ? sync : true; 
+			
+			var loadString = function(s) {
+				var items = JSON.parse(s.toString());
+				//console.log(s);
+				var i;
+				for (i=0; i< items.length; i++) {
+					// retrocycle if possible
+					items[i] = NDDB.retrocycle(items[i]);
+				}
+//					console.log(Object.prototype.toString.apply(items[0].aa))
 				
+				this.import(items);
+//				this.each(function(e) {
+//					e = NDDB.retrocycle(e);
+//				});
+			}
+			
 			if (sync) { 
 				var s = fs.readFileSync(file, 'utf-8');
-				this.import(JSON.parse(s.toString()));
+				loadString.call(this, s);
 			}
 			else {
 				fs.readFile(file, 'utf-8', function(e, s) {
 					if (e) throw e
-					this.import(JSON.parse(s.toString()));
+					loadString.call(this, s);
 					if (callback) callback();
 				});
 			}
