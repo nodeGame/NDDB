@@ -102,6 +102,8 @@
     function NDDB (options, db, parent) {                
         options = options || {};
         
+        if (!JSUS) throw new Error('JSUS not found.');
+        
         // The default database
         this.db = [];
         // The tags list
@@ -1584,5 +1586,5 @@
     
 })(
     'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
-  , 'undefined' != typeof JSUS ? JSUS : module.parent.exports.JSUS
+  , 'undefined' != typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
 );
