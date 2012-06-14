@@ -63,6 +63,39 @@ var not_hashable = [
                },
 ];
 
+// NOT WORKING WELL
+var weirdos = [
+	undefined, 
+    null, 
+    {}, 
+    function(){console.log('foo')},
+    {
+    	a: undefined,
+    	b: null,
+    	c: {},
+    	d: function(){console.log('foo')},
+}];
+
+// Cycles
+
+var base_cycle = {
+		a: 1,
+		b: 2,
+		c: {a: 1, 
+			b: {foo: 1},
+			},
+};
+
+var c1 = base_cycle;
+var c2 = base_cycle;
+
+// TODO: referencing the whole object does not work.
+//c1.aa = base_cycle;
+c2.ac = base_cycle.c;
+c2.aa = base_cycle.b;
+
+var cycles = [c1, c2];
+
 var nitems = hashable.length + not_hashable.length;
 var testcase = null;
 var tmp = null;
@@ -72,10 +105,7 @@ var hashPainter = function(o) {
 	return o.painter;
 }
 
-//db.h('painter', hashPainter);
-
-db.import(not_hashable);
-db.import(hashable);
+db.h('painter', hashPainter);
 
 var filename = './db.out';
 
@@ -87,17 +117,25 @@ var deleteIfExist = function() {
 	}
 };
 
-describe('Testing NDDB save and load functions', function(){
+
+var testSaveLoad = function(items) {
 	
 	describe('#save()', function(){
 		
-		before(function(){
+		before(function() {
 			deleteIfExist();
+			db2.clear(true);
+			db = new NDDB();
+			db.import(items);
 			db.save(filename);
 		});
 		
 		it('should create a dump file', function() {
 			path.existsSync(filename).should.be.true;
+		});
+		
+		it('original database should be unchanged', function() {
+			db.db.should.be.eql(items);
 		});
 		
 	});
@@ -115,7 +153,52 @@ describe('Testing NDDB save and load functions', function(){
 		});
 		
 	});
+};
+
+describe('NDDB io operations.', function(){
 	
+	describe('Cycle / Decycle.', function(){
+		
+		describe('Not Hashable items', function(){
+			testSaveLoad(not_hashable);
+		});
+		
+		describe('Hashable items.', function(){
+			testSaveLoad(hashable);
+		});
+		
+//		describe('Weirdos items.', function(){
+//			testSaveLoad(weirdos);
+//		});
+		
+		describe('Cycles items', function(){
+			testSaveLoad(cycles);
+		});
+
+	});
 	
+	describe('Without Cycle / Decycle.', function(){
+		before(function(){
+			delete JSON.decycle;
+			delete JSON.retrocycle;
+		});
+		
+		describe('Not Hashable items', function(){
+			testSaveLoad(not_hashable);
+		});
+		
+		describe('Hashable items.', function(){
+			testSaveLoad(hashable);
+		});
+		
+//		describe('Weirdos items.', function(){
+//			testSaveLoad(weirdos);
+//		});
+		
+//		describe('Cycles items', function(){
+//			testSaveLoad(cycles);
+//		});
+
+	});
 	
 });

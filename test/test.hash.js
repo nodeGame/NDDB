@@ -82,6 +82,8 @@ var hashPainter = function(o) {
 
 
 db.h('painter', hashPainter);
+db.h('foo_painter', hashPainter);
+
 db.init({update:
 			{
 			indexes: true,
@@ -138,6 +140,14 @@ describe('NDDB Hashing Operations:', function() {
 
     	it('updated property \'painter\' should be reflected in the index', function() {
     		db.select('painter', '=', 'M.A.N.E.T.').length.should.be.eql(1);
+        });
+    });
+    
+    
+    describe('Index should be created regardless if that is the name of a property of the object', function() {
+        it('should create the special indexes', function() {
+            db.foo_painter.should.exist;
+            db.foo_painter.Monet.length.should.be.eql(2);
         });
     });
     
