@@ -44,7 +44,7 @@
      *  
      *  6. Statistics operator
      *  
-     *      - size, count, max, min, mean
+     *      - size, count, max, min, mean, stddev
      *  
      *  7. Diff
      *  
@@ -1312,6 +1312,34 @@
         }    
         return (count === 0) ? 0 : sum / count;
     };
+    
+    /**
+     * Returns the standard deviation of the values of all the entries 
+     * in the database containing the specified key. 
+     * 
+     * Entries with non numeric values are ignored, and excluded
+     * from the computation of the standard deviation.
+     * 
+     */
+    NDDB.prototype.stddev = function (key) {	
+        var mean = this.mean(key);
+        if (isNaN(mean)) return false;
+        
+        var V = 0;
+        this.each(function(e){
+            try {
+                var tmp = JSUS.eval('this.' + key, e);
+                if (!isNaN(tmp)) { 
+                	V += Math.pow(tmp - mean, 2)
+                    //NDDB.log(tmp);
+                }
+            }
+            catch (e) {};
+        });
+        
+        return (V !== 0) ? Math.sqrt(V) : 0;
+    };
+    
     
     /**
      * Returns the min of the values of all the entries 
