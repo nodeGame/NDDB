@@ -341,7 +341,7 @@
     NDDB.prototype.toString = function () {
         var out = '';
         for (var i=0; i< this.db.length; i++) {
-            out += this.db[i] + '\n'
+            out += this.db[i] + "\n";
         }    
         return out;
     };    
@@ -1224,6 +1224,9 @@
                         return this;
                     }
                 });
+                
+                // Reset nddb_pointer in subgroups
+                out.nddb_pointer = 0;
                 
                 outs.push(out);
             }
