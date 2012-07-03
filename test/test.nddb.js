@@ -8,12 +8,6 @@ var util = require('util'),
 
 var db = new NDDB();
 
-var clients = ['a','b','c','d'];
-var states = [1,2,3,4];
-var ids = ['z','x'];//['z','x','c','v'];
-
-//To test 0 vs undefined
-
 var items = [
 			 {
 				 painter: "Jesus",
@@ -49,15 +43,6 @@ var items = [
              
 ];
 
-
-//var nddb = new NDDB({}, items);
-//
-//nddb.forEach(function(e){
-//	console.log(e);
-//	console.log(e.nddbid);
-//});
-//
-//ewdwe
 
 describe('NDDB Basic Operations:', function() {
     
@@ -130,9 +115,14 @@ describe('NDDB Basic Operations:', function() {
 	        });
 	    });
 	    
+	after(function(){
+		db.clear(true);
+		db = new NDDB(); 
+		db.import(items);
+	});
 });
 
-describe('Iterator', function() {
+describe('NDDB Iterator', function() {
 	
 	describe('#last()', function() {
 	    it('should return the last element of the previously inserted collection', function() {
@@ -249,11 +239,15 @@ describe('Iterator', function() {
 		});
 	});
 	
-	// TODO test auto_update
-	
+    after(function(){
+    	db.clear(true);
+       	db = new NDDB(); 
+       	db.import(items);
+    });	
 });
 
-describe('NDDB sorting', function(){
+
+describe('NDDB Sorting', function(){
 
 	describe('#sort()', function() {  
 		it('should not change the order of the elements (it sorts by nddbid)', function(){
@@ -321,112 +315,105 @@ describe('NDDB sorting', function(){
 			l.should.have.property('title', 'Wheatstacks (End of Summer)');
 		});
    	});
+
+    after(function(){
+    	db.clear(true);
+       	db = new NDDB(); 
+       	db.import(items);
+    });
+	
 });
 
 
-describe('Selecting', function() {
-//	 it('should select all painting from Dali', function(){
-//         db.select('painter', '=', 'Dali').db.length.should.equal(2); 
-//      });
-//      it('should select all portraits', function(){
-//          db.select('portrait').db.length.should.equal(1);
-//      });
-//      it('should select all paintings from Dali that are from before 1928', function(){
-//         db.select('painter', '=', 'Dali').select('year', '<', 1928).db.length.should.equal(1); 
-//      });
-//      it('should select all painting of the beginning of the XX centuries', function(){
-//         db.select('year', '><', [1900, 1910]).db.length.should.equal(1); 
-//      });
-//      after(function(){
-//         db = new NDDB(); 
-//      });
+describe('NDDB Selecting', function() {
+	it('should select all paintings from Dali', function(){
+		db.select('painter', '=', 'Dali').db.length.should.equal(2); 
+	});
+
+    it('should select all portraits', function(){
+        db.select('portrait').db.length.should.equal(1);
+    });
+    
+    it('should select all paintings from Dali that are from before 1928', function(){
+       db.select('painter', '=', 'Dali').select('year', '<', 1928).db.length.should.equal(1); 
+    });
+    
+    it('should select all painting of the beginning of the XX centuries', function(){
+       db.select('year', '><', [1900, 1910]).db.length.should.equal(1); 
+    });
+    
+    after(function(){
+    	db.clear(true);
+       	db = new NDDB(); 
+       	db.import(items);
+    });
 });
 
-//describe('default sort', function() {
-// 	 before(function(){
-// 		 
-// 		
-// 		 
-// 		  // Simulates
-// 		  for (var i=0;i<clients.length;i++) {
-// 		  	for (var j=0;j<states.length;j++) {
-// 		  		for (var x=0;x<ids.length;x++) {
-// 		  			var gb = {
-// 		  					player: clients[i],
-// 		  					key: ids[x],
-// 		  					value: Math.random(0,1),
-// 		  					state: {state:states[j]},
-// 		  			};
-// 		  			
-// 		  			db.insert(gb);
-// 		  		}
-// 		  	}
-// 		  }
-// 		 db.sort('player');
-// 	});
-// 	it('should sort all elements alphabetically ASC', function(){
-// 	  db.db[1].player.should.equal(clients[0]);
-// 	});
-// });
-   
-   //console.log('Default sort');
-   //var out = nddb.sort();
-   //console.log(out.toString());
-   //
-   //
-   //console.log('Reverse');
-   //out = nddb.reverse();
-   //console.log(out.toString());
-   //
-   //console.log('Sort by Player');
-   //nddb.sort('player');
-   //console.log(out.toString());
-   //
-   //console.log('Sort by State');
-   //out = nddb.sort('state');
-   //console.log(out.toString());
-   //
-   //console.log('Sort by Key');
-   //out = nddb.sort('key');
-   //console.log(out.toString());
 
-   //console.log('Get by value');
-   //out = nddb.sort('value');
-   //console.log(out.toString());
 
- //  console.log('Select Key');
- //  out = nddb.select('key','=','x');
- //  console.log(out.toString());
+describe('NDDB Custom callbacks', function() {
+	//map, forEach, filter
 
-   //console.log('Select !Key');
-   //out = nddb.select('key','!=','x');
-   //console.log(out.toString());
-   //
-   //console.log('Select State');
-   //out = nddb.select('state','>', new GameState({state: 1}));
-   //console.log(out.toString());
+});
 
-   //console.log('Join State');
-   //out = nddb.join('state','state', 'joined');
-   //console.log(out.fetch());
+describe('NDDB Deletion', function() {
+	//delete, clear
+	    	console.log(db.select("*"));
 
-   //console.log('Join State Selective');
-   //out = nddb.join('state','state', 'joined', ['key']);
-   ////console.log(out.fetch());
-   //
-   //console.log('Get First');
-   //console.log(out.first());
-   //
-   //console.log('Get Last');
-   //console.log(out.last());
-   //
-   //console.log('Limit 1');
-   //console.log(out.limit(1));
-   //
-   //console.log('Limit -1');
-   //console.log(out.limit(-1));
 
-   //nddb.clear(true);
-   //console.log(nddb.fetch());
+	it('should delete only all Dali paintings', function(){
+		db.delete('painter', '=', 'Dali');
+
+       	db.select('painter', '=', 'Dali').db.length.should.equal(0);
+       	db.select('painter', '=', 'Jesus').db.length.should.equal(1);
+    });
+
+
+    it('should clear db', function(){
+		db.clear(true);
+
+       	db.select('portrait').db.length.should.equal(0);
+    });
+
+	after(function(){
+		db.clear(true);
+       	db = new NDDB(); 
+       	db.import(items);
+    });
+
+
+});
+
+
+describe('NDDB Advanced Operation', function() {
+	//split*, join, concat
+	
+});
+
+
+describe('NDDB Fetching', function() {
+	//fetch, fetchArray, fetchKeyArray
+	
+});
+
+
+
+describe('NDDB Statistics Operator', function() {
+	//count, max, min, mean
+
+});
+
+
+
+describe('NDDB Diff', function() {
+	//diff, intersect
+	
+});
+
+describe('NDDB Tagging', function() {
+	//tag
+	
+});
+
 
 
