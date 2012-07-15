@@ -15,49 +15,38 @@ var ids = ['z','x'];//['z','x','c','v'];
 //To test 0 vs undefined
 
 var items = [
-			 {
-				 painter: "Jesus",
-				 title: "Tea in the desert",
-				 year: 0,
-			 },
-             {
-                 painter: "Dali",
-                 title: "Portrait of Paul Eluard",
-                 year: 1929,
-                 portrait: true
-             },
-             {
-                 painter: "Dali",
-                 title: "Barcelonese Mannequin",
-                 year: 1927
-             },
-             {
-                 painter: "Monet",
-                 title: "Water Lilies",
-                 year: 1906
-             },
-             {
-                 painter: "Monet",
-                 title: "Wheatstacks (End of Summer)",
-                 year: 1891
-             },
-             {
-                 painter: "Manet",
-                 title: "Olympia",
-                 year: 1863
-             },
-             
+	 {
+		 painter: "Jesus",
+		 title: "Tea in the desert",
+		 year: 0,
+	 },
+     {
+         painter: "Dali",
+         title: "Portrait of Paul Eluard",
+         year: 1929,
+         portrait: true
+     },
+     {
+         painter: "Dali",
+         title: "Barcelonese Mannequin",
+         year: 1927
+     },
+     {
+         painter: "Monet",
+         title: "Water Lilies",
+         year: 1906
+     },
+     {
+         painter: "Monet",
+         title: "Wheatstacks (End of Summer)",
+         year: 1891
+     },
+     {
+         painter: "Manet",
+         title: "Olympia",
+         year: 1863
+     },          
 ];
-
-
-//var nddb = new NDDB({}, items);
-//
-//nddb.forEach(function(e){
-//	console.log(e);
-//	console.log(e.nddbid);
-//});
-//
-//ewdwe
 
 describe('NDDB Basic Operations:', function() {
     
@@ -341,6 +330,20 @@ describe('Selecting', function() {
 //         db = new NDDB(); 
 //      });
 });
+
+
+describe('#distinct()', function(){
+	before(function(){
+		db.clear(true);
+		db.import(items);
+		db.import(items);
+	})
+	
+	it('should eliminates all duplicated entries', function() {
+		db.distinct().fetch().should.be.eql(items);
+	});
+});
+
 
 //describe('default sort', function() {
 // 	 before(function(){

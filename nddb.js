@@ -24,7 +24,7 @@
      * 
      *  1. Sorting and selecting:
      * 
-     *      - select, sort, reverse, last, first, limit, shuffle*
+     *      - select, sort, reverse, last, first, limit, distinct, shuffle*
      *  
      *  2. Custom callbacks
      *  
@@ -67,8 +67,6 @@
      * 
      * 
      * See README.md for help.
-     * 
-     * TODO: distinct
      * 
      */
 
@@ -601,6 +599,25 @@
     };
     
     /**
+     * ## NDDB.distinct
+     * 
+     * Eliminates duplicated entries
+     *  
+     * A new database is returned and the original stays unchanged
+     * 
+     * @return {NDDB} A copy of the current selection without duplicated entries
+     * 
+     * 	@see NDDB.select() 
+     *  @see NDDB.fetch()
+     *  @see NDDB.fetchValues()
+     */
+    NDDB.prototype.distinct = function () {
+    	return this.breed(JSUS.distinct(this.db));
+    };
+    
+    /**
+     * ## NDDB.select
+     * 
      * Select entries in the database according to the criteria 
      * specified as parameters.
      * 
