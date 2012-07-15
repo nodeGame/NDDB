@@ -26,7 +26,7 @@ implemented:
 
   * Sorting and selecting:
 
-     - select, sort, reverse, last, first, limit, shuffle*
+     - select, sort, reverse, last, first, limit, distinct, shuffle*
  
   * Custom callbacks
  
@@ -264,6 +264,13 @@ NDDB relies on [mocha](http://visionmedia.github.com/mocha/) and [should.js](htt
 
 ## ChangeLog
 
+### 0.2.5
+
+  - NDDB.distict() + test
+  - Support for cyclic objects when saving the database to file
+  - NDDB.stddev()
+  - Bug fixing
+  - More tests
 
 ### 0.2
 
