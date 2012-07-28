@@ -95,7 +95,7 @@ describe('NDDB Hashing Operations:', function() {
     
 	describe('Importing not-hashable items', function() {
     	before(function(){
-    		db.import(not_hashable);
+    		db.insert(not_hashable);
     	});
     	
         it('should not create the special indexes', function() {
@@ -107,7 +107,7 @@ describe('NDDB Hashing Operations:', function() {
 	
     describe('Importing hashable items', function() {
     	before(function(){
-    		db.import(hashable);
+    		db.insert(hashable);
     	});
     	
         it('should create the special indexes', function() {

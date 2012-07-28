@@ -126,7 +126,7 @@ var testSaveLoad = function(items) {
 			deleteIfExist();
 			db2.clear(true);
 			db = new NDDB();
-			db.import(items);
+			db.insert(items);
 			db.save(filename);
 		});
 		

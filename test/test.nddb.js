@@ -112,7 +112,7 @@ describe('NDDB Basic Operations:', function() {
 	  
 	  describe('Insert a collection of object', function() {
 	        before(function() {
-	            db.import(items);
+	            db.insert(items);
 	        });
 	        it('should return size 6 after having imported an object collection', function() {
 	            db.length.should.equal(items.length);
@@ -314,29 +314,29 @@ describe('NDDB sorting', function(){
 
 
 describe('Selecting', function() {
-//	 it('should select all painting from Dali', function(){
-//         db.select('painter', '=', 'Dali').db.length.should.equal(2); 
-//      });
-//      it('should select all portraits', function(){
-//          db.select('portrait').db.length.should.equal(1);
-//      });
-//      it('should select all paintings from Dali that are from before 1928', function(){
-//         db.select('painter', '=', 'Dali').select('year', '<', 1928).db.length.should.equal(1); 
-//      });
-//      it('should select all painting of the beginning of the XX centuries', function(){
-//         db.select('year', '><', [1900, 1910]).db.length.should.equal(1); 
-//      });
-//      after(function(){
-//         db = new NDDB(); 
-//      });
+	 it('should select all painting from Dali', function(){
+         db.select('painter', '=', 'Dali').db.length.should.equal(2); 
+      });
+      it('should select all portraits', function(){
+          db.select('portrait').db.length.should.equal(1);
+      });
+      it('should select all paintings from Dali that are from before 1928', function(){
+         db.select('painter', '=', 'Dali').select('year', '<', 1928).db.length.should.equal(1); 
+      });
+      it('should select all painting of the beginning of the XX centuries', function(){
+         db.select('year', '><', [1900, 1910]).db.length.should.equal(1); 
+      });
+      after(function(){
+         db = new NDDB(); 
+      });
 });
 
 
 describe('#distinct()', function(){
 	before(function(){
 		db.clear(true);
-		db.import(items);
-		db.import(items);
+		db.insert(items);
+		db.insert(items);
 	})
 	
 	it('should eliminates all duplicated entries', function() {
@@ -345,32 +345,29 @@ describe('#distinct()', function(){
 });
 
 
-//describe('default sort', function() {
-// 	 before(function(){
-// 		 
-// 		
-// 		 
-// 		  // Simulates
-// 		  for (var i=0;i<clients.length;i++) {
-// 		  	for (var j=0;j<states.length;j++) {
-// 		  		for (var x=0;x<ids.length;x++) {
-// 		  			var gb = {
-// 		  					player: clients[i],
-// 		  					key: ids[x],
-// 		  					value: Math.random(0,1),
-// 		  					state: {state:states[j]},
-// 		  			};
-// 		  			
-// 		  			db.insert(gb);
-// 		  		}
-// 		  	}
-// 		  }
-// 		 db.sort('player');
-// 	});
-// 	it('should sort all elements alphabetically ASC', function(){
-// 	  db.db[1].player.should.equal(clients[0]);
-// 	});
-// });
+describe('default sort', function() {
+ 	 before(function(){	 
+ 		  // Simulates
+ 		  for (var i=0;i<clients.length;i++) {
+ 		  	for (var j=0;j<states.length;j++) {
+ 		  		for (var x=0;x<ids.length;x++) {
+ 		  			var gb = {
+ 		  					player: clients[i],
+ 		  					key: ids[x],
+ 		  					value: Math.random(0,1),
+ 		  					state: {state:states[j]},
+ 		  			};
+ 		  			
+ 		  			db.insert(gb);
+ 		  		}
+ 		  	}
+ 		  }
+ 		 db.sort('player');
+ 	});
+ 	it('should sort all elements alphabetically ASC', function(){
+ 	  db.db[1].player.should.equal(clients[0]);
+ 	});
+ });
    
    //console.log('Default sort');
    //var out = nddb.sort();

@@ -134,7 +134,7 @@
         this.__parent = parent || undefined;
 
         this.init(options);
-        this.import(db);   
+        this.insert(db);   
     };
     
     /**
@@ -212,7 +212,7 @@
         
         // TODO: check this
         if ('undefined' !== typeof o.nddbid) return o;
-        var db = db || this.db;
+        db = db || this.db;
         
         Object.defineProperty(o, 'nddbid', {
         	value: db.length,
@@ -270,24 +270,30 @@
     }
     
     /**
-     * Imports a whole array into the current database
+     * ### NDDB.insert
      * 
+     * Insert an item, or an array of items, into the database
+     * 
+     * @param {object} o The item or array of items to insert
      */
-    NDDB.prototype.import = function (db) {
-        if (!db) return [];
+    NDDB.prototype.insert = function (o) {
+    	if ('undefined' === typeof o || o === null) return;
         if (!this.db) this.db = [];
-        for (var i = 0; i < db.length; i++) {
-            this.insert(db[i]);
+        if (!JSUS.isArray(o)) {
+        	this._insert(o);
         }
-        //this.db = this.db.concat(this._masqueradeDB(db));
-        //this._autoUpdate();
+        else {
+        	for (var i = 0; i < o.length; i++) {
+                this._insert(o[i]);
+            }
+        }
     };
     
     /**
      * Inserts an object into the current database
      * 
      */
-    NDDB.prototype.insert = function (o) {
+    NDDB.prototype._insert = function (o) {
         if ('undefined' === typeof o || o === null) return;
         var o = this._masquerade(o);
         
@@ -352,35 +358,12 @@
      * 
      */
     NDDB.prototype.stringify = function () {
-		var objToStr = function(o) {
+		if (!this.length) return '[]';
+		
+    	var objToStr = function(o) {
 			// Skip empty objects
 			if (JSUS.isEmpty(o)) return '{}';
 			return JSON.stringify(o);
-			// These are ignored by JSON.stringify
-//			if (o === NaN) return 'NaN';
-//			if (o === Infinity) return 'Infinity';
-//			
-//			var s = '{';
-//			for (var x in o) {
-//				s += '"' + x + '": ';
-//				
-//				switch (typeof(o[x])) {
-//					case 'undefined':
-//						break;
-//					case 'object': 
-//						s += (o[x]) ? objToStr(o[x]) : 'null'; 
-//						break;
-//					case 'string': 
-//						s += '"' + o[x].toString() + '"'; 
-//						break;
-//					default: 
-//						s += o[x].toString();
-//						break;
-//				}
-//				s+=', '
-//			}
-//			s=s.replace(/, $/,'}');
-//			return s;
 		}
 		
         var out = '[';
@@ -1129,7 +1112,7 @@
      * 
      * 
      * var nddb = new NDDB();
-     * nddb.import([{a:1,
+     * nddb.insert([{a:1,
      *                  b:{c:2},
      *                  d:3
      *               }]);
@@ -1159,7 +1142,7 @@
      * is exploded, and its values returned in a array.  E.g.:
      * 
      * var nddb = new NDDB();
-     * nddb.import([{a:1,
+     * nddb.insert([{a:1,
      *                  b:{c:2},
      *                  d:3
      *               }]);
@@ -1179,7 +1162,7 @@
      * returned values. E.g.
      * 
      * var nddb = new NDDB();
-     * nddb.import([{a:1,
+     * nddb.insert([{a:1,
      *                  b:{c:2},
      *                  d:3
      *               }]);
@@ -1586,6 +1569,7 @@
 	    		NDDB.log('You must specify a valid file.', 'ERR');
 	    		return false;
 	    	}
+	    	
 			fs.writeFile(file, this.stringify(), 'utf-8', function(e) {
 				if (e) throw e
 				if (callback) callback();
@@ -1609,7 +1593,7 @@
 				}
 //					console.log(Object.prototype.toString.apply(items[0].aa))
 				
-				this.import(items);
+				this.insert(items);
 //				this.each(function(e) {
 //					e = NDDB.retrocycle(e);
 //				});
