@@ -8,5 +8,5 @@ test/NDDB_Test.js
 *.out
 *.nddb
 
-build/*
+/build/*
 
