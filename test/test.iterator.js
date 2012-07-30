@@ -158,7 +158,7 @@ describe('NDDB Iterator', function() {
 		});
 	});
 	
-    after(function(){
+    before(function(){
     	db.clear(true);
        	db = new NDDB(); 
        	db.import(items);

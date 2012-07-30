@@ -41,8 +41,63 @@ var items = [
              
 ];
 
+var items_less = [
+             {
+                 painter: "Monet",
+                 title: "Water Lilies",
+                 year: 1906
+             },
+             {
+                 painter: "Dali",
+                 title: "Das Rätsel der Begierde",
+                 year: 1929,
+             },
+];
+
 
 describe('NDDB Diff', function() {
 	//diff, intersect
 	
+    before(function() {
+        db.import(items);
+    });
+
+    describe("#diff()",function() {
+        var difference = null;
+        var different_db = null;
+        before(function() {
+            different_db = new NDDB();
+            different_db.import(items_less);
+            difference = db.diff(different_db);
+        });
+
+        it("db.length should be smaller by 2",function() {
+            difference.length.should.be.eql(db.length - different_db.length);
+
+        });
+
+        it("should not contain 2 of the items",function() {
+            difference.select('title','=',"Water Lilies").length.should.be.eql(0);
+            difference.select('title','=',"Das Rätsel der Begierde").length.should.be.eql(0);
+        });
+    });
+
+    describe("#intersect",function() {
+        var difference = null;
+        var different_db = null;
+        before(function() {
+            different_db = new NDDB();
+            different_db.import(items_less);
+            difference = db.intersect(different_db);
+        });
+
+        it("the count should be 1",function() {
+            difference.length.should.be.eql(1);
+        });
+
+        it("should contain one masterpiece (item)",function() {
+            difference.select('title','=',"Water Lilies").length.should.be.eql(1);
+        });
+    });
+
 });

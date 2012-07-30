@@ -58,7 +58,7 @@ describe('NDDB Selecting', function() {
        db.select('year', '><', [1900, 1910]).db.length.should.equal(1); 
     });
     
-    after(function(){
+    before(function(){
     	db.clear(true);
        	db = new NDDB(); 
        	db.import(items);

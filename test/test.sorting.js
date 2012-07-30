@@ -5,6 +5,7 @@ var util = require('util'),
 
 var db = new NDDB();
 
+
 var items = [
 			 {
 				 painter: "Jesus",
@@ -39,7 +40,6 @@ var items = [
              },
              
 ];
-
 
 
 describe('NDDB Sorting', function(){
@@ -111,7 +111,7 @@ describe('NDDB Sorting', function(){
         });
     });
 
-    after(function(){
+    before(function(){
         db.clear(true);
         db = new NDDB(); 
         db.import(items);
