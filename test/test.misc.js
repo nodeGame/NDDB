@@ -41,7 +41,7 @@ var items = [
 ];
 
 
-describe('NDDB Advanced Operation', function() {
+describe('NDDB Misc Operation', function() {
 	//split*, join, concat
 
     before(function() {
@@ -55,7 +55,7 @@ describe('NDDB Advanced Operation', function() {
 
     describe('#map()',function() {
         before(function() {
-            addDone = function(item) {
+            var addDone = function(item) {
                 item['done'] = "10";
             };
 
