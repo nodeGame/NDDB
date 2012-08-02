@@ -118,7 +118,7 @@ Import a collection of items
         }
     ];
     
-    db.import(items);
+    db.importDB(items);
 ```
     
 Retrieve the database size

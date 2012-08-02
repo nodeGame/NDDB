@@ -82,8 +82,8 @@ var hashPainter = function(o) {
 
 db.h('painter', hashPainter);
 
-db.import(not_hashable);
-db.import(hashable);
+db.importDB(not_hashable);
+db.importDB(hashable);
 
 describe('NDDB Delete Operations:', function() {
 

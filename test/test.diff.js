@@ -59,7 +59,7 @@ describe('NDDB Diff', function() {
 	//diff, intersect
 	
     before(function() {
-        db.import(items);
+        db.importDB(items);
     });
 
     describe("#diff()",function() {
@@ -67,7 +67,7 @@ describe('NDDB Diff', function() {
         var different_db = null;
         before(function() {
             different_db = new NDDB();
-            different_db.import(items_less);
+            different_db.importDB(items_less);
             difference = db.diff(different_db);
         });
 
@@ -89,7 +89,7 @@ describe('NDDB Diff', function() {
         var different_db = null;
         before(function() {
             different_db = new NDDB();
-            different_db.import(items_less);
+            different_db.importDB(items_less);
             difference = db.intersect(different_db);
         });
 

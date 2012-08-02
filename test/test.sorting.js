@@ -114,7 +114,7 @@ describe('NDDB Sorting', function(){
     before(function(){
         db.clear(true);
         db = new NDDB(); 
-        db.import(items);
+        db.importDB(items);
     });
     
 });

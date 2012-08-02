@@ -94,8 +94,8 @@ describe('NDDB Fetching', function() {
 	//fetch, fetchArray, fetchKeyArray
 	
     before(function() {
-        db.import(hashable);
-        db.import(not_hashable);
+        db.importDB(hashable);
+        db.importDB(not_hashable);
     });
 
     describe('the complete database',function() {

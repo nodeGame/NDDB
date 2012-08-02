@@ -61,7 +61,7 @@ describe('NDDB Selecting', function() {
     before(function(){
     	db.clear(true);
        	db = new NDDB(); 
-       	db.import(items);
+       	db.importDB(items);
     });
 });
 
@@ -69,8 +69,8 @@ describe('NDDB Selecting', function() {
 describe('#distinct()', function(){
 	before(function(){
 		db.clear(true);
-		db.import(items);
-		db.import(items);
+		db.importDB(items);
+		db.importDB(items);
 	})
 	
 	it('should eliminates all duplicated entries', function() {

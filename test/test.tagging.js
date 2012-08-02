@@ -46,7 +46,7 @@ var items = [
 
 describe('NDDB Tagging', function() {
     before(function() {
-        db.import(items);
+        db.importDB(items);
     });
 
 
