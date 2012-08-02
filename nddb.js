@@ -654,8 +654,8 @@ NDDB.prototype._analyzeQuery = function (d, op, value) {
             }
             if (op === '<>' || op === '><') {
                 
-                value[0] = JSUS.setNestedValue(d,value[0]);
-                value[1] = JSUS.setNestedValue(d,value[1]);
+                value[0] = JSUS.setNestedValue(d, value[0]);
+                value[1] = JSUS.setNestedValue(d, value[1]);
             }
         }
         else {
@@ -1001,7 +1001,15 @@ NDDB.prototype.clear = function (confirm) {
  *
  * Performs a *left* join across all the entries of the database
  * 
- * @see NDDB._join
+ * @param {string} key1 First property to compare  
+ * @param {string} key2 Second property to compare
+ * @param {string} pos Optional. The property under which the join is performed. Defaults 'joined'
+ * @param {string|array} select Optional. The properties to copy in the join. Defaults undefined 
+ * @return {NDDB} A new database containing the joined entries
+ * 
+ * 	@see NDDB._join
+ * 	@see NDDB.breed
+ * 
  * 
  */
 NDDB.prototype.join = function (key1, key2, pos, select) {
@@ -1027,7 +1035,16 @@ NDDB.prototype.join = function (key1, key2, pos, select) {
  * Copies all the entries (or selected properties of them) containing key2 
  * in all the entries containing key1.
  * 
+ * Nested properties can be accessed with '.'.
+ * 
+ * @param {string} key1 First property to compare  
+ * @param {string} key2 Second property to compare
+ * @param {string} pos Optional. The property under which the join is performed. Defaults 'joined'
+ * @param {string|array} select Optional. The properties to copy in the join. Defaults undefined 
+ * @return {NDDB} A new database containing the concatenated entries
+ * 
  *  @see NDDB._join
+ *  @see JSUS.join
  */
 NDDB.prototype.concat = function (key1, key2, pos, select) {        
     return this._join(key1, key2, function(){ return true;}, pos, select);
@@ -1038,27 +1055,31 @@ NDDB.prototype.concat = function (key1, key2, pos, select) {
  *
  * Performs a *left* join across all the entries of the database
  * 
- * A new property is created in every matching entry contained the 
- * matched ones, or selected properties of them.  
- * 
- * Accepts two keys, a comparator function, the name of the containing 
- * property (default "joined") for matched entries, and an array with
- * the name of properties to select and copy in the matched entry.  
- * 
  * The values of two keys (also nested properties are accepted) are compared
  * according to the specified comparator callback, or using JSUS.equals.
  * 
+ * If the comparator function returns TRUE, matched entries are appended 
+ * as a new property of the matching one. 
+ * 
+ * By default, the full object is copied in the join, but it is possible to 
+ * specify the name of the properties to copy as an input parameter.
+ * 
  * A new NDDB object breeded, so that further operations can be chained.
  * 
- * TODO: check do we need to reassign __nddbid__ ?
- * 
- * @see NDDB.breed
- * 
  * @api private
+ * @param {string} key1 First property to compare  
+ * @param {string} key2 Second property to compare
+ * @param {function} comparator Optional. A comparator function. Defaults JSUS.equals
+ * @param {string} pos Optional. The property under which the join is performed. Defaults 'joined'
+ * @param {string|array} select Optional. The properties to copy in the join. Defaults undefined 
+ * @return {NDDB} A new database containing the joined entries
+ * 	@see NDDB.breed
+ * 
+ *  * TODO: check do we need to reassign __nddbid__ ?
  */
 NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
-    var comparator = comparator || JSUS.equals;
-    var pos = ('undefined' !== typeof pos) ? pos : 'joined';
+    comparator = comparator || JSUS.equals;
+    pos = ('undefined' !== typeof pos) ? pos : 'joined';
     if (select) {
         var select = (select instanceof Array) ? select : [select];
     }
@@ -1099,64 +1120,6 @@ NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
 };
 
 /**
- * ### NDDB._split
- *
- * Splits an object along a specified dimension, and returns 
- * all the copies in an array.
- *  
- * It creates as many new objects as the number of properties 
- * contained in the specified dimension. The object are identical,
- * but for the given dimension, which was split. E.g.
- * 
- *  var o = { a: 1,
- *            b: {c: 2,
- *                d: 3
- *            },
- *            e: 4
- *  };
- *  
- *  becomes
- *  
- *  [{ a: 1,
- *     b: {c: 2},
- *     e: 4
- *  },
- *  { a: 1,
- *    b: {d: 3},
- *    e: 4
- *  }];
- * 
- */
-NDDB.prototype._split = function (o, key) {        
-    
-    if ('object' !== typeof o[key]) {
-        return JSUS.clone(o);
-    }
-    
-    var out = [];
-    var model = JSUS.clone(o);
-    model[key] = {};
-    
-    var splitValue = function (value) {
-        for (var i in value) {
-            var copy = JSUS.clone(model);
-            if (value.hasOwnProperty(i)) {
-                if ('object' === typeof value[i]) {
-                    out = out.concat(splitValue(value[i]));
-                }
-                else {
-                    copy[key][i] = value[i]; 
-                    out.push(copy);
-                }
-            }
-        }
-        return out;
-    };
-    
-    return splitValue(o[key]);
-};
-
-/**
  * ### NDDB.split
  *
  * Splits all the entries in the database containing
@@ -1171,9 +1134,8 @@ NDDB.prototype._split = function (o, key) {
 NDDB.prototype.split = function (key) {    
     var out = [];
     for (var i=0; i < this.db.length;i++) {
-        out = out.concat(this._split(this.db[i], key));
+        out = out.concat(JSUS.split(this.db[i], key));
     }
-    //console.log(out);
     return this.breed(out);
 };
 
