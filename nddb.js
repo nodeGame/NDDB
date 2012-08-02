@@ -34,9 +34,20 @@
 // Expose constructors
 exports.NDDB = NDDB;
 
+// ## NDDB.log
 // Stdout redirect
 NDDB.log = console.log;
 
+/**
+ * ### NDDB.retrocycle
+ * 
+ * Removes cyclic references from an object
+ * 
+ * @param {object} e The object to decycle
+ * @return {object} e The decycled object
+ * 
+ * 	@see https://github.com/douglascrockford/JSON-js/
+ */
 NDDB.decycle = function(e) {
 	if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
 		e = JSON.decycle(e);
@@ -44,6 +55,16 @@ NDDB.decycle = function(e) {
 	return e;
 };
 
+/**
+ * ### NDDB.retrocycle
+ * 
+ * Restores cyclic references in an object previously decycled
+ * 
+ * @param {object} e The object to retrocycle
+ * @return {object} e The retrocycled object
+ * 
+ * 	@see https://github.com/douglascrockford/JSON-js/
+ */
 NDDB.retrocycle = function(e) {
 	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
 		e = JSON.retrocycle(e);
@@ -57,6 +78,9 @@ NDDB.retrocycle = function(e) {
  *
  * Creates a new instance of NDDB
  * 
+ * @param {object} options Optional. Configuration options
+ * @param {db} db Optional. An initial set of items to import
+ * @param {NDDB} parent Optional. A parent database to keep sync
  * 
  */
 function NDDB (options, db, parent) {                
@@ -64,26 +88,20 @@ function NDDB (options, db, parent) {
     
     if (!JSUS) throw new Error('JSUS not found.');
     
+    // ## db
     // The default database
     this.db = [];
+    
+    // ##tags
     // The tags list
-    this.tags = {};					
+    this.tags = {};
+    
+    // ## nddb_pointer
     // Pointer for iterating along all the elements
     this.nddb_pointer = 0; 
     
-    // Comparator functions
-    this.__C = {};
-    // Hashing functions
-    this.__H = {};
-    // Auto update options
-    this.__update = {};
-    // Always points to the last insert
-    this.__update.pointer 	= false;
-    // Rebuild indexes on insert and delete
-    this.__update.indexes 	= false;
-    // Always sort the elements in the database
-    this.__update.sort 		= false;
-    
+    // ## length
+    // The number of items in the database
     Object.defineProperty(this, 'length', {
     	set: function(){},
     	get: function(){
@@ -92,7 +110,32 @@ function NDDB (options, db, parent) {
     	configurable: true
 	});
     
-    // Parent NNDB database (if chaining)
+    // ## __C
+    // List of comparator functions
+    this.__C = {};
+    
+    // ## __H
+    // List of hashing functions
+    this.__H = {};
+    
+    // ## __update
+    // Auto update options container
+    this.__update = {};
+    
+    // ## __update.pointer
+    // If TRUE, nddb_pointer always points to the last insert
+    this.__update.pointer 	= false;
+    
+    // ## __update.indexes
+    // If TRUE, rebuild indexes on every insert and delete
+    this.__update.indexes 	= false;
+    
+    // ## __update.sort
+    // If TRUE, sort db on every insert and delete
+    this.__update.sort 		= false;
+        
+    // ## __parent
+    // Reference to a parent NNDB database (if chaining)
     this.__parent = parent || undefined;
 
     this.init(options);
@@ -105,8 +148,13 @@ function NDDB (options, db, parent) {
  * ### NDDB.init
  * 
  * Sets global options based on local configuration
+ * 
+ * @param {object} options Optional. Configuration options
+ * 
  */
 NDDB.prototype.init = function(options) {
+	options = options || {};
+	
 	this.__options = options;
 	
 	if (options.log) {
@@ -145,18 +193,25 @@ NDDB.prototype.init = function(options) {
     
 };
 
-
-///////////
-// 0. Core
-//////////
+// ## CORE
 
 /**
- * ### Global Compare
+ * ### NDDB.globalCompare
  * 
- * Default function used for sorting
+ * Function used for comparing two items in the database
  * 
- * Elements are sorted according to their internal id 
- * (FIFO). 
+ * By default, elements are sorted according to their 
+ * internal id (FIFO). Override to change.
+ * 
+ * Returns
+ * 
+ *  - 0 if the objects are the same
+ *  - a positive number if o2 precedes o1 
+ *  - a negative number if o1 precedes o2 
+ * 
+ * @param {object} o1 The first object to compare
+ * @param {object} o1 The second object to compare
+ * @return {number} The result of the comparison
  * 
  */
 NDDB.prototype.globalCompare = function(o1, o2) {
@@ -170,8 +225,14 @@ NDDB.prototype.globalCompare = function(o1, o2) {
 };
 
 /**
- * Adds a special id into the __proto__ object of 
- * the object
+ * ### NDDB._masquerade
+ * 
+ * Injects a hidden counter property into the prototype 
+ * 
+ * The object contains the index of the containing array.
+ * 
+ * @param {object} o The object to masquerade
+ * @param {array} db Optional. The array
  * 
  * @api private
  */
@@ -184,17 +245,16 @@ NDDB.prototype._masquerade = function (o, db) {
     
     Object.defineProperty(o, 'nddbid', {
     	value: db.length,
-    	//set: function(){},
     	configurable: true,
     	writable: true,
 	});
     
-    //o.__proto__ = JSUS.clone(o.__proto__);
-    //o.__proto__.nddbid = db.length;
     return o;
 };
 
 /**
+ * ### NDDB._masqueradeDB
+ *
  * Masquerades a whole array and returns it
  * 
  * @see NDDB._masquerade
@@ -211,6 +271,8 @@ NDDB.prototype._masqueradeDB = function (db) {
 };
 
 /**
+ * ### NDDB._autoUpdate
+ *
  * Performs a series of automatic checkings 
  * and updates the db according to current 
  * configuration
@@ -267,6 +329,8 @@ NDDB.prototype.insert = function (o) {
 };
 
 /**
+ * ### NDDB._insert
+ *
  * Inserts an object into the current database
  * 
  */
@@ -286,6 +350,8 @@ NDDB.prototype._insert = function (o) {
 };
 
 /**
+ * ### NDDB.breed
+ *
  * Creates a clone of the current NDDB object
  * with a reference to the parent database
  * 
@@ -300,6 +366,8 @@ NDDB.prototype.breed = function (db) {
 };
     
 /**
+ * ### NDDB.cloneSettings
+ *
  * Creates a configuration object to initialize
  * a new NDDB instance based on the current settings
  * and returns it
@@ -317,6 +385,8 @@ NDDB.prototype.cloneSettings = function () {
 };    
 
 /**
+ * ### NDDB.toString
+ *
  * Prints out the elements in the database
  */
 NDDB.prototype.toString = function () {
@@ -328,6 +398,8 @@ NDDB.prototype.toString = function () {
 };    
     
 /**
+ * ### NDDB.stringify
+ *
  * Returns a string representation of the state
  * of the database.
  * 
@@ -356,6 +428,8 @@ NDDB.prototype.stringify = function () {
 
 
 /**
+ * ### NDDB.compare | NDDB.c 
+ *
  * Adds a new comparator for dimension d 
  * 
  */
@@ -377,6 +451,8 @@ NDDB.prototype.compare = NDDB.prototype.c = function (d, comparator) {
 //    };
 
 /**
+ * ### NDDB.comparator
+ *
  * Returns the comparator function for dimension d. 
  * If no comparator was defined returns a generic
  * comparator function. 
@@ -407,6 +483,8 @@ NDDB.prototype.comparator = function (d) {
 };
 
 /**
+ * ### NDDB.hash | NDDB.h 
+ *
  * Returns TRUE if this[key] exists
  */
 NDDB.prototype.isReservedWord = function (key) {
@@ -414,6 +492,8 @@ NDDB.prototype.isReservedWord = function (key) {
 };
 
 /**
+ * ### NDDB.
+ *
  * Adds an hashing function for the dimension d.
  * 
  * If no function is specified Object.toString is used.
@@ -442,6 +522,8 @@ NDDB.prototype.hash = NDDB.prototype.h = function (d, func) {
 };
 
 /**
+ * ### NDDB.rebuildIndexes
+ *
  * Resets and rebuilds the databases indexes defined
  * by the hashing functions
  */
@@ -460,6 +542,8 @@ NDDB.prototype.rebuildIndexes = function() {
 };
 
 /**
+ * ### NDDB.hashIt
+ *
  * Hashes an element and adds it to one of the indexes,
  * as defined by the hashing functions
  */
@@ -494,11 +578,12 @@ NDDB.prototype.hashIt = function(o) {
 	}
 };
 
-//////////////////////
-// 1. Sort and Select
-/////////////////////
+
+// ## Sort and Select
 
 /**
+ * ### NDDB._analyzeQuery
+ *
  * Validates and prepares select queries before execution
  * 
  *  @api private
@@ -664,6 +749,8 @@ NDDB.prototype.select = function (d, op, value) {
 };
 
 /**
+ * ### NDDB.limit
+ *
  * Creates a copy of the current database limited only to 
  * the first N entries, where N is the passed parameter.
  * 
@@ -679,6 +766,8 @@ NDDB.prototype.limit = function (limit) {
 };
     
 /**
+ * ### NDDB.reverse
+ *
  * Reverses the order of all the entries in the database
  * 
  */
@@ -688,6 +777,8 @@ NDDB.prototype.reverse = function () {
 };
     
 /**
+ * ### NDDB.sort
+ *
  * Sort the db according to one of the following
  * criteria:
  *  
@@ -732,6 +823,8 @@ NDDB.prototype.reverse = function () {
   };
 
 /**
+ * ### NDDB.shuffle
+ *
  * Randomly shuffles all the entries of the database
  * 
  */
@@ -741,11 +834,12 @@ NDDB.prototype.shuffle = function () {
     return true;
 };
     
-////////////////////// 
-// 2. Custom callbacks
-//////////////////////
+
+// ## Custom callbacks
   
 /**
+ * ### NDDB.filter
+ *
  * Filters the entries of the database according to the
  * specified callback function. A new NDDB instance is breeded.
  * 
@@ -758,6 +852,8 @@ NDDB.prototype.filter= function (func) {
 
 
 /**
+ * ### NDDB.each
+ *
  * Applies a callback function to each element in the db.
  * 
  * It accepts a variable number of input arguments, but the first one 
@@ -775,6 +871,8 @@ NDDB.prototype.each = NDDB.prototype.forEach = function () {
 };
 
 /**
+ * ### NDDB.map
+ *
  * Applies a callback function to each element in the db, store
  * the results in an array and returns it.
  * 
@@ -794,11 +892,12 @@ NDDB.prototype.map = function () {
     return out;
 };
 
-//////////////
-// 3. Deletion
-//////////////
+
+// ## Deletion
 
 /**
+ * ### NDDB.delete
+ *
  * Removes all entries from the database.  
  * If chained to a select query, elements in the parent 
  * object will be deleted too.
@@ -827,6 +926,8 @@ NDDB.prototype.delete = function () {
 };    
 
 /**
+ * ### NDDB.clear
+ *
  * Removes all entries from the database. Requires an
  * additional parameter to confirm the deletion.
  * 
@@ -846,11 +947,12 @@ NDDB.prototype.clear = function (confirm) {
     return confirm;
 };    
 
-/////////////////////////
-// 4. Advanced operations
-/////////////////////////
+
+// ## Advanced operations
 
 /**
+ * ### NDDB.join
+ *
  * Performs a *left* join across all the entries of the database
  * 
  * @see NDDB._join
@@ -872,6 +974,8 @@ NDDB.prototype.join = function (key1, key2, pos, select) {
 };
 
 /**
+ * ### NDDB.concat
+ *
  * Copies all the entries (or selected properties of them) containing key2 
  * in all the entries containing key1.
  * 
@@ -882,6 +986,8 @@ NDDB.prototype.concat = function (key1, key2, pos, select) {
 };
 
 /**
+ * ### NDDB._join
+ *
  * Performs a *left* join across all the entries of the database
  * 
  * A new property is created in every matching entry contained the 
@@ -945,6 +1051,8 @@ NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
 };
 
 /**
+ * ### NDDB._split
+ *
  * Splits an object along a specified dimension, and returns 
  * all the copies in an array.
  *  
@@ -1001,6 +1109,8 @@ NDDB.prototype._split = function (o, key) {
 };
 
 /**
+ * ### NDDB.split
+ *
  * Splits all the entries in the database containing
  * the passed dimension. 
  * 
@@ -1019,11 +1129,12 @@ NDDB.prototype.split = function (key) {
     return this.breed(out);
 };
 
-//////////////
-// 5. Fetching
-//////////////
+// ## Fetching
+
 
 /**
+ * ### NDDB._fetch
+ *
  * Performs the fetching of the entries according to the
  * specified parameters. 
  * 
@@ -1080,6 +1191,8 @@ NDDB.prototype._fetch = function (key, array) {
 }
 
 /**
+ * ### NDDB.fetch
+ *
  * Fetches all the entries in the database and returns 
  * them in a array. 
  * 
@@ -1110,6 +1223,8 @@ NDDB.prototype.fetch = function (key) {
 };
 
 /**
+ * ### NDDB.fetchArray
+ *
  * Fetches all the entries in the database, transforms them into 
  * one-dimensional array by exploding all nested values, and returns
  * them into an array.
@@ -1135,6 +1250,8 @@ NDDB.prototype.fetchArray = function (key) {
 };
 
 /**
+ * ### NDDB.fetchKeyArray
+ *
  * Exactly as NDDB.fetchArray, but also the keys are added to the
  * returned values. E.g.
  * 
@@ -1155,6 +1272,8 @@ NDDB.prototype.fetchKeyArray = function (key) {
 };
 
 /**
+ * ### NDDB.fetchValues
+ *
  * @deprecated
  * @see NDDB.fetchArray
  * 
@@ -1164,6 +1283,8 @@ NDDB.prototype.fetchValues = function (key) {
 };
 
 /**
+ * ### NDDB.fetchKeyValues
+ *
  * @deprecated
  * @see NDDB.fetchKeyArray
  */
@@ -1172,6 +1293,8 @@ NDDB.prototype.fetchKeyValues = function (key) {
 };
             
 /**
+ * ### NDDB.groupBy
+ *
  * Splits the entries in the database in subgroups,
  * each of them formed up by element which have the
  * same value along the specified dimension. An array
@@ -1215,12 +1338,11 @@ NDDB.prototype.groupBy = function (key) {
     return outs;
 };    
 
-
-////////////////
-// 6. Statistics
-////////////////
+// ## Statistics
 
 /**
+ * ### NDDB.count
+ *
  * Returns the total count of all the entries 
  * in the database containing the specified key. 
  * 
@@ -1245,6 +1367,8 @@ NDDB.prototype.count = function (key) {
 
 
 /**
+ * ### NDDB.sum
+ *
  * Returns the total sum of the values of all the entries 
  * in the database containing the specified key. 
  * 
@@ -1266,6 +1390,8 @@ NDDB.prototype.sum = function (key) {
 };
 
 /**
+ * ### NDDB.mean
+ *
  * Returns the average of the values of all the entries 
  * in the database containing the specified key. 
  * 
@@ -1291,6 +1417,8 @@ NDDB.prototype.mean = function (key) {
 };
 
 /**
+ * ### NDDB.stddev
+ *
  * Returns the standard deviation of the values of all the entries 
  * in the database containing the specified key. 
  * 
@@ -1319,6 +1447,8 @@ NDDB.prototype.stddev = function (key) {
 
 
 /**
+ * ### NDDB.min
+ *
  * Returns the min of the values of all the entries 
  * in the database containing the specified key. 
  * 
@@ -1340,6 +1470,8 @@ NDDB.prototype.min = function (key) {
 };
 
 /**
+ * ### NDDB.max
+ *
  * Returns the max of the values of all the entries 
  * in the database containing the specified key. 
  * 
@@ -1360,11 +1492,12 @@ NDDB.prototype.max = function (key) {
     return max;
 };
     
-//////////
-// 7. Diff
-/////////
+// ## Diff
+
 
 /**
+ * ### NDDB.diff
+ *
  * Performs a diff of the entries in the database and the database
  * object passed as parameter (can be instance of Array or NDDB).
  * 
@@ -1393,6 +1526,8 @@ NDDB.prototype.diff = function (nddb) {
 };
 
 /**
+ * ### NDDB.intersect
+ *
  * Performs a diff of the entries in the database and the database 
  * object passed as parameter (can be instance of Array or NDDB).
  * 
@@ -1417,11 +1552,12 @@ NDDB.prototype.intersect = function (nddb) {
     });
 };
 
-/////////////
-// 8 Iterator
-////////////
+// ## Iterator
+
 
 /**
+ * ### NDDB.get
+ *
  * Returns the entry in the database, at which 
  * the iterator is currently pointing. 
  * 
@@ -1441,6 +1577,8 @@ NDDB.prototype.get = function (pos) {
 };
     
 /**
+ * ### NDDB.next
+ *
  * Moves the pointer to the next entry in the database 
  * and returns it.
  * 
@@ -1455,6 +1593,8 @@ NDDB.prototype.next = function () {
 };
 
 /**
+ * ### NDDB.previous
+ *
  * Moves the pointer to the previous entry in the database 
  * and returns it.
  * 
@@ -1469,6 +1609,8 @@ NDDB.prototype.previous = function () {
 };
 
 /**
+ * ### NDDB.first
+ *
  * Moves the pointer to the first entry in the database.
  * 
  * Returns the first entry of the database, or undefined 
@@ -1485,6 +1627,8 @@ NDDB.prototype.first = function (key) {
 };
 
 /**
+ * ### NDDB.last
+ *
  * Moves the pointer to the first last in the database.
  * 
  * Returns the last entry of the database, or undefined 
@@ -1500,11 +1644,12 @@ NDDB.prototype.last = function (key) {
     return undefined;
 };
 
-/////////////
-// 9. Tagging
-/////////////
+// ## Tagging
+
 
 /**
+ * ### NDDB.tag
+ *
  * Registers a tag associated to an internal id.
  * 
  * @TODO: tag should be updated with shuffling and sorting
@@ -1524,6 +1669,8 @@ NDDB.prototype.tag = function (tag, idx) {
 };
 
 /**
+ * ### NDDB.resolveTag
+ *
  * Returns the element associated to the given tag.
  * 
  * @status: experimental
@@ -1532,9 +1679,10 @@ NDDB.prototype.resolveTag = function (tag) {
     if ('undefined' === typeof tag) return false;
         return this.tags[tag];
     };
+
+// ## Persistance    
     
-    
- // if node
+// if node
 if ('object' === typeof module && 'function' === typeof require) {
     
 	require('./external/cycle.js');		
