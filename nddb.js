@@ -34,7 +34,7 @@
 // Expose constructors
 exports.NDDB = NDDB;
 
-// ## NDDB.log
+// ### NDDB.log
 // Stdout redirect
 NDDB.log = console.log;
 
@@ -88,19 +88,21 @@ function NDDB (options, db, parent) {
     
     if (!JSUS) throw new Error('JSUS not found.');
     
-    // ## db
+    // ## Public properties
+    
+    // ### db
     // The default database
     this.db = [];
     
-    // ##tags
+    // ###tags
     // The tags list
     this.tags = {};
     
-    // ## nddb_pointer
+    // ### nddb_pointer
     // Pointer for iterating along all the elements
     this.nddb_pointer = 0; 
     
-    // ## length
+    // ### length
     // The number of items in the database
     Object.defineProperty(this, 'length', {
     	set: function(){},
@@ -110,31 +112,31 @@ function NDDB (options, db, parent) {
     	configurable: true
 	});
     
-    // ## __C
+    // ### __C
     // List of comparator functions
     this.__C = {};
     
-    // ## __H
+    // ### __H
     // List of hashing functions
     this.__H = {};
     
-    // ## __update
+    // ### __update
     // Auto update options container
     this.__update = {};
     
-    // ## __update.pointer
+    // ### __update.pointer
     // If TRUE, nddb_pointer always points to the last insert
     this.__update.pointer 	= false;
     
-    // ## __update.indexes
+    // ### __update.indexes
     // If TRUE, rebuild indexes on every insert and delete
     this.__update.indexes 	= false;
     
-    // ## __update.sort
+    // ### __update.sort
     // If TRUE, sort db on every insert and delete
     this.__update.sort 		= false;
         
-    // ## __parent
+    // ### __parent
     // Reference to a parent NNDB database (if chaining)
     this.__parent = parent || undefined;
 
@@ -340,10 +342,10 @@ NDDB.prototype._insert = function (o) {
     
     this.db.push(o);
     
-    // We save time calling hashIt only
+    // We save time calling _hashIt only
     // on the latest inserted element
     if (this.__update.indexes) {
-    	this.hashIt(o);
+    	this._hashIt(o);
     }
 	// See above
     this._autoUpdate({indexes: false});
@@ -430,7 +432,15 @@ NDDB.prototype.stringify = function () {
 /**
  * ### NDDB.compare | NDDB.c 
  *
- * Adds a new comparator for dimension d 
+ * Registers a comparator function for dimension d
+ * 
+ * Each time a comparison between two objects containing
+ * property named as the specified dimension, the registered
+ * comparator function will be used.
+ * 
+ * @param {string} d The name of the dimension
+ * @param {function} comparator The comparator function
+ * @return {boolean} TRUE, if registration was successful
  * 
  */
 NDDB.prototype.compare = NDDB.prototype.c = function (d, comparator) {
@@ -442,21 +452,18 @@ NDDB.prototype.compare = NDDB.prototype.c = function (d, comparator) {
     return true;
 };
 
-//    /**
-//     * Adds a new comparator for dimension d
-//     * @depracated
-//     */
-//    NDDB.prototype.set = function (d, comparator) {
-//        return this.d(d, comparator);
-//    };
-
 /**
  * ### NDDB.comparator
  *
- * Returns the comparator function for dimension d. 
- * If no comparator was defined returns a generic
+ * Retrieves the comparator function for dimension d.
+ *  
+ * If no comparator function is found, returns a generic
  * comparator function. 
  * 
+ * @param {string} d The name of the dimension
+ * @return {function} The comparator function
+ * 
+ * @see NDDB.compare
  */
 NDDB.prototype.comparator = function (d) {
     if ('undefined' !== typeof this.__C[d]) {
@@ -483,40 +490,54 @@ NDDB.prototype.comparator = function (d) {
 };
 
 /**
- * ### NDDB.hash | NDDB.h 
+ * ### NDDB.isReservedWord
  *
- * Returns TRUE if this[key] exists
+ * Returns TRUE if a property or a method with the same name
+ * already exists in the current instance od NDDB 
+ * 
+ * @param {string} key The name of the property
+ * @return {boolean} TRUE, if the property exists
  */
 NDDB.prototype.isReservedWord = function (key) {
 	return (this[key]) ? true : false; 
 };
 
 /**
- * ### NDDB.
+ * ### NDDB.hash | NDDB.h
  *
- * Adds an hashing function for the dimension d.
+ * Registers a new hashing function for index d
+ * 
+ * Hashing functions automatically creates indexes 
+ * to retrieve objects faster
  * 
  * If no function is specified Object.toString is used.
  * 
+ * @param {string} idx The name of index
+ * @param {function} func The hashing function
+ * @return {boolean} TRUE, if registration was successful
+ * 
+ * 	@see NDDB.isReservedWord
+ * 	@see NDDB.rebuildIndexes
+ * 
  */
-NDDB.prototype.hash = NDDB.prototype.h = function (d, func) {
-	if ('undefined' === typeof d) {
-		NDDB.log('Cannot hash empty dimension', 'ERR');
+NDDB.prototype.hash = NDDB.prototype.h = function (idx, func) {
+	if ('undefined' === typeof idx) {
+		NDDB.log('A valid index name must be provided', 'ERR');
 		return false;
 	}
 	
 	func = func || Object.toString;
 	
-	if (this.isReservedWord(d)) {
+	if (this.isReservedWord(idx)) {
 		var str = 'A reserved word have been selected as an index. ';
-		str += 'Please select another one: ' + d;
+		str += 'Please select another one: ' + idx;
 		NDDB.log(str, 'ERR');
 		return false;
 	}
 	
-	this.__H[d] = func;
+	this.__H[idx] = func;
 	
-	this[d] = {};
+	this[idx] = {};
 	
 	return true;
 };
@@ -524,12 +545,15 @@ NDDB.prototype.hash = NDDB.prototype.h = function (d, func) {
 /**
  * ### NDDB.rebuildIndexes
  *
- * Resets and rebuilds the databases indexes defined
- * by the hashing functions
+ * Resets and rebuilds all the database indexes 
+ * 
+ * Indexes are defined by the hashing functions
+ * 
+ *	@see NDDB.hash
  */
 NDDB.prototype.rebuildIndexes = function() {
 	if (JSUS.isEmpty(this.__H)) {
-		return false;
+		return;
 	} 	
 	// Reset current indexes
 	for (var key in this.__H) {
@@ -538,16 +562,19 @@ NDDB.prototype.rebuildIndexes = function() {
 		}
 	}
 	
-	this.each(this.hashIt)
+	this.each(this._hashIt)
 };
 
 /**
- * ### NDDB.hashIt
+ * ### NDDB._hashIt
  *
- * Hashes an element and adds it to one of the indexes,
- * as defined by the hashing functions
+ * Hashes an element and adds it to one of the indexes
+ * 
+ * @param {object} o The element to hash
+ * @return {boolean} TRUE, if insertion to an index was successful
+ * 
  */
-NDDB.prototype.hashIt = function(o) {
+NDDB.prototype._hashIt = function(o) {
   	if (!o) return false;
 	if (JSUS.isEmpty(this.__H)) {
 		return false;
@@ -586,7 +613,11 @@ NDDB.prototype.hashIt = function(o) {
  *
  * Validates and prepares select queries before execution
  * 
- *  @api private
+ * @api private
+ * @param {string} d The dimension of comparison
+ * @param {string} op The operation to perform
+ * @param {string} value The right-hand element of comparison
+ * @return {boolean|object} The object-query or FALSE if an error was detected 
  */
 NDDB.prototype._analyzeQuery = function (d, op, value) {
     
@@ -663,19 +694,18 @@ NDDB.prototype.distinct = function () {
 /**
  * ## NDDB.select
  * 
- * Select entries in the database according to the criteria 
- * specified as parameters.
+ * Select entries a subset of entries in the database 
  * 
  * Input parameters:
  * 
- *     - d: the string representation of the dimension used to filter. Mandatory.
- *     - op: operator for selection. Allowed: >, <, >=, <=, = (same as ==), ==, ===, 
- *             !=, !==, in (in array), !in, >< (not in interval), <> (in interval)
+ * - d: the string representation of the dimension used to filter. Mandatory.
+ * - op: operator for selection. Allowed: >, <, >=, <=, = (same as ==), ==, ===, 
+ * 		!=, !==, in (in array), !in, >< (not in interval), <> (in interval)
  *  - value: values of comparison. Operators: in, !in, ><, <> require an array.
  *  
  *  The selection is returned as a new NDDB object, on which further operations 
- *  can be chained. In order to get the actual entries of the db, it is necessary
- *  to fetch the values.
+ *  can be chained. In order to get the actual entries returned, it is necessary
+ *  to call one of the fetching methods.
  *  
  *  @see NDDB.fetch()
  *  @see NDDB.fetchValues()
@@ -691,17 +721,12 @@ NDDB.prototype.select = function (d, op, value) {
 
     var comparator = this.comparator(d);
     
-//        NDDB.log(comparator.toString());
-//        NDDB.log(value);
-    
     var exist = function (elem) {
         if ('undefined' !== typeof JSUS.getNestedValue(d,elem)) return elem;
     };
     
     var compare = function (elem) {
         try {    
-//                console.log(elem);
-//                console.log(value);
             if (JSUS.eval(comparator(elem, value) + op + 0, elem)) {
                 return elem;
             }
@@ -751,13 +776,20 @@ NDDB.prototype.select = function (d, op, value) {
 /**
  * ### NDDB.limit
  *
- * Creates a copy of the current database limited only to 
- * the first N entries, where N is the passed parameter.
+ * Creates a copy of the current database containing only 
+ * the first N entries
  * 
- * Negative N selects starting from the end of the database.
+ * If limit is a negative number, selection is made starting 
+ * from the end of the database.
  * 
+ * @param {number} limit The number of entries to include
+ * @return {NDDB} A "limited" copy of the current instance of NDDB
+ * 
+ *	@see NDDB.first
+ * 	@see NDDB.last
  */
 NDDB.prototype.limit = function (limit) {
+	limit = limit || 0;
     if (limit === 0) return this.breed();
     var db = (limit > 0) ? this.db.slice(0, limit) :
                            this.db.slice(limit);
@@ -770,6 +802,7 @@ NDDB.prototype.limit = function (limit) {
  *
  * Reverses the order of all the entries in the database
  * 
+ * 	@see NDDB.sort
  */
 NDDB.prototype.reverse = function () {
     this.db.reverse();
@@ -789,6 +822,10 @@ NDDB.prototype.reverse = function () {
  * A reference to the current NDDB object is returned, so that
  * further operations can be chained. 
  * 
+ * Notice: the order of entries is changed.
+ * 
+ * @param {string|arrat|function} d Optional. The criterium of sorting
+ * @return {NDDB} A sorted copy of the current instance of NDDB 
  */
   NDDB.prototype.sort = function (d) {
     // GLOBAL compare  
@@ -841,12 +878,16 @@ NDDB.prototype.shuffle = function () {
  * ### NDDB.filter
  *
  * Filters the entries of the database according to the
- * specified callback function. A new NDDB instance is breeded.
+ * specified callback function. 
  * 
- * @see NDDB.breed()
+ * A new NDDB instance is breeded.
+ * 
+ * @param {function} func The filtering function
+ * 
+ * 	@see NDDB.breed
  * 
  */
-NDDB.prototype.filter= function (func) {
+NDDB.prototype.filter = function (func) {
     return this.breed(this.db.filter(func));
 };
 
@@ -860,6 +901,7 @@ NDDB.prototype.filter= function (func) {
  * must be a valid callback, and all the following are passed as parameters
  * to the callback
  * 
+ * 	@see NDDB.map
  */
 NDDB.prototype.each = NDDB.prototype.forEach = function () {
     if (arguments.length === 0) return;
@@ -876,7 +918,11 @@ NDDB.prototype.each = NDDB.prototype.forEach = function () {
  * Applies a callback function to each element in the db, store
  * the results in an array and returns it.
  * 
- * @see NDDB.prototype.forEach
+ * It accepts a variable number of input arguments, but the first one 
+ * must be a valid callback, and all the following are passed as parameters
+ * to the callback
+ * 
+ * 	@see NDDB.each
  * 
  */
 NDDB.prototype.map = function () {
@@ -898,9 +944,9 @@ NDDB.prototype.map = function () {
 /**
  * ### NDDB.delete
  *
- * Removes all entries from the database.  
- * If chained to a select query, elements in the parent 
- * object will be deleted too.
+ * Removes all entries from the database
+ * 
+ * Elements in the parent database will be deleted too.
  * 
  */
 NDDB.prototype.delete = function () {
@@ -928,11 +974,11 @@ NDDB.prototype.delete = function () {
 /**
  * ### NDDB.clear
  *
- * Removes all entries from the database. Requires an
- * additional parameter to confirm the deletion.
+ * Removes all entries from the database. 
  * 
- * If chained to a select query, elements in parent 
- * object will be unaffected.
+ * Requires an additional parameter to confirm the deletion.
+ * 
+ * Elements in parent database will not be deleted
  * 
  */
 NDDB.prototype.clear = function (confirm) {
@@ -959,6 +1005,7 @@ NDDB.prototype.clear = function (confirm) {
  * 
  */
 NDDB.prototype.join = function (key1, key2, pos, select) {
+// <!--	
     // Construct a better comparator function
     // than the generic JSUS.equals
 //        if (key1 === key2 && 'undefined' !== typeof this.__C[key1]) {
@@ -970,6 +1017,7 @@ NDDB.prototype.join = function (key1, key2, pos, select) {
 //        else {
 //            var comparator = JSUS.equals;
 //        }
+// -->	
     return this._join(key1, key2, JSUS.equals, pos, select);
 };
 

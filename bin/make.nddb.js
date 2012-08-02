@@ -36,7 +36,7 @@ program
 	console.log('Building documentation for NDDB v.' + version);
 	// http://nodejs.org/api.html#_child_processes
 	var root =  __dirname + '/../';
-	var command = root + 'node_modules/.bin/docker -i ' + root + ' jnddd.js -s true -o ' + root + 'docs/';
+	var command = root + 'node_modules/.bin/docker -i ' + root + ' nddb.js -s true -o ' + root + 'docs/';
 	var child = exec(command, function (error, stdout, stderr) {
 		util.print(stdout);
 		util.print(stderr);

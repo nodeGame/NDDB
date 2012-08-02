@@ -9,4 +9,4 @@ test/NDDB_Test.js
 *.nddb
 
 /build/*
-
+/docs/*
