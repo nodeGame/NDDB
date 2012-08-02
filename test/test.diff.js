@@ -71,8 +71,8 @@ describe('NDDB Diff', function() {
             difference = db.diff(different_db);
         });
 
-        it("db.length should be smaller by 2",function() {
-            difference.length.should.be.eql(db.length - different_db.length);
+        it("db.length should decrease by 1",function() {
+            difference.length.should.be.eql(db.length - 1);
 
         });
 
@@ -80,9 +80,11 @@ describe('NDDB Diff', function() {
             difference.select('title','=',"Water Lilies").length.should.be.eql(0);
             difference.select('title','=',"Das Rätsel der Begierde").length.should.be.eql(0);
         });
+        
+        // Add test should contain
     });
 
-    describe("#intersect",function() {
+    describe("#intersect()",function() {
         var difference = null;
         var different_db = null;
         before(function() {

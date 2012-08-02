@@ -8,7 +8,8 @@
     { "type": "MIT" }
   ],
   "dependencies": {
-    "JSUS": ">= 0.1.3"
+    "JSUS": ">= 0.1.3",
+    "docker": ">= 0.1.3"
   },
   "devDependencies": {
     "mocha": ">= 0.3.0",

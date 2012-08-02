@@ -943,8 +943,8 @@
      * @api private
      */
     NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
-        var comparator = comparator || JSUS.equals;
-        var pos = ('undefined' !== typeof pos) ? pos : 'joined';
+        comparator = comparator || JSUS.equals;
+        pos = ('undefined' !== typeof pos) ? pos : 'joined';
         if (select) {
             var select = (select instanceof Array) ? select : [select];
         }
@@ -1055,7 +1055,6 @@
         for (var i=0; i < this.db.length;i++) {
             out = out.concat(this._split(this.db[i], key));
         }
-        //console.log(out);
         return this.breed(out);
     };
     
@@ -1424,7 +1423,7 @@
         var that = this;
         return this.filter(function(el) {
             for (var i=0; i < nddb.length; i++) {
-                if (that.globalCompare(el,nddb[i]) === 0) {
+                if (that.globalCompare(el, nddb[i]) === 0) {
                     return false;
                 }
             }
@@ -1559,7 +1558,7 @@
             NDDB.log('Cannot register empty tag.', 'ERR');
             return;
         }
-        var idx = idx || this.nddb_pointer;
+        idx = idx || this.nddb_pointer;
         this.tags[tag] = idx;
     };
     

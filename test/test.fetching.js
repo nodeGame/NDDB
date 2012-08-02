@@ -124,7 +124,4 @@ describe('NDDB Fetching', function() {
         });
     });
 
-
-
 });
-
