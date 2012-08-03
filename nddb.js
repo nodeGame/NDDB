@@ -261,6 +261,7 @@ NDDB.prototype._masquerade = function (o, db) {
  * 
  * @see NDDB._masquerade
  * @api private
+ * @param {array} db Array of items to masquerade
  * 
  */
 NDDB.prototype._masqueradeDB = function (db) {
@@ -280,6 +281,7 @@ NDDB.prototype._masqueradeDB = function (db) {
  * configuration
  * 
  * @api private
+ * @param {object} options Optional. Configuration object
  */
 NDDB.prototype._autoUpdate = function (options) {
 	var update = JSUS.merge(options || {}, this.__update);
@@ -306,6 +308,7 @@ NDDB.prototype._autoUpdate = function (options) {
  * 
  * Imports a whole array into the current database
  * 
+ * @param {array} db Array of items to import
  */
 NDDB.prototype.importDB = function (db) {
     if (!db) return;
@@ -313,16 +316,19 @@ NDDB.prototype.importDB = function (db) {
     for (var i = 0; i < db.length; i++) {
         this.insert(db[i]);
     }
+    // <!-- Check this
     //this.db = this.db.concat(this._masqueradeDB(db));
     //this._autoUpdate();
+    // -->
 };
     
 /**
  * ### NDDB.insert
  * 
- * Insert an item, or an array of items, into the database
+ * Insert an item into the database
  * 
  * @param {object} o The item or array of items to insert
+ * @see NDDB._insert
  */
 NDDB.prototype.insert = function (o) {
 	if ('undefined' === typeof o || o === null) return;
@@ -335,6 +341,7 @@ NDDB.prototype.insert = function (o) {
  *
  * Inserts an object into the current database
  * 
+ * @param {object} o The item or array of items to insert
  */
 NDDB.prototype._insert = function (o) {
     if ('undefined' === typeof o || o === null) return;
@@ -357,6 +364,12 @@ NDDB.prototype._insert = function (o) {
  * Creates a clone of the current NDDB object
  * with a reference to the parent database
  * 
+ * Takes care of calling the actual constructor
+ * of the class, so that inheriting objects will
+ * preserve their prototype.
+ * 
+ * @param {array} db Array of items to import in the new database
+ * @return {NDDB} The new database 
  */
 NDDB.prototype.breed = function (db) {
     db = db || this.db;
@@ -374,6 +387,8 @@ NDDB.prototype.breed = function (db) {
  * a new NDDB instance based on the current settings
  * and returns it
  * 
+ * @return {object} options A copy of the current settings
+ * 
  */
 NDDB.prototype.cloneSettings = function () {
     var options = this.__options || {};
@@ -389,7 +404,9 @@ NDDB.prototype.cloneSettings = function () {
 /**
  * ### NDDB.toString
  *
- * Prints out the elements in the database
+ * Returns a human-readable representation of the database
+ * 
+ * @return {string} out A human-readable representation of the database
  */
 NDDB.prototype.toString = function () {
     var out = '';
@@ -402,10 +419,11 @@ NDDB.prototype.toString = function () {
 /**
  * ### NDDB.stringify
  *
- * Returns a string representation of the state
- * of the database.
+ * Returns a machine-readable representation of the database
  * 
  * Cyclic objects are decycled.
+ * 
+ * @return {string} out A machine-readable representation of the database
  * 
  */
 NDDB.prototype.stringify = function () {
