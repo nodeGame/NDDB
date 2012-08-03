@@ -891,6 +891,8 @@ NDDB.prototype.reverse = function () {
  *
  * Randomly shuffles all the entries of the database
  * 
+ * Changes the order of elements in the current database
+ * 
  */
 NDDB.prototype.shuffle = function () {
     // TODO: check do we need to reassign __nddbid__ ?
@@ -910,8 +912,9 @@ NDDB.prototype.shuffle = function () {
  * A new NDDB instance is breeded.
  * 
  * @param {function} func The filtering function
+ * @return {NDDB} A new instance of NDDB containing the filtered entries 
  * 
- * 	@see NDDB.breed
+ * @see NDDB.breed
  * 
  */
 NDDB.prototype.filter = function (func) {
@@ -928,7 +931,7 @@ NDDB.prototype.filter = function (func) {
  * must be a valid callback, and all the following are passed as parameters
  * to the callback
  * 
- * 	@see NDDB.map
+ * @see NDDB.map
  */
 NDDB.prototype.each = NDDB.prototype.forEach = function () {
     if (arguments.length === 0) return;
@@ -949,7 +952,8 @@ NDDB.prototype.each = NDDB.prototype.forEach = function () {
  * must be a valid callback, and all the following are passed as parameters
  * to the callback
  * 
- * 	@see NDDB.each
+ * @return {array} out The result of the mapping
+ * @see NDDB.each
  * 
  */
 NDDB.prototype.map = function () {
@@ -975,6 +979,7 @@ NDDB.prototype.map = function () {
  * 
  * Elements in the parent database will be deleted too.
  * 
+ * @return {NDDB} A new instance of NDDB with no entries 
  */
 NDDB.prototype.delete = function () {
 	if (!this.length) return this;
@@ -1007,6 +1012,7 @@ NDDB.prototype.delete = function () {
  * 
  * Elements in parent database will not be deleted
  * 
+ * @return {boolean} TRUE, if the database was cleared
  */
 NDDB.prototype.clear = function (confirm) {
     if (confirm) {
@@ -1685,6 +1691,7 @@ NDDB.prototype.intersect = function (nddb) {
  * 
  * Returns false, if the pointer is at an invalid position.
  * 
+ * @return {object|boolean} The current entry, or FALSE if none is found
  */
 NDDB.prototype.get = function (pos) {
     var pos = pos || this.nddb_pointer;
@@ -1703,6 +1710,8 @@ NDDB.prototype.get = function (pos) {
  * Returns false if the pointer is at the last entry,
  * or if database is empty.
  * 
+ * @return {object|boolean} The next entry, or FALSE if none is found 
+ * 
  */
 NDDB.prototype.next = function () {
     var el = NDDB.prototype.get.call(this, ++this.nddb_pointer);
@@ -1719,6 +1728,7 @@ NDDB.prototype.next = function () {
  * Returns false if the pointer is at the first entry,
  * or if database is empty.
  * 
+ * @return {object|boolean} The previous entry, or FALSE if none is found
  */
 NDDB.prototype.previous = function () {
     var el = NDDB.prototype.get.call(this, --this.nddb_pointer);
