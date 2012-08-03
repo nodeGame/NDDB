@@ -1423,14 +1423,16 @@ NDDB.prototype.groupBy = function (key) {
     var outs = [];
     for (var i=0; i < this.db.length; i++) {
         var el = JSUS.getNestedValue(key, this.db[i]);
+        console.log('VALUE1: ' + el)
         if ('undefined' === typeof el) continue;
-        
+        console.log('VALUE2: ' + el)
+        console.log(groups);
         // Creates a new group and add entries to it
         if (!JSUS.in_array(el, groups)) {
             groups.push(el);
-            
+            console.log('VALUE3: ' + el)
             var out = this.filter(function (elem) {
-                if (JSUS.equals(JSUS.getNestedValue(key, elem),el)) {
+                if (JSUS.equals(JSUS.getNestedValue(key, elem), el)) {
                     return this;
                 }
             });
