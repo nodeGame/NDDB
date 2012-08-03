@@ -707,6 +707,11 @@ NDDB.prototype.distinct = function () {
  *  can be chained. In order to get the actual entries returned, it is necessary
  *  to call one of the fetching methods.
  *  
+ * @param {string} d The dimension of comparison
+ * @param {string} op The operation to perform
+ * @param {string} value The right-hand element of comparison
+ * @return {NDDB} A new NDDB instance containing the selected items
+ * 
  *  @see NDDB.fetch()
  *  @see NDDB.fetchValues()
  */
@@ -1128,7 +1133,10 @@ NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
  * New entries are created and a new NDDB object is
  * breeded to allows method chaining.
  * 
- * @see NDDB._split
+ * @param {string} key The dimension along which splitting the entries
+ * @return {NDDB} A new database containing the split entries
+ * 
+ * 	@see NDDB._split
  * 
  */
 NDDB.prototype.split = function (key) {    
@@ -1146,13 +1154,44 @@ NDDB.prototype.split = function (key) {
  * ### NDDB._fetch
  *
  * Performs the fetching of the entries according to the
- * specified parameters. 
+ * specified parameters 
+ * 
+ * Examples
+ * 
+ * ```javascript
+ * var db = new NDDB();
+ * var items = [{a:1, b:2}, {a:3, b:4}, {a:5}];
+ * db.importDB(items);
+ * 
+ * db._fetch(); 
+ * // [ {a:1, b:2}, {a:3, b:4}, {a:5} ]
+ * 
+ * db._fetch('a'); 
+ * // [1, 3, 5];
+ * 
+ * db._fetch('a', 'VALUES'); 
+ * //  [ [ 1 ], [ 3 ], [ 5 ] ]
+ * 
+ * db._fetch('a', 'KEY_VALUES'); 
+ * // [ [ 'a', 1 ], [ 'a', 3 ], [ 'a', 5 ] ]
+ * 
+ * db._fetch(null, 'VALUES'); 
+ * // [ [ 1, 2 ], [ 3, 4 ], [ 5] ]
+ * 
+ * db._fetch(null, 'KEY_VALUES'); 
+ * // [ [ 'a', 1, 'b', 2 ], [ 'a', 3, 'b', 4 ], [ 'a', 5 ] ]
+ * ```
+ * 
+ * No further chaining is permitted after fetching.
  * 
  * @api private
+ * @param {string} key Optional. If set, returns only the value from the specified property 
+ * @param {string} array. Optional If set, objects are transformed in arrays and returned
+ * @return {array} out The fetched values 
  * 
- * @see NDDB.fetch
- * @see NDDB.fetchArray
- * @see NDDB.fetchKeyArray
+ * 	@see NDDB.fetch
+ * 	@see NDDB.fetchArray
+ * 	@see NDDB.fetchKeyArray
  * 
  */
 NDDB.prototype._fetch = function (key, array) {
@@ -1208,24 +1247,27 @@ NDDB.prototype._fetch = function (key, array) {
  * 
  * If a second key parameter is passed, only the value of 
  * the property named after the key are returned, otherwise  
- * the whole entry is returned as it is. E.g.:
+ * the whole entry is returned as it is.
  * 
+ * Examples
  * 
- * var nddb = new NDDB();
- * nddb.insert([{a:1,
- *                  b:{c:2},
- *                  d:3
- *               }]);
+ * ```javascript
+ * var db = new NDDB();
+ * db.insert([ { a:1, b:{c:2}, d:3 } ]);
  * 
- * nddb.fetch();    // [ {a: 1, b: {c: 2}, d: 3} ] 
- * nddb.fetch('b'); // [ {c: 2} ];
- * nddb.fetch('d'); // [ 3 ];
+ * db.fetch();    // [ {a: 1, b: {c: 2}, d: 3} ] 
+ * db.fetch('b'); // [ {c: 2} ];
+ * db.fetch('d'); // [ 3 ];
+ * ```
  * 
  * No further chaining is permitted after fetching.
  * 
- * @see NDDB._fetch
- * @see NDDB.fetchArray
- * @see NDDB.fetchKeyArray
+ * @param {string} key Optional. If set, returns only the value from the specified property 
+ * @return {array} out The fetched values 
+ * 
+ * 	@see NDDB._fetch
+ * 	@see NDDB.fetchArray
+ * 	@see NDDB.fetchKeyArray
  * 
  */
 NDDB.prototype.fetch = function (key) {
@@ -1239,20 +1281,29 @@ NDDB.prototype.fetch = function (key) {
  * one-dimensional array by exploding all nested values, and returns
  * them into an array.
  * 
- * If a second key parameter is passed, only the value of the property
+ * If a parameter is passed, only the value of the property
  * named after the key is returned, otherwise the whole entry 
- * is exploded, and its values returned in a array.  E.g.:
+ * is exploded, and its values returned in a array. 
  * 
- * var nddb = new NDDB();
- * nddb.insert([{a:1,
- *                  b:{c:2},
- *                  d:3
- *               }]);
+ * Examples
  * 
- * nddb.fetchArray();     // [ [ 1, 2, 3 ] ]
- * nddb.fetchArray('b'); // [ ['c', 2 ] ]
- * nddb.fetchArray('d'); // [ [ 3 ] ];
+ * ```javascript
+ * var db = new NDDB();
+ * db.insert([ { a:1, b:{c:2}, d:3 } ]);
  * 
+ * db.fetchArray();    // [ [ 1, 2, 3 ] ]
+ * db.fetchArray('b'); // [ ['c', 2 ] ]
+ * db.fetchArray('d'); // [ [ 3 ] ];
+ * ```
+ * 
+ * No further chaining is permitted after fetching.
+ * 
+ * @param {string} key Optional. If set, returns only the value from the specified property 
+ * @return {array} out The fetched values 
+ * 
+ * 	@see NDDB._fetch
+ * 	@see NDDB.fetch
+ * 	@see NDDB.fetchKeyArray
  * 
  */
 NDDB.prototype.fetchArray = function (key) {
@@ -1263,19 +1314,27 @@ NDDB.prototype.fetchArray = function (key) {
  * ### NDDB.fetchKeyArray
  *
  * Exactly as NDDB.fetchArray, but also the keys are added to the
- * returned values. E.g.
+ * returned values. 
  * 
- * var nddb = new NDDB();
- * nddb.insert([{a:1,
- *                  b:{c:2},
- *                  d:3
- *               }]);
+ * Examples
  * 
- * nddb.fetchArray();        // [ [ 'a', 1, 'c', 2, 'd', 3 ] ]
- * nddb.fetchKeyArray('b'); // [ [ 'b', 'c', 2 ] ] 
- * nddb.fetchArray('d');    // [ [ 'd', 3 ] ]
+ * ```javascript
+ * var db = new NDDB();
+ * db.insert([ { a:1, b:{c:2}, d:3 } ]);
  * 
- * @see NDDB.fetchArray
+ * db.fetchArray();       // [ [ 'a', 1, 'c', 2, 'd', 3 ] ]
+ * db.fetchKeyArray('b'); // [ [ 'b', 'c', 2 ] ] 
+ * db.fetchArray('d');    // [ [ 'd', 3 ] ]
+ * ```
+ * 
+ * No further chaining is permitted after fetching.
+ * 
+ * @param {string} key Optional. If set, returns only the value from the specified property 
+ * @return {array} out The fetched values 
+ * 
+ * 	@see NDDB._fetch
+ * 	@see NDDB.fetch
+ * 	@see NDDB.fetchArray
  */
 NDDB.prototype.fetchKeyArray = function (key) {
     return this._fetch(key, 'KEY_VALUES');
@@ -1305,14 +1364,34 @@ NDDB.prototype.fetchKeyValues = function (key) {
 /**
  * ### NDDB.groupBy
  *
- * Splits the entries in the database in subgroups,
- * each of them formed up by element which have the
- * same value along the specified dimension. An array
- * of NDDB instances is returned, therefore no direct 
+ * Splits the entries in the database in subgroups
+ * 
+ * Each subgroup is formed up by elements which have the
+ * same value along the specified dimension. 
+ * 
+ * An array of NDDB instances is returned, therefore no direct 
  * method chaining is allowed afterwards. 
  * 
  * Entries containing undefined values in the specified
- * dimension will be skipped 
+ * dimension will be skipped
+ * 
+ * Examples
+ * 
+ * ```javascript
+ * var db = new NDDB();
+ * var items = [{a:1, b:2}, {a:3, b:4}, {a:5}, {a:6, b:2}];
+ * db.importDB(items);
+ * 
+ * var groups = db.groupBy('b'); 
+ * groups.length; // 2
+ * 
+ * groups[0].fetch(); // [ { a: 1, b: 2 }, { a: 6, b: 2 } ]
+ * 
+ * groups[1].fetch(); // [ { a: 3, b: 4 } ]
+ * ```
+ * 
+ * @param {string} key If the dimension for grouping 
+ * @return {array} outs The array of groups 
  * 
  */
 NDDB.prototype.groupBy = function (key) {
@@ -1324,8 +1403,7 @@ NDDB.prototype.groupBy = function (key) {
         var el = JSUS.getNestedValue(key, this.db[i]);
         if ('undefined' === typeof el) continue;
         
-        // Creates a new group and add entries
-        // into it
+        // Creates a new group and add entries to it
         if (!JSUS.in_array(el, groups)) {
             groups.push(el);
             
@@ -1342,9 +1420,6 @@ NDDB.prototype.groupBy = function (key) {
         }
         
     }
-    
-    //NDDB.log(groups);
-    
     return outs;
 };    
 
@@ -1353,24 +1428,22 @@ NDDB.prototype.groupBy = function (key) {
 /**
  * ### NDDB.count
  *
- * Returns the total count of all the entries 
- * in the database containing the specified key. 
+ * Counts the entries containing the specified key 
  * 
  * If key is undefined, the size of the databse is returned.
  * 
- * @see NDDB.size
+ * @param {string} key The dimension to count
+ * @return {number} count The number of items along the specified dimension
+ * 
+ * 	@see NDDB.length
  */
 NDDB.prototype.count = function (key) {
     if ('undefined' === typeof key) return this.db.length;
     var count = 0;
-    for (var i=0; i < this.db.length; i++) {
-        try {
-            var tmp = JSUS.eval('this.' + key, this.db[i]);
-            if ('undefined' !== typeof tmp) {
-                count++;
-            }
+    for (var i = 0; i < this.db.length; i++) {
+        if (JSUS.hasOwnNestedProperty(key, this.db[i])){
+            count++;
         }
-        catch (e) {};
     }    
     return count;
 };
@@ -1384,17 +1457,18 @@ NDDB.prototype.count = function (key) {
  * 
  * Non numeric values are ignored. 
  * 
+ * @param {string} key The dimension to sum
+ * @return {number|boolean} sum The sum of the values for the dimension, or FALSE if it does not exist
+ * 
  */
 NDDB.prototype.sum = function (key) {
+	if ('undefined' === typeof key) return false;
     var sum = 0;
     for (var i=0; i < this.db.length; i++) {
-        try {
-            var tmp = JSUS.getNestedValue(key, this.db[i]);
-            if (!isNaN(tmp)) {
-                sum += tmp;
-            }
+        var tmp = JSUS.getNestedValue(key, this.db[i]);
+        if (!isNaN(tmp)) {
+            sum += tmp;
         }
-        catch (e) {};
     }    
     return sum;
 };
@@ -1408,20 +1482,20 @@ NDDB.prototype.sum = function (key) {
  * Entries with non numeric values are ignored, and excluded
  * from the computation of the mean.
  * 
+ * @param {string} key The dimension to average
+ * @return {number|boolean} The mean of the values for the dimension, or FALSE if it does not exist
+ * 
  */
 NDDB.prototype.mean = function (key) {
+	if ('undefined' === typeof key) return false;
     var sum = 0;
     var count = 0;
     for (var i=0; i < this.db.length; i++) {
-        try {
-            var tmp = JSUS.eval('this.' + key, this.db[i]);
-            if (!isNaN(tmp)) { 
-                //NDDB.log(tmp);
-                sum += tmp;
-                count++;
-            }
+        var tmp = JSUS.getNestedValue(key, this.db[i]);
+        if (!isNaN(tmp)) { 
+            sum += tmp;
+            count++;
         }
-        catch (e) {};
     }    
     return (count === 0) ? 0 : sum / count;
 };
@@ -1435,21 +1509,22 @@ NDDB.prototype.mean = function (key) {
  * Entries with non numeric values are ignored, and excluded
  * from the computation of the standard deviation.
  * 
+ * @param {string} key The dimension to average
+ * @return {number|boolean} The mean of the values for the dimension, or FALSE if it does not exist
+ * 
+ * 	@see NDDB.mean
  */
-NDDB.prototype.stddev = function (key) {	
+NDDB.prototype.stddev = function (key) {
+	if ('undefined' === typeof key) return false;
     var mean = this.mean(key);
     if (isNaN(mean)) return false;
     
     var V = 0;
     this.each(function(e){
-        try {
-            var tmp = JSUS.eval('this.' + key, e);
-            if (!isNaN(tmp)) { 
-            	V += Math.pow(tmp - mean, 2)
-                //NDDB.log(tmp);
-            }
+        var tmp = JSUS.getNestedValue(key, e);
+        if (!isNaN(tmp)) { 
+        	V += Math.pow(tmp - mean, 2)
         }
-        catch (e) {};
     });
     
     return (V !== 0) ? Math.sqrt(V) : 0;
@@ -1464,17 +1539,19 @@ NDDB.prototype.stddev = function (key) {
  * 
  * Entries with non numeric values are ignored. 
  * 
+ * @param {string} key The dimension of which to find the min
+ * @return {number|boolean} The smallest value for the dimension, or FALSE if it does not exist
+ * 
+ * 	@see NDDB.max
  */
 NDDB.prototype.min = function (key) {
+	if ('undefined' === typeof key) return false;
     var min = false;
     for (var i=0; i < this.db.length; i++) {
-        try {
-            var tmp = JSUS.eval('this.' + key, this.db[i]);
-            if (!isNaN(tmp) && (tmp < min || min === false)) {
-                min = tmp;
-            }
+        var tmp = JSUS.getNestedValue(key, this.db[i]);
+        if (!isNaN(tmp) && (tmp < min || min === false)) {
+            min = tmp;
         }
-        catch (e) {};
     }    
     return min;
 };
@@ -1486,18 +1563,20 @@ NDDB.prototype.min = function (key) {
  * in the database containing the specified key. 
  * 
  * Entries with non numeric values are ignored. 
+ *
+ * @param {string} key The dimension of which to find the max
+ * @return {number|boolean} The biggest value for the dimension, or FALSE if it does not exist
  * 
+ * 	@see NDDB.min
  */
 NDDB.prototype.max = function (key) {
+	if ('undefined' === typeof key) return false;
     var max = false;
     for (var i=0; i < this.db.length; i++) {
-        try {
-            var tmp = JSUS.eval('this.' + key, this.db[i]);
-            if (!isNaN(tmp) && (tmp > max || max === false)) {
-                max = tmp;
-            }
+        var tmp = JSUS.getNestedValue(key, this.db[i]);
+        if (!isNaN(tmp) && (tmp > max || max === false)) {
+            max = tmp;
         }
-        catch (e) {};
     }    
     return max;
 };
@@ -1509,12 +1588,16 @@ NDDB.prototype.max = function (key) {
  * ### NDDB.diff
  *
  * Performs a diff of the entries in the database and the database
- * object passed as parameter (can be instance of Array or NDDB).
+ * object passed as parameter (Array or NDDB)
  * 
- * Returns all the entries which are present in the current
- * instance of NDDB and *not* in the database obj passed 
- * as parameter.
+ * Returns a new NDDB instance containing all the entries that
+ * are present in the current instance, and *not* in the 
+ * database obj passed as parameter.
  * 
+ * @param {NDDB|array} nddb The external database to compare
+ * @return {NDDB} A new database containing the result of the diff
+ * 
+ *  @see NDDB.intersect
  */
 NDDB.prototype.diff = function (nddb) {
     if (!nddb) return this;
@@ -1527,7 +1610,7 @@ NDDB.prototype.diff = function (nddb) {
     var that = this;
     return this.filter(function(el) {
         for (var i=0; i < nddb.length; i++) {
-            if (that.globalCompare(el,nddb[i]) === 0) {
+            if (that.globalCompare(el, nddb[i]) === 0) {
                 return false;
             }
         }
@@ -1538,12 +1621,17 @@ NDDB.prototype.diff = function (nddb) {
 /**
  * ### NDDB.intersect
  *
- * Performs a diff of the entries in the database and the database 
- * object passed as parameter (can be instance of Array or NDDB).
+ * Finds the common the entries between the current database and 
+ * the database  object passed as parameter (Array or NDDB)
  * 
- * Returns all the entries which are present both in the current
- * instance of NDDB and in the database obj passed as parameter.
+ * Returns a new NDDB instance containing all the entries that
+ * are present both in the current instance of NDDB and in the 
+ * database obj passed as parameter.
  * 
+ * @param {NDDB|array} nddb The external database to compare
+ * @return {NDDB} A new database containing the result of the intersection
+ * 
+ *  @see NDDB.diff
  */
 NDDB.prototype.intersect = function (nddb) {
     if (!nddb) return this;
@@ -1569,13 +1657,13 @@ NDDB.prototype.intersect = function (nddb) {
  * ### NDDB.get
  *
  * Returns the entry in the database, at which 
- * the iterator is currently pointing. 
+ * the iterator is currently pointing 
  * 
  * If a parameter is passed, then returns the entry
  * with the same internal id. The pointer is *not*
  * automatically updated. 
  * 
- * Returns false, if the pointer is at invalid position.
+ * Returns false, if the pointer is at an invalid position.
  * 
  */
 NDDB.prototype.get = function (pos) {
@@ -1590,7 +1678,7 @@ NDDB.prototype.get = function (pos) {
  * ### NDDB.next
  *
  * Moves the pointer to the next entry in the database 
- * and returns it.
+ * and returns it
  * 
  * Returns false if the pointer is at the last entry,
  * or if database is empty.
@@ -1606,7 +1694,7 @@ NDDB.prototype.next = function () {
  * ### NDDB.previous
  *
  * Moves the pointer to the previous entry in the database 
- * and returns it.
+ * and returns it
  * 
  * Returns false if the pointer is at the first entry,
  * or if database is empty.
@@ -1621,15 +1709,20 @@ NDDB.prototype.previous = function () {
 /**
  * ### NDDB.first
  *
- * Moves the pointer to the first entry in the database.
+ * Moves the pointer to the first entry in the database,
+ * and returns it
  * 
  * Returns the first entry of the database, or undefined 
  * if the database is empty.
  * 
+ * @param {string} key Optional. If set, moves to the pointer to the first entry along this dimension
+ * @return {object} The first entry found
+ * 
+ * 	@see NDDB.last
  */
 NDDB.prototype.first = function (key) {
     var db = this.fetch(key);
-    if (db.length > 0) {
+    if (db.length) {
         this.nddb_pointer = db[0].nddbid;
         return db[0];
     }
@@ -1639,15 +1732,20 @@ NDDB.prototype.first = function (key) {
 /**
  * ### NDDB.last
  *
- * Moves the pointer to the first last in the database.
+ * Moves the pointer to the first last in the database,
+ * and returns it
  * 
  * Returns the last entry of the database, or undefined 
  * if the database is empty.
  * 
+ * @param {string} key Optional. If set, moves to the pointer to the last entry along this dimension
+ * @return {object} The last entry found
+ * 
+ * 	@see NDDB.first
  */
 NDDB.prototype.last = function (key) {
     var db = this.fetch(key);
-    if (db.length > 0) {
+    if (db.length) {
         this.nddb_pointer = db[db.length-1].nddbid;
         return db[db.length-1];
     }
@@ -1667,28 +1765,44 @@ NDDB.prototype.last = function (key) {
  * 
  * @status: experimental
  * 
- * @see NDDB.resolveTag
+ * @param {string} tag An alphanumeric id
+ * @param {string} idx Optional. The index in the database. Defaults nddb_pointer
+ * @return {boolean} TRUE, if registration is successful
+ * 
+ * 	@see NDDB.resolveTag
  */
 NDDB.prototype.tag = function (tag, idx) {
     if ('undefined' === typeof tag) {
         NDDB.log('Cannot register empty tag.', 'ERR');
-        return;
+        return false;
     }
     idx = idx || this.nddb_pointer;
-    this.tags[tag] = idx;
+    if (idx > this.length || idx < 0) {
+        NDDB.log('Invalid index provided for tag registration', 'ERR');
+        return false;
+    }
+    this.tags[tag] = this.db[idx];
+    return true;
 };
 
 /**
  * ### NDDB.resolveTag
  *
- * Returns the element associated to the given tag.
+ * Returns the element associated with the given tag.
  * 
+ * @param {string} tag An alphanumeric id
+ * @return {object} The object associated with the tag
+ * 
+ * 	@see NDDB.tag
  * @status: experimental
  */
 NDDB.prototype.resolveTag = function (tag) {
-    if ('undefined' === typeof tag) return false;
-        return this.tags[tag];
-    };
+    if ('undefined' === typeof tag) {
+    	NDDB.log('Cannot resolve empty tag.', 'ERR');
+    	return false;
+    }
+    return this.tags[tag];
+};
 
 // ## Persistance    
     

@@ -66,6 +66,13 @@ describe('NDDB Misc Operation', function() {
         });
 
     });
+    
+    
+    describe('#count()', function() {
+    	it('should count the entries having the specified property',function() {
+    		db.count('done').should.be.eql(db.length);
+        });
+    });
 
     
 	

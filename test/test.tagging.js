@@ -54,26 +54,67 @@ describe('NDDB Tagging', function() {
         it('should return the position of the entry',function() {
             db.last();
             db.tag('someone');
-            db.resolveTag('someone').should.eql(5);
+            db.resolveTag('someone').should.eql({
+                painter: "Manet",
+                title: "Olympia",
+                year: 1863
+            });
         });
         
         it('should return the position of the entry',function() {
             db.previous();
             db.tag('a other one');
-            db.resolveTag('a other one').should.eql(4);
+            db.resolveTag('a other one').should.eql({
+                painter: "Monet",
+                title: "Wheatstacks (End of Summer)",
+                year: 1891
+            });
         });
 
         it('should return the correct position after db.sort(year)',function() {
             var sortedDb = db.sort('year');
-            sortedDb.resolveTag.should.eql(1);
+            sortedDb.resolveTag('someone').should.eql({
+                painter: "Manet",
+                title: "Olympia",
+                year: 1863
+            });
+        });
+        
+        it('should return the correct position after db.shuffle()',function() {
+            db.shuffle();
+            db.resolveTag('someone').should.eql({
+                painter: "Manet",
+                title: "Olympia",
+                year: 1863
+            });
+        });
+        
+        it('should reflect the state of the object after an update',function() {
+            var olympia = db.select('title', '=', 'Olympia').first();
+            olympia.updated = true;
+            
+            db.resolveTag('someone').should.eql({
+                painter: "Manet",
+                title: "Olympia",
+                year: 1863,
+                updated: true,
+            });
         });
 
     });
 
     describe('a specific entry', function() {
+    	before(function(){
+    		db.clear(true);
+    		db.importDB(items);
+    	})
         it('should return the position of the entry',function() {
-            db.tag('the secret one',3);
-            db.resolveTag('the secret one').should.eql(3);
+            db.tag('the secret one', 3);
+            db.resolveTag('the secret one').should.eql({
+                painter: "Monet",
+                title: "Water Lilies",
+                year: 1906
+            });
         });
     });
 
