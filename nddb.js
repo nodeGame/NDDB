@@ -489,15 +489,19 @@ NDDB.prototype.comparator = function (d) {
     }
     
     return function (o1, o2) {
+// <!--    	
 //            NDDB.log('1' + o1);
 //            NDDB.log('2' + o2);
+// -->    	
         if ('undefined' === typeof o1 && 'undefined' === typeof o2) return 0;
         if ('undefined' === typeof o1) return 1;
         if ('undefined' === typeof o2) return -1;        
         var v1 = JSUS.getNestedValue(d,o1);
         var v2 = JSUS.getNestedValue(d,o2);
+// <!--
 //            NDDB.log(v1);
 //            NDDB.log(v2);
+// -->        
         if ('undefined' === typeof v1 && 'undefined' === typeof v2) return 0;
         if ('undefined' === typeof v1) return 1;
         if ('undefined' === typeof v2) return -1;
@@ -534,8 +538,8 @@ NDDB.prototype.isReservedWord = function (key) {
  * @param {function} func The hashing function
  * @return {boolean} TRUE, if registration was successful
  * 
- * 	@see NDDB.isReservedWord
- * 	@see NDDB.rebuildIndexes
+ * @see NDDB.isReservedWord
+ * @see NDDB.rebuildIndexes
  * 
  */
 NDDB.prototype.hash = NDDB.prototype.h = function (idx, func) {
@@ -567,7 +571,7 @@ NDDB.prototype.hash = NDDB.prototype.h = function (idx, func) {
  * 
  * Indexes are defined by the hashing functions
  * 
- *	@see NDDB.hash
+ * @see NDDB.hash
  */
 NDDB.prototype.rebuildIndexes = function() {
 	if (JSUS.isEmpty(this.__H)) {
