@@ -76,7 +76,7 @@ describe('NDDB Diff', function() {
 
         });
         
-        it("difference should consist of five item",function() {
+        it("difference should consist of five items",function() {
             difference.length.should.be.eql(5);
 
         });
