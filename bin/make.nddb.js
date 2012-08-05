@@ -21,11 +21,11 @@ program
 program  
 	.command('build [options]')
 	.description('Creates a custom NDDB build')
+	.option('-L, --standalone', 'bare NDDB (no dependencies)')
 	.option('-J, --JSUS', 'with JSUS (OBJ and ARRAY)')
 	.option('-c, --cycle', 'with support for cyclyc objects')
 	.option('-s, --shelf', 'with Shelf.JS')
 	.option('-e, --es5', 'with support for old browsers')
-	.option('-L, --standalone', 'just NDDB (no dependency)')
 	.option('-a, --all', 'full build of NDDB')
 	.option('-o, --output <file>', 'output file (without .js)')
 	.action(function(env, options){

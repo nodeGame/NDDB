@@ -260,11 +260,41 @@ NDDB relies on [mocha](http://visionmedia.github.com/mocha/) and [should.js](htt
     $ npm test # will run the test suite against nddb.js
 
 
+## Build
+
+Create your customized build of NDDB using the make file in the `bin` directory
+
+```javascript
+node make.nddb.js build // Standard build, about 28Kb minified
+node make.nddb.js build -a -o nddb-full // Full build, about 40Kb minified
+```
+
+### Help
+
+```javascript
+node make.nddb.js --help
+```
+
+## API Documentation
+
+Create html API documentation using the make file in the bin directory  
+
+```javascript
+node make.nddb.js doc
+```
+
 ## ChangeLog
+
+### 0.3.0 (forecoming)
+
+  - Full test coverage
+  - Make file in bin directory
+  - Custom builds
+  - Bug fixing
 
 ### 0.2.5
 
-  - NDDB.distict() + test
+  - NDDB.distinct() + test
   - Support for cyclic objects when saving the database to file
   - NDDB.stddev()
   - Bug fixing
