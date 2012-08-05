@@ -20,7 +20,7 @@ program
   
 program  
 	.command('build [options]')
-	.description('Create NDDB ustom build')
+	.description('Creates a custom NDDB build')
 	.option('-J, --JSUS', 'with JSUS (OBJ and ARRAY)')
 	.option('-c, --cycle', 'with support for cyclyc objects')
 	.option('-s, --shelf', 'with Shelf.JS')
@@ -34,7 +34,7 @@ program
   
 program  
 	.command('multibuild')
-	.description('Create NDDB ustom build')
+	.description('Creates pre-defined NDDB builds')
 	.action(function(){
 		console.log('Multi-build for NDDB v.' + version);
 		build({
@@ -46,15 +46,15 @@ program
 			output: "nddb-standalone",
 		});
 		build({
-			all: false,
-			output: "nddb-jsus",
+			JSUS: true,
+			output: "nddb",
 		});
 		
 });
 
 program
 	.command('doc')
-	.description('Build documentation files')
+	.description('Builds documentation files')
 	.action(function(){
 		console.log('Building documentation for NDDB v.' + version);
 		// http://nodejs.org/api.html#_child_processes
