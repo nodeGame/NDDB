@@ -104,18 +104,14 @@ function NDDB (options, db, parent) {
     
     // ### length
     // The number of items in the database
-    //
-    // May not be available in some browsers. Use NDDB.count() in such cases 
-    // @see https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/defineProperty
-    if (Object.defineProperty) {
-	    Object.defineProperty(this, 'length', {
-	    	set: function(){},
-	    	get: function(){
-	    		return this.db.length;
-	    	},
-	    	configurable: true
-		});
-    }
+    Object.defineProperty(this, 'length', {
+    	set: function(){},
+    	get: function(){
+    		return this.db.length;
+    	},
+    	configurable: true
+	});
+   
     
     // ### __C
     // List of comparator functions
