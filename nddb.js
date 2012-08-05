@@ -129,11 +129,11 @@ function NDDB (options, db, parent) {
     this.__update.pointer 	= false;
     
     // ### __update.indexes
-    // If TRUE, rebuild indexes on every insert and delete
+    // If TRUE, rebuild indexes on every insert and remove
     this.__update.indexes 	= false;
     
     // ### __update.sort
-    // If TRUE, sort db on every insert and delete
+    // If TRUE, sort db on every insert and remove
     this.__update.sort 		= false;
         
     // ### __parent
@@ -973,20 +973,20 @@ NDDB.prototype.map = function () {
 // ## Deletion
 
 /**
- * ### NDDB.delete
+ * ### NDDB.remove
  *
  * Removes all entries from the database
  * 
- * Elements in the parent database will be deleted too.
+ * Elements in the parent database will be removed too.
  * 
  * @return {NDDB} A new instance of NDDB with no entries 
  */
-NDDB.prototype.delete = function () {
+NDDB.prototype.remove = function () {
 	if (!this.length) return this;
   
 	if (this.__parent) {    	  
 		for (var i=0; i < this.db.length; i++) {
-			// Important: index changes as we deletes elements
+			// Important: index changes as we removes elements
 			var idx = this.db[i].nddbid - i;
 			this.__parent.db.splice(idx,1);
         }
@@ -1010,7 +1010,7 @@ NDDB.prototype.delete = function () {
  * 
  * Requires an additional parameter to confirm the deletion.
  * 
- * Elements in parent database will not be deleted
+ * Elements in parent database will not be removed
  * 
  * @return {boolean} TRUE, if the database was cleared
  */

@@ -85,13 +85,13 @@ db.h('painter', hashPainter);
 db.importDB(not_hashable);
 db.importDB(hashable);
 
-describe('NDDB Delete Operations:', function() {
+describe('NDDB Remove Operations:', function() {
 
 	
-	describe('Delete elements not in index (Ferrari)', function() {
+	describe('Remove elements not in index (Ferrari)', function() {
 		before(function(){
     		testcase = db.select('car', '=', 'Ferrari');
-    		testcase.delete();
+    		testcase.remove();
     	});
 		after(function(){
 			testcase = null;
@@ -112,11 +112,11 @@ describe('NDDB Delete Operations:', function() {
     	
     });
 	
-	describe('Deleting elements that are indexed', function() {
+	describe('Removing elements that are indexed', function() {
 		before(function(){
 			tmp = db.length;
 			testcase = db.select('painter', '=', 'Monet');
-			testcase.delete();
+			testcase.remove();
 			db.rebuildIndexes();	
 
 			
@@ -132,9 +132,9 @@ describe('NDDB Delete Operations:', function() {
 	
 	});
 	
-	describe('Deleting all items', function() {
+	describe('Removing all items', function() {
     	before(function(){
-    		db.delete();
+    		db.remove();
     	});
     	
     	it('should make db.length equal to 0', function() {

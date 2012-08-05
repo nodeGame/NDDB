@@ -26,19 +26,19 @@ implemented:
 
   * Sorting and selecting:
 
-     - select, sort, reverse, last, first, limit, distinct, shuffle*
+     - select, sort, reverse, last, first, limit, distinct, shuffle
  
   * Custom callbacks
  
-     - map, forEach, filter
+     - map, each, filter
  
   * Deletion
  
-     - delete, clear
+     - remove, clear
  
   * Advanced operations
  
-     - split*, join, concat
+     - split, join, concat
  
   * Fetching
  
@@ -56,15 +56,13 @@ implemented:
  
      - previous, next, first, last
 
-  * Tagging*
+  * Tagging
  
      - tag
         
   * Updating
   
-     - Update must be performed manually after a selection.
-    
-\* = experimental
+     - Update must be performed manually after a selection
 
 ## Usage
 
@@ -221,7 +219,7 @@ Define a custom index (hash) function for the name of the painter, which splits 
 
     var options = {
       tags:  {},          // Collection of tags
-      update: {           // On every insert and delete:
+      update: {           // On every insert and remove:
         indexes:  true,   // updates the indexes, if any  
         sort:     true,   // sorts the items of the database 
         pointer:  true,   // moves the iterator pointer to the last inserted element
