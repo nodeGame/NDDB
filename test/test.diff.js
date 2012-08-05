@@ -71,8 +71,13 @@ describe('NDDB Diff', function() {
             difference = db.diff(different_db);
         });
 
-        it("db.length should decrease by 1",function() {
-            difference.length.should.be.eql(db.length - 1);
+        it("db.length should stay the same",function() {
+            db.length.should.be.eql(items.length);
+
+        });
+        
+        it("difference should consist of five item",function() {
+            difference.length.should.be.eql(5);
 
         });
 

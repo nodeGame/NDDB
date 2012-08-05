@@ -1623,25 +1623,17 @@ NDDB.prototype.max = function (key) {
  * @param {NDDB|array} nddb The external database to compare
  * @return {NDDB} A new database containing the result of the diff
  * 
- *  @see NDDB.intersect
+ * @see NDDB.intersect
+ * @see JSUS.arrayDiff
  */
 NDDB.prototype.diff = function (nddb) {
-    if (!nddb) return this;
+    if (!nddb || !nddb.length) return this;
     if ('object' === typeof nddb) {
         if (nddb instanceof NDDB || nddb instanceof this.constructor) {
-            var nddb = nddb.db;
+            nddb = nddb.db;
         }
     }
-    if (nddb.length === 0) return this;
-    var that = this;
-    return this.filter(function(el) {
-        for (var i=0; i < nddb.length; i++) {
-            if (that.globalCompare(el, nddb[i]) === 0) {
-                return false;
-            }
-        }
-        return el;
-    });
+    return this.breed(JSUS.arrayDiff(this.db, nddb));
 };
 
 /**
@@ -1657,23 +1649,17 @@ NDDB.prototype.diff = function (nddb) {
  * @param {NDDB|array} nddb The external database to compare
  * @return {NDDB} A new database containing the result of the intersection
  * 
- *  @see NDDB.diff
+ * @see NDDB.diff
+ * @see JSUS.arrayIntersect
  */
 NDDB.prototype.intersect = function (nddb) {
-    if (!nddb) return this;
+    if (!nddb || !nddb.length) return this;
     if ('object' === typeof nddb) {
         if (nddb instanceof NDDB || nddb instanceof this.constructor) {
             var nddb = nddb.db;
         }
     }
-    var that = this;
-    return this.filter(function(el) {
-        for (var i=0; i < nddb.length; i++) {
-            if (that.globalCompare(el,nddb[i]) === 0) {
-                return el;
-            }
-        }
-    });
+    return this.breed(JSUS.arrayIntersect(this.db, nddb));
 };
 
 // ## Iterator
