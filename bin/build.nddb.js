@@ -14,7 +14,7 @@ var smoosh = require('smoosh'),
 
 function build(options) {
 	
-	if (!options.JSUS && !options.shelf && !options.all && !options.cycle) {
+	if (!options.standalone && !options.JSUS && !options.shelf && !options.all && !options.cycle) {
 		options.standard = true;
 	}
 	
