@@ -22,6 +22,7 @@ program
   .option('-J, --JSUS', 'build with JSUS (OBJ and ARRAY)')
   .option('-c, --cycle', 'build with support for cyclyc objects')
   .option('-s, --shelf', 'build with Shelf.JS')
+  .option('-e, --es5', 'build with support for old browsers')
   .option('-a, --all', 'full build of NDDB')
   .option('-o, --output <file>', 'output file (without .js)')
   .action(function(env, options){

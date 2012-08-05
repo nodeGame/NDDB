@@ -50,13 +50,23 @@ function build(options) {
 	  rootDir + "nddb.js",           
 	];
 	
-	//nddb
+	// cyclic objects
 	var nddb_cycle = [
 	  rootDir + "external/cycle.js",
 	];	
 	
+	var nddb_es5 = [
+	  rootDir + "node_modules/es5-shim/es5-shim.js",       
+	];
+	
 	// CREATING build array
 	var files = [];
+	
+	// 0. ES5-shim
+	if (options.es5 || options.all) {
+		console.log('  - es5');
+		files = files.concat(nddb_es5);
+	}
 	
 	// 1. Shelf.js
 	if (options.shelf || options.all || options.standard) {
