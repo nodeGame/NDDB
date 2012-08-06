@@ -13,7 +13,7 @@ var program = require('commander'),
     pkg = require('../package.json'),
     version = pkg.version;
 
-var build = require('./build.nddb.js').build;
+var build = require('./build.js').build;
 
 program
   .version(version);

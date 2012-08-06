@@ -3328,12 +3328,57 @@ JSUS.extend(OBJ);
     
 // ## Global scope
 
+	
+var nddb_operation = null;
+var nddb_conditions = [];
+
+var addCondition = function(type, condition) {
+	if (!type || !condition) {
+		NDDB.log('Attempt to add invalid condition', 'ERR');
+		return false;
+	}
+	nddb_conditions.push({
+		type: type,
+		condition: condition,
+	});
+	return true;
+}
+
+var addOperation = function (type, d, op, value) {
+	if (!nddb_operation) {
+		NDDB.log('No operation found.', 'ERR');
+		return false;
+	}
+	
+    var valid = this._analyzeQuery(d, op, value);        
+    if (!valid) return false;
+	
+    
+	return addCondition(type, valid);
+}
+
+NDDB.prototype.and = NDDB.prototype.AND = function (d, op, value) {
+	return addOperation('AND', d, op, value);
+};
+
+NDDB.prototype.or = NDDB.prototype.OR = function (d, op, value) {
+	return addOperation('OR', d, op, value);
+};
+
+NDDB.prototype.not = NDDB.prototype.NOT = function (d, op, value) {
+	return addOperation('NOT', d, op, value);
+};
+	
 // Expose constructors
 exports.NDDB = NDDB;
 
 // ### NDDB.log
 // Stdout redirect
 NDDB.log = console.log;
+
+
+NDDB.__symbols = ['>','>=','>==','<', '<=', '<==', '!=', '!==', '=', '==', '===', '><', '<>', 'in', '!in'];
+NDDB.__operations = ['select', 'groupby', 'limit', 'first', 'fetch', 'last'];
 
 /**
  * ### NDDB.retrocycle
@@ -4098,6 +4143,16 @@ NDDB.prototype.select = function (d, op, value) {
     return this.filter(func);
 };
 
+
+//function queryBuilder(o) {
+//	for (var d in o) {
+//		if (o.hasOwnProperty(d)) {
+//			
+//		}
+//	}
+//}
+
+
 /**
  * ### NDDB.limit
  *
@@ -4221,7 +4276,7 @@ NDDB.prototype.filter = function (func) {
 
 
 /**
- * ### NDDB.each
+ * ### NDDB.each || NDDB.forEach
  *
  * Applies a callback function to each element in the db.
  * 
@@ -4267,8 +4322,48 @@ NDDB.prototype.map = function () {
     return out;
 };
 
+// # Update
 
-// ## Deletion
+///**
+// * ### NDDB.remove
+// *
+// * Removes all entries from the database
+// * 
+// * Elements in the parent database will be removed too.
+// * 
+// * @return {NDDB} A new instance of NDDB with no entries 
+// */
+//
+//NDDB.prototype.update = function (update) {
+//	if (!this.length) {
+//		NDDB.log('Cannot update empty database', 'WARN');
+//		return this;
+//	}
+//  
+//	if (!JSUS.isArray(update)) update = [update];
+//	
+//	    	  
+//	for (var i=0; i < this.db.length; i++) {
+//		this.db[i] = update[i % update.length];
+//		
+//		var idx = this.db[i].nddbid - i;
+//		if (this.__parent) {
+//		this.__parent.db.splice(idx,1);
+//    }
+//    // TODO: we could make it with only one for loop
+//    // we loop on parent db and check whether the id is in the array
+//    // at the same time we decrement the nddbid depending on i
+//    for (var i=0; i < this.__parent.length; i++) {
+//    	this.__parent.db[i].nddbid = i;
+//    }
+//	
+// 
+//	this.db = [];
+//	this._autoUpdate();
+//	return this;
+//};  
+
+//## Deletion
 
 /**
  * ### NDDB.remove

@@ -9,3 +9,4 @@ test/NDDB_Test.js
 *.nddb
 
 /docs/*
+/nddb2.js
