@@ -31,12 +31,57 @@
     
 // ## Global scope
 
+	
+var nddb_operation = null;
+var nddb_conditions = [];
+
+var addCondition = function(type, condition) {
+	if (!type || !condition) {
+		NDDB.log('Attempt to add invalid condition', 'ERR');
+		return false;
+	}
+	nddb_conditions.push({
+		type: type,
+		condition: condition,
+	});
+	return true;
+}
+
+var addOperation = function (type, d, op, value) {
+	if (!nddb_operation) {
+		NDDB.log('No operation found.', 'ERR');
+		return false;
+	}
+	
+    var valid = this._analyzeQuery(d, op, value);        
+    if (!valid) return false;
+	
+    
+	return addCondition(type, valid);
+}
+
+NDDB.prototype.and = NDDB.prototype.AND = function (d, op, value) {
+	return addOperation('AND', d, op, value);
+};
+
+NDDB.prototype.or = NDDB.prototype.OR = function (d, op, value) {
+	return addOperation('OR', d, op, value);
+};
+
+NDDB.prototype.not = NDDB.prototype.NOT = function (d, op, value) {
+	return addOperation('NOT', d, op, value);
+};
+	
 // Expose constructors
 exports.NDDB = NDDB;
 
 // ### NDDB.log
 // Stdout redirect
 NDDB.log = console.log;
+
+
+NDDB.__symbols = ['>','>=','>==','<', '<=', '<==', '!=', '!==', '=', '==', '===', '><', '<>', 'in', '!in'];
+NDDB.__operations = ['select', 'groupby', 'limit', 'first', 'fetch', 'last'];
 
 /**
  * ### NDDB.retrocycle
