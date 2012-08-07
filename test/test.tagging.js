@@ -49,81 +49,41 @@ describe('NDDB Tagging', function() {
         db.importDB(items);
     });
 
-
-    describe('a pre-selected entry', function() {
-        it('should return the position of the entry',function() {
-            db.last();
-            db.tag('someone');
-            db.resolveTag('someone').should.eql({
-                painter: "Manet",
-                title: "Olympia",
-                year: 1863
+    describe('#tag() #resolveTag()',function() {
+        describe('a pre-selected entry (args: tagname)', function() {
+            it('should return the entry number 5',function() {
+                db.last();
+                db.tag('someone');
+                db.resolveTag('someone').should.eql(items[5]);
             });
-        });
-        
-        it('should return the position of the entry',function() {
-            db.previous();
-            db.tag('a other one');
-            db.resolveTag('a other one').should.eql({
-                painter: "Monet",
-                title: "Wheatstacks (End of Summer)",
-                year: 1891
-            });
-        });
-
-        it('should return the correct position after db.sort(year)',function() {
-            var sortedDb = db.sort('year');
-            sortedDb.resolveTag('someone').should.eql({
-                painter: "Manet",
-                title: "Olympia",
-                year: 1863
-            });
-        });
-        
-        it('should return the correct position after db.shuffle()',function() {
-            db.shuffle();
-            db.resolveTag('someone').should.eql({
-                painter: "Manet",
-                title: "Olympia",
-                year: 1863
-            });
-        });
-        
-        it('should reflect the state of the object after an update',function() {
-            var olympia = db.select('title', '=', 'Olympia').first();
-            olympia.updated = true;
             
-            db.resolveTag('someone').should.eql({
-                painter: "Manet",
-                title: "Olympia",
-                year: 1863,
-                updated: true,
+            it('should return the entry number 4',function() {
+                db.previous();
+                db.tag('a other one');
+                db.resolveTag('a other one').should.eql(items[4]);
+            });
+
+            it('should return the correct position after db.sort(year)',function() {
+                var sortedDb = db.sort('year');
+                sortedDb.resolveTag('someone').should.eql({painter: "Manet",title: "Olympia",year: 1863});
+            });
+
+        });
+
+        describe('a specific entry (args: tagname,key)', function() {
+            it('should return the entry number 3',function() {
+                db.tag('the secret one',3);
+                db.resolveTag('the secret one').should.eql(items[3]);
             });
         });
 
-    });
-
-    describe('a specific entry', function() {
-    	before(function(){
-    		db.clear(true);
-    		db.importDB(items);
-    	})
-        it('should return the position of the entry',function() {
-            db.tag('the secret one', 3);
-            db.resolveTag('the secret one').should.eql({
-                painter: "Monet",
-                title: "Water Lilies",
-                year: 1906
+        describe('the count of tags',function() {
+            it('should return the count of made tags',function() {
+                Object.keys(db.tags).length.should.eql(3);
             });
         });
     });
-
-    describe('the count of tags',function() {
-        it('should return the count of made tags',function() {
-            Object.keys(db.tags).length.should.eql(3);
-        });
-
-    });
+    
 
 
 

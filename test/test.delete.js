@@ -87,65 +87,79 @@ db.importDB(hashable);
 
 describe('NDDB Delete Operations:', function() {
 
-	
-	describe('Delete elements not in index (Ferrari)', function() {
-		before(function(){
-    		testcase = db.select('car', '=', 'Ferrari');
-    		testcase.delete();
-    	});
-		after(function(){
-			testcase = null;
-			tmp = null;
-		});
-    	
-		it('the selection should be empty', function() {
-			testcase.length.should.be.eql(0);
+	describe('#delete',function() {
+        describe('Delete elements not in index (Ferrari)', function() {
+            before(function(){
+                testcase = db.select('car', '=', 'Ferrari');
+                testcase.delete();
+            });
+            after(function(){
+                testcase = null;
+                tmp = null;
+            });
+            
+            it('the selection should be empty', function() {
+                testcase.length.should.be.eql(0);
+            });
+            
+            it('there should be no Ferrari in the database', function() {
+               db.select('car', '=', 'Ferrari').length.should.be.eql(0);
+            });
+            
+            it('should decrease db.length', function() {
+                db.length.should.eql(nitems -1);
+            });
+        
         });
-		
-    	it('there should be no Ferrari in the database', function() {
-           db.select('car', '=', 'Ferrari').length.should.be.eql(0);
-        });
-    	
-    	it('should decrease db.length', function() {
-            db.length.should.eql(nitems -1);
-        });
-    	
-    });
-	
-	describe('Deleting elements that are indexed', function() {
-		before(function(){
-			tmp = db.length;
-			testcase = db.select('painter', '=', 'Monet');
-			testcase.delete();
-			db.rebuildIndexes();	
+        describe('Deleting elements that are indexed', function() {
+            before(function(){
+                tmp = db.length;
+                testcase = db.select('painter', '=', 'Monet');
+                testcase.delete();
+                db.rebuildIndexes();    
 
-			
-		});
-		
-		it('should decrease the length of the database', function() {
-			db.length.should.be.eql(tmp - 2);
-		});
-		
-		it('should decrease the length of the index', function() {
-			db.painter.should.not.have.property('Monet');
-		});
-	
-	});
-	
-	describe('Deleting all items', function() {
-    	before(function(){
-    		db.delete();
-    	});
-    	
-    	it('should make db.length equal to 0', function() {
-            db.length.should.eql(0);
-        });
-    	
-        it('should reset all indexes', function() {
-            db.painter.should.be.eql({});
+                
+            });
+            
+            it('should decrease the length of the database', function() {
+                db.length.should.be.eql(tmp - 2);
+            });
+            
+            it('should decrease the length of the index', function() {
+                db.painter.should.not.have.property('Monet');
+            });
+        
         });
         
+        describe('Deleting all items', function() {
+            before(function(){
+                db.delete();
+            });
+            
+            it('should make db.length equal to 0', function() {
+                db.length.should.eql(0);
+            });
+            
+            it('should reset all indexes', function() {
+                db.painter.should.be.eql({});
+            });
+            
+        });
     });
+	
+	describe('#clear',function() {
+
+        before(function() {
+            db.importDB(hashable);
+        });
+
+        it('should clear all items',function() {
+            var before = db.db.length;
+            db.clear(true);
+            db.db.length.should.not.eql(before);
+        })
+    });
+
 });
 
 
