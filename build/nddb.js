@@ -3,7 +3,7 @@
  * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed
  * 
- * ### Collection of general purpose javascript functions. JSUS helps!
+ * Collection of general purpose javascript functions. JSUS helps!
  * 
  * 
  * JSUS is designed to be modular and easy to extend. 
@@ -26,11 +26,11 @@
  * and mySecondClass will receive all the methods of myClass. In this case,
  * no reference of myClass is stored.
  * 
- * To get a copy of one of the registered JSUS libraries do:
+ * To get a copy of one of the registered JSUS libraries
  * 
  *  	var myClass = JSUS.require('myClass');
  * 
- * ### JSUS come shipped in with a default set of libraries:
+ * JSUS come shipped in with a default set of libraries
  * 
  * 1. OBJ
  * 2. ARRAY
@@ -40,7 +40,7 @@
  * 6. RANDOM
  * 7. PARSE
  * 
- * ### Documentation
+ * Documentation
  * 
  * Automatic documentation for all libraries can be generated with the command
  * 
@@ -48,7 +48,7 @@
  * node bin/make.js doc
  * ```
  *  
- * ### Build
+ * Build
  * 
  * Create your customized build of JSUS.js using the make file in the bin directory
  * 
@@ -236,23 +236,24 @@ if (!Array.prototype.filter) {
 /**
  * ## ARRAY.isArray
  * 
- * Returns TRUE if a variable is an Array.
+ * Returns TRUE if a variable is an Array
+ * 
+ * This method is exactly the same as `Array.isArray`, 
+ * but it works on a larger share of browsers. 
  * 
  * @param {object} o The variable to check.
+ * @see Array.isArray
  *  
  */
 ARRAY.isArray = function (o) {
 	if (!o) return false;
-	if (Object.prototype.toString.call(o) === '[object Array]') {
-		return true;
-	}
-    return false;
+	return Object.prototype.toString.call(o) === '[object Array]';	
 };
 
 /**
  * ## ARRAY.seq
  * 
- * Returns an array of sequential numbers from start to end.
+ * Returns an array of sequential numbers from start to end
  * 
  * If start > end the series goes backward.
  * 
@@ -311,7 +312,8 @@ ARRAY.seq = function (start, end, increment, func) {
 /**
  * ## ARRAY.each
  * 
- * Executes a callback on each element of the array.
+ * Executes a callback on each element of the array
+ * 
  * If an error occurs returns FALSE.
  * 
  * @param {Array} array The array to loop in
@@ -337,7 +339,7 @@ ARRAY.each = function (array, func, context) {
  * ## ARRAY.map
  * 
  * Applies a callback function to each element in the db, store
- * the results in an array and returns it.
+ * the results in an array and returns it
  * 
  * Any number of additional parameters can be passed after the 
  * callback function
@@ -371,7 +373,8 @@ ARRAY.map = function () {
 /**
  * ## ARRAY.removeElement
  * 
- * Removes an element from the the array, and returns it.
+ * Removes an element from the the array, and returns it
+ * 
  * For objects, deep equality comparison is performed 
  * through JSUS.equals.
  * 
@@ -407,7 +410,7 @@ ARRAY.removeElement = function (needle, haystack) {
  * ## ARRAY.in_array
  * 
  * Returns TRUE if the element is contained in the array,
- * FALSE otherwise.
+ * FALSE otherwise
  * 
  * For objects, deep equality comparison is performed 
  * through JSUS.equals.
@@ -436,7 +439,8 @@ ARRAY.in_array = function (needle, haystack) {
  * 
  * Returns an array of N array containing the same number of elements
  * If the length of the array and the desired number of elements per group
- * are not multiple, the last group could have less elements.
+ * are not multiple, the last group could have less elements
+ * 
  * The original array is not modified.
  *  
  *  @see ARRAY.getGroupsSizeN
@@ -455,7 +459,7 @@ ARRAY.getNGroups = function (array, N) {
  * ## ARRAY.getGroupsSizeN
  * 
  * Returns an array of array containing N elements each
- * The last group could have less elements.
+ * The last group could have less elements
  * 
  * @param {Array} array The array to split in subgroups
  * @param {Number} N The number of elements in each subgroup
@@ -506,9 +510,9 @@ ARRAY.getGroupsSizeN = function (array, N) {
 };
 
 /**
- * ## ARRAY.latinSquare
+ * ## ARRAY._latinSquare
  * 
- * Generate a random Latin Square of size S.
+ * Generate a random Latin Square of size S
  * 
  * If N is defined, it returns "Latin Rectangle" (SxN) 
  * 
@@ -563,7 +567,7 @@ ARRAY._latinSquare = function (S, N, self) {
 /**
  * ## ARRAY.latinSquare
  * 
- * Generate a random Latin Square of size S.
+ * Generate a random Latin Square of size S
  * 
  * If N is defined, it returns "Latin Rectangle" (SxN) 
  * 
@@ -584,7 +588,7 @@ ARRAY.latinSquare = function (S, N) {
  * ## ARRAY.latinSquareNoSelf
  * 
  * Generate a random Latin Square of size Sx(S-1), where 
- * in each column "i", the symbol "i" is not found.
+ * in each column "i", the symbol "i" is not found
  * 
  * If N < S, it returns a "Latin Rectangle" (SxN)
  * 
@@ -605,7 +609,7 @@ ARRAY.latinSquareNoSelf = function (S, N) {
  * ## ARRAY.generateCombinations
  * 
  *  Generates all distinct combinations of exactly r elements each 
- *  and returns them into an array.
+ *  and returns them into an array
  *  
  *  @param {Array} array The array from which the combinations are extracted
  *  @param {Number} r The number of elements in each combination
@@ -640,7 +644,8 @@ ARRAY.generateCombinations = function (array, r) {
 /**
  * ## ARRAY.matchN
  * 
- * Match each element of the array with N random others.
+ * Match each element of the array with N random others
+ * 
  * If strict is equal to true, elements cannot be matched multiple times.
  * 
  * *Important*: this method has a bug / feature. If the strict parameter is set,
@@ -688,7 +693,7 @@ ARRAY.matchN = function (array, N, strict) {
 /**
  * ## ARRAY.rep
  * 
- * Appends an array to itself a number of times and return a new array.
+ * Appends an array to itself a number of times and return a new array
  * 
  * The original array is not modified.
  * 
@@ -750,7 +755,8 @@ ARRAY.arrayDiff = function (a1, a2) {
 /**
  * ## ARRAY.shuffle
  * 
- * Shuffles the elements of the array using the Fischer algorithm.
+ * Shuffles the elements of the array using the Fischer algorithm
+ * 
  * The original array is not modified, and a copy is returned.
  * 
  * @param {Array} shuffle The array to shuffle
@@ -775,7 +781,7 @@ ARRAY.shuffle = function (array) {
 /**
  * ## ARRAY.getNRandom
  * 
- * Select N random elements from the array and returns them.
+ * Select N random elements from the array and returns them
  * 
  * @param {Array} array The array from which extracts random elements
  * @paran {Number} N The number of random elements to extract
@@ -1097,24 +1103,41 @@ OBJ.implode = OBJ.implodeObj = function (obj) {
 /**
  * ## OBJ.clone
  * 
- * Creates a perfect copy of the object passed as parameter.
+ * Creates a perfect copy of the object passed as parameter
  * 
+ * Recursively scans all the properties of the object to clone.
+ * Properties of the prototype chain are copied as well.
+ * 
+ * Primitive types and special values are returned as they are.
+ *  
  * @param {object} obj The object to clone
  * @return {object} clone The clone of the object
  */
 OBJ.clone = function (obj) {
-	if (!obj) return;
+	if (!obj) return obj;
 	if ('number' === typeof obj) return obj;
 	if ('string' === typeof obj) return obj;
+	if ('boolean' === typeof obj) return obj;
 	if (obj === NaN) return obj;
 	if (obj === Infinity) return obj;
 	 
 	var clone = {};
 	for (var i in obj) {
- 	
+		var value;
 		// It is not NULL and it is an object
-		var value = (obj[i] && 'object' === typeof obj[i]) 	? OBJ.clone(obj[i])
-					 								 		: obj[i];
+		if (obj[i] && 'object' === typeof obj[i]) {
+			// is an array
+			if (Object.prototype.toString.call(obj[i]) === '[object Array]') {
+				value = obj[i].slice(0);
+			}
+			// is an object
+			else {
+				value = OBJ.clone(obj[i]);
+			}
+		}
+		else {
+			value = obj[i];
+		} 
 	 	
 	    if (obj.hasOwnProperty(i)) {
 	    	clone[i] = value;
@@ -1396,6 +1419,7 @@ OBJ.hasOwnNestedProperty = function (str, obj) {
  * contained in the specified dimension. The object are identical,
  * but for the given dimension, which was split. E.g.
  * 
+ * ```javascript
  *  var o = { a: 1,
  *            b: {c: 2,
  *                d: 3
@@ -1403,7 +1427,9 @@ OBJ.hasOwnNestedProperty = function (str, obj) {
  *            e: 4
  *  };
  *  
- *  becomes
+ *  o = OBJ.split(o, 'b');
+ *  
+ *  // o becomes:
  *  
  *  [{ a: 1,
  *     b: {c: 2},
@@ -1413,7 +1439,7 @@ OBJ.hasOwnNestedProperty = function (str, obj) {
  *    b: {d: 3},
  *    e: 4
  *  }];
- * 
+ * ```
  */
 OBJ.split = function (o, key) {        
     if (!o) return;
@@ -1476,7 +1502,7 @@ JSUS.extend(OBJ);
  * 
  */
 
-(function (exports, JSUS) {
+(function (exports, JSUS, store) {
     
 // ## Global scope
 
@@ -3366,67 +3392,102 @@ NDDB.prototype.resolveTag = function (tag) {
 };
 
 // ## Persistance    
-    
+
+var isNodeJS = function() {
+	return ('object' === typeof module && 'function' === typeof require);
+};
+
+var storageAvailable = function() {
+	return ('function' === typeof store);
+}
+
 // if node
-if ('object' === typeof module && 'function' === typeof require) {
-    
+if (isNodeJS()) {   
 	require('./external/cycle.js');		
 	var fs = require('fs');
+};
+
+//end node  
     
-    
-    NDDB.prototype.save = function (file, callback) {
-    	if (!file) {
-    		NDDB.log('You must specify a valid file.', 'ERR');
-    		return false;
-    	}
-    	
-		fs.writeFile(file, this.stringify(), 'utf-8', function(e) {
-			if (e) throw e
-			if (callback) callback();
-		});
-	};
+NDDB.prototype.save = function (file, callback) {
+	if (!file) {
+		NDDB.log('You must specify a valid file name.', 'ERR');
+		return false;
+	}
 	
-	NDDB.prototype.load = function (file, sync, callback) {
-		if (!file) {
-			NDDB.log('You must specify a valid file.', 'ERR');
+	// Try to save in the browser, e.g. with Shelf.js
+	if (!isNodeJS()){
+		if (!storageAvailable()) {
+			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
 		}
-		sync = ('undefined' !== typeof sync) ? sync : true; 
 		
-		var loadString = function(s) {
-			var items = JSON.parse(s.toString());
-			//console.log(s);
-			var i;
-			for (i=0; i< items.length; i++) {
-				// retrocycle if possible
-				items[i] = NDDB.retrocycle(items[i]);
-			}
+		store(file, this.stringify());
+		return true;
+	}
+	
+	// Save in Node.js
+	fs.writeFile(file, this.stringify(), 'utf-8', function(e) {
+		if (e) throw e
+		if (callback) callback();
+		return true;
+	});
+};
+
+NDDB.prototype.load = function (file, callback) {
+	if (!file) {
+		NDDB.log('You must specify a valid file.', 'ERR');
+		return false;
+	}
+	
+	// Try to save in the browser, e.g. with Shelf.js
+	if (!isNodeJS()){
+		if (!storageAvailable()) {
+			NDDB.log('No support for persistent storage found.', 'ERR');
+			return false;
+		}
+		
+		var items = store(file);
+		this.importDB(items);
+		if (callback) callback();
+		return true;
+	}
+	
+	var loadString = function(s) {
+		var items = JSON.parse(s.toString());
+		//console.log(s);
+		var i;
+		for (i=0; i< items.length; i++) {
+			// retrocycle if possible
+			items[i] = NDDB.retrocycle(items[i]);
+		}
 //					console.log(Object.prototype.toString.apply(items[0].aa))
-			
-			this.importDB(items);
+		
+		this.importDB(items);
 //				this.each(function(e) {
 //					e = NDDB.retrocycle(e);
 //				});
-		}
-		
-		if (sync) { 
-			var s = fs.readFileSync(file, 'utf-8');
-			loadString.call(this, s);
-		}
-		else {
-			fs.readFile(file, 'utf-8', function(e, s) {
-				if (e) throw e
-				loadString.call(this, s);
-				if (callback) callback();
-			});
-		}
-	};
+	}
 	
-}
-// end node
-    
+	if (!callback) { 
+		var s = fs.readFileSync(file, 'utf-8');
+		loadString.call(this, s);
+	}
+	else {
+		fs.readFile(file, 'utf-8', function(e, s) {
+			if (e) throw e
+			loadString.call(this, s);
+			callback();
+		});
+	}
+};
+	
+
+
+// ## Closure    
     
 })(
     'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
-  , 'undefined' != typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
+  , 'undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
+  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store  		  
 );

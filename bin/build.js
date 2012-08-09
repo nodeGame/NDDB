@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+//# NDDB build script
+
 /**
  * Export build
  */
@@ -14,7 +16,7 @@ var smoosh = require('smoosh'),
 
 function build(options) {
 	
-	if (!options.standalone && !options.JSUS && !options.shelf && !options.all && !options.cycle) {
+	if (!options.bare && !options.JSUS && !options.shelf && !options.all && !options.cycle) {
 		options.standard = true;
 	}
 	
@@ -99,8 +101,6 @@ function build(options) {
 	// 4. NDDB: always built
 	files = files.concat(nddb);
 	
-	console.log(files.length)
-	
 	// Configurations for file smooshing.
 	var config = {
 	    // VERSION : "0.0.1",
@@ -120,15 +120,23 @@ function build(options) {
 	config.JAVASCRIPT[out] = files;
 	
 	var run_it = function(){
-	    // Smooshing callback chain
-	    // More information on how it behaves can be found in the smoosh Readme https://github.com/fat/smoosh
-	    smoosh
-	        .config(config) // hand over configurations made above
-	        // .clean() // removes all files out of the nodegame folder
-	        .run() // runs jshint on full build
-	        .build() // builds both uncompressed and compressed files
-	        .analyze(); // analyzes everything
-	
+		// https://github.com/fat/smoosh
+		// hand over configurations made above
+	    var smooshed = smoosh.config(config);
+	    
+	    // removes all files from the build folder
+	    if (options.clean) {
+	    	smooshed.clean();
+	    }
+	    
+	    // builds both uncompressed and compressed files
+	    smooshed.build(); 
+	        
+    	if (options.analyse) {
+    		smooshed.run(); // runs jshint on full build
+    		smooshed.analyze(); // analyzes everything
+    	}
+    	
 	    console.log('NDDB build created');
 	}
 	
