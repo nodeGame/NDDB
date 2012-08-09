@@ -48,10 +48,6 @@ var cleanBuildDir = function(dir, ext) {
 	});
 }
 
-function list(val) {
-	return val.split(',');
-}
-
 program
   .version(version);
 
