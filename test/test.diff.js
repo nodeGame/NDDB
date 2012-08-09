@@ -71,25 +71,21 @@ describe('NDDB Diff', function() {
             difference = db.diff(different_db);
         });
 
-        it("db.length should stay the same",function() {
-            db.length.should.be.eql(items.length);
-
-        });
-        
-        it("difference should consist of five items",function() {
+        it("db.length should be smaller by 1",function() {
             difference.length.should.be.eql(5);
 
         });
-
+        it("should contain this objects", function() {
+            var should_be_like_this = [ {painter: "Jesus",title: "Tea in the desert",year: 0,},{painter: "Dali",title: "Portrait of Paul Eluard",year: 1929, portrait: true},{ painter: 'Dali', title: 'Barcelonese Mannequin', year: 1927 },{ painter: 'Monet',title: 'Wheatstacks (End of Summer)',year: 1891 },{ painter: 'Manet', title: 'Olympia', year: 1863 } ];
+            difference.db.should.eql(should_be_like_this);
+        });
         it("should not contain 2 of the items",function() {
             difference.select('title','=',"Water Lilies").length.should.be.eql(0);
             difference.select('title','=',"Das Rätsel der Begierde").length.should.be.eql(0);
         });
-        
-        // Add test should contain
     });
 
-    describe("#intersect()",function() {
+    describe("#intersect",function() {
         var difference = null;
         var different_db = null;
         before(function() {
@@ -98,10 +94,13 @@ describe('NDDB Diff', function() {
             difference = db.intersect(different_db);
         });
 
-        it("the count should be 1",function() {
+        it("db.length should be 1",function() {
             difference.length.should.be.eql(1);
         });
-
+        it("should contain this objects", function() {
+            var should_be_like_this = [{painter: "Monet",title: "Water Lilies",year: 1906}];
+            difference.db.should.eql(should_be_like_this);
+        });
         it("should contain one masterpiece (item)",function() {
             difference.select('title','=',"Water Lilies").length.should.be.eql(1);
         });

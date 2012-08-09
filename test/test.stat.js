@@ -23,6 +23,27 @@ for (var i=0;i<clients.length;i++) {
 
 describe('Testing native NDDB statistics', function(){
 
+    describe('#count()', function() {
+        before(function() {
+
+        });
+
+        it('should be 56',function() {
+            nddb.count().should.be.eql(56);
+        });
+    });
+
+    describe('#sum()', function() {
+        before(function() {
+
+        });
+
+        it('of all states should be 224',function() {
+            nddb.sum('state.state').should.be.eql(224);
+        });
+    });
+
+
     describe('#mean()', function(){
 
         it('the mean should be equal to 4', function(){

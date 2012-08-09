@@ -42,7 +42,6 @@ var items = [
 
 
 describe('NDDB Misc Operation', function() {
-	//split*, join, concat
 
     before(function() {
         db.importDB(items);
@@ -53,28 +52,47 @@ describe('NDDB Misc Operation', function() {
         db.rebuildIndexes();
     });
 
-    describe('#map()',function() {
+    describe('#forEach()',function() {
         before(function() {
             var addDone = function(item) {
                 item['done'] = "10";
             };
-
             db.forEach(addDone);
         });
         it('every entry should have a new key',function() {
             db.select('done','=','10').length.should.be.eql(db.length);
         });
-
     });
-    
-    
-    describe('#count()', function() {
-    	it('should count the entries having the specified property',function() {
-    		db.count('done').should.be.eql(db.length);
+
+    describe('#map()',function() {
+        var result = null;
+        var result2 = null;
+
+        before(function() {
+            var addDone = function(item) {
+                item['done'] = "10";
+                return item['painter'] + " - " +  item['title'];
+            };
+            result = db.map(addDone);
+            var addDoneArgs = function(item,args) {
+                var calc = item['year'] + args;
+                return calc;
+            }
+            result2 = db.map(addDoneArgs,5);
+        });
+        it('result.length should be equal db.length',function() {
+            result.length.should.be.eql(6);
+        });
+        it('the result must be a special modification of the original items array',function() {
+            for(var key in items) {
+                result[key].should.be.eql(items[key]['painter'] + ' - '  + items[key]['title']);
+            }
+        });
+        it('each year in the result must be increased by 5',function() {
+            for(var key in items) {
+                var calc = items[key]['year'] + 5;
+                result2[key].should.be.eql(calc);
+            }
         });
     });
-
-    
-	
 });
-
