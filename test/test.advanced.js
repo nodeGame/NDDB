@@ -1,7 +1,8 @@
 
 var util = require('util'),
     should = require('should'),
-    NDDB = require('./../nddb').NDDB;
+    NDDB = require('./../nddb').NDDB,
+    J = require('JSUS').JSUS;
 
 
 
@@ -195,11 +196,14 @@ describe('NDDB Advanced Operation', function() {
                 
     });
 
+
+        
     describe('#join()',function() {
-        describe('first parameter set (painter,painter,joined,[painter,title,year])',function() {
+    	
+    	describe('parameter set (painter, painter)',function() {
             before(function() {
                 join_db = null;
-                join_db = db.join('painter','painter','joined',['painter','title','year']);
+                join_db = db.join('painter','painter');
             });
             it('should have 9 entries if using not splited db',function() {
                 join_db.length.should.be.eql(9);
@@ -214,15 +218,115 @@ describe('NDDB Advanced Operation', function() {
                 }
                 trues.should.eql(9);
             });
+            
+            it('joined properties should be a copy of the original item',function() {
+                join_db.each(function(e) {
+                    var painter = e.joined.painter;
+                    var year = e.joined.year;
+                    var title = e.joined.title;
+                    
+                    var original = db.select('painter', '=', painter)
+			                    	.select('year', '=', year)
+			                    	.select('title', '=', title)
+			                    	.first();
+                
+                	e.joined.should.be.eql(original);
+                });
+                
+            });
+            
             // Value 7 is the addition of the following calculation
             // x!/(2!*(x-2)!) for each painter
             it('should have 16 entries if using splited db',function() {
-                var join_db_2 = split_db.join('painter','painter','sibling',['painter','title','year']);
+                var join_db_2 = split_db.join('painter','painter');
                 join_db_2.length.should.be.eql(16);
             });
 
         });
-        describe('second parameter set (painter,title,undefined,[title,year])',function() {
+    
+    	describe('parameter set (painter, painter, xxx)',function() {
+            before(function() {
+                join_db = null;
+                join_db = db.join('painter','painter', 'xxx');
+            });
+            it('should have 9 entries if using not splited db',function() {
+                join_db.length.should.be.eql(9);
+            });
+
+            it('the painter of the joined one should equal with the joining one',function() {
+                var trues = 0;
+                for(var key in join_db.db) {
+                    if(join_db.db[key]['xxx']['painter'] == join_db.db[key]['painter']) {
+                        trues++;
+                    }
+                }
+                trues.should.eql(9);
+            });
+            
+            it('joined properties should be a copy of the original item',function() {
+                join_db.each(function(e) {
+                    var painter = e.xxx.painter;
+                    var year = e.xxx.year;
+                    var title = e.xxx.title;
+                    
+                    var original = db.select('painter', '=', painter)
+			                    	.select('year', '=', year)
+			                    	.select('title', '=', title)
+			                    	.first();
+                
+                	e.xxx.should.be.eql(original);
+                });
+                
+            });
+        });
+    
+    	
+        describe('parameter set (painter,painter,joined,[painter,title,year, portrait])',function() {
+            before(function() {
+                join_db = null;
+                join_db = db.join('painter','painter','joined',['painter','title','year','portrait']);
+            });
+            it('should have 9 entries if using not splited db',function() {
+                join_db.length.should.be.eql(9);
+            });
+
+            it('the painter of the joined one should equal with the joining one',function() {
+                var trues = 0;
+                for(var key in join_db.db) {
+                    if(join_db.db[key]['joined']['painter'] == join_db.db[key]['painter']) {
+                        trues++;
+                    }
+                }
+                trues.should.eql(9);
+            });
+            
+            it('joined properties should be a copy of the original item',function() {
+                join_db.each(function(e) {
+                    var painter = e.joined.painter;
+                    var year = e.joined.year;
+                    var title = e.joined.title;
+                    
+                    var original = db.select('painter', '=', painter)
+			                    	.select('year', '=', year)
+			                    	.select('title', '=', title)
+			                    	.first();
+                
+                	e.joined.should.be.eql(original);
+                });
+                
+            });
+            
+            // Value 7 is the addition of the following calculation
+            // x!/(2!*(x-2)!) for each painter
+            it('should have 16 entries if using splited db',function() {
+                var join_db_2 = split_db.join('painter','painter','sibling',['painter','title','year', 'portrait']);
+                join_db_2.length.should.be.eql(16);
+            });
+
+        });
+        
+        
+        describe('parameter set (painter,title,undefined,[title,year])',function() {
             before(function() {
                 join_db = null;
                 join_db = db.join('painter','title',undefined,['title','year']);
@@ -246,7 +350,7 @@ describe('NDDB Advanced Operation', function() {
             });
             
         });
-        describe('third parameter set (painter,painter,undefined,year)',function() {
+        describe('parameter set (painter,painter,undefined,year)',function() {
             before(function() {
                 join_db = null;
                 join_db = db.join('painter','painter',undefined,'year');
@@ -282,9 +386,8 @@ describe('NDDB Advanced Operation', function() {
                 join_db.db.length.should.be.eql(0);
             });
         });
+        
     });
-
-
 
 
     describe('#concat()',function() {
@@ -293,8 +396,9 @@ describe('NDDB Advanced Operation', function() {
                 db = new NDDB();
                 db.importDB(items_for_concat);
                 concat_db = db.concat('painter','title','friend',['painter','title','year']);
+                console.log(concat_db.fetch())
             });
-            it('should have 3 entries if using not splited db',function() {
+            it('should have 3 entries if using not split db',function() {
                 concat_db.db.length.should.be.eql(3);
             });
 

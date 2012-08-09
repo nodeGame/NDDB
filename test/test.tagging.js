@@ -1,5 +1,3 @@
-
-
 var util = require('util'),
     should = require('should'),
     NDDB = require('./../nddb').NDDB;
