@@ -27,7 +27,7 @@
  * 
  */
 
-(function (exports, JSUS) {
+(function (exports, JSUS, store) {
     
 // ## Global scope
 
@@ -1917,67 +1917,102 @@ NDDB.prototype.resolveTag = function (tag) {
 };
 
 // ## Persistance    
-    
+
+var isNodeJS = function() {
+	return ('object' === typeof module && 'function' === typeof require);
+};
+
+var storageAvailable = function() {
+	return ('function' === typeof store);
+}
+
 // if node
-if ('object' === typeof module && 'function' === typeof require) {
-    
+if (isNodeJS()) {   
 	require('./external/cycle.js');		
 	var fs = require('fs');
+};
+
+//end node  
     
-    
-    NDDB.prototype.save = function (file, callback) {
-    	if (!file) {
-    		NDDB.log('You must specify a valid file.', 'ERR');
-    		return false;
-    	}
-    	
-		fs.writeFile(file, this.stringify(), 'utf-8', function(e) {
-			if (e) throw e
-			if (callback) callback();
-		});
-	};
+NDDB.prototype.save = function (file, callback) {
+	if (!file) {
+		NDDB.log('You must specify a valid file name.', 'ERR');
+		return false;
+	}
 	
-	NDDB.prototype.load = function (file, sync, callback) {
-		if (!file) {
-			NDDB.log('You must specify a valid file.', 'ERR');
+	// Try to save in the browser, e.g. with Shelf.js
+	if (!isNodeJS()){
+		if (!storageAvailable()) {
+			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
 		}
-		sync = ('undefined' !== typeof sync) ? sync : true; 
 		
-		var loadString = function(s) {
-			var items = JSON.parse(s.toString());
-			//console.log(s);
-			var i;
-			for (i=0; i< items.length; i++) {
-				// retrocycle if possible
-				items[i] = NDDB.retrocycle(items[i]);
-			}
+		store(file, this.stringify());
+		return true;
+	}
+	
+	// Save in Node.js
+	fs.writeFile(file, this.stringify(), 'utf-8', function(e) {
+		if (e) throw e
+		if (callback) callback();
+		return true;
+	});
+};
+
+NDDB.prototype.load = function (file, callback) {
+	if (!file) {
+		NDDB.log('You must specify a valid file.', 'ERR');
+		return false;
+	}
+	
+	// Try to save in the browser, e.g. with Shelf.js
+	if (!isNodeJS()){
+		if (!storageAvailable()) {
+			NDDB.log('No support for persistent storage found.', 'ERR');
+			return false;
+		}
+		
+		var items = store(file);
+		this.importDB(items);
+		if (callback) callback();
+		return true;
+	}
+	
+	var loadString = function(s) {
+		var items = JSON.parse(s.toString());
+		//console.log(s);
+		var i;
+		for (i=0; i< items.length; i++) {
+			// retrocycle if possible
+			items[i] = NDDB.retrocycle(items[i]);
+		}
 //					console.log(Object.prototype.toString.apply(items[0].aa))
-			
-			this.importDB(items);
+		
+		this.importDB(items);
 //				this.each(function(e) {
 //					e = NDDB.retrocycle(e);
 //				});
-		}
-		
-		if (sync) { 
-			var s = fs.readFileSync(file, 'utf-8');
-			loadString.call(this, s);
-		}
-		else {
-			fs.readFile(file, 'utf-8', function(e, s) {
-				if (e) throw e
-				loadString.call(this, s);
-				if (callback) callback();
-			});
-		}
-	};
+	}
 	
-}
-// end node
-    
+	if (!callback) { 
+		var s = fs.readFileSync(file, 'utf-8');
+		loadString.call(this, s);
+	}
+	else {
+		fs.readFile(file, 'utf-8', function(e, s) {
+			if (e) throw e
+			loadString.call(this, s);
+			callback();
+		});
+	}
+};
+	
+
+
+// ## Closure    
     
 })(
     'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
-  , 'undefined' != typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
+  , 'undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
+  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store  		  
 );
