@@ -1,10 +1,7 @@
-
 var util = require('util'),
     should = require('should'),
     NDDB = require('./../nddb').NDDB,
     J = require('JSUS').JSUS;
-
-
 
 var items = [
 			 {
@@ -396,7 +393,6 @@ describe('NDDB Advanced Operation', function() {
                 db = new NDDB();
                 db.importDB(items_for_concat);
                 concat_db = db.concat('painter','title','friend',['painter','title','year']);
-                console.log(concat_db.fetch())
             });
             it('should have 3 entries if using not split db',function() {
                 concat_db.db.length.should.be.eql(3);
