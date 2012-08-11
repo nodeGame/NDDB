@@ -51,6 +51,10 @@ implemented:
   * Diff
  
      - diff, intersect
+
+  * Skim
+
+     - skim, keep
  
   * Iterator
  
