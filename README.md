@@ -291,6 +291,7 @@ node make.nddb.js doc
 
 ### 0.3.0 (forecoming)
 
+  - NDDB.skim() and NDDB.keep()
   - Full test coverage
   - Make file in bin directory
   - Custom builds
