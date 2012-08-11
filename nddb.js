@@ -956,7 +956,6 @@ NDDB.prototype.shuffle = function () {
     return true;
 };
     
-
 // ## Custom callbacks
   
 /**
@@ -1067,6 +1066,7 @@ NDDB.prototype.map = function () {
 //};  
 
 //## Deletion
+
 
 /**
  * ### NDDB.remove
@@ -1703,6 +1703,59 @@ NDDB.prototype.max = function (key) {
     return max;
 };
     
+// ## Skim
+
+/**
+ * ### NDDB.skim
+ *
+ * Removes the specified properties from all the items in the database 
+ *  
+ * Use '.' (dot) to point to a nested property.
+ * 
+ * Items with no property are automatically removed.
+ * 
+ * @param {string|array} skim The selection of properties to remove
+ * @return {NDDB} A new database containing the result of the skim
+ * 
+ * @see NDDB.keep
+ * @see JSUS.skim
+ */
+NDDB.prototype.skim = function (skim) {
+    if (!skim) return this;
+    return this.breed(this.map(function(e){
+    	var skimmed = JSUS.skim(e, skim); 
+    	if (!JSUS.isEmpty(skimmed)) {
+    		return skimmed;
+    	}
+    }));
+};
+
+/**
+ * ### NDDB.keep
+ *
+ * Removes all the properties that are not specified as parameter 
+ * from all the items in the database
+ *  
+ * Use '.' (dot) to point to a nested property.
+ * 
+ * Items with no property are automatically removed.
+ * 
+ * @param {string|array} skim The selection of properties to keep
+ * @return {NDDB} A new database containing the result of the keep operation
+ * 
+ * @see NDDB.skim
+ * @see JSUS.keep
+ */
+NDDB.prototype.keep = function (keep) {
+    if (!keep) return this.breed([]);
+    return this.breed(this.map(function(e){
+    	var subobj = JSUS.subobj(e, keep);
+    	if (!JSUS.isEmpty(subobj)) {
+    		return subobj;
+    	}
+    }));
+};
+
 // ## Diff
 
 

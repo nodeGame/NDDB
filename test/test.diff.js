@@ -59,6 +59,7 @@ describe('NDDB Diff', function() {
 	//diff, intersect
 	
     before(function() {
+    	db = new NDDB();
         db.importDB(items);
     });
 
