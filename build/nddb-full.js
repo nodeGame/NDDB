@@ -1901,8 +1901,8 @@ if (typeof JSON.retrocycle !== 'function') {
  * Create your customized build of JSUS.js using the make file in the bin directory
  * 
  * ```javascript
- * node make.jsus.js build // Full build, about 16Kb minified
- * node make.jsus.js build OBJ ARRAY -o jsus-oa.js // about 8Kb minified
+ * node make.js build // Full build, about 20Kb minified
+ * node make.js build -l obj,array -o jsus-oa.js // about 12Kb minified
  * ```
  */
 
@@ -3133,10 +3133,12 @@ OBJ.mergeOnKey = function (obj1, obj2, key) {
  * ## OBJ.subobj
  * 
  * Creates a copy of an object containing only the properties 
- * passed as second parameter.
+ * passed as second parameter
  * 
  * The parameter select can be an array of strings, or the name 
- * of a property. Nested properties can be specified too. 
+ * of a property. 
+ * 
+ * Use '.' (dot) to point to a nested property.
  * 
  * @param {object} o The object to dissect
  * @param {string|array} select The selection of properties to extract
@@ -3152,12 +3154,41 @@ OBJ.subobj = function (o, select) {
     for (var i=0; i < select.length; i++) {
         var key = select[i];
         if (OBJ.hasOwnNestedProperty(key, o)) {
-            out[key] = OBJ.getNestedValue(key, o);
+        	OBJ.setNestedValue(key, OBJ.getNestedValue(key, o), out);
         }
     }
     return out;
 };
   
+/**
+ * ## OBJ.skim
+ * 
+ * Creates a copy of an object where a set of selected properties
+ * have been removed
+ * 
+ * The parameter `remove` can be an array of strings, or the name 
+ * of a property. 
+ * 
+ * Use '.' (dot) to point to a nested property.
+ * 
+ * @param {object} o The object to dissect
+ * @param {string|array} select The selection of properties to extract
+ * @return {object} out The subobject with the properties from the parent one 
+ * 
+ * 	@see OBJ.getNestedValue
+ */
+OBJ.skim = function (o, remove) {
+    if (!o) return false;
+    var out = OBJ.clone(o);
+    if (!remove) return out;
+    if (!(remove instanceof Array)) remove = [remove];
+    for (var i=0; i < remove.length; i++) {
+    	OBJ.deleteNestedKey(remove[i], out);
+    }
+    return out;
+};
+
+
 /**
  * ## OBJ.setNestedValue
  * 
@@ -3165,8 +3196,9 @@ OBJ.subobj = function (o, select) {
  * and returns it.
  *
  * If the object is not passed a new one is created.
- * 
  * If the nested property is not existing, a new one is created.
+ * 
+ * Use '.' (dot) to point to a nested property.
  *
  * The original object is modified.
  *
@@ -3174,7 +3206,8 @@ OBJ.subobj = function (o, select) {
  * @param {mixed} value The value to set
  * @return {object|boolean} obj The modified object, or FALSE if error occurred
  * 
- * 	@see OBJ.getNestedValue
+ * @see OBJ.getNestedValue
+ * @see OBJ.deleteNestedKey
  *  
  */
 OBJ.setNestedValue = function (str, value, obj) {
@@ -3182,7 +3215,7 @@ OBJ.setNestedValue = function (str, value, obj) {
 		JSUS.log('Cannot set value of undefined property', 'ERR');
 		return false;
 	}
-	obj = obj || {};
+	obj = ('object' === typeof obj) ? obj : {};
     var keys = str.split('.');
     if (keys.length === 1) {
     	obj[str] = value;
@@ -3199,7 +3232,7 @@ OBJ.setNestedValue = function (str, value, obj) {
  * Returns the value of a property of an object, as defined
  * by a path string. 
  * 
- * Use '.' to point to a nested property.
+ * Use '.' (dot) to point to a nested property.
  *  
  * Returns undefined if the nested property does not exist.
  * 
@@ -3214,7 +3247,8 @@ OBJ.setNestedValue = function (str, value, obj) {
  * @param {object} obj The object from which extract the value
  * @return {mixed} The extracted value
  * 
- * 	@see OBJ.setNestedValue
+ * @see OBJ.setNestedValue
+ * @see OBJ.deleteNestedKey
  */
 OBJ.getNestedValue = function (str, obj) {
     if (!obj) return;
@@ -3226,6 +3260,42 @@ OBJ.getNestedValue = function (str, obj) {
     return OBJ.getNestedValue(keys.join('.'), obj[k]); 
 };
 
+/**
+ * ## OBJ.deleteNestedKey
+ * 
+ * Deletes a property from an object, as defined by a path string 
+ * 
+ * Use '.' (dot) to point to a nested property.
+ *  
+ * The original object is modified.
+ * 
+ * E.g.
+ * 
+ * ```javascript
+ * var o = { a:1, b:{a:2} };
+ * OBJ.deleteNestedKey('b.a', o); // { a:1, b: {} }
+ * ```
+ * 
+ * @param {string} str The path string
+ * @param {object} obj The object from which deleting a property
+ * @param {boolean} TRUE, if the property was existing, and then deleted
+ * 
+ * @see OBJ.setNestedValue
+ * @see OBJ.getNestedValue
+ */
+OBJ.deleteNestedKey = function (str, obj) {
+    if (!obj) return;
+    var keys = str.split('.');
+    if (keys.length === 1) {
+		delete obj[str];
+        return true;
+    }
+    var k = keys.shift();
+    if ('undefined' === typeof obj[k]) {
+    	return false;
+    }
+    return OBJ.deleteNestedKey(keys.join('.'), obj[k]); 
+};
 
 /**
  * ## OBJ.hasOwnNestedProperty
@@ -4279,7 +4349,6 @@ NDDB.prototype.shuffle = function () {
     return true;
 };
     
-
 // ## Custom callbacks
   
 /**
@@ -4390,6 +4459,7 @@ NDDB.prototype.map = function () {
 //};  
 
 //## Deletion
+
 
 /**
  * ### NDDB.remove
@@ -5026,6 +5096,59 @@ NDDB.prototype.max = function (key) {
     return max;
 };
     
+// ## Skim
+
+/**
+ * ### NDDB.skim
+ *
+ * Removes the specified properties from all the items in the database 
+ *  
+ * Use '.' (dot) to point to a nested property.
+ * 
+ * Items with no property are automatically removed.
+ * 
+ * @param {string|array} skim The selection of properties to remove
+ * @return {NDDB} A new database containing the result of the skim
+ * 
+ * @see NDDB.keep
+ * @see JSUS.skim
+ */
+NDDB.prototype.skim = function (skim) {
+    if (!skim) return this;
+    return this.breed(this.map(function(e){
+    	var skimmed = JSUS.skim(e, skim); 
+    	if (!JSUS.isEmpty(skimmed)) {
+    		return skimmed;
+    	}
+    }));
+};
+
+/**
+ * ### NDDB.keep
+ *
+ * Removes all the properties that are not specified as parameter 
+ * from all the items in the database
+ *  
+ * Use '.' (dot) to point to a nested property.
+ * 
+ * Items with no property are automatically removed.
+ * 
+ * @param {string|array} skim The selection of properties to keep
+ * @return {NDDB} A new database containing the result of the keep operation
+ * 
+ * @see NDDB.skim
+ * @see JSUS.keep
+ */
+NDDB.prototype.keep = function (keep) {
+    if (!keep) return this.breed([]);
+    return this.breed(this.map(function(e){
+    	var subobj = JSUS.subobj(e, keep);
+    	if (!JSUS.isEmpty(subobj)) {
+    		return subobj;
+    	}
+    }));
+};
+
 // ## Diff
 
 

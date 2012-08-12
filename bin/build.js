@@ -32,7 +32,7 @@ function build(options) {
 	
 	var re = new RegExp('node_modules.+');
 	
-	var rootDir = __dirname + '/../';
+	var rootDir = path.resolve(__dirname, '..') + '/';
 	var distDir =  rootDir + 'build/';
 	
 	// jsus
@@ -72,11 +72,11 @@ function build(options) {
 	
 	// 1. Shelf.js
 	if (options.shelf || options.all || options.standard) {
-		var shelfjs_build = './../node_modules/shelf.js/build/shelf.js';
-		var shelfjs_make = './../node_modules/shelf.js/bin/build.js';
+		var shelfjs_build = rootDir + 'node_modules/shelf.js/build/shelf.js';
+		var shelfjs_make = rootDir + 'node_modules/shelf.js/bin/build.js';
 		// Build custom shelf.js if not existing
 		if (!path.existsSync(shelfjs_build)) {
-			console.log('Building custom Shelf.js')
+			console.log("\n  - building custom shelf.js")
 			var buildShelf = require(shelfjs_make);
 			buildShelf.build({cycle: true});
 		}
