@@ -289,7 +289,7 @@ node make.nddb.js doc
 
 ## ChangeLog
 
-### 0.3.0 (forecoming)
+### 0.3.0 
 
   - NDDB.skim() and NDDB.keep()
   - Full test coverage
