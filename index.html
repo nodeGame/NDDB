@@ -1,0 +1,379 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Nddb by nodeGame</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Nddb</h1>
+        <p>Javascript lightweight N-dimensional database</p>
+
+        <p class="view"><a href="https://github.com/nodeGame/NDDB">View the Project on GitHub <small>nodeGame/NDDB</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/nodeGame/NDDB/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/nodeGame/NDDB/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/nodeGame/NDDB">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>NDDB</h1>
+
+<p>NDDB provides a simple, lightweight NO-SQL database for node.js and the browser.</p>
+
+<hr><p>NDDB provides a simple, lightweight, NO-SQL object database 
+for node.js and the browser. It depends on JSUS.</p>
+
+<p>Allows to define any number of comparator and indexing functions, 
+which are associated to any of the dimensions (i.e. properties) of 
+the objects stored in the database. </p>
+
+<p>Whenever a comparison is needed, the corresponding comparator function 
+is called, and the database is updated.</p>
+
+<p>Whenever an object is inserted that matches one of the indexing functions
+an hash is produced, and the element is added to one of the indexes.</p>
+
+<p>Additional features are: methods chaining, tagging, and iteration 
+through the entries.</p>
+
+<p>NDDB is work in progress. Currently, the following methods are
+implemented:</p>
+
+<ul>
+<li>
+<p>Sorting and selecting:</p>
+
+<ul>
+<li>select, sort, reverse, last, first, limit, distinct, shuffle</li>
+</ul>
+</li>
+<li>
+<p>Custom callbacks</p>
+
+<ul>
+<li>map, each, filter</li>
+</ul>
+</li>
+<li>
+<p>Deletion</p>
+
+<ul>
+<li>remove, clear</li>
+</ul>
+</li>
+<li>
+<p>Advanced operations</p>
+
+<ul>
+<li>split, join, concat</li>
+</ul>
+</li>
+<li>
+<p>Fetching</p>
+
+<ul>
+<li>fetch, fetchArray, fetchKeyArray</li>
+</ul>
+</li>
+<li>
+<p>Statistics operator</p>
+
+<ul>
+<li>count, max, min, mean</li>
+</ul>
+</li>
+<li>
+<p>Diff</p>
+
+<ul>
+<li>diff, intersect</li>
+</ul>
+</li>
+<li>
+<p>Skim</p>
+
+<ul>
+<li>skim, keep</li>
+</ul>
+</li>
+<li>
+<p>Iterator</p>
+
+<ul>
+<li>previous, next, first, last</li>
+</ul>
+</li>
+<li>
+<p>Tagging</p>
+
+<ul>
+<li>tag</li>
+</ul>
+</li>
+<li>
+<p>Updating</p>
+
+<ul>
+<li>Update must be performed manually after a selection</li>
+</ul>
+</li>
+</ul><h2>Usage</h2>
+
+<p>Create an instance of NDDB</p>
+
+<div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'NDDB'</span><span class="p">).</span><span class="nx">NDDB</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
+</pre></div>
+
+<p>Insert an item into the database</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span>
+        <span class="nx">painter</span><span class="o">:</span> <span class="s2">"Picasso"</span><span class="p">,</span>
+        <span class="nx">title</span><span class="o">:</span> <span class="s2">"Les Demoiselles d'Avignon"</span><span class="p">,</span>
+        <span class="nx">year</span><span class="o">:</span> <span class="mi">1907</span>
+    <span class="p">});</span>
+</pre></div>
+
+<p>Import a collection of items</p>
+
+<div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nx">painter</span><span class="o">:</span> <span class="s2">"Dali"</span><span class="p">,</span>
+            <span class="nx">title</span><span class="o">:</span> <span class="s2">"Portrait of Paul Eluard"</span><span class="p">,</span>
+            <span class="nx">year</span><span class="o">:</span> <span class="mi">1929</span><span class="p">,</span>
+            <span class="nx">portrait</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nx">painter</span><span class="o">:</span> <span class="s2">"Dali"</span><span class="p">,</span>
+            <span class="nx">title</span><span class="o">:</span> <span class="s2">"Barcelonese Mannequin"</span><span class="p">,</span>
+            <span class="nx">year</span><span class="o">:</span> <span class="mi">1927</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nx">painter</span><span class="o">:</span> <span class="s2">"Monet"</span><span class="p">,</span>
+            <span class="nx">title</span><span class="o">:</span> <span class="s2">"Water Lilies"</span><span class="p">,</span>
+            <span class="nx">year</span><span class="o">:</span> <span class="mi">1906</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nx">painter</span><span class="o">:</span> <span class="s2">"Monet"</span><span class="p">,</span>
+            <span class="nx">title</span><span class="o">:</span> <span class="s2">"Wheatstacks (End of Summer)"</span><span class="p">,</span>
+            <span class="nx">year</span><span class="o">:</span> <span class="mi">1891</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nx">painter</span><span class="o">:</span> <span class="s2">"Manet"</span><span class="p">,</span>
+            <span class="nx">title</span><span class="o">:</span> <span class="s2">"Olympia"</span><span class="p">,</span>
+            <span class="nx">year</span><span class="o">:</span> <span class="mi">1863</span>
+        <span class="p">}</span>
+    <span class="p">];</span>
+
+    <span class="nx">db</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">items</span><span class="p">);</span>
+</pre></div>
+
+<p>Retrieve the database size</p>
+
+<div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">db_size</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="c1">// 6</span>
+</pre></div>
+
+<p>Select all paintings from Dali</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'painter'</span><span class="p">,</span> <span class="s1">'='</span><span class="p">,</span> <span class="s1">'Dali'</span><span class="p">);</span> <span class="c1">// 2 items</span>
+</pre></div>
+
+<p>Select all portraits</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'portrait'</span><span class="p">);</span> <span class="c1">// 1 item</span>
+</pre></div>
+
+<p>Select all paintings from Dali that are before 1928</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'painter'</span><span class="p">,</span> <span class="s1">'='</span><span class="p">,</span> <span class="s1">'Dali'</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'year'</span><span class="p">,</span> <span class="s1">'&lt;'</span><span class="p">,</span> <span class="mi">1928</span><span class="p">);</span> <span class="c1">// 1 item</span>
+</pre></div>
+
+<p>Select all paintings of the beginning of XX's century</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'year'</span><span class="p">,</span> <span class="s1">'&gt;&lt;'</span><span class="p">,</span> <span class="p">[</span><span class="mi">1900</span><span class="p">,</span> <span class="mi">1910</span><span class="p">]);</span> <span class="c1">// 2 items    </span>
+</pre></div>
+
+<h2>Advanced commands</h2>
+
+<p>Define a global comparator function that sorts all the entries chronologically</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">globalCompator</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o1</span><span class="p">.</span><span class="nx">year</span> <span class="o">&lt;</span> <span class="nx">o2</span><span class="p">.</span><span class="nx">year</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o1</span><span class="p">.</span><span class="nx">year</span> <span class="o">&lt;</span> <span class="nx">o2</span><span class="p">.</span><span class="nx">year</span><span class="p">)</span> <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">};</span>
+</pre></div>
+
+<p>Sort all the items (global comparator function is automatically used)</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">sort</span><span class="p">();</span> <span class="c1">// Order: Manet, Monet, Monet, Picasso, Dali, Dali</span>
+</pre></div>
+
+<p>Reverse the order of the items</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span> <span class="c1">// Order: Dali, Dali, Picasso, Monet, Monet, Manet</span>
+</pre></div>
+
+<p>Define a custom comparator function for the name of the painter, which gives highest priorities to the canvases of Picasso;</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">c</span><span class="p">(</span><span class="s1">'painter'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o1</span><span class="p">.</span><span class="nx">painter</span> <span class="o">===</span> <span class="s1">'Picasso'</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o2</span><span class="p">.</span><span class="nx">painter</span> <span class="o">===</span> <span class="s1">'Picasso'</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+</pre></div>
+
+<p>Sort all the paintings by painter</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="s1">'painter'</span><span class="p">);</span> <span class="c1">// Picasso is always listed first</span>
+</pre></div>
+
+<p>Define a custom index (hash) function for the name of the painter, which splits the inserted items according to the;</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">h</span><span class="p">(</span><span class="s1">'painter'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">)</span> <span class="k">return</span> <span class="kc">undefined</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">painter</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="nx">db</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
+
+    <span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>          <span class="c1">// 6, unchanged;</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">painter</span><span class="p">.</span><span class="nx">Picasso</span><span class="p">;</span> <span class="c1">// NDDB with 1 element in db</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">painter</span><span class="p">.</span><span class="nx">Monet</span>    <span class="c1">// NDDB with 2 elements in db</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">painter</span><span class="p">.</span><span class="nx">Manet</span>    <span class="c1">// NDDB with 1 elements in db</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">painter</span><span class="p">.</span><span class="nx">Dali</span>     <span class="c1">// NDDB with 2 elements in db</span>
+</pre></div>
+
+<h2>Example of Configuration object</h2>
+
+<div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">logFunc</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">level</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">tags</span><span class="o">:</span>  <span class="p">{},</span>          <span class="c1">// Collection of tags</span>
+      <span class="nx">update</span><span class="o">:</span> <span class="p">{</span>           <span class="c1">// On every insert and remove:</span>
+        <span class="nx">indexes</span><span class="o">:</span>  <span class="kc">true</span><span class="p">,</span>   <span class="c1">// updates the indexes, if any  </span>
+        <span class="nx">sort</span><span class="o">:</span>     <span class="kc">true</span><span class="p">,</span>   <span class="c1">// sorts the items of the database </span>
+        <span class="nx">pointer</span><span class="o">:</span>  <span class="kc">true</span><span class="p">,</span>   <span class="c1">// moves the iterator pointer to the last inserted element</span>
+      <span class="p">},</span>
+      <span class="nx">C</span><span class="o">:</span>  <span class="p">{},</span>             <span class="c1">// Collection of comparator functions</span>
+      <span class="nx">H</span><span class="o">:</span>  <span class="p">{},</span>             <span class="c1">// Collection of hashing functions</span>
+      <span class="nx">log</span><span class="o">:</span> <span class="nx">logFunc</span><span class="p">,</span>       <span class="c1">// Default stdout</span>
+      <span class="nx">nddb_pointer</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>    <span class="c1">// Set the pointer to element of index 4. </span>
+    <span class="p">}</span>
+
+    <span class="kd">var</span> <span class="nx">nddb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+
+    <span class="c1">// or</span>
+
+    <span class="nx">nddb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
+    <span class="nx">nddb</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+</pre></div>
+
+<h2>Save and load from file</h2>
+
+<p>Only in the node.js environment, it is possible to save the state of the database to a file and load it afterwards.</p>
+
+<div class="highlight"><pre>   <span class="c1">// database exists and items inserted </span>
+   <span class="nx">db</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="s1">'./db.out'</span><span class="p">);</span>
+
+   <span class="kd">var</span> <span class="nx">db2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
+   <span class="nx">db2</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="s1">'./db.out'</span><span class="p">);</span>
+</pre></div>
+
+<h2>Test</h2>
+
+<p>NDDB relies on <a href="http://visionmedia.github.com/mocha/">mocha</a> and <a href="http://github.com/visionmedia/should.js">should.js</a> for testing.</p>
+
+<pre><code>$ npm install # will load all necessary dependencies
+$ npm test # will run the test suite against nddb.js
+</code></pre>
+
+<h2>Build</h2>
+
+<p>Create your customized build of NDDB using the make file in the <code>bin</code> directory</p>
+
+<div class="highlight"><pre><span class="nx">node</span> <span class="nx">make</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">js</span> <span class="nx">build</span> <span class="c1">// Standard build, about 28Kb minified</span>
+<span class="nx">node</span> <span class="nx">make</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">js</span> <span class="nx">build</span> <span class="o">-</span><span class="nx">a</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">nddb</span><span class="o">-</span><span class="nx">full</span> <span class="c1">// Full build, about 40Kb minified</span>
+</pre></div>
+
+<h3>Help</h3>
+
+<div class="highlight"><pre><span class="nx">node</span> <span class="nx">make</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">js</span> <span class="o">--</span><span class="nx">help</span>
+</pre></div>
+
+<h2>API Documentation</h2>
+
+<p>Create html API documentation using the make file in the bin directory  </p>
+
+<div class="highlight"><pre><span class="nx">node</span> <span class="nx">make</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">js</span> <span class="nx">doc</span>
+</pre></div>
+
+<h2>ChangeLog</h2>
+
+<h3>0.3.0</h3>
+
+<ul>
+<li>NDDB.skim() and NDDB.keep()</li>
+<li>Full test coverage</li>
+<li>Make file in bin directory</li>
+<li>Custom builds</li>
+<li>Bug fixing</li>
+</ul><h3>0.2.5</h3>
+
+<ul>
+<li>NDDB.distinct() + test</li>
+<li>Support for cyclic objects when saving the database to file</li>
+<li>NDDB.stddev()</li>
+<li>Bug fixing</li>
+<li>More tests</li>
+</ul><h3>0.2</h3>
+
+<ul>
+<li>Introduced indexing. Indexes are created with NDDB.h() or the alias NDDB.hash()</li>
+<li>NDDB.set() was already deprecated and it has been removed. NDDB.c() or the alias NDDB.compare() should be used instead.</li>
+<li>NDDB.init() can sets the configuration of the database</li>
+</ul><h2>License</h2>
+
+<p>Copyright (C) 2012 Stefano Balietti</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/nodeGame">nodeGame</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-34089835-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
