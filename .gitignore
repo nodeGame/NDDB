@@ -1,0 +1,12 @@
+node_modules/
+*~
+.project
+.settings
+test/NDDB_Test.js.old
+test/NDDB_Test.js
+/db.out
+*.out
+*.nddb
+
+/docs/*
+/nddb2.js
