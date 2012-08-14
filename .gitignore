@@ -8,5 +8,4 @@ test/NDDB_Test.js
 *.out
 *.nddb
 
-/docs/*
 /nddb2.js
