@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/nodeGame/NDDB.png)](http://travis-ci.org/nodeGame/NDDB)
 # NDDB
 
 NDDB provides a simple, lightweight NO-SQL database for node.js and the browser.
