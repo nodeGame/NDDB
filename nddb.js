@@ -143,6 +143,10 @@ function NDDB (options, db, parent) {
     // The tags list
     this.tags = {};
     
+    // ### hooks
+    // The list of hooks and associated callbacks
+    this.hooks = {};
+    
     // ### nddb_pointer
     // Pointer for iterating along all the elements
     this.nddb_pointer = 0; 
@@ -224,6 +228,10 @@ NDDB.prototype.init = function(options) {
     if (options.nddb_pointer > 0) {
     	this.nddb_pointer = options.nddb_pointer;
 	}
+    
+    if (options.hooks) {
+    	this.hooks = options.hook;
+    }
     
     if (options.update) {
         if ('undefined' !== typeof options.update.pointer) {
@@ -379,6 +387,7 @@ NDDB.prototype.importDB = function (db) {
 NDDB.prototype.insert = function (o) {
 	if ('undefined' === typeof o || o === null) return;
     if (!this.db) this.db = [];
+ 
     this._insert(o);
 };
 
