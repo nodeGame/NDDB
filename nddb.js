@@ -1980,16 +1980,12 @@ NDDB.prototype.resolveTag = function (tag) {
 
 // ## Persistance    
 
-var isNodeJS = function() {
-	return ('object' === typeof module && 'function' === typeof require);
-};
-
 var storageAvailable = function() {
 	return ('function' === typeof store);
 }
 
 // if node
-if (isNodeJS()) {   
+if (JSUS.isNodeJS()) {   
 	require('./external/cycle.js');		
 	var fs = require('fs');
 };
@@ -2003,7 +1999,7 @@ NDDB.prototype.save = function (file, callback) {
 	}
 	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!isNodeJS()){
+	if (!JSUS.isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
@@ -2028,7 +2024,7 @@ NDDB.prototype.load = function (file, callback) {
 	}
 	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!isNodeJS()){
+	if (!JSUS.isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
