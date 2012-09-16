@@ -2231,9 +2231,22 @@ JSUS.require = JSUS.get = function (className) {
     return JSUS.clone(JSUS._classes[className]);
 };
 
+/**
+ * ## JSUS.isNodeJS
+ * 
+ * Returns TRUE when executed inside Node.JS environment
+ * 
+ * @return {boolean} TRUE when executed inside Node.JS environment
+ */
+JSUS.isNodeJS = function () {
+	return 'undefined' !== typeof module 
+			&& 'undefined' !== typeof module.exports
+			&& 'function' === typeof require;
+};
+
 // ## Node.JS includes
 // if node
-if ('object' === typeof module && 'function' === typeof require) {
+if (JSUS.isNodeJS()) {
     require('./lib/obj');
     require('./lib/array');
     require('./lib/time');
@@ -2241,6 +2254,7 @@ if ('object' === typeof module && 'function' === typeof require) {
     require('./lib/dom');
     require('./lib/random');
     require('./lib/parse');
+    require('./lib/fs');
 }
 // end node
     
@@ -3386,7 +3400,7 @@ OBJ.subobj = function (o, select) {
  * Use '.' (dot) to point to a nested property.
  * 
  * @param {object} o The object to dissect
- * @param {string|array} select The selection of properties to extract
+ * @param {string|array} select The selection of properties to remove
  * @return {object} out The subobject with the properties from the parent one 
  * 
  * 	@see OBJ.getNestedValue

@@ -10,7 +10,9 @@ module.exports.build = build;
 
 var smoosh = require('smoosh'),
     path = require('path'),
-    pkg = require('../package.json'),
+    J = require('JSUS').JSUS;
+
+var	pkg = require('../package.json'),
     version = pkg.version;
 
 
@@ -36,15 +38,19 @@ function build(options) {
 	var distDir =  rootDir + 'build/';
 	
 	// jsus
+	
+	var JSUSdir = J.resolveModuleDir('JSUS');
+	
 	var nddb_jsus = [
-	  rootDir + "node_modules/JSUS/jsus.js",
-	  rootDir + "node_modules/JSUS/lib/array.js",
-	  rootDir + "node_modules/JSUS/lib/obj.js",
+	  JSUSdir + "jsus.js",
+	  JSUSdir + "lib/array.js",
+	  JSUSdir + "lib/obj.js",
 	];
 	
 	//shelf.js
+	var shelfDir = J.resolveModuleDir('shelf.js');
 	var nddb_shelf = [
-	  rootDir + "node_modules/shelf.js/build/shelf.js",
+	  shelfDir + "/build/shelf.js",
 	];
 	
 	// nddb
@@ -57,8 +63,10 @@ function build(options) {
 	  rootDir + "external/cycle.js",
 	];	
 	
+	// es5-shim
+	var es5Dir = J.resolveModuleDir('es5-shim');
 	var nddb_es5 = [
-	  rootDir + "node_modules/es5-shim/es5-shim.js",       
+	  es5Dir + "es5-shim.js",       
 	];
 	
 	// CREATING build array
@@ -72,12 +80,12 @@ function build(options) {
 	
 	// 1. Shelf.js
 	if (options.shelf || options.all || options.standard) {
-		var shelfjs_build = rootDir + 'node_modules/shelf.js/build/shelf.js';
+		var shelfjs = shelfDir + 'build/shelf.js';
 		// Build custom shelf.js if not existing
-		if (!path.existsSync(shelfjs_build)) {
-			var shelfjs_make = 'shelf.js/bin/build.js';
+		if (!path.existsSync(shelfjs)) {
+			var shelfjs_build = shelfDir + 'bin/build.js';
 			console.log("\n  - building custom shelf.js")
-			var buildShelf = require(shelfjs_make);
+			var buildShelf = require(shelfjs_build);
 			buildShelf.build({cycle: true});
 		}
 		

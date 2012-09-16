@@ -11,7 +11,7 @@ var program = require('commander'),
     util = require('util'),
     exec = require('child_process').exec,
     path = require('path'),
-    resolve = require('resolve');
+    J = require('JSUS').JSUS;
     
 var pkg = require('../package.json'),
     version = pkg.version;
@@ -21,43 +21,6 @@ var build = require('./build.js').build;
 var rootDir = path.resolve(__dirname, '..') + '/';
 var buildDir = rootDir + 'build/';
 
-var deleteIfExist = function(file) {
-	file = file || filename;
-	if (path.existsSync(file)) {
-		var stats = fs.lstatSync(file);
-		if (stats.isDirectory()) {
-			fs.rmdir(file, function (err) {
-				if (err) throw err;  
-			});
-		}
-		else {
-			fs.unlink(file, function (err) {
-				if (err) throw err;  
-			});
-		}
-		
-	}
-};
-
-var cleanBuildDir = function(dir, ext) {
-	ext = ext || '.js';
-	dir = dir || buildDir;
-	if (dir[dir.length] !== '/') dir = dir + '/';
-	fs.readdir(dir, function(err, files) {
-	    files.filter(function(file) { return path.extname(file) ===  ext; })
-	         .forEach(function(file) { deleteIfExist(dir + file); });
-	    
-	    console.log('Build directory cleaned');
-	});
-}
-
-var resolveModuleDir = function(module) {
-	var resolve = resolve || require('resolve');
-	
-	var str = resolve.sync(module);
-	var stop = str.indexOf(module) + module.length;
-	return str.substr(0, stop) + '/';
-}
 
 program
   .version(version);
@@ -66,7 +29,7 @@ program
 	.command('clean')
 	.description('Removes all files from build folder')
 	.action(function(){
-		cleanBuildDir();
+		J.cleanDir(buildDir);
 });
   
 program  
@@ -111,7 +74,7 @@ program
 	.action(function(){
 		console.log('Building documentation for NDDB v.' + version);
 		// http://nodejs.org/api.html#_child_processes
-		var dockerDir = resolveModuleDir('docker');
+		var dockerDir = J.resolveModuleDir('docker');
 		var command = dockerDir + 'docker -i ' + rootDir + ' nddb.js -s true -o ' + rootDir + 'docs/';
 		//console.log(command);
 		var child = exec(command, function (error, stdout, stderr) {
