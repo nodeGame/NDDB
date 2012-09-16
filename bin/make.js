@@ -11,12 +11,15 @@ var program = require('commander'),
     util = require('util'),
     exec = require('child_process').exec,
     path = require('path'),
-    pkg = require('../package.json'),
+    resolve = require('resolve');
+    
+var pkg = require('../package.json'),
     version = pkg.version;
 
 var build = require('./build.js').build;
 
-var buildDir =  __dirname + '/../build/';
+var rootDir = path.resolve(__dirname, '..') + '/';
+var buildDir = rootDir + 'build/';
 
 var deleteIfExist = function(file) {
 	file = file || filename;
@@ -46,6 +49,14 @@ var cleanBuildDir = function(dir, ext) {
 	    
 	    console.log('Build directory cleaned');
 	});
+}
+
+var resolveModuleDir = function(module) {
+	var resolve = resolve || require('resolve');
+	
+	var str = resolve.sync(module);
+	var stop = str.indexOf(module) + module.length;
+	return str.substr(0, stop) + '/';
 }
 
 program
@@ -100,8 +111,9 @@ program
 	.action(function(){
 		console.log('Building documentation for NDDB v.' + version);
 		// http://nodejs.org/api.html#_child_processes
-		var root =  __dirname + '/../';
-		var command = root + 'node_modules/.bin/docker -i ' + root + ' nddb.js -s true -o ' + root + 'docs/';
+		var dockerDir = resolveModuleDir('docker');
+		var command = dockerDir + 'docker -i ' + rootDir + ' nddb.js -s true -o ' + rootDir + 'docs/';
+		//console.log(command);
 		var child = exec(command, function (error, stdout, stderr) {
 			util.print(stdout);
 			util.print(stderr);
