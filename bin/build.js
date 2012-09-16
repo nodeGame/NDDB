@@ -39,7 +39,7 @@ function build(options) {
 	
 	// jsus
 	
-	var JSUSdir = J.resolveModuleDir('JSUS');
+	var JSUSdir = J.resolveModuleDir('JSUS', __dirname);
 	
 	var nddb_jsus = [
 	  JSUSdir + "jsus.js",
@@ -48,7 +48,7 @@ function build(options) {
 	];
 	
 	//shelf.js
-	var shelfDir = J.resolveModuleDir('shelf.js');
+	var shelfDir = J.resolveModuleDir('shelf.js', __dirname);
 	var nddb_shelf = [
 	  shelfDir + "/build/shelf.js",
 	];
@@ -64,7 +64,7 @@ function build(options) {
 	];	
 	
 	// es5-shim
-	var es5Dir = J.resolveModuleDir('es5-shim');
+	var es5Dir = J.resolveModuleDir('es5-shim', __dirname);
 	var nddb_es5 = [
 	  es5Dir + "es5-shim.js",       
 	];
