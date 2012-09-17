@@ -68,7 +68,7 @@ implemented:
   
      - Update must be performed manually after a selection
 
-Full NDDB API is available [here](nodegame.github.com/NDDB/docs/nddb.js.html)
+The complete NDDB api is available [here](http://nodegame.github.com/NDDB/docs/nddb.js.html).
 
 ## Usage
 
