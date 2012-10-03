@@ -27,10 +27,22 @@
  * 
  */
 
-(function (exports, JSUS, store) {
+(function () {
     
 // ## Global scope
+var exports, JSUS, store;
 
+if ('undefined' !== typeof module && 'undefined' !== typeof module.exports) {
+	exports = module.exports;
+	JSUS = module.parent.exports.JSUS || require('JSUS').JSUS;	
+	var shelfDir = JSUS.resolveModuleDir('shelf.js', __dirname);
+	//store = require(shelfDir + '/build/shelf-fs.js').store;
+}
+else {
+	exports = this;
+	JSUS = JSUS;
+	store = store;
+}
 	
 var nddb_operation = null;
 var nddb_conditions = [];
@@ -1980,16 +1992,12 @@ NDDB.prototype.resolveTag = function (tag) {
 
 // ## Persistance    
 
-var isNodeJS = function() {
-	return ('object' === typeof module && 'function' === typeof require);
-};
-
 var storageAvailable = function() {
 	return ('function' === typeof store);
 }
 
 // if node
-if (isNodeJS()) {   
+if (JSUS.isNodeJS()) {   
 	require('./external/cycle.js');		
 	var fs = require('fs');
 };
@@ -2003,7 +2011,7 @@ NDDB.prototype.save = function (file, callback) {
 	}
 	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!isNodeJS()){
+	if (!JSUS.isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
@@ -2028,7 +2036,7 @@ NDDB.prototype.load = function (file, callback) {
 	}
 	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!isNodeJS()){
+	if (!JSUS.isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
@@ -2073,8 +2081,4 @@ NDDB.prototype.load = function (file, callback) {
 
 // ## Closure    
     
-})(
-    'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
-  , 'undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
-  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store  		  
-);
+})();

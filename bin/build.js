@@ -87,6 +87,13 @@ function build(options) {
 			console.log("\n  - building custom shelf.js")
 			var buildShelf = require(shelfjs_build);
 			buildShelf.build({cycle: true});
+			
+			// building shelf.js FS as well
+			buildShelf.build({
+				lib: ['fs'],
+				output: "shelf-fs",
+				cycle: true,
+			});
 		}
 		
 		console.log('  - shelf');
