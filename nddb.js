@@ -27,22 +27,7 @@
  * 
  */
 
-(function () {
-    
-// ## Global scope
-var exports, JSUS, store;
-
-if ('undefined' !== typeof module && 'undefined' !== typeof module.exports) {
-	exports = module.exports;
-	JSUS = module.parent.exports.JSUS || require('JSUS').JSUS;	
-	var shelfDir = JSUS.resolveModuleDir('shelf.js', __dirname);
-	//store = require(shelfDir + '/build/shelf-fs.js').store;
-}
-else {
-	exports = this;
-	JSUS = JSUS;
-	store = store;
-}
+(function (exports, JSUS, store) {
 	
 var nddb_operation = null;
 var nddb_conditions = [];
@@ -2080,5 +2065,8 @@ NDDB.prototype.load = function (file, callback) {
 
 
 // ## Closure    
-    
-})();
+})(
+    'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
+  , 'undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
+  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store
+);
