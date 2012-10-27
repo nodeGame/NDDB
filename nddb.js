@@ -335,7 +335,8 @@ NDDB.prototype._masqueradeDB = function (db) {
  * @param {object} options Optional. Configuration object
  */
 NDDB.prototype._autoUpdate = function (options) {
-	var update = JSUS.merge(options || {}, this.__update);
+	var update = (options) ? JSUS.merge(options, this.__update)
+						   : this.__update;
 	
     if (update.pointer) {
         this.nddb_pointer = this.db.length-1;
