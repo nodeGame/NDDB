@@ -2021,7 +2021,7 @@ if (JSUS.isNodeJS()) {
  * 
  * @param {string} file The file system path, or the identifier for the browser database
  * @param {function} callback Optional. A callback to execute after the database was saved
- * @param {compress} boolean Optional. If TRUE, JSON will be compressed. Defaults, FALSE
+ * @param {compress} boolean Optional. If TRUE, output will be compressed. Defaults, FALSE
  * 
  * @see NDDB.load
  * @see NDDB.stringify
