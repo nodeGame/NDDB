@@ -291,6 +291,12 @@ node make.nddb.js doc
 
 ## ChangeLog
 
+### 0.3.6
+
+  - Bug fixing
+  - NDDB.save beautifies the output by default
+  - Post install scripts build the libraries
+
 ### 0.3.0 
 
   - NDDB.skim() and NDDB.keep()
