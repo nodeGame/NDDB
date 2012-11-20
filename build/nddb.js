@@ -1764,7 +1764,7 @@ var addCondition = function(type, condition) {
 	}
 	nddb_conditions.push({
 		type: type,
-		condition: condition,
+		condition: condition
 	});
 	return true;
 }
@@ -1875,13 +1875,18 @@ function NDDB (options, db, parent) {
     
     // ### length
     // The number of items in the database
-    Object.defineProperty(this, 'length', {
-    	set: function(){},
-    	get: function(){
-    		return this.db.length;
-    	},
-    	configurable: true
-	});
+    try {	
+	    Object.defineProperty(this, 'length', {
+	    	set: function(){},
+	    	get: function(){
+	    		return this.db.length;
+	    	},
+	    	configurable: true
+		});
+    }
+    catch(e) {
+    	this.length = null;
+    }
    
     
     // ### __C
@@ -2021,11 +2026,16 @@ NDDB.prototype._masquerade = function (o, db) {
     if ('undefined' !== typeof o.nddbid) return o;
     db = db || this.db;
     
-    Object.defineProperty(o, 'nddbid', {
-    	value: db.length,
-    	configurable: true,
-    	writable: true,
-	});
+    try {
+	    Object.defineProperty(o, 'nddbid', {
+	    	value: db.length,
+	    	configurable: true,
+	    	writable: true
+		});
+    }
+    catch(e) {
+    	o.nddbid = db.length;
+    }
     
     return o;
 };
@@ -3746,7 +3756,7 @@ if (JSUS.isNodeJS()) {
  * 
  * @param {string} file The file system path, or the identifier for the browser database
  * @param {function} callback Optional. A callback to execute after the database was saved
- * @param {compress} boolean Optional. If TRUE, JSON will be compressed. Defaults, FALSE
+ * @param {compress} boolean Optional. If TRUE, output will be compressed. Defaults, FALSE
  * 
  * @see NDDB.load
  * @see NDDB.stringify
@@ -3860,5 +3870,5 @@ NDDB.prototype.load = function (file, callback) {
 })(
     'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
   , 'undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
-//  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store
+  , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store
 );

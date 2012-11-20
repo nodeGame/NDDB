@@ -150,13 +150,18 @@ function NDDB (options, db, parent) {
     
     // ### length
     // The number of items in the database
-    Object.defineProperty(this, 'length', {
-    	set: function(){},
-    	get: function(){
-    		return this.db.length;
-    	},
-    	configurable: true
-	});
+    try {	
+	    Object.defineProperty(this, 'length', {
+	    	set: function(){},
+	    	get: function(){
+	    		return this.db.length;
+	    	},
+	    	configurable: true
+		});
+    }
+    catch(e) {
+    	this.length = null;
+    }
    
     
     // ### __C
@@ -296,11 +301,16 @@ NDDB.prototype._masquerade = function (o, db) {
     if ('undefined' !== typeof o.nddbid) return o;
     db = db || this.db;
     
-    Object.defineProperty(o, 'nddbid', {
-    	value: db.length,
-    	configurable: true,
-    	writable: true
-	});
+    try {
+	    Object.defineProperty(o, 'nddbid', {
+	    	value: db.length,
+	    	configurable: true,
+	    	writable: true
+		});
+    }
+    catch(e) {
+    	o.nddbid = db.length;
+    }
     
     return o;
 };
