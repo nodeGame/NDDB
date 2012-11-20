@@ -39,7 +39,7 @@ var addCondition = function(type, condition) {
 	}
 	nddb_conditions.push({
 		type: type,
-		condition: condition,
+		condition: condition
 	});
 	return true;
 }
@@ -299,7 +299,7 @@ NDDB.prototype._masquerade = function (o, db) {
     Object.defineProperty(o, 'nddbid', {
     	value: db.length,
     	configurable: true,
-    	writable: true,
+    	writable: true
 	});
     
     return o;

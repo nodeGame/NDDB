@@ -10,3 +10,5 @@ test/NDDB_Test.js
 
 /docs/*
 /nddb2.js
+
+npm-debug.log
