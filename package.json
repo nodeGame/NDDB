@@ -13,7 +13,7 @@
     "shelf.js": ">= 0.3.2",	
     "commander": "1.0.0",
     "smoosh": "0.3.2",
-    "JSUS": ">= 0.5.1"
+    "JSUS": ">= 0.6.0"
   },
   "devDependencies": {
     "mocha": ">= 0.3.0",
