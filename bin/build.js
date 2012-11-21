@@ -43,6 +43,7 @@ function build(options) {
 	
 	var nddb_jsus = [
 	  JSUSdir + "jsus.js",
+	  JSUSdir + "lib/compatibility.js",
 	  JSUSdir + "lib/array.js",
 	  JSUSdir + "lib/obj.js",
 	];
