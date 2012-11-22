@@ -152,14 +152,8 @@ function NDDB (options, db, parent) {
     
     // ### length
     // The number of items in the database
-    if (NDDB.compatibility.getter) {	
-	    Object.defineProperty(this, 'length', {
-	    	set: function(){},
-	    	get: function(){
-	    		return this.db.length;
-	    	},
-	    	configurable: true
-		});
+    if (NDDB.compatibility.getter) {
+    	this.__defineGetter__('length', function() { return this.db.length; });
     }
 	else {
     	this.length = null;

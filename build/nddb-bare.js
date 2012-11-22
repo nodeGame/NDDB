@@ -68,6 +68,8 @@ NDDB.prototype.or = NDDB.prototype.OR = function (d, op, value) {
 NDDB.prototype.not = NDDB.prototype.NOT = function (d, op, value) {
 	return addOperation('NOT', d, op, value);
 };
+
+NDDB.compatibility = JSUS.compatibility();
 	
 // Expose constructors
 exports.NDDB = NDDB;
@@ -150,16 +152,10 @@ function NDDB (options, db, parent) {
     
     // ### length
     // The number of items in the database
-    try {	
-	    Object.defineProperty(this, 'length', {
-	    	set: function(){},
-	    	get: function(){
-	    		return this.db.length;
-	    	},
-	    	configurable: true
-		});
+    if (NDDB.compatibility.getter) {
+    	this.__defineGetter__('length', function() { return this.db.length; });
     }
-    catch(e) {
+	else {
     	this.length = null;
     }
    
@@ -301,14 +297,14 @@ NDDB.prototype._masquerade = function (o, db) {
     if ('undefined' !== typeof o.nddbid) return o;
     db = db || this.db;
     
-    try {
+    if (NDDB.compatibility.defineProperty) {
 	    Object.defineProperty(o, 'nddbid', {
 	    	value: db.length,
 	    	configurable: true,
 	    	writable: true
 		});
     }
-    catch(e) {
+    else {
     	o.nddbid = db.length;
     }
     
