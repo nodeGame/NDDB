@@ -26,7 +26,6 @@
     "url": "https://github.com/nodeGame/NDDB.git"
   },
   "scripts": {
-    "test": "make test",
-    "postinstall": "node bin/make.js multibuild"
+    "test": "make test"
   }
 }
