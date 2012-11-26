@@ -1,7 +1,7 @@
 {
   "name": "NDDB",
   "description": "Javascript lightweight N-dimensional database",
-  "version": "0.0.100",
+  "version": "0.4.2",
   "keywords": [ "db", "no-sql", "cyclic objects", "nddb", "database" ],
   "author": "Stefano Balietti <futur.dorko@gmail.com>",
   "licenses": [
@@ -26,6 +26,7 @@
     "url": "https://github.com/nodeGame/NDDB.git"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "postinstall": "node bin/make.js multibuild"
   }
 }
