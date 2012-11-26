@@ -146,8 +146,7 @@ function build(options) {
 	    }
 	    
 	    // builds both uncompressed and compressed files
-	    //smooshed.build(); 
-	    smooshed.build('uncompressed'); 
+	    smooshed.build(); 
 	         
     	if (options.analyse) {
     		smooshed.run(); // runs jshint on full build
