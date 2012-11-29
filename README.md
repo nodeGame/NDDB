@@ -224,7 +224,7 @@ Listen on the `insert` event and modify the inserted items by adding an external
     });
 ```  
   
-Define a custom indexing function that splits the inserted items according to the name of the painter;
+Define a custom indexing function that splits that gives direct access to the items of the database;
     
 ```javascript
     db.i('pid', function(o) {
