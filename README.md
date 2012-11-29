@@ -64,9 +64,9 @@ implemented:
  
      - tag
         
-  * Updating
+  * Event listener / emitter
   
-     - Update must be performed manually after a selection
+     - on, off, emit
 
 The complete NDDB api is available [here](http://nodegame.github.com/NDDB/docs/nddb.js.html).
 
@@ -195,7 +195,7 @@ Sort all the paintings by painter
     db.sort('painter'); // Picasso is always listed first
 ```
 
-Define a custom index (hash) function for the name of the painter, which splits the inserted items according to the;
+Define a custom hash function that splits the inserted items according to the name of the painter;
     
 ```javascript
     db.h('painter', function(o) {
@@ -211,6 +211,30 @@ Define a custom index (hash) function for the name of the painter, which splits 
     db.painter.Manet    // NDDB with 1 elements in db
     db.painter.Dali     // NDDB with 2 elements in db
 ```
+
+Listen on the `insert` event and modify the inserted items by adding an external index to them
+    
+```javascript
+
+    var id = 0;
+    function getMyId(){ return id++; };
+    
+    db.on('insert', function(o) {
+        o.painter.id = getMyId();
+    });
+```  
+  
+Define a custom indexing function that splits the inserted items according to the name of the painter;
+    
+```javascript
+    db.i('pid', function(o) {
+        return o.id;
+    });
+    
+    db.rebuildIndexes();
+    db.pid[0].name; // Picasso    
+
+```  
   
 
 ## Example of Configuration object
