@@ -212,7 +212,7 @@ Define a custom hash function that splits the inserted items according to the na
     db.painter.Dali     // NDDB with 2 elements in db
 ```
 
-Listen on the `insert` event and modify the inserted items by adding an external index to them
+Listen on the `insert` event and modify the inserted items by adding an external index to them;
     
 ```javascript
 
@@ -256,6 +256,7 @@ Define a custom indexing function that splits that gives direct access to the it
       },
       C:  {},             // Collection of comparator functions
       H:  {},             // Collection of hashing functions
+      I:  {},             // Collection of indexing functions
       log: logFunc,       // Default stdout
       nddb_pointer: 4,    // Set the pointer to element of index 4. 
     }
@@ -314,6 +315,17 @@ node make.nddb.js doc
 ```
 
 ## ChangeLog
+
+### 0.5.0
+
+  - Support for events: 'remove', 'insert'
+  - NDDB.index(): provides fast access to objects
+  - NDDB.tag(): accepts also objects
+
+### 0.4.0
+
+  - IE compatibility
+  - Bug fixing
 
 ### 0.3.6
 
