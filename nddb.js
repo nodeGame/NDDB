@@ -144,7 +144,10 @@ function NDDB (options, db, parent) {
     
     // ### hooks
     // The list of hooks and associated callbacks
-    this.hooks = {};
+    this.hooks = {
+		insert: [],
+    	remove: []	
+    };
     
     // ### nddb_pointer
     // Pointer for iterating along all the elements
@@ -244,7 +247,6 @@ NDDB.prototype.init = function(options) {
         	this.__update.sort = options.update.sort;
         }
     }
-    
 };
 
 // ## CORE
@@ -361,6 +363,38 @@ NDDB.prototype._autoUpdate = function (options) {
     }
 }
 
+NDDB.prototype.on = function(event, func) {
+	if (!event || !func || !this.hooks[event]) return;
+    this.hooks[event].push(func);
+    return true;
+};
+
+NDDB.prototype.off = function(event, func) {
+	if (!event || !this.hooks[event] || !this.hooks[event].length) return;
+	 
+    if (!func) {
+    	this.hooks[event] = [];
+    	return true;
+    }
+     
+    for (var i=0; i < this.hooks[event].length; i++) {
+    	if (this.hooks[event][i] == func) {
+    		this.hooks[event].splice(i, 1);
+	        return true;
+	    }
+	}
+     
+    return false;
+}
+
+NDDB.prototype.emit = function(event, o) {
+	if (!event || !this.hooks[event] || !this.hooks[event].length) return;
+	
+	for (var i=0; i < this.hooks[event].length; i++) {
+		this.hooks[event][i].call(this, o);
+	}
+};
+
 /**
  * ### NDDB.importDB
  * 
@@ -403,12 +437,11 @@ NDDB.prototype.insert = function (o) {
  * @param {object} o The item or array of items to insert
  */
 NDDB.prototype._insert = function (o) {
-    if ('undefined' === typeof o || o === null) return;
     o = this._masquerade(o);
-    
     this.db.push(o);
+    this.emit('insert', o);
     
-    // We save time calling _hashIt only
+	// We save time calling _hashIt only
     // on the latest inserted element
     if (this.__update.indexes) {
     	this._hashIt(o);
@@ -1120,6 +1153,7 @@ NDDB.prototype.remove = function () {
         }
 	}
  
+	this.emit('remove', this.db);
 	this.db = [];
 	this._autoUpdate();
 	return this;
