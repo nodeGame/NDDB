@@ -2922,11 +2922,12 @@ NDDB.prototype.reverse = function () {
  * 
  * Changes the order of elements in the current database
  * 
+ * @return {NDDB} A a reference to the current instance with shuffled entries
  */
 NDDB.prototype.shuffle = function () {
     // TODO: check do we need to reassign __nddbid__ ?
     this.db = JSUS.shuffle(this.db);
-    return true;
+    return this;
 };
     
 // ## Custom callbacks
