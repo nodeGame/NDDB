@@ -373,7 +373,7 @@ describe('NDDB Advanced Operation', function() {
             });
             
         });
-        describe('invalid parameter set (invalid,painter,undefined,year)',function() {
+        describe("invalid parameter set ('painter',undefined,undefined,'year')",function() {
             before(function() {
                 join_db = null;
                 join_db = db.join('painter',undefined,undefined,'year');

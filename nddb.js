@@ -998,23 +998,37 @@ NDDB.prototype.select = function (d, op, value) {
     var valid = this._analyzeQuery(d, op, value);        
     if (!valid) return false;
     
-    var d = valid.d;
-    var op = valid.op;
-    var value = valid.value;
+    var d = valid.d,
+    	op = valid.op,
+    	value = valid.value;
 
-    var comparator = this.comparator(d);
+    var comparator = this.comparator(d),
+    	compared = null;
     
     var exist = function (elem) {
         if ('undefined' !== typeof JSUS.getNestedValue(d,elem)) return elem;
     };
     
     var compare = function (elem) {
-        try {    
-            if (JSUS.eval(comparator(elem, value) + op + 0, elem)) {
-                return elem;
-            }
+       
+        compared = comparator(elem, value);
+
+        if (op === '==') {
+        	if (compared === 0) return elem;
         }
-        catch(e) {
+        else if (op === '>') {
+        	if (compared === 1 ) return elem;
+        }
+        else if (op === '>=') {
+        	if (compared === 1 || compared === 0) return elem;
+        }	
+        else if (op === '<') {
+        	if (compared === -1 ) return elem;
+        }
+        else if (op === '<=') {
+        	if (compared === -1 || compared === 0) return elem;
+        }	
+        else {
             NDDB.log('Malformed select query: ' + d + op + value);
             return false;
         };
@@ -1418,41 +1432,35 @@ NDDB.prototype.concat = function (key1, key2, pos, select) {
  *  * TODO: check do we need to reassign __nddbid__ ?
  */
 NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
+	if (!key1 || !key2) return this.breed([]);
+	
     comparator = comparator || JSUS.equals;
     pos = ('undefined' !== typeof pos) ? pos : 'joined';
     if (select) {
-        var select = (select instanceof Array) ? select : [select];
+        select = (select instanceof Array) ? select : [select];
     }
-    var out = [];
-    var idxs = [];
+    var out = [], idxs = [], foreign_key, key;
+    
     for (var i=0; i < this.db.length; i++) {
-        try {
-            var foreign_key = JSUS.eval('this.'+key1, this.db[i]);
-            if ('undefined' !== typeof foreign_key) { 
-                for (var j=i+1; j < this.db.length; j++) {
-                    try {
-                        var key = JSUS.eval('this.'+key2, this.db[j]);
-                        if ('undefined' !== typeof key) { 
-                            if (comparator(foreign_key, key)) {
-                                // Inject the matched obj into the
-                                // reference one
-                                var o = JSUS.clone(this.db[i]);
-                                var o2 = (select) ? JSUS.subobj(this.db[j], select) : this.db[j];
-                                o[pos] = o2;
-                                out.push(o);
-                            }
-                        }
-                    }
-                    catch(e) {
-                        NDDB.log('Key not found in entry: ' + key2, 'WARN');
-                        //return false;
-                    }
+       
+       foreign_key = JSUS.getNestedValue(key1, this.db[i]);
+       if ('undefined' !== typeof foreign_key) { 
+    	   for (var j=i+1; j < this.db.length; j++) {
+           
+    		   key = JSUS.getNestedValue(key2, this.db[j]);
+               
+               if ('undefined' !== typeof key) { 
+            	   if (comparator(foreign_key, key)) {
+	                    // Inject the matched obj into the
+	                    // reference one
+	                    var o = JSUS.clone(this.db[i]);
+	                    var o2 = (select) ? JSUS.subobj(this.db[j], select) : this.db[j];
+	                    o[pos] = o2;
+	                    out.push(o);
+            	   }
+                    
                 }
             }
-        }
-        catch(e) {
-            NDDB.log('Key not found in entry: ' + key1, 'WARN');
-            //return false;
         }
     }
     
