@@ -5,22 +5,8 @@
  * MIT Licensed
  * 
  * NDDB provides a simple, lightweight, NO-SQL object database 
- * for node.js and the browser. It depends on JSUS.
- * 
- * Allows to define any number of comparator and indexing functions, 
- * which are associated to any of the dimensions (i.e. properties) of 
- * the objects stored in the database. 
- * 
- * Whenever a comparison is needed, the corresponding comparator function 
- * is called, and the database is updated.
- * 
- * Whenever an object is inserted that matches one of the indexing functions
- * an hash is produced, and the element is added to one of the indexes.
- * 
- * Additional features are: methods chaining, tagging, and iteration 
- * through the entries.
- * 
- * 
+ * for node.js and the browser.
+ *
  * See README.md for help.
  * 
  * ---

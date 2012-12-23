@@ -7,7 +7,7 @@ NDDB provides a simple, lightweight NO-SQL database for node.js and the browser.
 ---
 
 NDDB provides a simple, lightweight, NO-SQL object database 
-for node.js and the browser. It depends on JSUS.
+for node.js and the browser.
 
 Allows to define any number of comparator and indexing functions, 
 which are associated to any of the dimensions (i.e. properties) of 
@@ -71,6 +71,8 @@ implemented:
      - on, off, emit
 
 The complete NDDB api is available [here](http://nodegame.github.com/NDDB/docs/nddb.js.html).
+
+Different build files available in the build directory.
 
 ## Usage
 
