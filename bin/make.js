@@ -73,8 +73,13 @@ program
 	.description('Builds documentation files')
 	.action(function(){
 		console.log('Building documentation for NDDB v.' + version);
-		// http://nodejs.org/api.html#_child_processes
-		var dockerDir = J.resolveModuleDir('docker');
+		try {
+			var dockerDir = J.resolveModuleDir('docker');
+		}
+		catch(e) {
+			console.log('module Docker not found. Cannot build doc. Do \'npm install docker\' to fix it.');
+			return false;
+		}
 		var command = dockerDir + 'docker -i ' + rootDir + ' nddb.js -s true -o ' + rootDir + 'docs/';
 		//console.log(command);
 		var child = exec(command, function (error, stdout, stderr) {
