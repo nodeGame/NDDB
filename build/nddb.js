@@ -1426,7 +1426,7 @@ OBJ.mixin = function (obj1, obj2) {
 };
 
 /**
- * ## OBJ.mixin
+ * ## OBJ.mixout
  * 
  * Copies only non-overlapping properties from obj2 to obj1
  * 
@@ -1764,26 +1764,11 @@ JSUS.extend(OBJ);
 /**
  * # NDDB: N-Dimensional Database
  * 
- * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed
  * 
  * NDDB provides a simple, lightweight, NO-SQL object database 
- * for node.js and the browser. It depends on JSUS.
- * 
- * Allows to define any number of comparator and indexing functions, 
- * which are associated to any of the dimensions (i.e. properties) of 
- * the objects stored in the database. 
- * 
- * Whenever a comparison is needed, the corresponding comparator function 
- * is called, and the database is updated.
- * 
- * Whenever an object is inserted that matches one of the indexing functions
- * an hash is produced, and the element is added to one of the indexes.
- * 
- * Additional features are: methods chaining, tagging, and iteration 
- * through the entries.
- * 
- * 
+ * for node.js and the browser.
+ *
  * See README.md for help.
  * 
  * ---
@@ -2158,12 +2143,26 @@ NDDB.prototype.importDB = function (db) {
  * 
  * Insert an item into the database
  * 
+ * Item must be of type object or function. 
+ * 
+ * The following entries will be ignored:
+ * 
+ * 	- strings
+ * 	- numbers
+ * 	- undefined
+ * 	- null
+ * 
  * @param {object} o The item or array of items to insert
  * @see NDDB._insert
  */
 NDDB.prototype.insert = function (o) {
-	if ('undefined' === typeof o || o === null) return;
-    if (!this.db) this.db = [];
+	if (o === null) return;
+	var type = typeof(o);
+	if (type === 'undefined') return;
+	if (type === 'string') return;
+	if (type === 'number') return;
+	
+	if (!this.db) this.db = [];
  
     this._insert(o);
 };
@@ -3993,6 +3992,10 @@ if (JSUS.isNodeJS()) {
  * Cyclic objects are decycled, and do not cause errors. Upon loading, the cycles
  * are restored.
  * 
+ * Note that the database is serialized using `JSON.stringify`. Some values are 
+ * automatically omitted by this function, e.g. function declarations, and undefined
+ * values.
+ * 
  * @param {string} file The file system path, or the identifier for the browser database
  * @param {function} callback Optional. A callback to execute after the database was saved
  * @param {compress} boolean Optional. If TRUE, output will be compressed. Defaults, FALSE
@@ -4024,11 +4027,10 @@ NDDB.prototype.save = function (file, callback, compress) {
 	}
 	
 	// Save in Node.js
-	fs.writeFile(file, this.stringify(compress), 'utf-8', function(e) {
-		if (e) throw e
-		if (callback) callback();
-		return true;
-	});
+	fs.writeFileSync(file, this.stringify(compress), 'utf-8');
+	if (callback) callback();
+	return true;
+	
 };
 
 /**
@@ -4083,7 +4085,7 @@ NDDB.prototype.load = function (file, callback) {
 			items[i] = NDDB.retrocycle(items[i]);
 		}
 //					console.log(Object.prototype.toString.apply(items[0].aa))
-		
+//		console.log(items);
 		this.importDB(items);
 //				this.each(function(e) {
 //					e = NDDB.retrocycle(e);

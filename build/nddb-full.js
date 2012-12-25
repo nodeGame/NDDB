@@ -1709,7 +1709,7 @@ store.verbosity = 0;
 store.types = {};
 
 
-var mainStorageType = null;
+var mainStorageType = "volatile";
 
 //if Object.defineProperty works...
 try {	
@@ -1759,8 +1759,8 @@ store.log = function(text) {
 };
 
 store.isPersistent = function() {
-	if (!store.types.length) return false;
-	if (store.types.length === 1 && store.type === "volatile") return false;
+	if (!store.types) return false;
+	if (store.type === "volatile") return false;
 	return true;
 };
 
@@ -2176,185 +2176,6 @@ if (cookie.test()) {
 
 }(this));
 /**
- * ## File System storage for Shelf.js
- * 
- * ### Available only in Node.JS
- */
-
-(function(exports) {
-	
-var store = exports.store;
-
-if (!store) {
-	console.log('fs.shelf.js: shelf.js core not found. File system storage not available.');
-	return;
-}
-
-store.filename = './shelf.out';
-
-var fs = require('fs'),
-	path = require('path'),
-	util = require('util');
-
-// https://github.com/jprichardson/node-fs-extra/blob/master/lib/copy.js
-var copyFile = function(srcFile, destFile, cb) {
-    var fdr, fdw;
-    fdr = fs.createReadStream(srcFile);
-    fdw = fs.createWriteStream(destFile);
-    fdr.on('end', function() {
-      return cb(null);
-    });
-    return fdr.pipe(fdw);
-  };
-
-
-var timeout = {};
-
-var overwrite = function (fileName, items) {
-	var file = fileName || store.filename;
-	if (!file) {
-		store.log('You must specify a valid file.', 'ERR');
-		return false;
-	}
-	
-	var tmp_copy = path.dirname(file) + '.' + path.basename(file);
-	
-//	console.log('files')
-//	console.log(file);
-//	console.log(fileName);
-//	console.log(tmp_copy)
-	
-	copyFile(file, tmp_copy, function(){
-		var s = store.stringify(items);
-		// removing leading { and trailing }
-		s = s.substr(1, s = s.substr(0, s.legth-1));
-//		console.log('SAVING')
-//		console.log(s)
-		fs.writeFile(file, s, 'utf-8', function(e) {
-			if (e) throw e;
-			fs.unlink(tmp_copy, function (err) {
-				if (err) throw err;  
-			});
-			return true;
-		});
-
-	});
-	
-};
-
-if ('undefined' !== typeof fs.appendFileSync) {
-	// node 0.8
-	var save = function (fileName, key, value) {
-		var file = fileName || store.filename;
-		if (!file) {
-			store.log('You must specify a valid file.', 'ERR');
-			return false;
-		}
-		if (!key) return;
-		
-		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
-		
-		return fs.appendFileSync(file, item, 'utf-8');
-	};	
-}
-else {
-	// node < 0.8
-	var save = function (fileName, key, value) {
-		var file = fileName || store.filename;
-		if (!file) {
-			store.log('You must specify a valid file.', 'ERR');
-			return false;
-		}
-		if (!key) return;
-		
-		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
-		
-
-
-		fs.open(file, 'a', 666, function( e, id ) {
-			fs.write( id, item, null, 'utf8', function(){
-				fs.close(id, function(){});
-			});
-		});
-		
-		return true;
-	};
-}
-
-var load = function (fileName, key) {
-	var file = fileName || store.filename;
-	if (!file) {
-		store.log('You must specify a valid file.', 'ERR');
-		return false;
-	}
-
-	var s = fs.readFileSync(file, 'utf-8');
-	
-//	console.log('BEFORE removing end')
-//	console.log(s)
-	
-	
-	s = s.substr(0, s.length-2); // removing last ',' and /n
-	
-//	console.log('BEFORE PARSING')
-//	console.log(s)
-	
-	var items = store.parse('{' + s + '}');
-	
-//	console.log('PARSED')
-//	console.log(items)
-	
-	return (key) ? items[key] : items; 
-
-};
-
-var deleteVariable = function (fileName, key) {
-	var file = fileName || store.filename;
-	var items = load(file);
-//	console.log('dele')
-//	console.log(items)
-//	console.log(key)
-	delete items[key];
-	overwrite(file, items);
-	return null;
-};
-
-store.addType("fs", function(key, value, options) {
-	
-	var filename = options.file || store.filename;
-	
-	if (!key) { 
-		return load(filename);
-	}
-
-	if (value === undefined) {
-		return load(filename, key);
-	}
-
-	if (timeout[key]) {
-		clearTimeout(timeout[key]);
-		deleteVariable(filename, key);
-	}
-
-	if (value === null) {
-		deleteVariable(filename, key);
-		return null;
-	}
-	
-	// save item
-	save(filename, key, value);
-	
-	if (options.expires) {
-		timeout[key] = setTimeout(function() {
-			deleteVariable(filename, key);
-		}, options.expires);
-	}
-
-	return value;
-});
-
-}(('undefined' !== typeof module && 'function' === typeof require) ? module.exports || module.parent.exports : {}));
-/**
  * ## Amplify storage for Shelf.js
  * 
  */
@@ -2593,6 +2414,198 @@ if (!store.types.localStorage && window.globalStorage) {
 
 
 }(this));
+/**
+ * ## File System storage for Shelf.js
+ * 
+ * ### Available only in Node.JS
+ */
+
+(function(exports) {
+	
+var store = exports.store;
+
+if (!store) {
+	console.log('fs.shelf.js: shelf.js core not found. File system storage not available.');
+	return;
+}
+
+store.filename = './shelf.out';
+
+var fs = require('fs-ext'),
+	path = require('path'),
+	util = require('util');
+
+// https://github.com/jprichardson/node-fs-extra/blob/master/lib/copy.js
+var copyFile = function(srcFile, destFile, cb) {
+	
+    var fdr, fdw;
+    
+    fdr = fs.createReadStream(srcFile);
+    fs.flockSync(fdr, 'sh');
+    
+    fdw = fs.createWriteStream(destFile);
+    
+    fs.flockSync(fdw, 'ex');
+    		
+	fdr.on('end', function() {
+      fs.flockSync(fdr, 'un');
+    });
+    fdw.on('close', function() {
+        fs.flockSync(fdw, 'un');
+    });
+    
+    fdr.pipe(fdw);
+    
+  };
+
+
+var timeout = {};
+
+var overwrite = function (fileName, items) {
+	var file = fileName || store.filename;
+	if (!file) {
+		store.log('You must specify a valid file.', 'ERR');
+		return false;
+	}
+	
+	var tmp_copy = path.dirname(file) + '.' + path.basename(file);
+	
+//	console.log('files')
+//	console.log(file);
+//	console.log(fileName);
+//	console.log(tmp_copy)
+	
+	copyFile(file, tmp_copy, function(){
+		var s = store.stringify(items);
+		// removing leading { and trailing }
+		s = s.substr(1, s = s.substr(0, s.legth-1));
+//		console.log('SAVING')
+//		console.log(s)
+		fs.writeFile(file, s, 'utf-8', function(e) {
+			if (e) throw e;
+//			fs.unlinkSync(tmp_copy);
+//			fs.unlink(tmp_copy, function (err) {
+//				if (err) throw err;  
+//			});
+			return true;
+		});
+
+	});
+	
+};
+
+if ('undefined' !== typeof fs.appendFileSync) {
+	// node 0.8
+	var save = function (fileName, key, value) {
+		var file = fileName || store.filename;
+		if (!file) {
+			store.log('You must specify a valid file.', 'ERR');
+			return false;
+		}
+		if (!key) return;
+		
+		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
+		
+		return fs.appendFileSync(file, item, 'utf-8');
+	};	
+}
+else {
+	// node < 0.8
+	var save = function (fileName, key, value) {
+		var file = fileName || store.filename;
+		if (!file) {
+			store.log('You must specify a valid file.', 'ERR');
+			return false;
+		}
+		if (!key) return;
+		
+		var item = store.stringify(key) + ": " + store.stringify(value) + ",\n";
+		
+
+
+		fs.open(file, 'a', 666, function( e, id ) {
+			fs.write( id, item, null, 'utf8', function(){
+				fs.close(id, function(){});
+			});
+		});
+		
+		return true;
+	};
+}
+
+var load = function (fileName, key) {
+	var file = fileName || store.filename;
+	if (!file) {
+		store.log('You must specify a valid file.', 'ERR');
+		return false;
+	}
+
+	var s = fs.readFileSync(file, 'utf-8');
+	
+//	console.log('BEFORE removing end')
+//	console.log(s)
+	
+	
+	s = s.substr(0, s.length-2); // removing last ',' and /n
+	
+//	console.log('BEFORE PARSING')
+//	console.log(s)
+	
+	var items = store.parse('{' + s + '}');
+	
+//	console.log('PARSED')
+//	console.log(items)
+	
+	return (key) ? items[key] : items; 
+
+};
+
+var deleteVariable = function (fileName, key) {
+	var file = fileName || store.filename;
+	var items = load(file);
+//	console.log('dele')
+//	console.log(items)
+//	console.log(key)
+	delete items[key];
+	overwrite(file, items);
+	return null;
+};
+
+store.addType("fs", function(key, value, options) {
+	
+	var filename = options.file || store.filename;
+	
+	if (!key) { 
+		return load(filename);
+	}
+
+	if (value === undefined) {
+		return load(filename, key);
+	}
+
+	if (timeout[key]) {
+		clearTimeout(timeout[key]);
+		deleteVariable(filename, key);
+	}
+
+	if (value === null) {
+		deleteVariable(filename, key);
+		return null;
+	}
+	
+	// save item
+	save(filename, key, value);
+	
+	if (options.expires) {
+		timeout[key] = setTimeout(function() {
+			deleteVariable(filename, key);
+		}, options.expires);
+	}
+
+	return value;
+});
+
+}(('undefined' !== typeof module && 'function' === typeof require) ? module.exports || module.parent.exports : {}));
 /**
  * # JSUS: JavaScript UtilS. 
  * Copyright(c) 2012 Stefano Balietti
@@ -4021,7 +4034,7 @@ OBJ.mixin = function (obj1, obj2) {
 };
 
 /**
- * ## OBJ.mixin
+ * ## OBJ.mixout
  * 
  * Copies only non-overlapping properties from obj2 to obj1
  * 
@@ -4359,26 +4372,11 @@ JSUS.extend(OBJ);
 /**
  * # NDDB: N-Dimensional Database
  * 
- * Copyright(c) 2012 Stefano Balietti
  * MIT Licensed
  * 
  * NDDB provides a simple, lightweight, NO-SQL object database 
- * for node.js and the browser. It depends on JSUS.
- * 
- * Allows to define any number of comparator and indexing functions, 
- * which are associated to any of the dimensions (i.e. properties) of 
- * the objects stored in the database. 
- * 
- * Whenever a comparison is needed, the corresponding comparator function 
- * is called, and the database is updated.
- * 
- * Whenever an object is inserted that matches one of the indexing functions
- * an hash is produced, and the element is added to one of the indexes.
- * 
- * Additional features are: methods chaining, tagging, and iteration 
- * through the entries.
- * 
- * 
+ * for node.js and the browser.
+ *
  * See README.md for help.
  * 
  * ---
@@ -4753,12 +4751,26 @@ NDDB.prototype.importDB = function (db) {
  * 
  * Insert an item into the database
  * 
+ * Item must be of type object or function. 
+ * 
+ * The following entries will be ignored:
+ * 
+ * 	- strings
+ * 	- numbers
+ * 	- undefined
+ * 	- null
+ * 
  * @param {object} o The item or array of items to insert
  * @see NDDB._insert
  */
 NDDB.prototype.insert = function (o) {
-	if ('undefined' === typeof o || o === null) return;
-    if (!this.db) this.db = [];
+	if (o === null) return;
+	var type = typeof(o);
+	if (type === 'undefined') return;
+	if (type === 'string') return;
+	if (type === 'number') return;
+	
+	if (!this.db) this.db = [];
  
     this._insert(o);
 };
@@ -6588,6 +6600,10 @@ if (JSUS.isNodeJS()) {
  * Cyclic objects are decycled, and do not cause errors. Upon loading, the cycles
  * are restored.
  * 
+ * Note that the database is serialized using `JSON.stringify`. Some values are 
+ * automatically omitted by this function, e.g. function declarations, and undefined
+ * values.
+ * 
  * @param {string} file The file system path, or the identifier for the browser database
  * @param {function} callback Optional. A callback to execute after the database was saved
  * @param {compress} boolean Optional. If TRUE, output will be compressed. Defaults, FALSE
@@ -6619,11 +6635,10 @@ NDDB.prototype.save = function (file, callback, compress) {
 	}
 	
 	// Save in Node.js
-	fs.writeFile(file, this.stringify(compress), 'utf-8', function(e) {
-		if (e) throw e
-		if (callback) callback();
-		return true;
-	});
+	fs.writeFileSync(file, this.stringify(compress), 'utf-8');
+	if (callback) callback();
+	return true;
+	
 };
 
 /**
@@ -6678,7 +6693,7 @@ NDDB.prototype.load = function (file, callback) {
 			items[i] = NDDB.retrocycle(items[i]);
 		}
 //					console.log(Object.prototype.toString.apply(items[0].aa))
-		
+//		console.log(items);
 		this.importDB(items);
 //				this.each(function(e) {
 //					e = NDDB.retrocycle(e);
