@@ -17,7 +17,7 @@
   "devDependencies": {
     "docker": "0.2.2",
     "mocha": ">= 0.3.0",
-    "should": ">= 0.5.1"
+    "should": ">= 1.2.1"
   },
   "optionalDependencies": {
     "docker": "0.2.2"

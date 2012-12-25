@@ -76,6 +76,17 @@ var weirdos = [
     	d: function(){console.log('foo')},
 }];
 
+var weirdos_clean = [
+       {}, 
+       function(){console.log('foo')},
+       {
+       	a: undefined,
+       	b: null,
+       	c: {},
+       	d: function(){console.log('foo')},
+}];
+
+
 // Cycles
 
 var base_cycle = {
@@ -109,25 +120,28 @@ db.h('painter', hashPainter);
 
 var filename = './db.out';
 
-var deleteIfExist = function() {
+var deleteIfExist = function(cb) {
 	if (path.existsSync(filename)) {
-		fs.unlink(filename, function (err) {
-			if (err) throw err;  
-		});
+		fs.unlinkSync(filename);
+		if (cb) cb();
+	}
+	else {
+		if (cb) cb();
 	}
 };
 
 
-var testSaveLoad = function(items) {
+var testSaveLoad = function(items, compareTo) {
 	
 	describe('#save()', function(){
 		
 		before(function() {
-			deleteIfExist();
-			db2.clear(true);
-			db = new NDDB();
-			db.importDB(items);
-			db.save(filename);
+			deleteIfExist(function(){
+				db2.clear(true);
+				db = new NDDB();
+				db.importDB(items);
+				db.save(filename);
+			});
 		});
 		
 		it('should create a dump file', function() {
@@ -135,7 +149,13 @@ var testSaveLoad = function(items) {
 		});
 		
 		it('original database should be unchanged', function() {
-			db.db.should.be.eql(items);
+	
+			if (compareTo) {
+				JSUS.equals(db.db, compareTo).should.be.true;
+			}
+			else {
+				db.db.should.be.eql(compareTo || items);
+			}
 		});
 		
 	});
@@ -155,6 +175,9 @@ var testSaveLoad = function(items) {
 	});
 };
 
+// STRESS TEST
+//for (var i=0; i<1000; i++){
+
 describe('NDDB io operations.', function(){
 	
 	describe('Cycle / Decycle.', function(){
@@ -167,9 +190,9 @@ describe('NDDB io operations.', function(){
 			testSaveLoad(hashable);
 		});
 		
-//		describe('Weirdos items.', function(){
-//			testSaveLoad(weirdos);
-//		});
+		describe('Weirdos items.', function(){
+			testSaveLoad(weirdos, weirdos_clean);
+		});
 		
 		describe('Cycles items', function(){
 			testSaveLoad(cycles);
@@ -191,14 +214,16 @@ describe('NDDB io operations.', function(){
 			testSaveLoad(hashable);
 		});
 		
-//		describe('Weirdos items.', function(){
-//			testSaveLoad(weirdos);
-//		});
+		describe('Weirdos items.', function(){
+			testSaveLoad(weirdos, weirdos_clean);
+		});
 		
-//		describe('Cycles items', function(){
-//			testSaveLoad(cycles);
-//		});
+		describe('Cycles items', function(){
+			testSaveLoad(cycles);
+		});
 
 	});
-	
+		
 });
+
+//}
