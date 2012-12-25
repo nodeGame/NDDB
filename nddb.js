@@ -2229,6 +2229,10 @@ if (JSUS.isNodeJS()) {
  * Cyclic objects are decycled, and do not cause errors. Upon loading, the cycles
  * are restored.
  * 
+ * Note that the database is serialized using `JSON.stringify`. Some values are 
+ * automatically omitted by this function, e.g. function declarations, and undefined
+ * values.
+ * 
  * @param {string} file The file system path, or the identifier for the browser database
  * @param {function} callback Optional. A callback to execute after the database was saved
  * @param {compress} boolean Optional. If TRUE, output will be compressed. Defaults, FALSE
@@ -2318,7 +2322,7 @@ NDDB.prototype.load = function (file, callback) {
 			items[i] = NDDB.retrocycle(items[i]);
 		}
 //					console.log(Object.prototype.toString.apply(items[0].aa))
-		
+//		console.log(items);
 		this.importDB(items);
 //				this.each(function(e) {
 //					e = NDDB.retrocycle(e);

@@ -76,7 +76,7 @@ var weirdos = [
     	d: function(){console.log('foo')},
 }];
 
-var weirdos_clean = [
+var weirdos_import = [
        {}, 
        function(){console.log('foo')},
        {
@@ -84,6 +84,14 @@ var weirdos_clean = [
        	b: null,
        	c: {},
        	d: function(){console.log('foo')},
+}];
+
+var weirdos_load = [
+      {}, 
+      {},
+      {
+      	b: null,
+      	c: {},
 }];
 
 
@@ -131,7 +139,7 @@ var deleteIfExist = function(cb) {
 };
 
 
-var testSaveLoad = function(items, compareTo) {
+var testSaveLoad = function(items, compareToImport, compareToLoad) {
 	
 	describe('#save()', function(){
 		
@@ -150,11 +158,11 @@ var testSaveLoad = function(items, compareTo) {
 		
 		it('original database should be unchanged', function() {
 	
-			if (compareTo) {
-				JSUS.equals(db.db, compareTo).should.be.true;
+			if (compareToImport) {
+				JSUS.equals(db.db, compareToImport).should.be.true;
 			}
 			else {
-				db.db.should.be.eql(compareTo || items);
+				db.db.should.be.eql(items);
 			}
 		});
 		
@@ -169,7 +177,7 @@ var testSaveLoad = function(items, compareTo) {
 		});
 		
 		it('the loaded database should be a copy of the saved one', function() {
-			db2.db.should.be.eql(db.db);
+			db2.db.should.be.eql(compareToLoad || db.db);
 		});
 		
 	});
@@ -191,7 +199,7 @@ describe('NDDB io operations.', function(){
 		});
 		
 		describe('Weirdos items.', function(){
-			testSaveLoad(weirdos, weirdos_clean);
+			testSaveLoad(weirdos, weirdos_import, weirdos_load);
 		});
 		
 		describe('Cycles items', function(){
@@ -215,7 +223,7 @@ describe('NDDB io operations.', function(){
 		});
 		
 		describe('Weirdos items.', function(){
-			testSaveLoad(weirdos, weirdos_clean);
+			testSaveLoad(weirdos, weirdos_import, weirdos_load);
 		});
 		
 		describe('Cycles items', function(){
@@ -226,4 +234,5 @@ describe('NDDB io operations.', function(){
 		
 });
 
+// END STRESS
 //}
