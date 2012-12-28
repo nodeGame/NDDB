@@ -320,6 +320,13 @@ node make.nddb.js doc
 
 ## ChangeLog
 
+### 0.5.8
+
+  - Serialization of functions, null and undefined values
+  - Removed eval from select queries
+  - Travis-ci continous integration
+  - Minor bug fixing
+
 ### 0.5.0
 
   - Support for events: 'remove', 'insert'
