@@ -63,7 +63,7 @@ var not_hashable = [
                },
 ];
 
-// NOT WORKING WELL
+
 var weirdos = [
 	undefined, 
     null, 
@@ -177,7 +177,13 @@ var testSaveLoad = function(items, compareToImport, compareToLoad) {
 		});
 		
 		it('the loaded database should be a copy of the saved one', function() {
-			db2.db.should.be.eql(compareToLoad || db.db);
+			if (compareToLoad) {
+				JSUS.equals(db2.db, compareToLoad).should.be.true;
+			}
+			else {
+				JSUS.equals(db.db, db2.db).should.be.true;
+			}
+			
 		});
 		
 	});
@@ -199,7 +205,7 @@ describe('NDDB io operations.', function(){
 		});
 		
 		describe('Weirdos items.', function(){
-			testSaveLoad(weirdos, weirdos_import, weirdos_load);
+			testSaveLoad(weirdos, weirdos_import);
 		});
 		
 		describe('Cycles items', function(){
@@ -223,7 +229,7 @@ describe('NDDB io operations.', function(){
 		});
 		
 		describe('Weirdos items.', function(){
-			testSaveLoad(weirdos, weirdos_import, weirdos_load);
+			testSaveLoad(weirdos, weirdos_import);
 		});
 		
 		describe('Cycles items', function(){
