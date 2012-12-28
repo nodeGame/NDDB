@@ -46,6 +46,7 @@ function build(options) {
 	  JSUSdir + "lib/compatibility.js",
 	  JSUSdir + "lib/array.js",
 	  JSUSdir + "lib/obj.js",
+	  JSUSdir + "lib/parse.js",
 	];
 	
 	//shelf.js
