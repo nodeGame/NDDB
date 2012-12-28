@@ -3587,26 +3587,29 @@ if ('undefined' !== typeof JSUS.compatibility) {
  * 
  */
 OBJ.equals = function (o1, o2) {	
-	if ('undefined' === typeof o1 || 'undefined' === typeof o2) {
+	var type1 = typeof o1, type2 = typeof o2;
+	
+	if (type1 !== type2) return false;
+	
+	if ('undefined' === type1 || 'undefined' === type2) {
 		return (o1 === o2);
 	}
 	if (o1 === null || o2 === null) {
 		return (o1 === o2);
 	}
-	if (('number' === typeof o1 && isNaN(o1)) && ('number' === typeof o2 && isNaN(o2)) ) {
+	if (('number' === type1 && isNaN(o1)) && ('number' === type2 && isNaN(o2)) ) {
 		return (isNaN(o1) && isNaN(o2));
 	}
 	
     // Check whether arguments are not objects
 	var primitives = {number: '', string: '', boolean: ''}
-    if (typeof o1 in primitives) {
-        if (typeof o2 in primitives) {
-            return (o1 === o2);
-        }
-        return false;
-    } else if (typeof o2 in {number: '', string: '', boolean: ''}) {
-        return false;
-    }
+    if (type1 in primitives) {
+    	return o1 === o2;
+    } 
+	
+	if ('function' === type1) {
+		return o1.toString() === o2.toString();
+	}
 
     for (var p in o1) {
         if (o1.hasOwnProperty(p)) {
@@ -4370,6 +4373,204 @@ JSUS.extend(OBJ);
     
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 /**
+ * # PARSE
+ *  
+ * Copyright(c) 2012 Stefano Balietti
+ * MIT Licensed
+ * 
+ * Collection of static functions related to parsing strings
+ * 
+ */
+(function (JSUS) {
+    
+function PARSE(){};
+
+/**
+ * ## PARSE.stringify_prefix
+ * 
+ * Prefix used by PARSE.stringify and PARSE.parse
+ * to decode strings with special meaning
+ * 
+ * @see PARSE.stringify
+ * @see PARSE.parse
+ */
+PARSE.stringify_prefix = '!?_';
+
+/**
+ * ## PARSE.getQueryString
+ * 
+ * Parses the current querystring and returns it full or a specific variable.
+ * Return false if the requested variable is not found.
+ * 
+ * @param {string} variable Optional. If set, returns only the value associated
+ *   with this variable
+ *   
+ * @return {string|boolean} The querystring, or a part of it, or FALSE
+ */
+PARSE.getQueryString = function (variable) {
+    var query = window.location.search.substring(1);
+    if ('undefined' === typeof variable) return query;
+    
+    var vars = query.split("&");
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] === variable) {
+            return unescape(pair[1]);
+        }
+    }
+    return false;
+};
+
+/**
+ * ## PARSE.tokenize
+ * 
+ * Splits a string in tokens that users can specified as input parameter.
+ * Additional options can be specified with the modifiers parameter
+ * 
+ * - limit: An integer that specifies the number of splits, 
+ * 		items after the split limit will not be included in the array
+ * 
+ * @param {string} str The string to split
+ * @param {array} separators Array containing the separators words
+ * @param {object} modifiers Optional. Configuration options for the tokenizing
+ * 
+ * @return {array} Tokens in which the string was split
+ * 
+ */
+PARSE.tokenize = function (str, separators, modifiers) {
+	if (!str) return;
+	if (!separators || !separators.length) return [str];
+	modifiers = modifiers || {};
+	
+	var pattern = '[';
+	
+	JSUS.each(separators, function(s) {
+		if (s === ' ') s = '\\s';
+		
+		pattern += s;
+	});
+	
+	pattern += ']+';
+	
+	var regex = new RegExp(pattern);
+	return str.split(regex, modifiers.limit);
+};
+
+/**
+ * ## PARSE.stringify
+ * 
+ * Stringifies objects, functions, primitive, undefined or null values
+ * 
+ * Makes uses `JSON.stringify` with a special reviver function, that 
+ * strinfifies also functions, undefined, and null values.
+ * 
+ * A special prefix is prepended to avoid name collisions.
+ * 
+ * @param {mixed} o The value to stringify
+ * @param {number} spaces Optional the number of indentation spaces. Defaults, 0
+ * 
+ * @return {string} The stringified result
+ * 
+ * @see JSON.stringify
+ * @see PARSE.stringify_prefix
+ */
+PARSE.stringify = function(o, spaces) {
+	return JSON.stringify(o, function(key, value){
+		var type = typeof value;
+		
+		if ('function' === type) {
+			return PARSE.stringify_prefix + value.toString()
+		}
+		
+		if ('undefined' === type) {
+			return PARSE.stringify_prefix + 'undefined';
+		}
+		
+		if (value === null) {
+			return PARSE.stringify_prefix + 'null';
+		}
+		
+		return value;
+		
+	}, spaces);
+};
+
+/**
+ * ## PARSE.stringify
+ * 
+ * Decodes strings in objects and other values
+ * 
+ * Uses `JSON.parse` and then looks  for special strings 
+ * encoded by `PARSE.stringify`
+ * 
+ * @param {string} str The string to decode
+ * @return {mixed} The decoded value 
+ * 
+ * @see JSON.parse
+ * @see PARSE.stringify_prefix
+ */
+PARSE.parse = function(str) {
+	
+	var marker_func = PARSE.stringify_prefix + 'function',
+		marker_null = PARSE.stringify_prefix + 'null',
+		marker_und	= PARSE.stringify_prefix + 'undefined';
+	
+	var len_prefix 	= PARSE.stringify_prefix.length,
+		len_func 	= marker_func.length,
+		len_null 	= marker_null.length,
+		len_und 	= marker_und.length;	
+	
+	var o = JSON.parse(str);
+	return walker(o);
+	
+	function walker(o) {
+		var tmp;
+		
+		if ('object' !== typeof o) {
+			return reviver(o);
+		}
+		
+		for (var i in o) {
+			if (o.hasOwnProperty(i)) {
+				if ('object' === typeof o[i]) {
+					walker(o[i]);
+				}
+				else {
+					o[i] = reviver(o[i]);
+				}
+			}
+		}
+		
+		return o;
+	}
+	
+	function reviver(value) {
+		var type = typeof value;
+		
+		if (type === 'string') {
+			if (value.substring(0, len_prefix) !== PARSE.stringify_prefix) {
+				return value;
+			}
+			else if (value.substring(0, len_func) === marker_func) {
+				return eval('('+value.substring(len_prefix)+')');
+			}
+			else if (value.substring(0, len_null) === marker_null) {
+				return null;
+			}
+			else if (value.substring(0, len_und) === marker_und) {
+				return undefined;
+			}
+		}	
+		
+		return value;
+	};
+}
+
+
+JSUS.extend(PARSE);
+    
+})('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
+/**
  * # NDDB: N-Dimensional Database
  * 
  * MIT Licensed
@@ -4871,31 +5072,16 @@ NDDB.prototype.stringify = function (compressed) {
 	if (!this.length) return '[]';
 	compressed = ('undefined' === typeof compressed) ? true : compressed;
 	
-	var objToStr;
-	
-	if (compressed) {
-		objToStr = function(o) {
-			// Skip empty objects
-			if (JSUS.isEmpty(o)) return '{}';
-			return JSON.stringify(o);
-		}	
-	}
-	else {
-		objToStr = function(o) {
-			// Skip empty objects
-			if (JSUS.isEmpty(o)) return '{}';
-			return JSON.stringify(o, null, 4);
-		}
-	}
+	var spaces = compressed ? 0 : 4;
 	
     var out = '[';
     this.each(function(e) {
     	// decycle, if possible
     	e = NDDB.decycle(e);
-    	out += objToStr(e) + ', ';
+    	out += JSUS.stringify(e) + ', ';
     });
     out = out.replace(/, $/,']');
-    
+
     return out;
 };    
 
@@ -6657,7 +6843,7 @@ NDDB.prototype.save = function (file, callback, compress) {
  * Cyclic objects previously decycled will be retrocycled. 
  * 
  * @param {string} file The file system path, or the identifier for the browser database
- * @param {function} callback Optional. A callback to execute after the database was saved
+ * @param {function} cb Optional. A callback to execute after the database was saved
  * 
  * @see NDDB.save
  * @see NDDB.stringify
@@ -6665,7 +6851,7 @@ NDDB.prototype.save = function (file, callback, compress) {
  * @return {boolean} TRUE, if operation is successful
  * 
  */
-NDDB.prototype.load = function (file, callback) {
+NDDB.prototype.load = function (file, cb) {
 	if (!file) {
 		NDDB.log('You must specify a valid file / id.', 'ERR');
 		return false;
@@ -6680,37 +6866,26 @@ NDDB.prototype.load = function (file, callback) {
 		
 		var items = store(file);
 		this.importDB(items);
-		if (callback) callback();
+		if (cb) callback();
 		return true;
 	}
 	
 	var loadString = function(s) {
-		var items = JSON.parse(s.toString());
-		//console.log(s);
+
+		var items = JSUS.parse(s);
+		
 		var i;
 		for (i=0; i< items.length; i++) {
 			// retrocycle if possible
 			items[i] = NDDB.retrocycle(items[i]);
 		}
-//					console.log(Object.prototype.toString.apply(items[0].aa))
-//		console.log(items);
+
 		this.importDB(items);
-//				this.each(function(e) {
-//					e = NDDB.retrocycle(e);
-//				});
 	}
 	
-	if (!callback) { 
-		var s = fs.readFileSync(file, 'utf-8');
-		loadString.call(this, s);
-	}
-	else {
-		fs.readFile(file, 'utf-8', function(e, s) {
-			if (e) throw e
-			loadString.call(this, s);
-			callback();
-		});
-	}
+	var s = fs.readFileSync(file, 'utf-8');	
+	loadString.call(this, s);
+	return true;
 };
 	
 
