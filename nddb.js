@@ -1064,6 +1064,28 @@ NDDB.prototype.select = function (d, op, value) {
 //	}
 //}
 
+/**
+ * ### NDDB.exists
+ * 
+ * Returns TRUE if a copy of the object exists in 
+ * the database
+ * 
+ * @param {object} o The object to look for
+ * @return {boolean} TRUE, if a copy is found
+ * 
+ * @see JSUS.equals
+ */
+NDDB.prototype.exists = function (o) {
+	if (!o) return false;
+	
+	for (var i = 0 ; i < this.db.length ; i++) {
+		if (JSUS.equals(this.db[i], o)) {
+			return true;
+		}
+	}
+	
+    return false;
+};
 
 /**
  * ### NDDB.limit
