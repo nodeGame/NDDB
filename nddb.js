@@ -2216,7 +2216,8 @@ var storageAvailable = function() {
 // if node
 if (JSUS.isNodeJS()) {   
 	require('./external/cycle.js');		
-	var fs = require('fs');
+	var fs = require('fs'),
+		csv = require('ya-csv');
 };
 
 //end node  
@@ -2337,6 +2338,44 @@ NDDB.prototype.load = function (file, cb) {
 	return true;
 };
 	
+
+NDDB.prototype.load.csv = function (file, cb) {
+	if (!file) {
+		NDDB.log('You must specify a valid CSV file.', 'ERR');
+		return false;
+	}
+	
+	if (!JSUS.isNodeJS()){
+		NDDB.log('Loading a CSV file is available only in Node.js environment.', 'ERR');
+		return false;
+	}
+	
+	// Mix options
+//	reader.setColumnNames([ 'col1', 'col2' ]);
+	
+	//var reader = csv.createCsvStreamReader(file, );
+	
+	reader.addListener('data', function(data) {
+	    this.(data);
+	});
+	
+	var loadString = function(s) {
+
+		var items = JSUS.parse(s);
+		
+		var i;
+		for (i=0; i< items.length; i++) {
+			// retrocycle if possible
+			items[i] = NDDB.retrocycle(items[i]);
+		}
+
+		this.importDB(items);
+	}
+	
+	var s = fs.readFileSync(file, 'utf-8');	
+	loadString.call(this, s);
+	return true;
+};
 
 
 // ## Closure    

@@ -5067,6 +5067,7 @@ NDDB.prototype.toString = function () {
  * @param {boolean} TRUE, if compressed
  * @return {string} out A machine-readable representation of the database
  * 
+ * @see JSUS.stringify
  */
 NDDB.prototype.stringify = function (compressed) {
 	if (!this.length) return '[]';
@@ -5635,6 +5636,28 @@ NDDB.prototype.select = function (d, op, value) {
 //	}
 //}
 
+/**
+ * ### NDDB.exists
+ * 
+ * Returns TRUE if a copy of the object exists in 
+ * the database
+ * 
+ * @param {object} o The object to look for
+ * @return {boolean} TRUE, if a copy is found
+ * 
+ * @see JSUS.equals
+ */
+NDDB.prototype.exists = function (o) {
+	if (!o) return false;
+	
+	for (var i = 0 ; i < this.db.length ; i++) {
+		if (JSUS.equals(this.db[i], o)) {
+			return true;
+		}
+	}
+	
+    return false;
+};
 
 /**
  * ### NDDB.limit
@@ -6786,18 +6809,15 @@ if (JSUS.isNodeJS()) {
  * Cyclic objects are decycled, and do not cause errors. Upon loading, the cycles
  * are restored.
  * 
- * Note that the database is serialized using `JSON.stringify`. Some values are 
- * automatically omitted by this function, e.g. function declarations, and undefined
- * values.
- * 
  * @param {string} file The file system path, or the identifier for the browser database
  * @param {function} callback Optional. A callback to execute after the database was saved
  * @param {compress} boolean Optional. If TRUE, output will be compressed. Defaults, FALSE
+ * @return {boolean} TRUE, if operation is successful
  * 
  * @see NDDB.load
  * @see NDDB.stringify
  * @see https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
- * @return {boolean} TRUE, if operation is successful
+
  * 
  */
 NDDB.prototype.save = function (file, callback, compress) {
@@ -6844,11 +6864,12 @@ NDDB.prototype.save = function (file, callback, compress) {
  * 
  * @param {string} file The file system path, or the identifier for the browser database
  * @param {function} cb Optional. A callback to execute after the database was saved
+ * @return {boolean} TRUE, if operation is successful
  * 
  * @see NDDB.save
  * @see NDDB.stringify
+ * @see JSUS.parse
  * @see https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
- * @return {boolean} TRUE, if operation is successful
  * 
  */
 NDDB.prototype.load = function (file, cb) {
