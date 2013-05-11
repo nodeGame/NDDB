@@ -1604,6 +1604,52 @@ NDDB.prototype._fetch = function (key, array) {
     return out;
 }
 
+//function getValues_KeyString(out, o, key) {
+//	var el = JSUS.getNestedValue(key, o);
+//	if ('undefined' !== typeof el) out.push(el);
+//};
+//
+//function getValues_KeyArray(out, o, key) { 
+//	var el = JSUS.subobj(o, key);
+//	console.log('------------')
+//	console.log(out, o, key, el,JSUS.isEmpty(el))
+//	console.log('------------')
+//	if (!JSUS.isEmpty(el)) {
+//		out = out.concat(JSUS.obj2Array(el));
+//	}
+//};
+//
+//function getValuesArray_KeyString(out, o, key) {
+//    var el = JSUS.getNestedValue(key, o);
+//    if ('undefined' !== typeof el) out.push(JSUS.obj2KeyedArray(el));
+//};
+//
+//function getValuesArray_KeyArray(out, o, key) {
+//    var el = JSUS.subobj(o, key);
+//    if (!JSUS.isEmpty(el)) out.push(JSUS.obj2KeyedArray(el));
+//};
+//
+//
+//function getKeyValuesArray_KeyString(out, o, key) {
+//    var el = JSUS.getNestedValue(key, o);
+//    if ('undefined' !== typeof el) {
+//        out.push(key.split('.').concat(JSUS.obj2KeyedArray(el)));
+//    }
+//};
+//
+//function getKeyValuesArray_KeyArray(out, o, key) {
+//	var el = JSUS.subobj(o, key);
+//    if (!JSUS.isEmpty(el)) {
+//        out = out.push(key.split('.').concat(JSUS.obj2KeyedArray(el)));
+//	}
+//};
+//
+//function getSubObj(out, o, key) {
+//	var el = JSUS.subobj(o, key);
+//	if (!JSUS.isEmpty(el)) out.push(el);
+//}
+
+
 function getValues_KeyString(o, key) {        
     return JSUS.getNestedValue(key, o);
 };
@@ -1611,21 +1657,21 @@ function getValues_KeyString(o, key) {
 function getValues_KeyArray(o, key) { 
 	var el = JSUS.subobj(o, key);
 	if (!JSUS.isEmpty(el)) {
-		return JSUS.obj2Array(o);
+		return JSUS.obj2Array(el);
 	}
 };
 
 function getValuesArray_KeyString(o, key) {
     var el = JSUS.getNestedValue(key, o);
     if ('undefined' !== typeof el) {
-        return JSUS.obj2KeyedArray(el);
+        return JSUS.obj2Array(el);
     }
 };
 
 function getValuesArray_KeyArray(o, key) {
     var el = JSUS.subobj(o, key);
     if (!JSUS.isEmpty(el)) {
-    	return JSUS.obj2KeyedArray(el);
+    	return JSUS.obj2Array(el);
 	}
 };
 
@@ -1640,7 +1686,8 @@ function getKeyValuesArray_KeyString(o, key) {
 function getKeyValuesArray_KeyArray(o, key) {
 	var el = JSUS.subobj(o, key);
     if (!JSUS.isEmpty(el)) {
-        return key.split('.').concat(JSUS.obj2KeyedArray(el));
+        return JSUS.obj2KeyedArray(el);
+    	//return key.split('.').concat(JSUS.obj2KeyedArray(el));
 	}
 };
 
@@ -1717,7 +1764,9 @@ function getSubObj(o, key) {
  */
 NDDB.prototype._fetch = function (key, transform) {
     
+	
     var cb, out, el, i;
+    var mergefunc = Array.prototype.push;
     
     switch (transform) {
     	case 'ARRAY':

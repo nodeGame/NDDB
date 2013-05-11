@@ -89,7 +89,6 @@ for(var entry in Object.keys(all_items)) {
     array_of_all_items.push(line);
 }
 
-
 //Array for .fetchKeyArray()
 var key_array_of_all_items = new Array();
 for(var entry in Object.keys(all_items)) {
@@ -132,55 +131,92 @@ describe('NDDB Fetching', function() {
             it('should be like the original items array',function() {
                 db.fetch().should.eql(all_items);
             });
-            describe('passing a key as argument',function() {
-                it('should be like that when passing key painter',function() {
-                    var should_be_like_this = [ 'Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet' ];
-                    db.fetch('painter').should.eql(should_be_like_this);
-                });
-                it('should be like that when passing key title (if Object in key)',function() {
-                    var should_be_like_this = [ 'Tea in the desert' ,['Portrait of Paul Eluard','Das Rätsel der Begierde','Das finstere Spiel oder Unheilvolles Spiel' ], 'Barcelonese Mannequin' ,{en: "Water Lilies", de: "Wasser Lilies"}, 'Wheatstacks (End of Summer)' , 'Olympia' ];
-                    db.fetch('title').should.eql(should_be_like_this);
-                });
+        });
+        describe('passing a key as argument',function() {
+            it('should be like that when passing key painter',function() {
+                var should_be_like_this = [ 'Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet' ];
+                db.fetch('painter').should.eql(should_be_like_this);
+            });
+            it('should be like that when passing key title (if Object in key)',function() {
+                var should_be_like_this = [ 'Tea in the desert' ,['Portrait of Paul Eluard','Das Rätsel der Begierde','Das finstere Spiel oder Unheilvolles Spiel' ], 'Barcelonese Mannequin' ,{en: "Water Lilies", de: "Wasser Lilies"}, 'Wheatstacks (End of Summer)' , 'Olympia' ];
+                db.fetch('title').should.eql(should_be_like_this);
             });
         });
+//        describe('passing two keys: [\'painter\',\'year\'] as argument',function() {
+//            it('should be like this ',function() {
+//                var should_be_like_this = [ 'Jesus', 0, 'Dali', 1929, 'Dali', 1927, 'Monet', 1906, 'Monet', 1891, 'Manet', 1863 ];
+//                db.fetch(['painter','year']).should.eql(should_be_like_this);
+//            });
+//        });
     });
 
     describe('#fetchArray()',function() {
-            describe('the complete database',function() {
-                it('should be like the Array of all the items',function() {
-                    db.fetchArray().should.eql(array_of_all_items);
-                });
-            });
-            describe('passing a key as argument',function() {
-                it('should be like that when passing key title (if Object in key)',function() {
-                    var should_be_like_this = [ [ 'Tea in the desert' ],[ '0','Portrait of Paul Eluard','1','Das Rätsel der Begierde','2','Das finstere Spiel oder Unheilvolles Spiel' ],[ 'Barcelonese Mannequin' ],[ 'en', 'Water Lilies', 'de', 'Wasser Lilies' ],[ 'Wheatstacks (End of Summer)' ],[ 'Olympia' ] ];
-                    db.fetchArray('title').should.eql(should_be_like_this);
-                });
-            });
-        });
+	    describe('the complete database',function() {
+	        it('should be like the Array of all the items',function() {
+	            db.fetchArray().should.eql(array_of_all_items);
+	        });
+	    });
+	    describe('passing a key as argument',function() {
+	        it('should be like that when passing key title (if Object in key)',function() {
+	            var should_be_like_this = [ [ 'Tea in the desert' ],[ 'Portrait of Paul Eluard','Das Rätsel der Begierde','Das finstere Spiel oder Unheilvolles Spiel' ],[ 'Barcelonese Mannequin' ],[ 'Water Lilies', 'Wasser Lilies' ],[ 'Wheatstacks (End of Summer)' ],[ 'Olympia' ] ];
+	            db.fetchArray('title').should.eql(should_be_like_this);
+	        });
+	    });
+		describe('passing two keys: [\'painter\',\'year\'] as argument',function() {
+			it('should be like this ',function() {
+				var should_be_like_this = [ ['Jesus', 0], ['Dali', 1929], ['Dali', 1927], ['Monet', 1906], ['Monet', 1891], ['Manet', 1863] ];
+		        db.fetchArray(['painter','year']).should.eql(should_be_like_this);
+		    });
+		});
+    });
 
     describe('#fetchKeyArray()',function() {
-            describe('the complete database',function() {
-                it('should be like the Array of all the items',function() {
-                    db.fetchKeyArray().should.eql(key_array_of_all_items);
-                });
-            });
-            describe('passing a key as argument',function() {
-                it('should be like that when passing key title (if Object in key)',function() {
-                    var should_be_like_this = [ [ 'title', 'Tea in the desert' ],[ 'title','0','Portrait of Paul Eluard','1','Das Rätsel der Begierde','2','Das finstere Spiel oder Unheilvolles Spiel' ],[ 'title', 'Barcelonese Mannequin' ],[ 'title', 'en', 'Water Lilies', 'de', 'Wasser Lilies' ],[ 'title', 'Wheatstacks (End of Summer)' ],[ 'title', 'Olympia' ] ];
-                    db.fetchKeyArray('title').should.eql(should_be_like_this);
-                });
-            });
-            describe('passing a invalid key as argument',function() {
-                it('should be like []',function() {
-                    var should_be_like_this = [];
-                    db.fetchKeyArray('1h2eh7').should.eql(should_be_like_this);
-                });
-            });
+		describe('the complete database',function() {
+		    it('should be like the Array of all the items',function() {
+		        db.fetchKeyArray().should.eql(key_array_of_all_items);
+		    });
+		});
+		describe('passing a key as argument',function() {
+		    it('should be like that when passing key title (if Object in key)',function() {
+		        var should_be_like_this = [ [ 'title', 'Tea in the desert' ],[ 'title','0','Portrait of Paul Eluard','1','Das Rätsel der Begierde','2','Das finstere Spiel oder Unheilvolles Spiel' ],[ 'title', 'Barcelonese Mannequin' ],[ 'title', 'en', 'Water Lilies', 'de', 'Wasser Lilies' ],[ 'title', 'Wheatstacks (End of Summer)' ],[ 'title', 'Olympia' ] ];
+		        db.fetchKeyArray('title').should.eql(should_be_like_this);
+		    });
+		});
+		describe('passing a invalid key as argument',function() {
+		    it('should be like []',function() {
+		        var should_be_like_this = [];
+		        db.fetchKeyArray('1h2eh7').should.eql(should_be_like_this);
+		    });
+		});    
+		describe('passing two keys: [\'painter\',\'year\'] as argument',function() {
+			it('should be like this ',function() {
+		        var should_be_like_this = [ [ 'painter', 'Jesus', 'year', 0 ], [ 'painter', 'Dali', 'year', 1929 ], [ 'painter', 'Dali', 'year', 1927 ], 
+		                                    [ 'painter', 'Monet', 'year', 1906 ], [ 'painter', 'Monet', 'year', 1891 ], [ 'painter', 'Manet', 'year', 1863 ]
+		        ];
+		    	db.fetchKeyArray(['painter','year']).should.eql(should_be_like_this);
+		    });
+		});
+    });
 
+    describe('#fetchSubObj()',function() {
+		describe('the complete database',function() {
+		    it('should be like the Array of all the items',function() {
+		        db.fetchSubObj().should.eql(all_items);
+		    });
+		});
+        describe('passing a key as argument',function() {
+            it('should be like that when passing key title (if Object in key)',function() {
+                var should_be_like_this = [ {title: 'Tea in the desert'}, {title: [ 'Portrait of Paul Eluard', 'Das Rätsel der Begierde', 'Das finstere Spiel oder Unheilvolles Spiel'] }, {title: 'Barcelonese Mannequin'}, {title: {en: 'Water Lilies', de: 'Wasser Lilies'} }, {title: 'Wheatstacks (End of Summer)'}, {title: 'Olympia' } ];
+                db.fetchSubObj('title').should.eql(should_be_like_this);
+            });
+        });
+        describe('passing a invalid key as argument',function() {
+            it('should be like []',function() {
+                db.fetchSubObj('1h2eh7').should.eql([]);
+            });
         });
 
-
+    });
 
 });
 
