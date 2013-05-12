@@ -142,12 +142,16 @@ describe('NDDB Fetching', function() {
                 db.fetch('title').should.eql(should_be_like_this);
             });
         });
-//        describe('passing two keys: [\'painter\',\'year\'] as argument',function() {
-//            it('should be like this ',function() {
-//                var should_be_like_this = [ 'Jesus', 0, 'Dali', 1929, 'Dali', 1927, 'Monet', 1906, 'Monet', 1891, 'Manet', 1863 ];
-//                db.fetch(['painter','year']).should.eql(should_be_like_this);
-//            });
-//        });
+        describe('passing two keys: [\'painter\',\'year\'] as argument',function() {
+            it('should be like this ',function() {
+                var should_be_like_this = {
+                		painter: ['Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet'],
+                		year: [0, 1929, 1927, 1906, 1891, 1863]
+                };
+                
+                db.fetch(['painter','year']).should.eql(should_be_like_this);
+            });
+        });
     });
 
     describe('#fetchArray()',function() {

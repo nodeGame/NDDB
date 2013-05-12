@@ -1810,7 +1810,19 @@ NDDB.prototype._fetch = function (key, transform) {
 	    	}
     }
     
-    out = [];    
+    if (transform === true && 'object' === typeof key) {
+    	
+    	out = JSUS.melt(key,JSUS.rep([],key.length)); // object not array  
+        for (i=0; i < this.db.length; i++) {
+        	el = JSUS.subobj(this.db[i], key);
+        	if (!JSUS.isEmpty(el)) {
+            	JSUS.augment(out, el);
+            }
+        }   
+        return out;
+    }
+    
+    out = [];
     for (i=0; i < this.db.length; i++) {
         el = cb.call(this.db[i], this.db[i], key);
         if ('undefined' !== typeof el) out.push(el);
