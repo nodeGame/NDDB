@@ -1763,10 +1763,8 @@ function getSubObj(o, key) {
  * 
  */
 NDDB.prototype._fetch = function (key, transform) {
-    
 	
     var cb, out, el, i;
-    var mergefunc = Array.prototype.push;
     
     switch (transform) {
     	case 'ARRAY':
@@ -1836,11 +1834,7 @@ NDDB.prototype._fetch = function (key, transform) {
  * ### NDDB.fetch
  *
  * Fetches all the entries in the database and returns 
- * them in a array. 
- * 
- * If a second key parameter is passed, only the value of 
- * the property named after the key are returned, otherwise  
- * the whole entry is returned as it is.
+ * them in one array 
  * 
  * Examples
  * 
@@ -1849,34 +1843,26 @@ NDDB.prototype._fetch = function (key, transform) {
  * db.insert([ { a:1, b:{c:2}, d:3 } ]);
  * 
  * db.fetch();    // [ {a: 1, b: {c: 2}, d: 3} ] 
- * db.fetch('b'); // [ {c: 2} ];
- * db.fetch('d'); // [ 3 ];
  * ```
  * 
  * No further chaining is permitted after fetching.
- * 
- * @param {string} key Optional. If set, returns only the value from the specified property 
+ *  
  * @return {array} out The fetched values 
  * 
  * 	@see NDDB._fetch
- * 	@see NDDB.fetchArray
+ * 	@see NDDB.fetchValues
  * 	@see NDDB.fetchKeyArray
  * 
  */
-NDDB.prototype.fetch = function (key) {
-    return this._fetch(key, true);
+NDDB.prototype.fetch = function () {
+    return this.db;
 };
 
 /**
- * ### NDDB.fetchArray
+ * ### NDDB.fetchSubObj
  *
- * Fetches all the entries in the database, transforms them into 
- * one-dimensional array by exploding all nested values, and returns
- * them into an array.
+ * Fetches all the entries in the database and trims out unwanted properties
  * 
- * If a parameter is passed, only the value of the property
- * named after the key is returned, otherwise the whole entry 
- * is exploded, and its values returned in a array. 
  * 
  * Examples
  * 
@@ -1884,20 +1870,72 @@ NDDB.prototype.fetch = function (key) {
  * var db = new NDDB();
  * db.insert([ { a:1, b:{c:2}, d:3 } ]);
  * 
- * db.fetchArray();    // [ [ 1, 2, 3 ] ]
- * db.fetchArray('b'); // [ ['c', 2 ] ]
- * db.fetchArray('d'); // [ [ 3 ] ];
+ * db.fetchArray();       // [ [ 'a', 1, 'c', 2, 'd', 3 ] ]
+ * db.fetchKeyArray('b'); // [ [ 'b', 'c', 2 ] ] 
+ * db.fetchArray('d');    // [ [ 'd', 3 ] ]
  * ```
  * 
  * No further chaining is permitted after fetching.
  * 
- * @param {string} key Optional. If set, returns only the value from the specified property 
+ * @param {string|array} key Optional. If set, returned objects will have only such properties  
+ * @return {array} out The fetched objects 
+ * 
+ * @see NDDB._fetch
+ * @see NDDB.fetch
+ * @see NDDB.fetchArray
+ * @see NDDB.fetchKeyArray
+ */
+NDDB.prototype.fetchSubObj= function (key) {
+    return this._fetch(key, 'SUB_OBJ');
+};
+
+
+/**
+ * ### NDDB.fetchValues
+ *
+ * Fetches all the values of the entries in the database
+ * 
+ * The type of the input parameter determines the return value:
+ *  - if it is `string`, returned value is a one-dimensional array. 
+ * 	- if it is `array`, returned value is an object whose properties are arrays containing 
+ * all the values found in the database for those keys.
+ *   
+ * Nested properties can be specified too.  
+ *   
+ * Examples
+ * 
+ * ```javascript
+ * var db = new NDDB();
+ * db.insert([ { a:1, b:{c:2}, d:3 } ]);
+ * 
+ * db.fetchValues();    // [ [ 1, 2, 3 ] ]
+ * db.fetchValues('b'); // [ {c: 2} ]
+ * db.fetchValues('d'); // [ [ 3 ] ];
+ * 
+ * db.insert([ { a:4, b:{c:5}, d:6 } ]);
+ * 
+ * db.fetchValues([ 'a', 'd' ]); // { a: [ 1, 4] , d: [ 3, 6] };
+ * ```
+ * 
+ * No further chaining is permitted after fetching.
+ * 
+ * @param {string|array} key Optional. If set, returns only the value from the specified property 
  * @return {array} out The fetched values 
  * 
  * 	@see NDDB._fetch
  * 	@see NDDB.fetch
  * 	@see NDDB.fetchKeyArray
  * 
+ */
+NDDB.prototype.fetchValues = function (key) {
+    return this._fetch(key, 'VALUES');
+};
+
+/**
+ * ### NDDB.fetchArray
+ *
+ * @deprecated
+ * @see NDDB.fetchValues
  */
 NDDB.prototype.fetchArray = function (key) {
     return this._fetch(key, 'VALUES');
@@ -1933,47 +1971,8 @@ NDDB.prototype.fetchKeyArray = function (key) {
     return this._fetch(key, 'KEY_VALUES');
 };
 
-/**
- * ### NDDB.fetchSubObj
- *
- * Fetches all the entries in the database and trims out unwanted properties
- * 
- * 
- * Examples
- * 
- * ```javascript
- * var db = new NDDB();
- * db.insert([ { a:1, b:{c:2}, d:3 } ]);
- * 
- * db.fetchArray();       // [ [ 'a', 1, 'c', 2, 'd', 3 ] ]
- * db.fetchKeyArray('b'); // [ [ 'b', 'c', 2 ] ] 
- * db.fetchArray('d');    // [ [ 'd', 3 ] ]
- * ```
- * 
- * No further chaining is permitted after fetching.
- * 
- * @param {string|array} key Optional. If set, returned objects will have only such properties  
- * @return {array} out The fetched objects 
- * 
- * @see NDDB._fetch
- * @see NDDB.fetch
- * @see NDDB.fetchArray
- * @see NDDB.fetchKeyArray
- */
-NDDB.prototype.fetchSubObj= function (key) {
-    return this._fetch(key, 'SUB_OBJ');
-};
 
-/**
- * ### NDDB.fetchValues
- *
- * @deprecated
- * @see NDDB.fetchArray
- * 
- */
-NDDB.prototype.fetchValues = function (key) {
-    return this._fetch(key, 'VALUES');
-};
+
 
 /**
  * ### NDDB.fetchKeyValues

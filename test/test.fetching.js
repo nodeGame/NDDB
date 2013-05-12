@@ -132,16 +132,25 @@ describe('NDDB Fetching', function() {
                 db.fetch().should.eql(all_items);
             });
         });
-        describe('passing a key as argument',function() {
-            it('should be like that when passing key painter',function() {
-                var should_be_like_this = [ 'Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet' ];
-                db.fetch('painter').should.eql(should_be_like_this);
-            });
-            it('should be like that when passing key title (if Object in key)',function() {
-                var should_be_like_this = [ 'Tea in the desert' ,['Portrait of Paul Eluard','Das Rätsel der Begierde','Das finstere Spiel oder Unheilvolles Spiel' ], 'Barcelonese Mannequin' ,{en: "Water Lilies", de: "Wasser Lilies"}, 'Wheatstacks (End of Summer)' , 'Olympia' ];
-                db.fetch('title').should.eql(should_be_like_this);
+    });
+
+    describe('#fetchValues()', function() {
+        describe('the complete database',function() {
+            it('should be like the original items array',function() {
+                db.fetchValues().should.eql(array_of_all_items);
             });
         });
+        describe('passing a key as argument',function() {
+            it('key \'painter\'',function() {
+                var should_be_like_this = [ 'Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet' ];
+                db.fetchValues('painter').should.eql(should_be_like_this);
+            });
+            it('key \'title\' (object in key)',function() {
+                var should_be_like_this = [ 'Tea in the desert' ,['Portrait of Paul Eluard','Das Rätsel der Begierde','Das finstere Spiel oder Unheilvolles Spiel' ], 'Barcelonese Mannequin' ,{en: "Water Lilies", de: "Wasser Lilies"}, 'Wheatstacks (End of Summer)' , 'Olympia' ];
+                db.fetchValues('title').should.eql(should_be_like_this);
+            });
+        });
+        
         describe('passing two keys: [\'painter\',\'year\'] as argument',function() {
             it('should be like this ',function() {
                 var should_be_like_this = {
@@ -149,11 +158,11 @@ describe('NDDB Fetching', function() {
                 		year: [0, 1929, 1927, 1906, 1891, 1863]
                 };
                 
-                db.fetch(['painter','year']).should.eql(should_be_like_this);
+                db.fetchValues(['painter','year']).should.eql(should_be_like_this);
             });
         });
     });
-
+    
     describe('#fetchArray()',function() {
 	    describe('the complete database',function() {
 	        it('should be like the Array of all the items',function() {
