@@ -226,22 +226,22 @@
         <a href="#fetching">Fetching</a>
       </div>
       <div class="heading h3">
-        <a href="#nddb._fetch">NDDB._fetch</a>
+        <a href="#nddb.fetch">NDDB.fetch</a>
       </div>
       <div class="heading h3">
-        <a href="#nddb.fetch">NDDB.fetch</a>
+        <a href="#nddb.fetchsubobj">NDDB.fetchSubObj</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nddb.fetchvalues">NDDB.fetchValues</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nddb._fetcharray">NDDB._fetchArray</a>
       </div>
       <div class="heading h3">
         <a href="#nddb.fetcharray">NDDB.fetchArray</a>
       </div>
       <div class="heading h3">
         <a href="#nddb.fetchkeyarray">NDDB.fetchKeyArray</a>
-      </div>
-      <div class="heading h3">
-        <a href="#nddb.fetchvalues">NDDB.fetchValues</a>
-      </div>
-      <div class="heading h3">
-        <a href="#nddb.fetchkeyvalues">NDDB.fetchKeyValues</a>
       </div>
       <div class="heading h3">
         <a href="#nddb.groupby">NDDB.groupBy</a>
@@ -3332,41 +3332,330 @@ breeded to allows method chaining.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nddb._fetch">
+<div class="pilwrap" id="nddb.fetch">
   <h3>
-    <a href="#nddb._fetch" class="pilcrow">&#182;</a>
-    NDDB._fetch
+    <a href="#nddb.fetch" class="pilcrow">&#182;</a>
+    NDDB.fetch
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Performs the fetching of the entries according to the
-specified parameters </p>
+  <div class="body"><p>Fetches all the entries in the database and returns 
+them in one array </p>
 
 <p>Examples</p>
 
 
 <div class="highlight"><pre><code><span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
-<span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="p">[{</span><span class="nx">a</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span><span class="mi">2</span><span class="p">},</span> <span class="p">{</span><span class="nx">a</span><span class="o">:</span><span class="mi">3</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span><span class="mi">4</span><span class="p">},</span> <span class="p">{</span><span class="nx">a</span><span class="o">:</span><span class="mi">5</span><span class="p">}];</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">insert</span><span class="p">([</span> <span class="p">{</span> <span class="nx">a</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span><span class="p">{</span><span class="nx">c</span><span class="o">:</span><span class="mi">2</span><span class="p">},</span> <span class="nx">d</span><span class="o">:</span><span class="mi">3</span> <span class="p">}</span> <span class="p">]);</span>
+
+<span class="nx">db</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>    <span class="c1">// [ {a: 1, b: {c: 2}, d: 3} ] </span>
+</code></pre></div>
+
+
+
+<p>No further chaining is permitted after fetching.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span>out The fetched values </span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchValues</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchArray</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchKeyArray</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchSubObj
+
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fetch</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nddb.fetchsubobj">
+  <h3>
+    <a href="#nddb.fetchsubobj" class="pilcrow">&#182;</a>
+    NDDB.fetchSubObj
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Fetches all the entries in the database and trims out unwanted properties</p>
+
+<p>Examples</p>
+
+
+<div class="highlight"><pre><code><span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">insert</span><span class="p">([</span> <span class="p">{</span> <span class="nx">a</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span><span class="p">{</span><span class="nx">c</span><span class="o">:</span><span class="mi">2</span><span class="p">},</span> <span class="nx">d</span><span class="o">:</span><span class="mi">3</span> <span class="p">}</span> <span class="p">]);</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">insert</span><span class="p">([</span> <span class="p">{</span> <span class="nx">a</span><span class="o">:</span><span class="mi">4</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span><span class="p">{</span><span class="nx">c</span><span class="o">:</span><span class="mi">5</span><span class="p">},</span> <span class="nx">d</span><span class="o">:</span><span class="mi">6</span> <span class="p">}</span> <span class="p">]);</span>
+
+<span class="nx">db</span><span class="p">.</span><span class="nx">fetchSubObj</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">);</span> <span class="c1">// [ { a: 1} , {a: 4}]</span>
+</code></pre></div>
+
+
+
+<p>No further chaining is permitted after fetching.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">key</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">array</span>
+      <span>Optional. If set, returned objects will have only such properties  </span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span>out The fetched objects </span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetch</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchValues</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchArray</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchKeyArray
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fetchSubObj</span><span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">key</span><span class="p">)</span> <span class="k">return</span> <span class="p">[];</span>
+  <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">out</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">el</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">subobj</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">key</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nddb.fetchvalues">
+  <h3>
+    <a href="#nddb.fetchvalues" class="pilcrow">&#182;</a>
+    NDDB.fetchValues
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Fetches all the values of the entries in the database</p>
+
+<p>The type of the input parameter determines the return value:
+ - if it is <code>string</code>, returned value is a one-dimensional array. 
+  - if it is <code>array</code>, returned value is an object whose properties are arrays containing 
+all the values found in the database for those keys.</p>
+
+<p>Nested properties can be specified too.  </p>
+
+<p>Examples</p>
+
+
+<div class="highlight"><pre><code><span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">insert</span><span class="p">([</span> <span class="p">{</span> <span class="nx">a</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span><span class="p">{</span><span class="nx">c</span><span class="o">:</span><span class="mi">2</span><span class="p">},</span> <span class="nx">d</span><span class="o">:</span><span class="mi">3</span> <span class="p">}</span> <span class="p">]);</span>
+
+<span class="nx">db</span><span class="p">.</span><span class="nx">fetchValues</span><span class="p">();</span>    <span class="c1">// [ [ 1, 2, 3 ] ]</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">fetchValues</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">);</span> <span class="c1">// { b: [ {c: 2} ] }</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">fetchValues</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">);</span> <span class="c1">// { d: [ 3 ] };</span>
+
+<span class="nx">db</span><span class="p">.</span><span class="nx">insert</span><span class="p">([</span> <span class="p">{</span> <span class="nx">a</span><span class="o">:</span><span class="mi">4</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span><span class="p">{</span><span class="nx">c</span><span class="o">:</span><span class="mi">5</span><span class="p">},</span> <span class="nx">d</span><span class="o">:</span><span class="mi">6</span> <span class="p">}</span> <span class="p">]);</span>
+
+<span class="nx">db</span><span class="p">.</span><span class="nx">fetchValues</span><span class="p">([</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span> <span class="p">]);</span> <span class="c1">// { a: [ 1, 4] , d: [ 3, 6] };</span>
+</code></pre></div>
+
+
+
+<p>No further chaining is permitted after fetching.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">key</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">array</span>
+      <span>Optional. If set, returns only the value from the specified property </span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span>out The fetched values </span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetch</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchArray</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchKeyArray</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchSubObj
+
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fetchValues</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">typeofkey</span><span class="p">;</span>
+  
+  <span class="nx">typeofkey</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">out</span> <span class="o">=</span> <span class="p">{};</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="nx">typeofkey</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>  
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">JSUS</span><span class="p">.</span><span class="nx">augment</span><span class="p">(</span><span class="nx">out</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]));</span>
+    <span class="p">}</span> 
+  <span class="p">}</span>
+  
+  <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">typeofkey</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">out</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">el</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+          <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">out</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+          <span class="p">}</span>
+    <span class="p">}</span>
+    
+    
+  <span class="p">}</span>
+    
+  <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">out</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">melt</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">rep</span><span class="p">([],</span><span class="nx">key</span><span class="p">.</span><span class="nx">length</span><span class="p">));</span> <span class="c1">// object not array  </span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">el</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">subobj</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">key</span><span class="p">);</span>
+          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
+              <span class="nx">JSUS</span><span class="p">.</span><span class="nx">augment</span><span class="p">(</span><span class="nx">out</span><span class="p">,</span> <span class="nx">el</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>   
+  <span class="p">}</span>
+  
+    <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kd">function</span> <span class="nx">getValuesArray</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">obj2Array</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="kd">function</span> <span class="nx">getKeyValuesArray</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">obj2KeyedArray</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">};</span>
+
+
+<span class="kd">function</span> <span class="nx">getValuesArray_KeyString</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">obj2Array</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">function</span> <span class="nx">getValuesArray_KeyArray</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">subobj</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">key</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">obj2Array</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+
+<span class="kd">function</span> <span class="nx">getKeyValuesArray_KeyString</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">key</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">).</span><span class="nx">concat</span><span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">obj2KeyedArray</span><span class="p">(</span><span class="nx">el</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">function</span> <span class="nx">getKeyValuesArray_KeyArray</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">subobj</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">key</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">obj2KeyedArray</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
+</div>
+<p>return key.split('.').concat(JSUS.obj2KeyedArray(el));</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="p">}</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nddb._fetcharray">
+  <h3>
+    <a href="#nddb._fetcharray" class="pilcrow">&#182;</a>
+    NDDB._fetchArray
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Low level primitive for fetching the entities as arrays </p>
+
+<p>Examples</p>
+
+
+<div class="highlight"><pre><code><span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="p">[{</span><span class="nx">a</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span><span class="mi">2</span><span class="p">},</span> <span class="p">{</span><span class="nx">a</span><span class="o">:</span><span class="mi">3</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span><span class="mi">4</span><span class="p">},</span> <span class="p">{</span><span class="nx">a</span><span class="o">:</span><span class="mi">5</span><span class="p">,</span> <span class="nx">c</span><span class="o">:</span><span class="mi">6</span><span class="p">}];</span>
 <span class="nx">db</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">items</span><span class="p">);</span>
 
-<span class="nx">db</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">();</span> 
-<span class="c1">// [ {a:1, b:2}, {a:3, b:4}, {a:5} ]</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s1">&#39;VALUES&#39;</span><span class="p">);</span> 
+<span class="c1">// [ [ 1, 2 ], [ 3, 4 ], [ 5, 6] ]</span>
 
-<span class="nx">db</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">);</span> 
-<span class="c1">// [1, 3, 5];</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s1">&#39;KEY_VALUES&#39;</span><span class="p">);</span> 
+<span class="c1">// [ [ &#39;a&#39;, 1, &#39;b&#39;, 2 ], [ &#39;a&#39;, 3, &#39;b&#39;, 4 ], [ &#39;a&#39;, 5, &#39;c&#39;, 6 ] ]</span>
 
 <span class="nx">db</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;VALUES&#39;</span><span class="p">);</span> 
 <span class="c1">//  [ [ 1 ], [ 3 ], [ 5 ] ]</span>
 
 <span class="nx">db</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;KEY_VALUES&#39;</span><span class="p">);</span> 
-<span class="c1">// [ [ &#39;a&#39;, 1 ], [ &#39;a&#39;, 3 ], [ &#39;a&#39;, 5 ] ]</span>
+<span class="c1">// [ [ &#39;a&#39;, 1 ], [ &#39;a&#39;, 3 ], [ &#39;a&#39;, 5 ] ] </span>
 
-<span class="nx">db</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s1">&#39;VALUES&#39;</span><span class="p">);</span> 
-<span class="c1">// [ [ 1, 2 ], [ 3, 4 ], [ 5] ]</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">],</span> <span class="s1">&#39;VALUES&#39;</span><span class="p">);</span> 
+<span class="c1">//  [ [ 1 , 2], [ 3, 4 ], [ 5 ] ]</span>
 
-<span class="nx">db</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s1">&#39;KEY_VALUES&#39;</span><span class="p">);</span> 
-<span class="c1">// [ [ &#39;a&#39;, 1, &#39;b&#39;, 2 ], [ &#39;a&#39;, 3, &#39;b&#39;, 4 ], [ &#39;a&#39;, 5 ] ]</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">([</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="s1">&#39;KEY_VALUES&#39;</span><span class="p">);</span> 
+<span class="c1">// [ [ &#39;a&#39;, 1 ], [ &#39;a&#39;, 3 ], [ &#39;a&#39;, 5, &#39;c&#39;, 6 ] ]</span>
 </code></pre></div>
 
 
@@ -3382,128 +3671,57 @@ specified parameters </p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">key</span>
       <span class="dox_type">string</span>
-      <span>Optional. If set, returns only the value from the specified property </span>
+      <span class="dox_type">array</span>
+      <span>Optional. If set, returns key/values only from the specified property </span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">array.</span>
-      <span class="dox_type">string</span>
-      <span>Optional If set, objects are transformed in arrays and returned</span>
+      <span class="dox_tag_name">keyed.</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. If set, also the keys are returned</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">array</span>
-      <span>out The fetched values 
-
-@see NDDB.fetch
-  @see NDDB.fetchArray
-  @see NDDB.fetchKeyArray</span>
+      <span>out The fetched values </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_fetch</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">array</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_fetchArray</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">keyed</span><span class="p">)</span> <span class="p">{</span>
+  
+    <span class="kd">var</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
     
-    <span class="kd">function</span> <span class="nx">getValues</span> <span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>        
-        <span class="k">return</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
-    <span class="p">};</span>
-    
-    <span class="kd">function</span> <span class="nx">getValuesArray</span> <span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">obj2KeyedArray</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">};</span>
-    
-    <span class="kd">function</span> <span class="nx">getKeyValuesArray</span> <span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">key</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">).</span><span class="nx">concat</span><span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">obj2KeyedArray</span><span class="p">(</span><span class="nx">el</span><span class="p">));</span>
-        <span class="p">}</span>
-    <span class="p">};</span>
-            
-    <span class="k">switch</span> <span class="p">(</span><span class="nx">array</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="s1">&#39;VALUES&#39;</span><span class="o">:</span>
-            <span class="kd">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">?</span> <span class="nx">getValuesArray</span> <span class="o">:</span> 
-                               <span class="nx">JSUS</span><span class="p">.</span><span class="nx">obj2Array</span><span class="p">;</span>
-            
-            <span class="k">break</span><span class="p">;</span>
-        <span class="k">case</span> <span class="s1">&#39;KEY_VALUES&#39;</span><span class="o">:</span>
-            <span class="kd">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">?</span> <span class="nx">getKeyValuesArray</span> <span class="o">:</span>
-                               <span class="nx">JSUS</span><span class="p">.</span><span class="nx">obj2KeyedArray</span><span class="p">;</span>
-            <span class="k">break</span><span class="p">;</span>
-            
-        <span class="k">default</span><span class="o">:</span> <span class="c1">// results are not </span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">key</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">;</span>
-            <span class="kd">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="nx">getValues</span><span class="p">;</span>        
+    <span class="k">if</span> <span class="p">(</span><span class="nx">keyed</span><span class="p">)</span> <span class="p">{</span>
+      
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">key</span><span class="p">)</span> <span class="nx">cb</span> <span class="o">=</span> <span class="nx">getKeyValuesArray</span><span class="p">;</span>
+      
+      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">cb</span> <span class="o">=</span> <span class="nx">getKeyValuesArray_KeyString</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">cb</span> <span class="o">=</span> <span class="nx">getKeyValuesArray_KeyArray</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">key</span><span class="p">)</span> <span class="nx">cb</span> <span class="o">=</span> <span class="nx">getValuesArray</span><span class="p">;</span>
+      
+      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">cb</span> <span class="o">=</span> <span class="nx">getValuesArray_KeyString</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">cb</span> <span class="o">=</span> <span class="nx">getValuesArray_KeyArray</span><span class="p">;</span>
+      <span class="p">}</span>
     <span class="p">}</span>
     
-    <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="p">[];</span>    
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">key</span><span class="p">);</span>
+    <span class="nx">out</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">el</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">key</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">el</span><span class="p">)</span> <span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
     <span class="p">}</span>    
     
     <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
 <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="nddb.fetch">
-  <h3>
-    <a href="#nddb.fetch" class="pilcrow">&#182;</a>
-    NDDB.fetch
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Fetches all the entries in the database and returns 
-them in a array. </p>
-
-<p>If a second key parameter is passed, only the value of 
-the property named after the key are returned, otherwise <br />
-the whole entry is returned as it is.</p>
-
-<p>Examples</p>
-
-
-<div class="highlight"><pre><code><span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
-<span class="nx">db</span><span class="p">.</span><span class="nx">insert</span><span class="p">([</span> <span class="p">{</span> <span class="nx">a</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span><span class="p">{</span><span class="nx">c</span><span class="o">:</span><span class="mi">2</span><span class="p">},</span> <span class="nx">d</span><span class="o">:</span><span class="mi">3</span> <span class="p">}</span> <span class="p">]);</span>
-
-<span class="nx">db</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>    <span class="c1">// [ {a: 1, b: {c: 2}, d: 3} ] </span>
-<span class="nx">db</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">);</span> <span class="c1">// [ {c: 2} ];</span>
-<span class="nx">db</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">);</span> <span class="c1">// [ 3 ];</span>
-</code></pre></div>
-
-
-
-<p>No further chaining is permitted after fetching.</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">key</span>
-      <span class="dox_type">string</span>
-      <span>Optional. If set, returns only the value from the specified property </span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">array</span>
-      <span>out The fetched values 
-
-@see NDDB._fetch
-  @see NDDB.fetchArray
-  @see NDDB.fetchKeyArray</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fetch</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -3517,23 +3735,18 @@ the whole entry is returned as it is.</p>
 </div>
 
   </div>
-  <div class="body"><p>Fetches all the entries in the database, transforms them into 
-one-dimensional array by exploding all nested values, and returns
-them into an array.</p>
-
-<p>If a parameter is passed, only the value of the property
-named after the key is returned, otherwise the whole entry 
-is exploded, and its values returned in a array. </p>
+  <div class="body"><p>Fetches the entities in the database as arrays instead of objects</p>
 
 <p>Examples</p>
 
 
 <div class="highlight"><pre><code><span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
 <span class="nx">db</span><span class="p">.</span><span class="nx">insert</span><span class="p">([</span> <span class="p">{</span> <span class="nx">a</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span><span class="p">{</span><span class="nx">c</span><span class="o">:</span><span class="mi">2</span><span class="p">},</span> <span class="nx">d</span><span class="o">:</span><span class="mi">3</span> <span class="p">}</span> <span class="p">]);</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">insert</span><span class="p">([</span> <span class="p">{</span> <span class="nx">a</span><span class="o">:</span><span class="mi">4</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span><span class="p">{</span><span class="nx">c</span><span class="o">:</span><span class="mi">5</span><span class="p">},</span> <span class="nx">d</span><span class="o">:</span><span class="mi">6</span> <span class="p">}</span> <span class="p">]);</span>
 
-<span class="nx">db</span><span class="p">.</span><span class="nx">fetchArray</span><span class="p">();</span>    <span class="c1">// [ [ 1, 2, 3 ] ]</span>
-<span class="nx">db</span><span class="p">.</span><span class="nx">fetchArray</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">);</span> <span class="c1">// [ [&#39;c&#39;, 2 ] ]</span>
-<span class="nx">db</span><span class="p">.</span><span class="nx">fetchArray</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">);</span> <span class="c1">// [ [ 3 ] ];</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">fetchArray</span><span class="p">();</span>     <span class="c1">// [ [ 1, &#39;c&#39;, 2, 3 ],  ]</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">fetchArray</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">);</span>  <span class="c1">// [ [ &#39;c&#39;, 2 ] ] </span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">fetchArray</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">);</span>  <span class="c1">// [ [ 3 ] ]</span>
 </code></pre></div>
 
 
@@ -3541,27 +3754,28 @@ is exploded, and its values returned in a array. </p>
 <p>No further chaining is permitted after fetching.</p>
   </div>
   <div class="details">
-    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">key</span>
-      <span class="dox_type">string</span>
-      <span>Optional. If set, returns only the value from the specified property </span>
+      <span class="dox_type">NDDB._fetchArray</span>
     </div>
-    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">array</span>
-      <span>out The fetched values 
-
-@see NDDB._fetch
-  @see NDDB.fetch
-  @see NDDB.fetchKeyArray</span>
+      <span class="dox_type">NDDB.fetchValues</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchKeyArray</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchSubObj
+  </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fetchArray</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="s1">&#39;VALUES&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fetchArray</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -3585,9 +3799,9 @@ returned values. </p>
 <div class="highlight"><pre><code><span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
 <span class="nx">db</span><span class="p">.</span><span class="nx">insert</span><span class="p">([</span> <span class="p">{</span> <span class="nx">a</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span><span class="p">{</span><span class="nx">c</span><span class="o">:</span><span class="mi">2</span><span class="p">},</span> <span class="nx">d</span><span class="o">:</span><span class="mi">3</span> <span class="p">}</span> <span class="p">]);</span>
 
-<span class="nx">db</span><span class="p">.</span><span class="nx">fetchArray</span><span class="p">();</span>       <span class="c1">// [ [ &#39;a&#39;, 1, &#39;c&#39;, 2, &#39;d&#39;, 3 ] ]</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">fetchKeyArray</span><span class="p">();</span>       <span class="c1">// [ [ &#39;a&#39;, 1, &#39;c&#39;, 2, &#39;d&#39;, 3 ] ]</span>
 <span class="nx">db</span><span class="p">.</span><span class="nx">fetchKeyArray</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">);</span> <span class="c1">// [ [ &#39;b&#39;, &#39;c&#39;, 2 ] ] </span>
-<span class="nx">db</span><span class="p">.</span><span class="nx">fetchArray</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">);</span>    <span class="c1">// [ [ &#39;d&#39;, 3 ] ]</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">fetchKeyArray</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">);</span>    <span class="c1">// [ [ &#39;d&#39;, 3 ] ]</span>
 </code></pre></div>
 
 
@@ -3605,72 +3819,30 @@ returned values. </p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">array</span>
-      <span>out The fetched values 
-
-@see NDDB._fetch
-  @see NDDB.fetch
-  @see NDDB.fetchArray</span>
+      <span>out The fetched values </span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB._fetchArray</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchArray</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchValues</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.fetchSubObj
+  </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fetchKeyArray</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="s1">&#39;KEY_VALUES&#39;</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="nddb.fetchvalues">
-  <h3>
-    <a href="#nddb.fetchvalues" class="pilcrow">&#182;</a>
-    NDDB.fetchValues
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">NDDB.fetchArray
-
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fetchValues</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="s1">&#39;VALUES&#39;</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="nddb.fetchkeyvalues">
-  <h3>
-    <a href="#nddb.fetchkeyvalues" class="pilcrow">&#182;</a>
-    NDDB.fetchKeyValues
-  </h3>
-</div>
-
-  </div>
-  <div class="body">
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">NDDB.fetchKeyArray
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fetchKeyValues</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fetch</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="s1">&#39;KEY_VALUES&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fetchArray</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 <span class="p">};</span>
             </pre></div>
         </td>
@@ -3743,7 +3915,7 @@ dimension will be skipped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
+  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
 </div>
 <p>Creates a new group and add entries to it</p>
         </td>
@@ -3760,7 +3932,7 @@ dimension will be skipped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
+  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
 </div>
 <p>Reset nddb_pointer in subgroups</p>
         </td>
@@ -4671,20 +4843,21 @@ if the database is empty.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-128" id="section-128">&#182;</a>
+  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
 </div>
 <p>if node</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isNodeJS</span><span class="p">())</span> <span class="p">{</span>   
   <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./external/cycle.js&#39;</span><span class="p">);</span>   
-  <span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">),</span>
+    <span class="nx">csv</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;ya-csv&#39;</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
+  <a class="pilcrow" href="#section-130" id="section-130">&#182;</a>
 </div>
 <p>end node  </p>
         </td>
@@ -4768,7 +4941,7 @@ are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-131" id="section-131">&#182;</a>
+  <a class="pilcrow" href="#section-132" id="section-132">&#182;</a>
 </div>
 <p>Try to save in the browser, e.g. with Shelf.js</p>
         </td>
@@ -4788,7 +4961,7 @@ are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-132" id="section-132">&#182;</a>
+  <a class="pilcrow" href="#section-133" id="section-133">&#182;</a>
 </div>
 <p>Save in Node.js</p>
         </td>
@@ -4861,7 +5034,7 @@ using the standard <code>fs.readFileSync</code> or <code>fs.readFile</code> meth
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;You must specify a valid file / id.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
@@ -4872,7 +5045,7 @@ using the standard <code>fs.readFileSync</code> or <code>fs.readFile</code> meth
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-134" id="section-134">&#182;</a>
+  <a class="pilcrow" href="#section-135" id="section-135">&#182;</a>
 </div>
 <p>Try to save in the browser, e.g. with Shelf.js</p>
         </td>
@@ -4884,7 +5057,7 @@ using the standard <code>fs.readFileSync</code> or <code>fs.readFile</code> meth
     
     <span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="nx">store</span><span class="p">(</span><span class="nx">file</span><span class="p">);</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">items</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">callback</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">cb</span><span class="p">();</span>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
   <span class="p">}</span>
   
@@ -4899,7 +5072,7 @@ using the standard <code>fs.readFileSync</code> or <code>fs.readFile</code> meth
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-135" id="section-135">&#182;</a>
+  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
 </div>
 <p>retrocycle if possible</p>
         </td>
@@ -4913,7 +5086,51 @@ using the standard <code>fs.readFileSync</code> or <code>fs.readFile</code> meth
   <span class="nx">loadString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">s</span><span class="p">);</span>
   <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
 <span class="p">};</span>
+  
+
+<span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span><span class="p">.</span><span class="nx">csv</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;You must specify a valid CSV file.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isNodeJS</span><span class="p">()){</span>
+    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Loading a CSV file is available only in Node.js environment.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
   </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
+</div>
+<p>Mix options</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+   
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">columnsFromHeader</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">options</span><span class="p">.</span><span class="nx">columnsFromHeader</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="p">}</span>
+
+
+  <span class="kd">var</span> <span class="nx">reader</span> <span class="o">=</span> <span class="nx">csv</span><span class="p">.</span><span class="nx">createCsvStreamReader</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">columnNames</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">reader</span><span class="p">.</span><span class="nx">setColumnNames</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">columnNames</span><span class="p">);</span>
+  <span class="p">}</span>
+  
+  <span class="nx">reader</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+  <span class="p">});</span>
+  
+  <span class="nx">reader</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">callback</span><span class="p">();</span>
+  <span class="p">});</span>
+  
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
