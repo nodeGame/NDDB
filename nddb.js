@@ -1500,336 +1500,6 @@ NDDB.prototype.split = function (key) {
 
 // ## Fetching
 
-
-/**
- * ### NDDB._fetch
- *
- * Performs the fetching of the entries according to the
- * specified parameters 
- * 
- * Examples
- * 
- * ```javascript
- * var db = new NDDB();
- * var items = [{a:1, b:2}, {a:3, b:4}, {a:5}];
- * db.importDB(items);
- * 
- * db._fetch(); 
- * // [ {a:1, b:2}, {a:3, b:4}, {a:5} ]
- * 
- * db._fetch('a'); 
- * // [1, 3, 5];
- * 
- * db._fetch('a', 'VALUES'); 
- * //  [ [ 1 ], [ 3 ], [ 5 ] ]
- * 
- * db._fetch('a', 'KEY_VALUES'); 
- * // [ [ 'a', 1 ], [ 'a', 3 ], [ 'a', 5 ] ]
- * 
- * db._fetch(null, 'VALUES'); 
- * // [ [ 1, 2 ], [ 3, 4 ], [ 5] ]
- * 
- * db._fetch(null, 'KEY_VALUES'); 
- * // [ [ 'a', 1, 'b', 2 ], [ 'a', 3, 'b', 4 ], [ 'a', 5 ] ]
- * ```
- * 
- * No further chaining is permitted after fetching.
- * 
- * @api private
- * @param {string} key Optional. If set, returns only the value from the specified property 
- * @param {string} array. Optional If set, objects are transformed in arrays and returned
- * @return {array} out The fetched values 
- * 
- * 	@see NDDB.fetch
- * 	@see NDDB.fetchArray
- * 	@see NDDB.fetchKeyArray
- * 
- */
-NDDB.prototype._fetch = function (key, array) {
-    
-    function getValues(o, key) {        
-        return JSUS.getNestedValue(key, o);
-    };
-    
-    function getValuesArray(o, key) {
-        var el = JSUS.getNestedValue(key, o);
-        if ('undefined' !== typeof el) {
-            return JSUS.obj2KeyedArray(el);
-        }
-    };
-    
-    function getKeyValuesArray(o, key) {
-        var el = JSUS.getNestedValue(key, o);
-        if ('undefined' !== typeof el) {
-            return key.split('.').concat(JSUS.obj2KeyedArray(el));
-        }
-    };
-    
-    function getSubObj(o, key) {
-    	var el = JSUS.subobj(o, key);
-    	if (!JSUS.isEmpty(el)) {
-    		return el;
-    	}
-    }
-    
-    var cb, out, el, i;
-    
-    switch (array) {
-    	case 'ARRAY':
-        case 'VALUES':
-            cb = (key) ? getValuesArray : JSUS.obj2Array;
-            break;
-           
-        case 'KEYED_ARRAY':    
-        case 'KEY_VALUES':
-            cb = (key) ? getKeyValuesArray : JSUS.obj2KeyedArray;
-            break;
-            
-        case 'SUB_OBJ':
-        	if (!key) return this.db;
-        	cb = getSubObj; 
-        	break;
-            
-        default: // results are not 
-            if (!key) return this.db;
-            cb = getValues;        
-    }
-    
-    out = [];    
-    for (i=0; i < this.db.length; i++) {
-        el = cb.call(this.db[i], this.db[i], key);
-        if ('undefined' !== typeof el) out.push(el);
-    }    
-    
-    return out;
-}
-
-//function getValues_KeyString(out, o, key) {
-//	var el = JSUS.getNestedValue(key, o);
-//	if ('undefined' !== typeof el) out.push(el);
-//};
-//
-//function getValues_KeyArray(out, o, key) { 
-//	var el = JSUS.subobj(o, key);
-//	console.log('------------')
-//	console.log(out, o, key, el,JSUS.isEmpty(el))
-//	console.log('------------')
-//	if (!JSUS.isEmpty(el)) {
-//		out = out.concat(JSUS.obj2Array(el));
-//	}
-//};
-//
-//function getValuesArray_KeyString(out, o, key) {
-//    var el = JSUS.getNestedValue(key, o);
-//    if ('undefined' !== typeof el) out.push(JSUS.obj2KeyedArray(el));
-//};
-//
-//function getValuesArray_KeyArray(out, o, key) {
-//    var el = JSUS.subobj(o, key);
-//    if (!JSUS.isEmpty(el)) out.push(JSUS.obj2KeyedArray(el));
-//};
-//
-//
-//function getKeyValuesArray_KeyString(out, o, key) {
-//    var el = JSUS.getNestedValue(key, o);
-//    if ('undefined' !== typeof el) {
-//        out.push(key.split('.').concat(JSUS.obj2KeyedArray(el)));
-//    }
-//};
-//
-//function getKeyValuesArray_KeyArray(out, o, key) {
-//	var el = JSUS.subobj(o, key);
-//    if (!JSUS.isEmpty(el)) {
-//        out = out.push(key.split('.').concat(JSUS.obj2KeyedArray(el)));
-//	}
-//};
-//
-//function getSubObj(out, o, key) {
-//	var el = JSUS.subobj(o, key);
-//	if (!JSUS.isEmpty(el)) out.push(el);
-//}
-
-
-function getValues_KeyString(o, key) {        
-    return JSUS.getNestedValue(key, o);
-};
-
-function getValues_KeyArray(o, key) { 
-	var el = JSUS.subobj(o, key);
-	if (!JSUS.isEmpty(el)) {
-		return JSUS.obj2Array(el);
-	}
-};
-
-function getValuesArray_KeyString(o, key) {
-    var el = JSUS.getNestedValue(key, o);
-    if ('undefined' !== typeof el) {
-        return JSUS.obj2Array(el);
-    }
-};
-
-function getValuesArray_KeyArray(o, key) {
-    var el = JSUS.subobj(o, key);
-    if (!JSUS.isEmpty(el)) {
-    	return JSUS.obj2Array(el);
-	}
-};
-
-
-function getKeyValuesArray_KeyString(o, key) {
-    var el = JSUS.getNestedValue(key, o);
-    if ('undefined' !== typeof el) {
-        return key.split('.').concat(JSUS.obj2KeyedArray(el));
-    }
-};
-
-function getKeyValuesArray_KeyArray(o, key) {
-	var el = JSUS.subobj(o, key);
-    if (!JSUS.isEmpty(el)) {
-        return JSUS.obj2KeyedArray(el);
-    	//return key.split('.').concat(JSUS.obj2KeyedArray(el));
-	}
-};
-
-function getSubObj(o, key) {
-	var el = JSUS.subobj(o, key);
-	if (!JSUS.isEmpty(el)) {
-		return el;
-	}
-}
-
-/**
- * ### NDDB._fetch
- *
- * Performs the fetching of the entries according to the
- * specified parameters 
- * 
- * Examples
- * 
- * ```javascript
- * var db = new NDDB();
- * var items = [{a:1, b:2}, {a:3, b:4}, {a:5, c:6}];
- * db.importDB(items);
- * 
- * db._fetch(); 
- * // [ {a:1, b:2}, {a:3, b:4}, {a:5, c:6} ]
- * 
- * db._fetch('a'); 
- * // [1, 3, 5];
- * 
- * db._fetch('a', 'VALUES'); 
- * //  [ [ 1 ], [ 3 ], [ 5 ] ]
- * 
- * db._fetch('a', 'KEY_VALUES'); 
- * // [ [ 'a', 1 ], [ 'a', 3 ], [ 'a', 5 ] ]
- * 
- * db._fetch('a', 'SUB_OBJ'); 
- * // [ {a:1}, {a:3}, {a:5} ]
- * 
- * 
- * db._fetch(['a','b']); 
- * // [1, 2, 3, 4, 5];
- * 
- * db._fetch(['a','b'], 'VALUES'); 
- * //  [ [ 1 , 2], [ 3, 4 ], [ 5 ] ]
- * 
- * db._fetch([ 'a', 'c'] 'KEY_VALUES'); 
- * // [ [ 'a', 1 ], [ 'a', 3 ], [ 'a', 5, 'c', 6 ] ]
- * 
- * db._fetch([ 'a', 'c' ], 'SUB_OBJ'); 
- * // [ {a:1}, {a:3}, {a:5, c:6} ]
- * 
- * 
- * db._fetch(null, 'VALUES'); 
- * // [ [ 1, 2 ], [ 3, 4 ], [ 5, 6] ]
- * 
- * db._fetch(null, 'KEY_VALUES'); 
- * // [ [ 'a', 1, 'b', 2 ], [ 'a', 3, 'b', 4 ], [ 'a', 5, 'c', 6 ] ]
- * 
- * db._fetch(null, 'SUB_OBJ'); 
- * // [ {a:1, b:2}, {a:3, b:4}, {a:5, c: 6} ]
- * ```
- * 
- * No further chaining is permitted after fetching.
- * 
- * @api private
- * @param {string} key Optional. If set, returns only the value from the specified property 
- * @param {string} array. Optional If set, objects are transformed in arrays and returned
- * @return {array} out The fetched values 
- * 
- * 	@see NDDB.fetch
- * 	@see NDDB.fetchArray
- * 	@see NDDB.fetchKeyArray
- * 
- */
-NDDB.prototype._fetch = function (key, transform) {
-	
-    var cb, out, el, i;
-    
-    switch (transform) {
-    	case 'ARRAY':
-        case 'VALUES':
-        	if (!key) cb = JSUS.obj2Array;
-        	
-        	else if ('string' === typeof key) {
-        		cb = getValuesArray_KeyString;
-        	}
-        	else {
-        		cb = getValuesArray_KeyArray;
-        	}
-            
-            break;
-           
-        case 'KEYED_ARRAY':    
-        case 'KEY_VALUES':
-        	if (!key) cb = JSUS.obj2KeyedArray;
-        	
-        	else if ('string' === typeof key) {
-        		cb = getKeyValuesArray_KeyString;
-        	}
-        	else {
-        		cb = getKeyValuesArray_KeyArray;
-        	}
-        	
-            break;
-            
-        case 'SUB_OBJ':
-        	if (!key) return this.db;
-        	cb = getSubObj;
-        	break;
-            
-        default: // results are not 
-            if (!key) return this.db;
-	        if ('string' === typeof key) {
-	    		cb = getValues_KeyString;
-	    	}
-	    	else {
-	    		cb = getValues_KeyArray;
-	    	}
-    }
-    
-    if (transform === true && 'object' === typeof key) {
-    	
-    	out = JSUS.melt(key,JSUS.rep([],key.length)); // object not array  
-        for (i=0; i < this.db.length; i++) {
-        	el = JSUS.subobj(this.db[i], key);
-        	if (!JSUS.isEmpty(el)) {
-            	JSUS.augment(out, el);
-            }
-        }   
-        return out;
-    }
-    
-    out = [];
-    for (i=0; i < this.db.length; i++) {
-        el = cb.call(this.db[i], this.db[i], key);
-        if ('undefined' !== typeof el) out.push(el);
-    }    
-    
-    return out;
-}
-
-
 /**
  * ### NDDB.fetch
  *
@@ -1849,9 +1519,10 @@ NDDB.prototype._fetch = function (key, transform) {
  *  
  * @return {array} out The fetched values 
  * 
- * 	@see NDDB._fetch
- * 	@see NDDB.fetchValues
- * 	@see NDDB.fetchKeyArray
+ * @see NDDB.fetchValues
+ * @see NDDB.fetchArray
+ * @see NDDB.fetchKeyArray
+ * @see NDDB.fetchSubObj
  * 
  */
 NDDB.prototype.fetch = function () {
@@ -1869,10 +1540,9 @@ NDDB.prototype.fetch = function () {
  * ```javascript
  * var db = new NDDB();
  * db.insert([ { a:1, b:{c:2}, d:3 } ]);
+ * db.insert([ { a:4, b:{c:5}, d:6 } ]);
  * 
- * db.fetchArray();       // [ [ 'a', 1, 'c', 2, 'd', 3 ] ]
- * db.fetchKeyArray('b'); // [ [ 'b', 'c', 2 ] ] 
- * db.fetchArray('d');    // [ [ 'd', 3 ] ]
+ * db.fetchSubObj('a'); // [ { a: 1} , {a: 4}]
  * ```
  * 
  * No further chaining is permitted after fetching.
@@ -1880,13 +1550,19 @@ NDDB.prototype.fetch = function () {
  * @param {string|array} key Optional. If set, returned objects will have only such properties  
  * @return {array} out The fetched objects 
  * 
- * @see NDDB._fetch
  * @see NDDB.fetch
+ * @see NDDB.fetchValues
  * @see NDDB.fetchArray
  * @see NDDB.fetchKeyArray
  */
 NDDB.prototype.fetchSubObj= function (key) {
-    return this._fetch(key, 'SUB_OBJ');
+	if (!key) return [];
+	var i, el, out = [];
+	for (i=0; i < this.db.length; i++) {
+	    el = JSUS.subobj(this.db[i], key);
+	    if (!JSUS.isEmpty(el)) out.push(el);
+    }
+    return out;
 };
 
 
@@ -1909,8 +1585,8 @@ NDDB.prototype.fetchSubObj= function (key) {
  * db.insert([ { a:1, b:{c:2}, d:3 } ]);
  * 
  * db.fetchValues();    // [ [ 1, 2, 3 ] ]
- * db.fetchValues('b'); // [ {c: 2} ]
- * db.fetchValues('d'); // [ [ 3 ] ];
+ * db.fetchValues('b'); // { b: [ {c: 2} ] }
+ * db.fetchValues('d'); // { d: [ 3 ] };
  * 
  * db.insert([ { a:4, b:{c:5}, d:6 } ]);
  * 
@@ -1922,23 +1598,187 @@ NDDB.prototype.fetchSubObj= function (key) {
  * @param {string|array} key Optional. If set, returns only the value from the specified property 
  * @return {array} out The fetched values 
  * 
- * 	@see NDDB._fetch
- * 	@see NDDB.fetch
- * 	@see NDDB.fetchKeyArray
+ * @see NDDB.fetch
+ * @see NDDB.fetchArray
+ * @see NDDB.fetchKeyArray
+ * @see NDDB.fetchSubObj
  * 
  */
-NDDB.prototype.fetchValues = function (key) {
-    return this._fetch(key, 'VALUES');
+NDDB.prototype.fetchValues = function(key) {
+	var el, i, out, typeofkey;
+	
+	typeofkey = typeof key, out = {};
+	
+	if (typeofkey === 'undefined') {	
+		for (i=0; i < this.db.length; i++) {
+			JSUS.augment(out, this.db[i], JSUS.keys(this.db[i]));
+		} 
+	}
+	
+	else if (typeofkey === 'string') {
+		out[key] = [];
+		for (i=0; i < this.db.length; i++) {
+			el = JSUS.getNestedValue(key, this.db[i]);
+	        if ('undefined' !== typeof el) {
+	        	out[key].push(el);
+	        }
+		}
+		
+		
+	}
+		
+	else if (JSUS.isArray(key)) {
+    	out = JSUS.melt(key,JSUS.rep([],key.length)); // object not array  
+        for (i=0; i < this.db.length; i++) {
+        	el = JSUS.subobj(this.db[i], key);
+        	if (!JSUS.isEmpty(el)) {
+            	JSUS.augment(out, el);
+            }
+        }   
+	}
+	
+    return out;
 };
+
+function getValuesArray(o, key) {
+	return JSUS.obj2Array(o, 1);
+};
+
+function getKeyValuesArray(o, key) {
+	return JSUS.obj2KeyedArray(o, 1);
+};
+
+
+function getValuesArray_KeyString(o, key) {
+    var el = JSUS.getNestedValue(key, o);
+    if ('undefined' !== typeof el) {
+        return JSUS.obj2Array(el,1);
+    }
+};
+
+function getValuesArray_KeyArray(o, key) {
+    var el = JSUS.subobj(o, key);
+    if (!JSUS.isEmpty(el)) {
+    	return JSUS.obj2Array(el,1);
+	}
+};
+
+
+function getKeyValuesArray_KeyString(o, key) {
+    var el = JSUS.getNestedValue(key, o);
+    if ('undefined' !== typeof el) {
+        return key.split('.').concat(JSUS.obj2KeyedArray(el));
+    }
+};
+
+function getKeyValuesArray_KeyArray(o, key) {
+	var el = JSUS.subobj(o, key);
+    if (!JSUS.isEmpty(el)) {
+        return JSUS.obj2KeyedArray(el);
+    	//return key.split('.').concat(JSUS.obj2KeyedArray(el));
+	}
+};
+
+/**
+ * ### NDDB._fetchArray
+ *
+ * Low level primitive for fetching the entities as arrays 
+ * 
+ * Examples
+ * 
+ * ```javascript
+ * var db = new NDDB();
+ * var items = [{a:1, b:2}, {a:3, b:4}, {a:5, c:6}];
+ * db.importDB(items);
+ * 
+ * db._fetch(null, 'VALUES'); 
+ * // [ [ 1, 2 ], [ 3, 4 ], [ 5, 6] ]
+ * 
+ * db._fetch(null, 'KEY_VALUES'); 
+ * // [ [ 'a', 1, 'b', 2 ], [ 'a', 3, 'b', 4 ], [ 'a', 5, 'c', 6 ] ]
+ * 
+ * db._fetch('a', 'VALUES'); 
+ * //  [ [ 1 ], [ 3 ], [ 5 ] ]
+ * 
+ * db._fetch('a', 'KEY_VALUES'); 
+ * // [ [ 'a', 1 ], [ 'a', 3 ], [ 'a', 5 ] ] 
+ * 
+ * db._fetch(['a','b'], 'VALUES'); 
+ * //  [ [ 1 , 2], [ 3, 4 ], [ 5 ] ]
+ * 
+ * db._fetch([ 'a', 'c'] 'KEY_VALUES'); 
+ * // [ [ 'a', 1 ], [ 'a', 3 ], [ 'a', 5, 'c', 6 ] ]
+ * ```
+ * 
+ * No further chaining is permitted after fetching.
+ * 
+ * @api private
+ * @param {string|array} key Optional. If set, returns key/values only from the specified property 
+ * @param {boolean} keyed. Optional. If set, also the keys are returned
+ * @return {array} out The fetched values 
+ * 
+ */
+NDDB.prototype._fetchArray = function (key, keyed) {
+	
+    var cb, out, el, i;
+    
+    if (keyed) {
+    	
+    	if (!key) cb = getKeyValuesArray;
+    	
+    	else if ('string' === typeof key) {
+    		cb = getKeyValuesArray_KeyString;
+    	}
+    	else {
+    		cb = getKeyValuesArray_KeyArray;
+    	}
+    }
+    else {
+    	if (!key) cb = getValuesArray;
+    	
+    	else if ('string' === typeof key) {
+    		cb = getValuesArray_KeyString;
+    	}
+    	else {
+    		cb = getValuesArray_KeyArray;
+    	}
+    }
+    
+    out = [];
+    for (i=0; i < this.db.length; i++) {
+        el = cb.call(this.db[i], this.db[i], key);
+        if ('undefined' !== typeof el) out.push(el);
+    }    
+    
+    return out;
+}
 
 /**
  * ### NDDB.fetchArray
  *
- * @deprecated
+ * Fetches the entities in the database as arrays instead of objects
+ * 
+ * Examples
+ * 
+ * ```javascript
+ * var db = new NDDB();
+ * db.insert([ { a:1, b:{c:2}, d:3 } ]);
+ * db.insert([ { a:4, b:{c:5}, d:6 } ]);
+ * 
+ * db.fetchArray();     // [ [ 1, 'c', 2, 3 ],  ]
+ * db.fetchArray('b');  // [ [ 'c', 2 ] ] 
+ * db.fetchArray('d');  // [ [ 3 ] ]
+ * ```
+ * 
+ * No further chaining is permitted after fetching.
+ * 
+ * @see NDDB._fetchArray
  * @see NDDB.fetchValues
+ * @see NDDB.fetchKeyArray
+ * @see NDDB.fetchSubObj
  */
 NDDB.prototype.fetchArray = function (key) {
-    return this._fetch(key, 'VALUES');
+    return this._fetchArray(key);
 };
 
 /**
@@ -1953,9 +1793,9 @@ NDDB.prototype.fetchArray = function (key) {
  * var db = new NDDB();
  * db.insert([ { a:1, b:{c:2}, d:3 } ]);
  * 
- * db.fetchArray();       // [ [ 'a', 1, 'c', 2, 'd', 3 ] ]
+ * db.fetchKeyArray();       // [ [ 'a', 1, 'c', 2, 'd', 3 ] ]
  * db.fetchKeyArray('b'); // [ [ 'b', 'c', 2 ] ] 
- * db.fetchArray('d');    // [ [ 'd', 3 ] ]
+ * db.fetchKeyArray('d');    // [ [ 'd', 3 ] ]
  * ```
  * 
  * No further chaining is permitted after fetching.
@@ -1963,25 +1803,13 @@ NDDB.prototype.fetchArray = function (key) {
  * @param {string} key Optional. If set, returns only the value from the specified property 
  * @return {array} out The fetched values 
  * 
- * 	@see NDDB._fetch
- * 	@see NDDB.fetch
- * 	@see NDDB.fetchArray
+ * @see NDDB._fetchArray
+ * @see NDDB.fetchArray
+ * @see NDDB.fetchValues
+ * @see NDDB.fetchSubObj
  */
 NDDB.prototype.fetchKeyArray = function (key) {
-    return this._fetch(key, 'KEY_VALUES');
-};
-
-
-
-
-/**
- * ### NDDB.fetchKeyValues
- *
- * @deprecated
- * @see NDDB.fetchKeyArray
- */
-NDDB.prototype.fetchKeyValues = function (key) {
-    return this._fetch(key, 'KEY_VALUES');
+    return this._fetchArray(key, true);
 };
             
 /**

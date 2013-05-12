@@ -2,6 +2,7 @@
 
 var util = require('util'),
     should = require('should'),
+    J = require('JSUS').JSUS,
     NDDB = require('./../nddb').NDDB;
 
 var db = new NDDB();
@@ -58,6 +59,8 @@ var not_hashable = [
                },
 ];
 
+
+
 var all_items = hashable.concat(not_hashable);
 
 var hashPainter = function(o) {
@@ -65,6 +68,12 @@ var hashPainter = function(o) {
     return o.painter;
 }
 
+// Array for fetchValues
+
+var array_fetch_values = [];
+for (i=0; i < all_items.length; i++) {
+	J.augment(array_fetch_values, all_items[i], J.keys(all_items[i]));
+} 
 
 // Array for .fetchArray()
 var array_of_all_items = new Array();
@@ -72,19 +81,7 @@ for(var entry in Object.keys(all_items)) {
     var line = new Array();
     for(var key in Object.keys(all_items[entry])) {
         keys = Object.keys(all_items[entry]);
-       if((typeof all_items[entry][keys[key]]) == 'object') {
-            for(var key2 in Object.keys(all_items[entry][keys[key]])) {
-                keys2 = Object.keys(all_items[entry][keys[key]]);
-                if('undefined' === (typeof all_items[entry][keys[key]][key2])) {
-                    line.push(all_items[entry][keys[key]][keys2[key2]]);
-                }else{
-                    line.push(all_items[entry][keys[key]][key2]);
-                }
-                
-            }
-        }else{
-            line.push(all_items[entry][keys[key]]);
-        }
+        line.push(all_items[entry][keys[key]]);
     }
     array_of_all_items.push(line);
 }
@@ -95,22 +92,22 @@ for(var entry in Object.keys(all_items)) {
     var line = new Array();
     for(var key in Object.keys(all_items[entry])) {
         keys = Object.keys(all_items[entry]);
-        if((typeof all_items[entry][keys[key]]) == 'object') {
-            keys2 = Object.keys(all_items[entry][keys[key]]);
-            for(var key2 in Object.keys(all_items[entry][keys[key]])) {
-                keys2 = Object.keys(all_items[entry][keys[key]]);
-                if('undefined' === (typeof all_items[entry][keys[key]][key2])) {
-                    line.push(keys2[key2]);
-                    line.push(all_items[entry][keys[key]][keys2[key2]]);
-                }else{
-                    line.push(keys2[key2]);
-                    line.push(all_items[entry][keys[key]][key2]);
-                }
-            }
-        }else{
-            line.push(keys[key]);
+        line.push(keys[key]);
+//        if((typeof all_items[entry][keys[key]]) == 'object') {
+//            keys2 = Object.keys(all_items[entry][keys[key]]);
+//            for(var key2 in Object.keys(all_items[entry][keys[key]])) {
+//                keys2 = Object.keys(all_items[entry][keys[key]]);
+//                if('undefined' === (typeof all_items[entry][keys[key]][key2])) {
+//                    line.push(keys2[key2]);
+//                    line.push(all_items[entry][keys[key]][keys2[key2]]);
+//                }else{
+//                    line.push(keys2[key2]);
+//                    line.push(all_items[entry][keys[key]][key2]);
+//                }
+//            }
+//        } else {
             line.push(all_items[entry][keys[key]]);
-        }
+        //}
     }
     key_array_of_all_items.push(line);
 }
@@ -137,17 +134,17 @@ describe('NDDB Fetching', function() {
     describe('#fetchValues()', function() {
         describe('the complete database',function() {
             it('should be like the original items array',function() {
-                db.fetchValues().should.eql(array_of_all_items);
+                db.fetchValues().should.eql(array_fetch_values);
             });
         });
         describe('passing a key as argument',function() {
             it('key \'painter\'',function() {
                 var should_be_like_this = [ 'Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet' ];
-                db.fetchValues('painter').should.eql(should_be_like_this);
+                db.fetchValues('painter').should.eql({painter: should_be_like_this});
             });
             it('key \'title\' (object in key)',function() {
                 var should_be_like_this = [ 'Tea in the desert' ,['Portrait of Paul Eluard','Das Rätsel der Begierde','Das finstere Spiel oder Unheilvolles Spiel' ], 'Barcelonese Mannequin' ,{en: "Water Lilies", de: "Wasser Lilies"}, 'Wheatstacks (End of Summer)' , 'Olympia' ];
-                db.fetchValues('title').should.eql(should_be_like_this);
+                db.fetchValues('title').should.eql({title: should_be_like_this});
             });
         });
         
@@ -180,7 +177,8 @@ describe('NDDB Fetching', function() {
 				var should_be_like_this = [ ['Jesus', 0], ['Dali', 1929], ['Dali', 1927], ['Monet', 1906], ['Monet', 1891], ['Manet', 1863] ];
 		        db.fetchArray(['painter','year']).should.eql(should_be_like_this);
 		    });
-		});
+		}); 
+		 
     });
 
     describe('#fetchKeyArray()',function() {
@@ -212,9 +210,9 @@ describe('NDDB Fetching', function() {
     });
 
     describe('#fetchSubObj()',function() {
-		describe('the complete database',function() {
-		    it('should be like the Array of all the items',function() {
-		        db.fetchSubObj().should.eql(all_items);
+		describe('without parameters',function() {
+		    it('should return an empty array',function() {
+		        db.fetchSubObj().should.eql([]);
 		    });
 		});
         describe('passing a key as argument',function() {
