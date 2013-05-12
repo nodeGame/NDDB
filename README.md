@@ -44,7 +44,7 @@ implemented:
  
   * Fetching
  
-     - fetch, fetchArray, fetchKeyArray
+     - fetch, fetchArray, fetchKeyArray, fetchValues, fetchSubObj
  
   * Statistics operator
  
@@ -147,18 +147,32 @@ Select all portraits
     db.select('portrait'); // 1 item
 ```
     
-Select all paintings from Dali that are before 1928
+Fetch all paintings from Dali that are before 1928
 
 ```javascript
     db.select('painter', '=', 'Dali')
-      .select('year', '<', 1928); // 1 item
+      .select('year', '<', 1928); 
+      .fetch(); // 1 item
 ```
 
-Select all paintings of the beginning of XX's century
+Fetch all paintings of the beginning of XX's century
 
 ```javascript
-    db.select('year', '><', [1900, 1910]); // 2 items    
+    db.select('year', '><', [1900, 1910])
+      .fetch(); // 2 items    
 ```
+
+Fetch separately all the painters and all the dates of execution of the paintings
+
+```javascript
+    db.select('year', '><', [1900, 1910]) 
+      .fetchValues(['painter', 'title']);
+
+// { painter: [ 'Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet' ],
+//   year: [ 0, 1929, 1927, 1906, 1891, 1863 ] }
+```
+
+
 
 ## Advanced commands
 
@@ -319,6 +333,14 @@ node make.nddb.js doc
 ```
 
 ## ChangeLog
+
+### 0.6.0
+
+  - fetch accepts no arguments
+  - fetchValues returns an object containing all the values in the grouped by property
+  - fetchSubObj
+  - fetchArray and fetchKeyArray operate only on the first level, and objects in properties are not further flattened
+  - fetchArray, fetchKeyArray, and fetchValues accept either a string or an array of strings as key-selector parameter
 
 ### 0.5.8
 
