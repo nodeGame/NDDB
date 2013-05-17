@@ -1021,9 +1021,6 @@ NDDB.prototype._analyzeQuery = function (d, op, value) {
     
     // Verify input 
     if ('undefined' !== typeof op) {
-        if ('undefined' === typeof value) {
-            raiseError(d,op,value);
-        }
         
         if (op === '=') {
             op = '==';
@@ -1033,11 +1030,10 @@ NDDB.prototype._analyzeQuery = function (d, op, value) {
             NDDB.log('Query error. Invalid operator detected: ' + op, 'WARN');
             return false;
         }
-        
 
-        
-        // Range-queries need an array as third parameter
+        // Range-queries need an array as third parameter instance of Array
         if (JSUS.in_array(op,['><', '<>', 'in', '!in'])) {
+        	
             if (!(value instanceof Array)) {
                 NDDB.log('Range-queries need an array as third parameter', 'WARN');
                 raiseError(d,op,value);
@@ -1048,10 +1044,18 @@ NDDB.prototype._analyzeQuery = function (d, op, value) {
                 value[1] = JSUS.setNestedValue(d, value[1]);
             }
         }
-        else {
-            // Encapsulating the value;
+        
+        else if (JSUS.in_array(op, ['>', '==', '>=', '<', '<='])){
+        	// Comparison queries need a third parameter
+        	if ('undefined' === typeof value) raiseError(d,op,value);
+
+        	// Comparison queries need to have the same data structure in the compared object
             value = JSUS.setNestedValue(d,value);
         }
+        
+        // other (e.g. user-defined) operators do not have constraints, 
+        // e.g. no need to transform the value
+        
     }
     else if ('undefined' !== typeof value) {
         raiseError(d,op,value);
