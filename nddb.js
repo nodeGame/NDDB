@@ -13,283 +13,6 @@
  */
 
 (function (exports, JSUS, store) {
-	
-/**
- * ## QueryBuilder
- * 
- * Manages the _select_ queries of NDDB
- */	
-function QueryBuilder() {
-	this.operations = {};
-	this.registerDefaultOperations();
-	this.reset();
-}
-
-/**
- * ### QueryBuilder.addCondition
- * 
- * Adds a new _select_ condition
- * 
- * @param {string} type. The type of the operation (e.g. 'OR', or 'AND')
- * @param {object} condition. An object containing the parameters of the
- *   _select_ query
- * @param {function} comparator. The comparator function associated with
- *   the dimension inside the condition object.  
- */
-QueryBuilder.prototype.addCondition = function(type, condition, comparator) {
-	condition.type = type;
-	condition.comparator = comparator;
-	this.query[this.pointer].push(condition);
-};
-
-/**
- * ### QueryBuilder.registerOperation
- * 
- * Registers a _select_ function with a an alphanumeric string
- * 
- * When calling `NDDB.select('d','OP','value')` the second parameter (_OP_)
- * will be matched with the callback function specified here.
- * 
- * @param {string} op An alphanumeric string standing for the operation
- * @param {function} cb The callback function
- */
-QueryBuilder.prototype.registerOperation = function(op, cb) {
-	this.operations[op] = cb;
-};
-
-/**
- * ## QueryBuilder.registerDefaultOperations
- * 
- * Register default operations for NDDB
- */
-QueryBuilder.prototype.registerDefaultOperations = function() {
-	
-	// ### Exists
-	this.operations['E'] = function (d, value, comparator) {
-		return function(elem) {
-			if ('undefined' !== typeof JSUS.getNestedValue(d,elem)) return elem;
-		}
-	};
-
-	// ### (strict) Equals
-	this.operations['=='] = function (d, value, comparator) {
-		return function(elem) {
-			if (comparator(elem, value) === 0) return elem;
-		};
-	};
-	
-	// ### Greater than
-	this.operations['>'] = function (d, value, comparator) {
-		return function(elem) {
-			var compared = comparator(elem, value);
-			if (compared === 1 || compared === 0) return elem;
-		};
-	};
-	
-	// ### Smaller than
-	this.operations['<'] = function (d, value, comparator) {
-		return function(elem) {
-			if (comparator(elem, value) === -1) return elem;
-		};
-	};
-	
-	//  ### Smaller or equal than
-	this.operations['<='] = function (d, value, comparator) {
-		return function(elem) {
-			var compared = comparator(elem, value);
-			if (compared === -1 || compared === 0) return elem;
-		};
-	};
-   
-    // ### Between
-    this.operations['><'] = function (d, value, comparator) {
-    	return function(elem) {
-    		if (comparator(elem, value[0]) > 0 && comparator(elem, value[1]) < 0) {
-	            return elem;
-	        }
-    	};
-    };
-    // ### Not Between
-    this.operations['<>'] = function (d, value, comparator) {
-    	return function(elem) {
-	        if (comparator(elem, value[0]) < 0 && comparator(elem, value[1] > 0)) {
-	            return elem;
-	        }
-    	};
-    };
-    
-    // ### In Array
-    this.operations['in'] = function (d, value, comparator) {
-    	return function(elem) {
-	        if (JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
-	            return elem;
-	        }
-    	};
-    };
-    
-    // ### Not In Array
-    this.operations['!in'] = function (d, value, comparator) {
-    	return function(elem) {
-	        if (!JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
-	            return elem;
-	        }
-    	};
-    };
-};
-
-/**
- * ### QueryBuilder.addBreak 
- * 
- * undocumented
- */
-QueryBuilder.prototype.addBreak = function() {
-	this.pointer++;
-	this.query[this.pointer] = [];
-};
-
-/**
- * ### QueryBuilder.reset
- * 
- * Resets the current query selection
- * 
- */
-QueryBuilder.prototype.reset = function() {
-	this.query = [];
-	this.pointer = 0;
-	this.query[this.pointer] = [];
-};
-
-/**
- * ### QueryBuilder.get
- * 
- * Builds up the select function
- * 
- * @return {function} The select function containing all the specified
- *   conditions
- */
-QueryBuilder.prototype.get = function() {
-	var line, lineLen, f1, f2, f3, type1, type2, i;
-	var query = this.query, pointer = this.pointer;
-	var operations = this.operations;
-	
-	function findCallback(obj, operations) {
-		var d = obj.d,
-			op = obj.op,
-			value = obj.value,
-			comparator = obj.comparator;
-		return operations[op](d, value, comparator);  
-	};	
-	
-	// Ready to support nested queries, not yet implemented
-	if (pointer === 0) {
-		line = query[pointer]
-		lineLen = line.length; 
-		
-		if (lineLen === 1) {
-			return findCallback(line[0], operations);
-		}
-		
-		else if (lineLen === 2) {
-			f1 = findCallback(line[0], operations);
-			f2 = findCallback(line[1], operations);
-			type1 = line[1].type;
-			
-			switch (type1) {
-				case 'OR': 
-					return function(elem) {
-						if ('undefined' !== typeof f1(elem)) return elem;
-						if ('undefined' !== typeof f2(elem)) return elem;
-					}	
-				case 'AND':
-					return function(elem) {
-						if ('undefined' !== typeof f1(elem) && 'undefined' !== typeof f2(elem)) return elem;
-					}
-				
-				case 'NOT':
-					return function(elem) {
-						if ('undefined' !== typeof f1(elem) && 'undefined' === typeof f2(elem)) return elem;
-					}
-			}
-		}
-		
-		else if (lineLen === 3) {
-			f1 = findCallback(line[0], operations);
-			f2 = findCallback(line[1], operations);
-			f3 = findCallback(line[2], operations);
-			type1 = line[1].type;
-			type2 = line[2].type;
-			type1 = type1 + '_' + type2;
-			switch (type1) {
-				case 'OR_OR': 
-					return function(elem) {
-						if ('undefined' !== typeof f1(elem)) return elem;
-						if ('undefined' !== typeof f2(elem)) return elem;
-						if ('undefined' !== typeof f3(elem)) return elem;
-					};	
-					
-				case 'OR_AND':
-					return function(elem) {
-					
-						if ('undefined' === typeof f3(elem)) return;
-						if ('undefined' !== typeof f2(elem)) return elem;
-						if ('undefined' !== typeof f1(elem)) return elem;
-					};
-				
-				case 'AND_OR':
-					return function(elem) {
-						if ('undefined' !== typeof f3(elem)) return elem;
-						if ('undefined' === typeof f2(elem)) return;
-						if ('undefined' !== typeof f1(elem)) return elem;
-					};
-					
-				case 'AND_AND':
-					return function(elem) {
-						if ('undefined' === typeof f3(elem)) return;
-						if ('undefined' === typeof f2(elem)) return;
-						if ('undefined' !== typeof f1(elem)) return elem;
-					};
-			}
-		}
-		
-		else {				
-			return function(elem) {
-				var i, f, type, resOK;
-				var prevType = 'OR', prevResOK = true;
-				for (i = lineLen-1 ; i > -1 ; i--) {
-					
-			
-					f = findCallback(line[i], operations);
-					type = line[i].type,
-					resOK = 'undefined' !== typeof f(elem);
-					
-					if (type === 'OR') {
-						// Current condition is TRUE OR
-						if (resOK) return elem;
-					}
-					
-					// Current condition is FALSE AND 
-					else if (type === 'AND') {
-						if (!resOK) {
-							return;
-						}
-						// Previous check was an AND or a FALSE OR
-						else if (prevType === 'OR' && !prevResOK) {
-							return;
-						}
-					}
-					prevType = type;
-					// A previous OR is TRUE also if follows a TRUE AND 
-					prevResOK = type === 'AND' ? resOK : resOK || prevResOK;
-					
-				}
-				return elem;
-			}
-			
-		}
-		
-	}
-	
-};
 
 NDDB.compatibility = JSUS.compatibility();
 	
@@ -1120,7 +843,7 @@ NDDB.prototype._analyzeQuery = function (d, op, value) {
 };
 
 /**
- * ## NDDB.distinct
+ * ### NDDB.distinct
  * 
  * Eliminates duplicated entries
  *  
@@ -1137,7 +860,7 @@ NDDB.prototype.distinct = function () {
 };
 
 /**
- * ## NDDB.select
+ * ### NDDB.select
  * 
  * Initiates a new query selection procedure
  * 
@@ -1170,7 +893,7 @@ NDDB.prototype.select = function (d, op, value) {
 };
 
 /**
- * ## NDDB.and
+ * ### NDDB.and
  * 
  * Chains an AND query to the current selection
  * 
@@ -1197,7 +920,7 @@ NDDB.prototype.and = function (d, op, value) {
 };
 
 /**
- * ## NDDB.or
+ * ### NDDB.or
  * 
  * Chains an OR query to the current selection
  * 
@@ -1224,7 +947,7 @@ NDDB.prototype.or = function (d, op, value) {
 };
 
 /**
- * ## NDDB.execute
+ * ### NDDB.execute
  * 
  * Implements the criteria for selection previously specified by `select` queries
  * 
@@ -2628,6 +2351,294 @@ if (JSUS.isNodeJS()) {
 	};
 };
 //end node  
+
+/**
+ * # QueryBuilder
+ * 
+ * MIT Licensed
+ * 
+ * Helper class for NDDB query selector
+ * 
+ * ---
+ * 
+ */
+
+/**
+ * ## QueryBuilder Constructor
+ * 
+ * Manages the _select_ queries of NDDB
+ */	
+function QueryBuilder() {
+	this.operations = {};
+	this.registerDefaultOperations();
+	this.reset();
+}
+
+/**
+ * ### QueryBuilder.addCondition
+ * 
+ * Adds a new _select_ condition
+ * 
+ * @param {string} type. The type of the operation (e.g. 'OR', or 'AND')
+ * @param {object} condition. An object containing the parameters of the
+ *   _select_ query
+ * @param {function} comparator. The comparator function associated with
+ *   the dimension inside the condition object.  
+ */
+QueryBuilder.prototype.addCondition = function(type, condition, comparator) {
+	condition.type = type;
+	condition.comparator = comparator;
+	this.query[this.pointer].push(condition);
+};
+
+/**
+ * ### QueryBuilder.registerOperation
+ * 
+ * Registers a _select_ function with a an alphanumeric string
+ * 
+ * When calling `NDDB.select('d','OP','value')` the second parameter (_OP_)
+ * will be matched with the callback function specified here.
+ * 
+ * @param {string} op An alphanumeric string standing for the operation
+ * @param {function} cb The callback function
+ */
+QueryBuilder.prototype.registerOperation = function(op, cb) {
+	this.operations[op] = cb;
+};
+
+/**
+ * ### QueryBuilder.registerDefaultOperations
+ * 
+ * Register default operations for NDDB
+ */
+QueryBuilder.prototype.registerDefaultOperations = function() {
+	
+	// Exists
+	this.operations['E'] = function (d, value, comparator) {
+		return function(elem) {
+			if ('undefined' !== typeof JSUS.getNestedValue(d,elem)) return elem;
+		}
+	};
+
+	// (strict) Equals
+	this.operations['=='] = function (d, value, comparator) {
+		return function(elem) {
+			if (comparator(elem, value) === 0) return elem;
+		};
+	};
+	
+	// Greater than
+	this.operations['>'] = function (d, value, comparator) {
+		return function(elem) {
+			var compared = comparator(elem, value);
+			if (compared === 1 || compared === 0) return elem;
+		};
+	};
+	
+	// Smaller than
+	this.operations['<'] = function (d, value, comparator) {
+		return function(elem) {
+			if (comparator(elem, value) === -1) return elem;
+		};
+	};
+	
+	//  Smaller or equal than
+	this.operations['<='] = function (d, value, comparator) {
+		return function(elem) {
+			var compared = comparator(elem, value);
+			if (compared === -1 || compared === 0) return elem;
+		};
+	};
+   
+    // Between
+    this.operations['><'] = function (d, value, comparator) {
+    	return function(elem) {
+    		if (comparator(elem, value[0]) > 0 && comparator(elem, value[1]) < 0) {
+	            return elem;
+	        }
+    	};
+    };
+    // Not Between
+    this.operations['<>'] = function (d, value, comparator) {
+    	return function(elem) {
+	        if (comparator(elem, value[0]) < 0 && comparator(elem, value[1] > 0)) {
+	            return elem;
+	        }
+    	};
+    };
+    
+    // In Array
+    this.operations['in'] = function (d, value, comparator) {
+    	return function(elem) {
+	        if (JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
+	            return elem;
+	        }
+    	};
+    };
+    
+    // Not In Array
+    this.operations['!in'] = function (d, value, comparator) {
+    	return function(elem) {
+	        if (!JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
+	            return elem;
+	        }
+    	};
+    };
+};
+
+/**
+ * ### QueryBuilder.addBreak 
+ * 
+ * undocumented
+ */
+QueryBuilder.prototype.addBreak = function() {
+	this.pointer++;
+	this.query[this.pointer] = [];
+};
+
+/**
+ * ### QueryBuilder.reset
+ * 
+ * Resets the current query selection
+ * 
+ */
+QueryBuilder.prototype.reset = function() {
+	this.query = [];
+	this.pointer = 0;
+	this.query[this.pointer] = [];
+};
+
+/**
+ * ### QueryBuilder.get
+ * 
+ * Builds up the select function
+ * 
+ * @return {function} The select function containing all the specified
+ *   conditions
+ */
+QueryBuilder.prototype.get = function() {
+	var line, lineLen, f1, f2, f3, type1, type2, i;
+	var query = this.query, pointer = this.pointer;
+	var operations = this.operations;
+	
+	function findCallback(obj, operations) {
+		var d = obj.d,
+			op = obj.op,
+			value = obj.value,
+			comparator = obj.comparator;
+		return operations[op](d, value, comparator);  
+	};	
+	
+	// Ready to support nested queries, not yet implemented
+	if (pointer === 0) {
+		line = query[pointer]
+		lineLen = line.length; 
+		
+		if (lineLen === 1) {
+			return findCallback(line[0], operations);
+		}
+		
+		else if (lineLen === 2) {
+			f1 = findCallback(line[0], operations);
+			f2 = findCallback(line[1], operations);
+			type1 = line[1].type;
+			
+			switch (type1) {
+				case 'OR': 
+					return function(elem) {
+						if ('undefined' !== typeof f1(elem)) return elem;
+						if ('undefined' !== typeof f2(elem)) return elem;
+					}	
+				case 'AND':
+					return function(elem) {
+						if ('undefined' !== typeof f1(elem) && 'undefined' !== typeof f2(elem)) return elem;
+					}
+				
+				case 'NOT':
+					return function(elem) {
+						if ('undefined' !== typeof f1(elem) && 'undefined' === typeof f2(elem)) return elem;
+					}
+			}
+		}
+		
+		else if (lineLen === 3) {
+			f1 = findCallback(line[0], operations);
+			f2 = findCallback(line[1], operations);
+			f3 = findCallback(line[2], operations);
+			type1 = line[1].type;
+			type2 = line[2].type;
+			type1 = type1 + '_' + type2;
+			switch (type1) {
+				case 'OR_OR': 
+					return function(elem) {
+						if ('undefined' !== typeof f1(elem)) return elem;
+						if ('undefined' !== typeof f2(elem)) return elem;
+						if ('undefined' !== typeof f3(elem)) return elem;
+					};	
+					
+				case 'OR_AND':
+					return function(elem) {
+					
+						if ('undefined' === typeof f3(elem)) return;
+						if ('undefined' !== typeof f2(elem)) return elem;
+						if ('undefined' !== typeof f1(elem)) return elem;
+					};
+				
+				case 'AND_OR':
+					return function(elem) {
+						if ('undefined' !== typeof f3(elem)) return elem;
+						if ('undefined' === typeof f2(elem)) return;
+						if ('undefined' !== typeof f1(elem)) return elem;
+					};
+					
+				case 'AND_AND':
+					return function(elem) {
+						if ('undefined' === typeof f3(elem)) return;
+						if ('undefined' === typeof f2(elem)) return;
+						if ('undefined' !== typeof f1(elem)) return elem;
+					};
+			}
+		}
+		
+		else {				
+			return function(elem) {
+				var i, f, type, resOK;
+				var prevType = 'OR', prevResOK = true;
+				for (i = lineLen-1 ; i > -1 ; i--) {
+					
+			
+					f = findCallback(line[i], operations);
+					type = line[i].type,
+					resOK = 'undefined' !== typeof f(elem);
+					
+					if (type === 'OR') {
+						// Current condition is TRUE OR
+						if (resOK) return elem;
+					}
+					
+					// Current condition is FALSE AND 
+					else if (type === 'AND') {
+						if (!resOK) {
+							return;
+						}
+						// Previous check was an AND or a FALSE OR
+						else if (prevType === 'OR' && !prevResOK) {
+							return;
+						}
+					}
+					prevType = type;
+					// A previous OR is TRUE also if follows a TRUE AND 
+					prevResOK = type === 'AND' ? resOK : resOK || prevResOK;
+					
+				}
+				return elem;
+			}
+			
+		}
+		
+	}
+	
+};
 
 // ## Closure    
 })(
