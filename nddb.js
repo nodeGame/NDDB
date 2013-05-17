@@ -20,15 +20,10 @@
 		this.reset();
 	}
 	
-	QueryBuilder.protototype.addCondition = function(type, d, op, value, comparator) {
-		
-		this.query[this.pointer].push({
-			type: type,
-			d: d,
-			op: op,
-			value: value,
-			comparator: comparator
-		});
+	QueryBuilder.prototype.addCondition = function(type, condition, comparator) {
+		condition.type = type;
+		condition.comparator = comparator;
+		this.query[this.pointer].push(condition);
 	};
 
 	function findCallback(obj) {
@@ -105,18 +100,6 @@
 	    
 	    return func;
 	}
-//	QueryBuilder.protototype.addOperation = function (type, d, op, value) {
-//		if (!nddb_operation) {
-//			NDDB.log('No operation found.', 'ERR');
-//			return false;
-//		}
-//		
-//	    var valid = this._analyzeQuery(d, op, value);        
-//	    if (!valid) return false;
-//		
-//	    
-//		return addCondition(type, valid);
-//	};
 
 	QueryBuilder.prototype.addBreak = function() {
 		this.pointer++;
@@ -152,12 +135,12 @@
 							if ('undefined' !== typeof f1(elem)) return elem;
 							if ('undefined' !== typeof f2(elem)) return elem;
 						}	
-					case: 'AND':
+					case 'AND':
 						return function(elem) {
 							if ('undefined' !== typeof f1(elem) && 'undefined' !== typeof f2(elem)) return elem;
 						}
 					
-					case: 'NOT':
+					case 'NOT':
 						return function(elem) {
 							if ('undefined' !== typeof f1(elem) && 'undefined' === typeof f2(elem)) return elem;
 						}
@@ -179,7 +162,7 @@
 							if ('undefined' !== typeof f3(elem)) return elem;
 						};	
 						
-					case: 'OR_AND':
+					case 'OR_AND':
 						return function(elem) {
 						
 							if ('undefined' === typeof f3(elem)) return;
@@ -187,14 +170,14 @@
 							if ('undefined' !== typeof f1(elem)) return elem;
 						};
 					
-					case: 'AND_OR':
+					case 'AND_OR':
 						return function(elem) {
 							if ('undefined' !== typeof f3(elem)) return elem;
 							if ('undefined' === typeof f2(elem)) return;
 							if ('undefined' !== typeof f1(elem)) return elem;
 						};
 						
-					case: 'AND_AND':
+					case 'AND_AND':
 						return function(elem) {
 							if ('undefined' === typeof f3(elem)) return;
 							if ('undefined' === typeof f2(elem)) return;
@@ -205,7 +188,7 @@
 			
 			else {
 				return function(elem) {
-					for (i = lineLen, i > -1 ; i--) {
+					for (i = lineLen ; i > -1 ; i--) {
 						
 						var f = findCallBack(line[i]),
 							type = line[i].type,
@@ -228,23 +211,6 @@
 		
 	};
 
-NDDB.prototype.and = function (d, op, value) {
-	if (!arguments.length) {
-		addBreakInQuery();
-		return this;
-	}
-	return addOperation('AND', d, op, value) ? this : false;
-	
-};
-
-NDDB.prototype.or = function (d, op, value) {
-	return addOperation('OR', d, op, value) ? this : false;
-};
-
-NDDB.prototype.not = function (d, op, value) {
-	return addOperation('NOT', d, op, value) ? this : false;
-};
-
 NDDB.compatibility = JSUS.compatibility();
 	
 // Expose constructors
@@ -254,9 +220,6 @@ exports.NDDB = NDDB;
 // Stdout redirect
 NDDB.log = console.log;
 
-
-NDDB.__symbols = ['>','>=','>==','<', '<=', '<==', '!=', '!==', '=', '==', '===', '><', '<>', 'in', '!in'];
-//NDDB.__operations = ['select', 'groupby', 'limit', 'first', 'fetch', 'last'];
 
 /**
  * ### NDDB.retrocycle
@@ -1173,23 +1136,37 @@ NDDB.prototype.distinct = function () {
  *  @see NDDB.fetchValues()
  */
 NDDB.prototype.select = function (d, op, value) {
-
-    var valid = this._analyzeQuery(d, op, value);        
-    if (!valid) return false;
-    
-    var d = valid.d,
-    	op = valid.op,
-    	value = valid.value;
-
-    this.query.reset();
-    this.query.addOperation('AND', d, op, value, this.comparator(d));
-    
-    return this;
+    this.__query.reset();
+    return arguments.length ? this.and(d, op, value) : this;
 };
 
 
+NDDB.prototype.and = function (d, op, value) {
+	if (!arguments.length) {
+		addBreakInQuery();
+	}
+	else {
+		var condition = this._analyzeQuery(d, op, value);        
+	    if (!condition) return false;
+	    this.__query.addCondition('AND', condition, this.comparator(d));
+	}			
+	return this;
+};
+
+NDDB.prototype.or = function (d, op, value) {
+	if (!arguments.length) {
+		addBreakInQuery();
+	}
+	else {
+		var condition = this._analyzeQuery(d, op, value);        
+	    if (!condition) return false;
+	    this.__query.addCondition('OR', condition, this.comparator(d));
+	}			
+	return this;
+};
+
 NDDB.prototype.execute = function () {
-    return this.filter(this.query.get());
+    return this.filter(this.__query.get());
 };
 
 /**
