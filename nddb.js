@@ -14,231 +14,282 @@
 
 (function (exports, JSUS, store) {
 	
-	function QueryBuilder() {
-		this.operations = {};
-		this.registerDefaultOperations();
-		this.reset();
-	}
+/**
+ * ## QueryBuilder
+ * 
+ * Manages the _select_ queries of NDDB
+ */	
+function QueryBuilder() {
+	this.operations = {};
+	this.registerDefaultOperations();
+	this.reset();
+}
+
+/**
+ * ### QueryBuilder.addCondition
+ * 
+ * Adds a new _select_ condition
+ * 
+ * @param {string} type. The type of the operation (e.g. 'OR', or 'AND')
+ * @param {object} condition. An object containing the parameters of the
+ *   _select_ query
+ * @param {function} comparator. The comparator function associated with
+ *   the dimension inside the condition object.  
+ */
+QueryBuilder.prototype.addCondition = function(type, condition, comparator) {
+	condition.type = type;
+	condition.comparator = comparator;
+	this.query[this.pointer].push(condition);
+};
+
+/**
+ * ### QueryBuilder.registerOperation
+ * 
+ * Registers a _select_ function with a an alphanumeric string
+ * 
+ * When calling `NDDB.select('d','OP','value')` the second parameter (_OP_)
+ * will be matched with the callback function specified here.
+ * 
+ * @param {string} op An alphanumeric string standing for the operation
+ * @param {function} cb The callback function
+ */
+QueryBuilder.prototype.registerOperation = function(op, cb) {
+	this.operations[op] = cb;
+};
+
+/**
+ * ## QueryBuilder.registerDefaultOperations
+ * 
+ * Register default operations for NDDB
+ */
+QueryBuilder.prototype.registerDefaultOperations = function() {
 	
-	QueryBuilder.prototype.addCondition = function(type, condition, comparator) {
-		condition.type = type;
-		condition.comparator = comparator;
-		this.query[this.pointer].push(condition);
+	// ### Exists
+	this.operations['E'] = function (d, value, comparator) {
+		return function(elem) {
+			if ('undefined' !== typeof JSUS.getNestedValue(d,elem)) return elem;
+		}
 	};
-	
-	QueryBuilder.prototype.registerOperation = function(sign, cb) {
-		this.operations[sign] = cb;
-	};
-	
-	QueryBuilder.prototype.registerDefaultOperations = function() {
-		
-		this.operations['E'] = function (d, value, comparator) {
-			return function(elem) {
-				if ('undefined' !== typeof JSUS.getNestedValue(d,elem)) return elem;
-			}
+
+	// ### (strict) Equals
+	this.operations['=='] = function (d, value, comparator) {
+		return function(elem) {
+			if (comparator(elem, value) === 0) return elem;
 		};
+	};
+	
+	// ### Greater than
+	this.operations['>'] = function (d, value, comparator) {
+		return function(elem) {
+			var compared = comparator(elem, value);
+			if (compared === 1 || compared === 0) return elem;
+		};
+	};
+	
+	// ### Smaller than
+	this.operations['<'] = function (d, value, comparator) {
+		return function(elem) {
+			if (comparator(elem, value) === -1) return elem;
+		};
+	};
+	
+	//  ### Smaller or equal than
+	this.operations['<='] = function (d, value, comparator) {
+		return function(elem) {
+			var compared = comparator(elem, value);
+			if (compared === -1 || compared === 0) return elem;
+		};
+	};
+   
+    // ### Between
+    this.operations['><'] = function (d, value, comparator) {
+    	return function(elem) {
+    		if (comparator(elem, value[0]) > 0 && comparator(elem, value[1]) < 0) {
+	            return elem;
+	        }
+    	};
+    };
+    // ### Not Between
+    this.operations['<>'] = function (d, value, comparator) {
+    	return function(elem) {
+	        if (comparator(elem, value[0]) < 0 && comparator(elem, value[1] > 0)) {
+	            return elem;
+	        }
+    	};
+    };
     
-		this.operations['=='] = function (d, value, comparator) {
-			return function(elem) {
-				if (comparator(elem, value) === 0) return elem;
-			};
-		};
-		
-		this.operations['>'] = function (d, value, comparator) {
-			return function(elem) {
-				var compared = comparator(elem, value);
-				if (compared === 1 || compared === 0) return elem;
-			};
-		};
-		
-		this.operations['<'] = function (d, value, comparator) {
-			return function(elem) {
-				if (comparator(elem, value) === -1) return elem;
-			};
-		};
-		
-		this.operations['<='] = function (d, value, comparator) {
-			return function(elem) {
-				var compared = comparator(elem, value);
-				if (compared === -1 || compared === 0) return elem;
-			};
-		};
-	   
-	    // Between
-	    this.operations['><'] = function (d, value, comparator) {
-	    	return function(elem) {
-	    		if (comparator(elem, value[0]) > 0 && comparator(elem, value[1]) < 0) {
-		            return elem;
-		        }
-	    	};
-	    };
-	    // Not Between
-	    this.operations['<>'] = function (d, value, comparator) {
-	    	return function(elem) {
-		        if (comparator(elem, value[0]) < 0 && comparator(elem, value[1] > 0)) {
-		            return elem;
-		        }
-	    	};
-	    };
-	    
-	    // In Array
-	    this.operations['in'] = function (d, value, comparator) {
-	    	return function(elem) {
-		        if (JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
-		            return elem;
-		        }
-	    	};
-	    };
-	    
-	    // Not In Array
-	    this.operations['!in'] = function (d, value, comparator) {
-	    	return function(elem) {
-		        if (!JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
-		            return elem;
-		        }
-	    	};
-	    };
-	};
+    // ### In Array
+    this.operations['in'] = function (d, value, comparator) {
+    	return function(elem) {
+	        if (JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
+	            return elem;
+	        }
+    	};
+    };
+    
+    // ### Not In Array
+    this.operations['!in'] = function (d, value, comparator) {
+    	return function(elem) {
+	        if (!JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
+	            return elem;
+	        }
+    	};
+    };
+};
+
+/**
+ * ### QueryBuilder.addBreak 
+ * 
+ * undocumented
+ */
+QueryBuilder.prototype.addBreak = function() {
+	this.pointer++;
+	this.query[this.pointer] = [];
+};
+
+/**
+ * ### QueryBuilder.reset
+ * 
+ * Resets the current query selection
+ * 
+ */
+QueryBuilder.prototype.reset = function() {
+	this.query = [];
+	this.pointer = 0;
+	this.query[this.pointer] = [];
+};
+
+/**
+ * ### QueryBuilder.get
+ * 
+ * Builds up the select function
+ * 
+ * @return {function} The select function containing all the specified
+ *   conditions
+ */
+QueryBuilder.prototype.get = function() {
+	var line, lineLen, f1, f2, f3, type1, type2, i;
+	var query = this.query, pointer = this.pointer;
+	var operations = this.operations;
 	
 	function findCallback(obj, operations) {
-
 		var d = obj.d,
 			op = obj.op,
 			value = obj.value,
 			comparator = obj.comparator;
-		
 		return operations[op](d, value, comparator);  
 	};	
 	
-	QueryBuilder.prototype.addBreak = function() {
-		this.pointer++;
-		this.query[this.pointer] = [];
-	};
-
-	QueryBuilder.prototype.reset = function() {
-		this.query = [];
-		this.pointer = 0;
-		this.query[this.pointer] = [];
-	};
-
-	QueryBuilder.prototype.get = function() {
-		var line, lineLen, f1, f2, f3, type1, type2, i;
-		var query = this.query, pointer = this.pointer;
-		var operations = this.operations;
+	// Ready to support nested queries, not yet implemented
+	if (pointer === 0) {
+		line = query[pointer]
+		lineLen = line.length; 
 		
-		if (pointer === 0) {
-			line = query[pointer]
-			lineLen = line.length; 
+		if (lineLen === 1) {
+			return findCallback(line[0], operations);
+		}
+		
+		else if (lineLen === 2) {
+			f1 = findCallback(line[0], operations);
+			f2 = findCallback(line[1], operations);
+			type1 = line[1].type;
 			
-			if (lineLen === 1) {
-				return findCallback(line[0], operations);
-			}
-			
-			else if (lineLen === 2) {
-				f1 = findCallback(line[0], operations);
-				f2 = findCallback(line[1], operations);
-				type1 = line[1].type;
-				
-				switch (type1) {
-					case 'OR': 
-						return function(elem) {
-							if ('undefined' !== typeof f1(elem)) return elem;
-							if ('undefined' !== typeof f2(elem)) return elem;
-						}	
-					case 'AND':
-						return function(elem) {
-							if ('undefined' !== typeof f1(elem) && 'undefined' !== typeof f2(elem)) return elem;
-						}
-					
-					case 'NOT':
-						return function(elem) {
-							if ('undefined' !== typeof f1(elem) && 'undefined' === typeof f2(elem)) return elem;
-						}
-				}
-			}
-			
-			else if (lineLen === 3) {
-				f1 = findCallback(line[0], operations);
-				f2 = findCallback(line[1], operations);
-				f3 = findCallback(line[2], operations);
-				type1 = line[1].type;
-				type2 = line[2].type;
-				type1 = type1 + '_' + type2;
-				switch (type1) {
-					case 'OR_OR': 
-						return function(elem) {
-							if ('undefined' !== typeof f1(elem)) return elem;
-							if ('undefined' !== typeof f2(elem)) return elem;
-							if ('undefined' !== typeof f3(elem)) return elem;
-						};	
-						
-					case 'OR_AND':
-						return function(elem) {
-						
-							if ('undefined' === typeof f3(elem)) return;
-							if ('undefined' !== typeof f2(elem)) return elem;
-							if ('undefined' !== typeof f1(elem)) return elem;
-						};
-					
-					case 'AND_OR':
-						return function(elem) {
-							if ('undefined' !== typeof f3(elem)) return elem;
-							if ('undefined' === typeof f2(elem)) return;
-							if ('undefined' !== typeof f1(elem)) return elem;
-						};
-						
-					case 'AND_AND':
-						return function(elem) {
-							if ('undefined' === typeof f3(elem)) return;
-							if ('undefined' === typeof f2(elem)) return;
-							if ('undefined' !== typeof f1(elem)) return elem;
-						};
-				}
-			}
-			
-			else {				
-				return function(elem) {
-					var i, f, type, resOK;
-					var prevType = 'OR', prevResOK = true;
-					for (i = lineLen-1 ; i > -1 ; i--) {
-						
-				
-						f = findCallback(line[i], operations);
-						type = line[i].type,
-						resOK = 'undefined' !== typeof f(elem);
-						
-						if (type === 'OR') {
-							// Current condition is TRUE OR
-							if (resOK) return elem;
-						}
-						
-						// Current condition is FALSE AND 
-						else if (type === 'AND') {
-							if (!resOK) {
-								return;
-							}
-							// Previous check was an AND or a FALSE OR
-							else if (prevType === 'OR' && !prevResOK) {
-								return;
-							}
-						}
-						prevType = type;
-						// A previous OR is TRUE also if follows a TRUE AND 
-						prevResOK = type === 'AND' ? resOK : resOK || prevResOK;
-						
+			switch (type1) {
+				case 'OR': 
+					return function(elem) {
+						if ('undefined' !== typeof f1(elem)) return elem;
+						if ('undefined' !== typeof f2(elem)) return elem;
+					}	
+				case 'AND':
+					return function(elem) {
+						if ('undefined' !== typeof f1(elem) && 'undefined' !== typeof f2(elem)) return elem;
 					}
-					return elem;
-				}
 				
+				case 'NOT':
+					return function(elem) {
+						if ('undefined' !== typeof f1(elem) && 'undefined' === typeof f2(elem)) return elem;
+					}
+			}
+		}
+		
+		else if (lineLen === 3) {
+			f1 = findCallback(line[0], operations);
+			f2 = findCallback(line[1], operations);
+			f3 = findCallback(line[2], operations);
+			type1 = line[1].type;
+			type2 = line[2].type;
+			type1 = type1 + '_' + type2;
+			switch (type1) {
+				case 'OR_OR': 
+					return function(elem) {
+						if ('undefined' !== typeof f1(elem)) return elem;
+						if ('undefined' !== typeof f2(elem)) return elem;
+						if ('undefined' !== typeof f3(elem)) return elem;
+					};	
+					
+				case 'OR_AND':
+					return function(elem) {
+					
+						if ('undefined' === typeof f3(elem)) return;
+						if ('undefined' !== typeof f2(elem)) return elem;
+						if ('undefined' !== typeof f1(elem)) return elem;
+					};
+				
+				case 'AND_OR':
+					return function(elem) {
+						if ('undefined' !== typeof f3(elem)) return elem;
+						if ('undefined' === typeof f2(elem)) return;
+						if ('undefined' !== typeof f1(elem)) return elem;
+					};
+					
+				case 'AND_AND':
+					return function(elem) {
+						if ('undefined' === typeof f3(elem)) return;
+						if ('undefined' === typeof f2(elem)) return;
+						if ('undefined' !== typeof f1(elem)) return elem;
+					};
+			}
+		}
+		
+		else {				
+			return function(elem) {
+				var i, f, type, resOK;
+				var prevType = 'OR', prevResOK = true;
+				for (i = lineLen-1 ; i > -1 ; i--) {
+					
+			
+					f = findCallback(line[i], operations);
+					type = line[i].type,
+					resOK = 'undefined' !== typeof f(elem);
+					
+					if (type === 'OR') {
+						// Current condition is TRUE OR
+						if (resOK) return elem;
+					}
+					
+					// Current condition is FALSE AND 
+					else if (type === 'AND') {
+						if (!resOK) {
+							return;
+						}
+						// Previous check was an AND or a FALSE OR
+						else if (prevType === 'OR' && !prevResOK) {
+							return;
+						}
+					}
+					prevType = type;
+					// A previous OR is TRUE also if follows a TRUE AND 
+					prevResOK = type === 'AND' ? resOK : resOK || prevResOK;
+					
+				}
+				return elem;
 			}
 			
 		}
 		
-		else if (pointer === 1) {
-			
-		}
-		
-	};
+	}
+	
+};
 
 NDDB.compatibility = JSUS.compatibility();
 	
@@ -258,7 +309,7 @@ NDDB.log = console.log;
  * @param {object} e The object to decycle
  * @return {object} e The decycled object
  * 
- * 	@see https://github.com/douglascrockford/JSON-js/
+ * @see https://github.com/douglascrockford/JSON-js/
  */
 NDDB.decycle = function(e) {
 	if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
@@ -275,7 +326,7 @@ NDDB.decycle = function(e) {
  * @param {object} e The object to retrocycle
  * @return {object} e The retrocycled object
  * 
- * 	@see https://github.com/douglascrockford/JSON-js/
+ * @see https://github.com/douglascrockford/JSON-js/
  */
 NDDB.retrocycle = function(e) {
 	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
@@ -1077,7 +1128,7 @@ NDDB.prototype._analyzeQuery = function (d, op, value) {
  * 
  * @return {NDDB} A copy of the current selection without duplicated entries
  * 
- * 	@see NDDB.select() 
+ * @see NDDB.select() 
  *  @see NDDB.fetch()
  *  @see NDDB.fetchValues()
  */
@@ -1088,7 +1139,7 @@ NDDB.prototype.distinct = function () {
 /**
  * ## NDDB.select
  * 
- * Select entries a subset of entries in the database 
+ * Initiates a new query selection procedure
  * 
  * Input parameters:
  * 
@@ -1096,49 +1147,99 @@ NDDB.prototype.distinct = function () {
  * - op: operator for selection. Allowed: >, <, >=, <=, = (same as ==), ==, ===, 
  * 		!=, !==, in (in array), !in, >< (not in interval), <> (in interval)
  *  - value: values of comparison. Operators: in, !in, ><, <> require an array.
- *  
- *  The selection is returned as a new NDDB object, on which further operations 
- *  can be chained. In order to get the actual entries returned, it is necessary
- *  to call one of the fetching methods.
+ *   
+ * No actual selection is performed until the `execute` method is called, so that 
+ * further selections can be chained with the `or`, and `and` methods.
+ * 
+ * To retrieve the items use one of the fetching methods.
  *  
  * @param {string} d The dimension of comparison
- * @param {string} op The operation to perform
- * @param {string} value The right-hand element of comparison
- * @return {NDDB} A new NDDB instance containing the selected items
+ * @param {string} op Optional. The operation to perform
+ * @param {mixed} value Optional. The right-hand element of comparison
+ * @return {NDDB} A new NDDB instance with the currently selected items in memory
  * 
- *  @see NDDB.fetch()
- *  @see NDDB.fetchValues()
+ * @see NDDB.and
+ * @see NDDB.or
+ * @see NDDB.execute()
+ * @see NDDB.fetch()
+ * 
  */
 NDDB.prototype.select = function (d, op, value) {
     this.query.reset();
     return arguments.length ? this.and(d, op, value) : this;
 };
 
-
+/**
+ * ## NDDB.and
+ * 
+ * Chains an AND query to the current selection
+ * 
+ * @param {string} d The dimension of comparison
+ * @param {string} op Optional. The operation to perform
+ * @param {mixed} value Optional. The right-hand element of comparison
+ * @return {NDDB} A new NDDB instance with the currently selected items in memory
+ * 
+ * @see NDDB.select
+ * @see NDDB.or
+ * @see NDDB.execute()
+ */
 NDDB.prototype.and = function (d, op, value) {
-	if (!arguments.length) {
-		addBreakInQuery();
-	}
-	else {
+// TODO: Support for nested query	
+//	if (!arguments.length) {
+//		addBreakInQuery();
+//	}
+//	else {
 		var condition = this._analyzeQuery(d, op, value);        
 	    if (!condition) return false;
 	    this.query.addCondition('AND', condition, this.comparator(d));
-	}			
+//	}			
 	return this;
 };
 
+/**
+ * ## NDDB.or
+ * 
+ * Chains an OR query to the current selection
+ * 
+ * @param {string} d The dimension of comparison
+ * @param {string} op Optional. The operation to perform
+ * @param {mixed} value Optional. The right-hand element of comparison
+ * @return {NDDB} A new NDDB instance with the currently selected items in memory
+ * 
+ * @see NDDB.select
+ * @see NDDB.and
+ * @see NDDB.execute()
+ */
 NDDB.prototype.or = function (d, op, value) {
-	if (!arguments.length) {
-		addBreakInQuery();
-	}
-	else {
+// TODO: Support for nested query		
+//	if (!arguments.length) {
+//		addBreakInQuery();
+//	}
+//	else {
 		var condition = this._analyzeQuery(d, op, value);        
 	    if (!condition) return false;
 	    this.query.addCondition('OR', condition, this.comparator(d));
-	}			
+//	}			
 	return this;
 };
 
+/**
+ * ## NDDB.execute
+ * 
+ * Implements the criteria for selection previously specified by `select` queries
+ * 
+ * Does not reset the query object, and it is possible to reuse the current
+ * selection multiple times
+ * 
+ * @param {string} d The dimension of comparison
+ * @param {string} op Optional. The operation to perform
+ * @param {mixed} value Optional. The right-hand element of comparison
+ * @return {NDDB} A new NDDB instance with the currently selected items in memory
+ * 
+ * @see NDDB.select
+ * @see NDDB.and
+ * @see NDDB.or
+ */
 NDDB.prototype.execute = function () {
     return this.filter(this.query.get.call(this.query));
 };
@@ -1178,8 +1279,8 @@ NDDB.prototype.exists = function (o) {
  * @param {number} limit The number of entries to include
  * @return {NDDB} A "limited" copy of the current instance of NDDB
  * 
- *	@see NDDB.first
- * 	@see NDDB.last
+ * @see NDDB.first
+ * @see NDDB.last
  */
 NDDB.prototype.limit = function (limit) {
 	limit = limit || 0;
@@ -1195,7 +1296,7 @@ NDDB.prototype.limit = function (limit) {
  *
  * Reverses the order of all the entries in the database
  * 
- * 	@see NDDB.sort
+ * @see NDDB.sort
  */
 NDDB.prototype.reverse = function () {
     this.db.reverse();
@@ -1384,8 +1485,6 @@ NDDB.prototype.map = function () {
  *
  * Removes all entries from the database
  * 
- * Elements in the parent database will be removed too.
- * 
  * @return {NDDB} A new instance of NDDB with no entries 
  */
 NDDB.prototype.remove = function () {
@@ -1432,10 +1531,8 @@ NDDB.prototype.clear = function (confirm) {
  * @param {string|array} select Optional. The properties to copy in the join. Defaults undefined 
  * @return {NDDB} A new database containing the joined entries
  * 
- * 	@see NDDB._join
- * 	@see NDDB.breed
- * 
- * 
+ * @see NDDB._join
+ * @see NDDB.breed
  */
 NDDB.prototype.join = function (key1, key2, pos, select) {
 // <!--	
@@ -1498,7 +1595,7 @@ NDDB.prototype.concat = function (key1, key2, pos, select) {
  * @param {string} pos Optional. The property under which the join is performed. Defaults 'joined'
  * @param {string|array} select Optional. The properties to copy in the join. Defaults undefined 
  * @return {NDDB} A new database containing the joined entries
- * 	@see NDDB.breed
+ * @see NDDB.breed
  * 
  *  * TODO: check do we need to reassign __nddbid__ ?
  */
@@ -1550,7 +1647,7 @@ NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
  * @param {string} key The dimension along which splitting the entries
  * @return {NDDB} A new database containing the split entries
  * 
- * 	@see NDDB._split
+ * @see NDDB._split
  * 
  */
 NDDB.prototype.split = function (key) {    
@@ -1947,7 +2044,7 @@ NDDB.prototype.groupBy = function (key) {
  * @param {string} key The dimension to count
  * @return {number} count The number of items along the specified dimension
  * 
- * 	@see NDDB.length
+ * @see NDDB.length
  */
 NDDB.prototype.count = function (key) {
     if ('undefined' === typeof key) return this.db.length;
@@ -2024,7 +2121,7 @@ NDDB.prototype.mean = function (key) {
  * @param {string} key The dimension to average
  * @return {number|boolean} The mean of the values for the dimension, or FALSE if it does not exist
  * 
- * 	@see NDDB.mean
+ * @see NDDB.mean
  */
 NDDB.prototype.stddev = function (key) {
 	if ('undefined' === typeof key) return false;
@@ -2054,7 +2151,7 @@ NDDB.prototype.stddev = function (key) {
  * @param {string} key The dimension of which to find the min
  * @return {number|boolean} The smallest value for the dimension, or FALSE if it does not exist
  * 
- * 	@see NDDB.max
+ * @see NDDB.max
  */
 NDDB.prototype.min = function (key) {
 	if ('undefined' === typeof key) return false;
@@ -2079,7 +2176,7 @@ NDDB.prototype.min = function (key) {
  * @param {string} key The dimension of which to find the max
  * @return {number|boolean} The biggest value for the dimension, or FALSE if it does not exist
  * 
- * 	@see NDDB.min
+ * @see NDDB.min
  */
 NDDB.prototype.max = function (key) {
 	if ('undefined' === typeof key) return false;
@@ -2273,7 +2370,7 @@ NDDB.prototype.previous = function () {
  * @param {string} key Optional. If set, moves to the pointer to the first entry along this dimension
  * @return {object} The first entry found
  * 
- * 	@see NDDB.last
+ * @see NDDB.last
  */
 NDDB.prototype.first = function (key) {
     var db = this.fetch(key);
@@ -2296,7 +2393,7 @@ NDDB.prototype.first = function (key) {
  * @param {string} key Optional. If set, moves to the pointer to the last entry along this dimension
  * @return {object} The last entry found
  * 
- * 	@see NDDB.first
+ * @see NDDB.first
  */
 NDDB.prototype.last = function (key) {
     var db = this.fetch(key);
@@ -2322,7 +2419,7 @@ NDDB.prototype.last = function (key) {
  * @param {string} idx Optional. The index in the database, or the. Defaults nddb_pointer
  * @return {boolean} TRUE, if registration is successful
  * 
- * 	@see NDDB.resolveTag
+ * @see NDDB.resolveTag
  */
 NDDB.prototype.tag = function (tag, idx) {
     if ('undefined' === typeof tag) {
@@ -2359,7 +2456,7 @@ NDDB.prototype.tag = function (tag, idx) {
  * @param {string} tag An alphanumeric id
  * @return {object} The object associated with the tag
  * 
- * 	@see NDDB.tag
+ * @see NDDB.tag
  * @status: experimental
  */
 NDDB.prototype.resolveTag = function (tag) {
@@ -2375,15 +2472,6 @@ NDDB.prototype.resolveTag = function (tag) {
 var storageAvailable = function() {
 	return ('function' === typeof store);
 }
-
-// if node
-if (JSUS.isNodeJS()) {   
-	require('./external/cycle.js');		
-	var fs = require('fs'),
-		csv = require('ya-csv');
-};
-
-//end node  
 
 /**
  * ### NDDB.save
@@ -2500,44 +2588,46 @@ NDDB.prototype.load = function (file, cb, options) {
 	loadString.call(this, s);
 	return true;
 };
-	
-
-NDDB.prototype.load.csv = function (file, cb, options) {
-	if (!file) {
-		NDDB.log('You must specify a valid CSV file.', 'ERR');
-		return false;
-	}
-	
-	if (!JSUS.isNodeJS()){
-		NDDB.log('Loading a CSV file is available only in Node.js environment.', 'ERR');
-		return false;
-	}
-	
-	// Mix options
-	options = options || {};
-	 
-	if ('undefined' === typeof options.columnsFromHeader) {
-		options.columnsFromHeader = true;
-	}
 
 
-	var reader = csv.createCsvStreamReader(file, options);
+//if node
+if (JSUS.isNodeJS()) {   
+	require('./external/cycle.js');		
+	var fs = require('fs'),
+		csv = require('ya-csv');
+	
+	NDDB.prototype.load.csv = function (file, cb, options) {
+		if (!file) {
+			NDDB.log('You must specify a valid CSV file.', 'ERR');
+			return false;
+		}
+		
+		// Mix options
+		options = options || {};
+		 
+		if ('undefined' === typeof options.columnsFromHeader) {
+			options.columnsFromHeader = true;
+		}
 
-	if (options.columnNames) {
-		reader.setColumnNames(options.columnNames);
-	}
-	
-	reader.addListener('data', function(data) {
-	    this.insert(data);
-	});
-	
-	reader.addListener('end', function(data) {
-		if (cb) callback();
-	});
-	
-	return true;
+
+		var reader = csv.createCsvStreamReader(file, options);
+
+		if (options.columnNames) {
+			reader.setColumnNames(options.columnNames);
+		}
+		
+		reader.addListener('data', function(data) {
+		    this.insert(data);
+		});
+		
+		reader.addListener('end', function(data) {
+			if (cb) callback();
+		});
+		
+		return true;
+	};
 };
-
+//end node  
 
 // ## Closure    
 })(
