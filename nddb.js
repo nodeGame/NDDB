@@ -13,10 +13,10 @@
  */
 
 (function (exports, JSUS, store) {
-
+	
 	function QueryBuilder() {
-		
-		this.operation = {AND:'', OR:'', NOT:''};
+		this.operations = {};
+		this.registerDefaultOperations();
 		this.reset();
 	}
 	
@@ -25,82 +25,167 @@
 		condition.comparator = comparator;
 		this.query[this.pointer].push(condition);
 	};
+	
+	QueryBuilder.prototype.registerOperation = function(sign, cb) {
+		this.operations[sign] = cb;
+	};
+	
+	QueryBuilder.prototype.registerDefaultOperations = function() {
+		
+		this.operations['E'] = function (d, value, comparator) {
+			return function(elem) {
+				if ('undefined' !== typeof JSUS.getNestedValue(d,elem)) return elem;
+			}
+		};
+    
+		this.operations['=='] = function (d, value, comparator) {
+			return function(elem) {
+				if (comparator(elem, value) === 0) return elem;
+			};
+		};
+		
+		this.operations['>'] = function (d, value, comparator) {
+			return function(elem) {
+				var compared = comparator(elem, value);
+				if (compared === 1 || compared === 0) return elem;
+			};
+		};
+		
+		this.operations['<'] = function (d, value, comparator) {
+			return function(elem) {
+				if (comparator(elem, value) === -1) return elem;
+			};
+		};
+		
+		this.operations['<='] = function (d, value, comparator) {
+			return function(elem) {
+				var compared = comparator(elem, value);
+				if (compared === -1 || compared === 0) return elem;
+			};
+		};
+	   
+	    // Between
+	    this.operations['><'] = function (d, value, comparator) {
+	    	return function(elem) {
+	    		if (comparator(elem, value[0]) > 0 && comparator(elem, value[1]) < 0) {
+		            return elem;
+		        }
+	    	};
+	    };
+	    // Not Between
+	    this.operations['<>'] = function (d, value, comparator) {
+	    	return function(elem) {
+		        if (comparator(elem, value[0]) < 0 && comparator(elem, value[1] > 0)) {
+		            return elem;
+		        }
+	    	};
+	    };
+	    
+	    // In Array
+	    this.operations['in'] = function (d, value, comparator) {
+	    	return function(elem) {
+		        if (JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
+		            return elem;
+		        }
+	    	};
+	    };
+	    
+	    // Not In Array
+	    this.operations['!in'] = function (d, value, comparator) {
+	    	return function(elem) {
+		        if (!JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
+		            return elem;
+		        }
+	    	};
+	    };
+	};
+	
 
-	function findCallback(obj) {
+//	function findCallback(obj) {
+//
+//		var d = obj.d,
+//			op = obj.op,
+//			value = obj.value,
+//			comparator = obj.comparator;
+//		
+//		
+//	    var compared = null;
+//		
+//	    var exist = function (elem) {
+//	        if ('undefined' !== typeof JSUS.getNestedValue(d,elem)) return elem;
+//	    };
+//	    
+//	    var compare = function (elem) {
+//	       
+//	        compared = comparator(elem, value);
+//
+//	        if (op === '==') {
+//	        	if (compared === 0) return elem;
+//	        }
+//	        else if (op === '>') {
+//	        	if (compared === 1 ) return elem;
+//	        }
+//	        else if (op === '>=') {
+//	        	if (compared === 1 || compared === 0) return elem;
+//	        }	
+//	        else if (op === '<') {
+//	        	if (compared === -1 ) return elem;
+//	        }
+//	        else if (op === '<=') {
+//	        	if (compared === -1 || compared === 0) return elem;
+//	        }	
+//	        else {
+//	            NDDB.log('Malformed select query: ' + d + op + value);
+//	            return false;
+//	        };
+//	    };
+//	    
+//	    var between = function (elem) {
+//	        if (comparator(elem, value[0]) > 0 && comparator(elem, value[1]) < 0) {
+//	            return elem;
+//	        }
+//	    };
+//	    
+//	    var notbetween = function (elem) {
+//	        if (comparator(elem, value[0]) < 0 && comparator(elem, value[1] > 0)) {
+//	            return elem;
+//	        }
+//	    };
+//	    
+//	    var inarray = function (elem) {
+//	        if (JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
+//	            return elem;
+//	        }
+//	    };
+//	    
+//	    var notinarray = function (elem) {
+//	        if (!JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
+//	            return elem;
+//	        }
+//	    };
+//	    
+//	    switch (op) {
+//	        case (''): var func = exist; break;
+//	        case ('<>'): var func = notbetween; break;
+//	        case ('><'): var func = between; break;
+//	        case ('in'): var func = inarray; break;
+//	        case ('!in'): var func = notinarray; break;
+//	        default: var func = compare;
+//	    }
+//	    
+//	    return func;
+//	}
+
+	function findCallback(obj, operations) {
 
 		var d = obj.d,
 			op = obj.op,
 			value = obj.value,
 			comparator = obj.comparator;
 		
-		
-	    var compared = null;
-		
-	    var exist = function (elem) {
-	        if ('undefined' !== typeof JSUS.getNestedValue(d,elem)) return elem;
-	    };
-	    
-	    var compare = function (elem) {
-	       
-	        compared = comparator(elem, value);
-
-	        if (op === '==') {
-	        	if (compared === 0) return elem;
-	        }
-	        else if (op === '>') {
-	        	if (compared === 1 ) return elem;
-	        }
-	        else if (op === '>=') {
-	        	if (compared === 1 || compared === 0) return elem;
-	        }	
-	        else if (op === '<') {
-	        	if (compared === -1 ) return elem;
-	        }
-	        else if (op === '<=') {
-	        	if (compared === -1 || compared === 0) return elem;
-	        }	
-	        else {
-	            NDDB.log('Malformed select query: ' + d + op + value);
-	            return false;
-	        };
-	    };
-	    
-	    var between = function (elem) {
-	        if (comparator(elem, value[0]) > 0 && comparator(elem, value[1]) < 0) {
-	            return elem;
-	        }
-	    };
-	    
-	    var notbetween = function (elem) {
-	        if (comparator(elem, value[0]) < 0 && comparator(elem, value[1] > 0)) {
-	            return elem;
-	        }
-	    };
-	    
-	    var inarray = function (elem) {
-	        if (JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
-	            return elem;
-	        }
-	    };
-	    
-	    var notinarray = function (elem) {
-	        if (!JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
-	            return elem;
-	        }
-	    };
-	    
-	    switch (op) {
-	        case (''): var func = exist; break;
-	        case ('<>'): var func = notbetween; break;
-	        case ('><'): var func = between; break;
-	        case ('in'): var func = inarray; break;
-	        case ('!in'): var func = notinarray; break;
-	        default: var func = compare;
-	    }
-	    
-	    return func;
-	}
-
+		return operations[op](d, value, comparator);  
+	};	
+	
 	QueryBuilder.prototype.addBreak = function() {
 		this.pointer++;
 		this.query[this.pointer] = [];
@@ -115,18 +200,19 @@
 	QueryBuilder.prototype.get = function() {
 		var line, lineLen, f1, f2, f3, type1, type2, i;
 		var query = this.query, pointer = this.pointer;
+		var operations = this.operations;
 		
 		if (pointer === 0) {
 			line = query[pointer]
 			lineLen = line.length; 
 			
 			if (lineLen === 1) {
-				return findCallback(line[0]);
+				return findCallback(line[0], operations);
 			}
 			
 			else if (lineLen === 2) {
-				f1 = findCallback(line[0]);
-				f2 = findCallback(line[1]);
+				f1 = findCallback(line[0], operations);
+				f2 = findCallback(line[1], operations);
 				type1 = line[1].type;
 				
 				switch (type1) {
@@ -148,9 +234,9 @@
 			}
 			
 			else if (lineLen === 3) {
-				f1 = findCallback(line[0]);
-				f2 = findCallback(line[1]);
-				f3 = findCallback(line[2]);
+				f1 = findCallback(line[0], operations);
+				f2 = findCallback(line[1], operations);
+				f3 = findCallback(line[2], operations);
 				type1 = line[1].type;
 				type2 = line[2].type;
 				type1 = type1 + '_' + type2;
@@ -192,7 +278,8 @@
 					var prevType = 'OR', prevResOK = true;
 					for (i = lineLen-1 ; i > -1 ; i--) {
 						
-						f = findCallback(line[i]),
+				
+						f = findCallback(line[i], operations);
 						type = line[i].type,
 						resOK = 'undefined' !== typeof f(elem);
 						
@@ -318,9 +405,9 @@ function NDDB (options, db) {
     	this.length = null;
     }
    
-    // ### __query
+    // ### query
     // QueryBuilder obj
-    this.__query = new QueryBuilder();
+    this.query = new QueryBuilder();
     
     // ### __C
     // List of comparator functions
@@ -349,7 +436,7 @@ function NDDB (options, db) {
     // ### __update.sort
     // If TRUE, sort db on every insert and remove
     this.__update.sort 		= false;
-
+    
     this.init(options);
     this.importDB(db);   
 };
@@ -1014,14 +1101,16 @@ NDDB.prototype._analyzeQuery = function (d, op, value) {
             raiseError(d,op,value);
         }
         
-        if (!JSUS.in_array(op, ['>','>=','>==','<', '<=', '<==', '!=', '!==', '=', '==', '===', '><', '<>', 'in', '!in'])) {
+        if (op === '=') {
+            op = '==';
+        }
+      
+        if (!(op in this.query.operations)) {
             NDDB.log('Query error. Invalid operator detected: ' + op, 'WARN');
             return false;
         }
         
-        if (op === '=') {
-            op = '==';
-        }
+
         
         // Range-queries need an array as third parameter
         if (JSUS.in_array(op,['><', '<>', 'in', '!in'])) {
@@ -1044,7 +1133,7 @@ NDDB.prototype._analyzeQuery = function (d, op, value) {
         raiseError(d,op,value);
     }
     else {
-        op = '';
+        op = 'E'; // exists
         value = '';
     }
     
@@ -1093,7 +1182,7 @@ NDDB.prototype.distinct = function () {
  *  @see NDDB.fetchValues()
  */
 NDDB.prototype.select = function (d, op, value) {
-    this.__query.reset();
+    this.query.reset();
     return arguments.length ? this.and(d, op, value) : this;
 };
 
@@ -1105,7 +1194,7 @@ NDDB.prototype.and = function (d, op, value) {
 	else {
 		var condition = this._analyzeQuery(d, op, value);        
 	    if (!condition) return false;
-	    this.__query.addCondition('AND', condition, this.comparator(d));
+	    this.query.addCondition('AND', condition, this.comparator(d));
 	}			
 	return this;
 };
@@ -1117,13 +1206,13 @@ NDDB.prototype.or = function (d, op, value) {
 	else {
 		var condition = this._analyzeQuery(d, op, value);        
 	    if (!condition) return false;
-	    this.__query.addCondition('OR', condition, this.comparator(d));
+	    this.query.addCondition('OR', condition, this.comparator(d));
 	}			
 	return this;
 };
 
 NDDB.prototype.execute = function () {
-    return this.filter(this.__query.get());
+    return this.filter(this.query.get.call(this.query));
 };
 
 /**
