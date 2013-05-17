@@ -27,7 +27,7 @@
 	};
 
 	function findCallback(obj) {
-		
+
 		var d = obj.d,
 			op = obj.op,
 			value = obj.value,
@@ -121,12 +121,12 @@
 			lineLen = line.length; 
 			
 			if (lineLen === 1) {
-				return findCallBack(line[0]);
+				return findCallback(line[0]);
 			}
 			
 			else if (lineLen === 2) {
-				f1 = findCallBack(line[0]);
-				f2 = findCallBack(line[1]);
+				f1 = findCallback(line[0]);
+				f2 = findCallback(line[1]);
 				type1 = line[1].type;
 				
 				switch (type1) {
@@ -148,9 +148,9 @@
 			}
 			
 			else if (lineLen === 3) {
-				f1 = findCallBack(line[0]);
-				f2 = findCallBack(line[1]);
-				f3 = findCallBack(line[2]);
+				f1 = findCallback(line[0]);
+				f2 = findCallback(line[1]);
+				f3 = findCallback(line[2]);
 				type1 = line[1].type;
 				type2 = line[2].type;
 				type1 = type1 + '_' + type2;
@@ -187,16 +187,62 @@
 			}
 			
 			else {
+//				return function(elem) {
+//					var i, f, type, resOK;
+//					var prevType = 'OR', prevResOK = true;
+//					for (i = lineLen-1 ; i > -1 ; i--) {
+//						// Last check is not needed if previous check was TRUE OR
+//						if (i === 0 && prevType === 'OR' && prevResOK) return elem;
+//						
+//						f = findCallback(line[i]),
+//						type = line[i].type,
+//						resOK = 'undefined' !== typeof f(elem);
+//						// Last condition is TRUE OR
+//						if (i === lineLen-1 && type === 'OR' && resOK) {
+//							return elem;
+//						}
+//						
+//						// Current condition is FALSE AND 
+//						if (type === 'AND' && !resOK) {
+//							// Previous check was an AND or a FALSE OR
+//							if (prevType === 'AND' || (prevType === 'OR' && !prevResOK)) {
+//								return;
+//							}
+//						}
+//						prevType = type;
+//						prevResOK = type === 'AND' ? resOK && prevResOK : resOK || prevResOK;
+//					}
+//					return elem;
+//				}
+				
 				return function(elem) {
-					for (i = lineLen ; i > -1 ; i--) {
+					var i, f, type, resOK;
+					var prevType = 'OR', prevResOK = true;
+					for (i = lineLen-1 ; i > -1 ; i--) {
 						
-						var f = findCallBack(line[i]),
-							type = line[i].type,
-							res = f(elem);
+						f = findCallback(line[i]),
+						type = line[i].type,
+						resOK = 'undefined' !== typeof f(elem);
 						
-						if (type === 'AND' && 'undefined' === typeof res) {
-							return;
+						if (type === 'OR') {
+							// Current condition is TRUE OR
+							if (resOK) return elem;
 						}
+						
+						// Current condition is FALSE AND 
+						else if (type === 'AND') {
+							if (!resOK) {
+								return;
+							}
+							// Previous check was an AND or a FALSE OR
+							else if (prevType === 'OR' && !prevResOK) {
+								return;
+							}
+						}
+						prevType = type;
+						// A previous OR is TRUE also if follows a TRUE AND 
+						prevResOK = type === 'AND' ? resOK : resOK || prevResOK;
+						
 					}
 					return elem;
 				}
