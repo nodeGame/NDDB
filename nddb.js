@@ -437,44 +437,8 @@ NDDB.prototype.globalCompare = function(o1, o2) {
     if ('undefined' === typeof o1 && 'undefined' === typeof o2) return 0;
     if ('undefined' === typeof o2) return -1;  
     if ('undefined' === typeof o1) return 1;
-    
-//    if (o1.nddbid < o2.nddbid) return -1;
-//    if (o1.nddbid > o2.nddbid) return 1;
     return 0;
 };
-
-///**
-// * ### NDDB._masquerade
-// * 
-// * Injects a hidden counter property into the prototype 
-// * 
-// * The object contains the index of the containing array.
-// * 
-// * @param {object} o The object to masquerade
-// * @param {array} db Optional. The array
-// * 
-// * @api private
-// */
-//NDDB.prototype._masquerade = function (o, db) {
-//    if ('undefined' === typeof o) return false;
-//    
-//    // TODO: check this
-//    if ('undefined' !== typeof o.nddbid) return o;
-//    db = db || this.db;
-//    
-//    if (NDDB.compatibility.defineProperty) {
-//	    Object.defineProperty(o, 'nddbid', {
-//	    	value: db.length,
-//	    	configurable: true,
-//	    	writable: true
-//		});
-//    }
-//    else {
-//    	o.nddbid = db.length;
-//    }
-//    
-//    return o;
-//};
 
 /**
  * ### NDDB._masqueradeDB
