@@ -438,43 +438,43 @@ NDDB.prototype.globalCompare = function(o1, o2) {
     if ('undefined' === typeof o2) return -1;  
     if ('undefined' === typeof o1) return 1;
     
-    if (o1.nddbid < o2.nddbid) return -1;
-    if (o1.nddbid > o2.nddbid) return 1;
+//    if (o1.nddbid < o2.nddbid) return -1;
+//    if (o1.nddbid > o2.nddbid) return 1;
     return 0;
 };
 
-/**
- * ### NDDB._masquerade
- * 
- * Injects a hidden counter property into the prototype 
- * 
- * The object contains the index of the containing array.
- * 
- * @param {object} o The object to masquerade
- * @param {array} db Optional. The array
- * 
- * @api private
- */
-NDDB.prototype._masquerade = function (o, db) {
-    if ('undefined' === typeof o) return false;
-    
-    // TODO: check this
-    if ('undefined' !== typeof o.nddbid) return o;
-    db = db || this.db;
-    
-    if (NDDB.compatibility.defineProperty) {
-	    Object.defineProperty(o, 'nddbid', {
-	    	value: db.length,
-	    	configurable: true,
-	    	writable: true
-		});
-    }
-    else {
-    	o.nddbid = db.length;
-    }
-    
-    return o;
-};
+///**
+// * ### NDDB._masquerade
+// * 
+// * Injects a hidden counter property into the prototype 
+// * 
+// * The object contains the index of the containing array.
+// * 
+// * @param {object} o The object to masquerade
+// * @param {array} db Optional. The array
+// * 
+// * @api private
+// */
+//NDDB.prototype._masquerade = function (o, db) {
+//    if ('undefined' === typeof o) return false;
+//    
+//    // TODO: check this
+//    if ('undefined' !== typeof o.nddbid) return o;
+//    db = db || this.db;
+//    
+//    if (NDDB.compatibility.defineProperty) {
+//	    Object.defineProperty(o, 'nddbid', {
+//	    	value: db.length,
+//	    	configurable: true,
+//	    	writable: true
+//		});
+//    }
+//    else {
+//    	o.nddbid = db.length;
+//    }
+//    
+//    return o;
+//};
 
 /**
  * ### NDDB._masqueradeDB
@@ -566,19 +566,7 @@ NDDB.prototype.insert = function (o) {
 	
 	if (!this.db) this.db = [];
  
-    this._insert(o);
-};
-
-/**
- * ### NDDB._insert
- *
- * Inserts an object into the current database
- * 
- * @param {object} o The item or array of items to insert
- */
-NDDB.prototype._insert = function (o) {
-    o = this._masquerade(o);
-    this.db.push(o);
+	this.db.push(o);
     this.emit('insert', o);
     
 	// We save time calling _hashIt only
@@ -2309,7 +2297,7 @@ NDDB.prototype.previous = function () {
 NDDB.prototype.first = function (key) {
     var db = this.fetch(key);
     if (db.length) {
-        this.nddb_pointer = db[0].nddbid;
+        this.nddb_pointer = 0;
         return db[0];
     }
     return undefined;
@@ -2332,7 +2320,7 @@ NDDB.prototype.first = function (key) {
 NDDB.prototype.last = function (key) {
     var db = this.fetch(key);
     if (db.length) {
-        this.nddb_pointer = db[db.length-1].nddbid;
+        this.nddb_pointer = db.length-1;
         return db[db.length-1];
     }
     return undefined;

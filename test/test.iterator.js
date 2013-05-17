@@ -75,13 +75,9 @@ describe('NDDB Iterator', function() {
 	
 	describe('#get()', function() {
 
-		it('should return the current element (nddbid = 1)', function() {
+		it('should return the current element (first item)', function() {
 	        db.get().should.equal(items[1]);
 	    });
-	    
-    	it('the returned element should have nddbid equal to 1', function() {
-    		db.get().nddbid.should.equal(1);
-    	});
 	});
 	
 	describe('calling 4 times next() in a row', function() {
