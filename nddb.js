@@ -1086,7 +1086,6 @@ NDDB.prototype.reverse = function () {
  * @return {NDDB} A a reference to the current instance with shuffled entries
  */
 NDDB.prototype.shuffle = function () {
-    // TODO: check do we need to reassign __nddbid__ ?
     this.db = JSUS.shuffle(this.db);
     return this;
 };
@@ -1125,8 +1124,8 @@ NDDB.prototype.filter = function (func) {
  */
 NDDB.prototype.each = NDDB.prototype.forEach = function () {
     if (arguments.length === 0) return;
-    var func = arguments[0];    
-    for (var i=0; i < this.db.length; i++) {
+    var func = arguments[0], i;    
+    for (i = 0 ; i < this.db.length ; i++) {
         arguments[0] = this.db[i];
         func.apply(this, arguments);
     }
@@ -1148,10 +1147,9 @@ NDDB.prototype.each = NDDB.prototype.forEach = function () {
  */
 NDDB.prototype.map = function () {
     if (arguments.length === 0) return;
-    var func = arguments[0];
-    var out = [];
-    var o = undefined;
-    for (var i=0; i < this.db.length; i++) {
+    var func = arguments[0], 
+    	out = [], o, i;
+    for (i = 0 ; i < this.db.length ; i++) {
         arguments[0] = this.db[i];
         o = func.apply(this, arguments);
         if ('undefined' !== typeof o) out.push(o);
@@ -1308,8 +1306,6 @@ NDDB.prototype.concat = function (key1, key2, pos, select) {
  * @param {string|array} select Optional. The properties to copy in the join. Defaults undefined 
  * @return {NDDB} A new database containing the joined entries
  * @see NDDB.breed
- * 
- *  * TODO: check do we need to reassign __nddbid__ ?
  */
 NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
 	if (!key1 || !key2) return this.breed([]);
