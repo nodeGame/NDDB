@@ -80,73 +80,70 @@ var hashPainter = function(o) {
 	return o.painter;
 }
 
-db.h('painter', hashPainter);
-
-db.importDB(not_hashable);
-db.importDB(hashable);
+//db.h('painter', hashPainter);
+//
+//db.importDB(not_hashable);
+//db.importDB(hashable);
 
 describe('NDDB Remove Operations:', function() {
 
+	before(function(){
+		db = new NDDB({
+			update: {
+				indexes: true,
+			}
+		});
+		db.h('painter', hashPainter);
 
-	describe('#remove()',function() {
-        describe('Removing elements not in index (Ferrari)', function() {
-            before(function(){
-                testcase = db.select('car', '=', 'Ferrari').execute();
-                testcase.remove();
-            });
-            after(function(){
-                testcase = null;
-                tmp = null;
-            });
-            
-            it('the selection should be empty', function() {
-                testcase.length.should.be.eql(0);
-            });
-            
-            it('there should be no Ferrari in the database', function() {
-               db.select('car', '=', 'Ferrari').execute().length.should.be.eql(0);
-            });
-            
-            it('should decrease db.length', function() {
-                db.length.should.eql(nitems -1);
-            });
-        
+		db.importDB(not_hashable);
+		db.importDB(hashable);
+	});
+	
+    describe('Removing elements not in index (Ferrari)', function() {
+        before(function(){
+            testcase = db.select('car', '=', 'Ferrari').execute();
+            testcase.remove();
         });
-        describe('Removing elements that are indexed', function() {
-            before(function(){
-                tmp = db.length;
-                testcase = db.select('painter', '=', 'Monet').execute();
-                testcase.remove();
-                db.rebuildIndexes();    
-
-                
-            });
-            
-            it('should decrease the length of the database', function() {
-                db.length.should.be.eql(tmp - 2);
-            });
-            
-            it('should decrease the length of the index', function() {
-                db.painter.should.not.have.property('Monet');
-            });
-        
+        after(function(){
+            testcase = null;
+            tmp = null;
         });
         
-        describe('Removing all items', function() {
-            before(function(){
-                db.remove();
-            });
-            
-            it('should make db.length equal to 0', function() {
-                db.length.should.eql(0);
-            });
-            
-            it('should reset all indexes', function() {
-                db.painter.should.be.eql({});
-            });
-            
+        it('the selection should be empty', function() {
+            testcase.length.should.be.eql(0);
         });
+        
+        it('Ferrari should still be in the original database', function() {
+           db.select('car', '=', 'Ferrari').execute().length.should.be.eql(1);
+        });
+        
+        it('original length should not change', function() {
+            db.length.should.eql(nitems);
+        });
+    
     });
+    
+    describe('Removing elements that are indexed', function() {
+        before(function(){
+            tmp = db.length;
+            testcase = db.select('painter', '=', 'Monet').execute();
+            testcase.remove();
+            db.rebuildIndexes();    
+
+            
+        });
+        
+        it('should not decrease the length of the database', function() {
+            db.length.should.be.eql(tmp);
+        });
+        
+        it('should leave the length of the index unchanged', function() {
+            db.painter.should.have.property('Monet');
+        });
+    
+    });
+       
+
 	
 	describe('#clear()',function() {
 

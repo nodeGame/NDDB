@@ -186,35 +186,7 @@
 				}
 			}
 			
-			else {
-//				return function(elem) {
-//					var i, f, type, resOK;
-//					var prevType = 'OR', prevResOK = true;
-//					for (i = lineLen-1 ; i > -1 ; i--) {
-//						// Last check is not needed if previous check was TRUE OR
-//						if (i === 0 && prevType === 'OR' && prevResOK) return elem;
-//						
-//						f = findCallback(line[i]),
-//						type = line[i].type,
-//						resOK = 'undefined' !== typeof f(elem);
-//						// Last condition is TRUE OR
-//						if (i === lineLen-1 && type === 'OR' && resOK) {
-//							return elem;
-//						}
-//						
-//						// Current condition is FALSE AND 
-//						if (type === 'AND' && !resOK) {
-//							// Previous check was an AND or a FALSE OR
-//							if (prevType === 'AND' || (prevType === 'OR' && !prevResOK)) {
-//								return;
-//							}
-//						}
-//						prevType = type;
-//						prevResOK = type === 'AND' ? resOK && prevResOK : resOK || prevResOK;
-//					}
-//					return elem;
-//				}
-				
+			else {				
 				return function(elem) {
 					var i, f, type, resOK;
 					var prevType = 'OR', prevResOK = true;
@@ -309,10 +281,9 @@ NDDB.retrocycle = function(e) {
  * 
  * @param {object} options Optional. Configuration options
  * @param {db} db Optional. An initial set of items to import
- * @param {NDDB} parent Optional. A parent database to keep sync
  * 
  */
-function NDDB (options, db, parent) {                
+function NDDB (options, db) {                
     options = options || {};
     
     if (!JSUS) throw new Error('JSUS not found.');
@@ -378,10 +349,6 @@ function NDDB (options, db, parent) {
     // ### __update.sort
     // If TRUE, sort db on every insert and remove
     this.__update.sort 		= false;
-        
-    // ### __parent
-    // Reference to a parent NNDB database (if chaining)
-    this.__parent = parent || undefined;
 
     this.init(options);
     this.importDB(db);   
@@ -552,11 +519,6 @@ NDDB.prototype._autoUpdate = function (options) {
     if (update.indexes) {
         this.rebuildIndexes();
     }
-    
-    // Update also parent element
-    if (this.__parent) {
-    	this.__parent._autoUpdate(update);
-    }
 }
 
 /**
@@ -633,7 +595,6 @@ NDDB.prototype._insert = function (o) {
  * ### NDDB.breed
  *
  * Creates a clone of the current NDDB object
- * with a reference to the parent database
  * 
  * Takes care of calling the actual constructor
  * of the class, so that inheriting objects will
@@ -644,11 +605,9 @@ NDDB.prototype._insert = function (o) {
  */
 NDDB.prototype.breed = function (db) {
     db = db || this.db;
-    var options = this.cloneSettings();
-    var parent = this.__parent || this;							
-    
+  			  
     //In case the class was inherited
-    return new this.constructor(options, db, parent);
+    return new this.constructor(this.cloneSettings(), db);
 };
     
 /**
@@ -1462,21 +1421,7 @@ NDDB.prototype.map = function () {
  */
 NDDB.prototype.remove = function () {
 	if (!this.length) return this;
-  
-	if (this.__parent) {    	  
-		for (var i=0; i < this.db.length; i++) {
-			// Important: index changes as we removes elements
-			var idx = this.db[i].nddbid - i;
-			this.__parent.db.splice(idx,1);
-        }
-        // TODO: we could make it with only one for loop
-        // we loop on parent db and check whether the id is in the array
-        // at the same time we decrement the nddbid depending on i
-        for (var i=0; i < this.__parent.length; i++) {
-        	this.__parent.db[i].nddbid = i;
-        }
-	}
- 
+	
 	this.emit('remove', this.db);
 	this.db = [];
 	this._autoUpdate();
@@ -1489,8 +1434,6 @@ NDDB.prototype.remove = function () {
  * Removes all entries from the database. 
  * 
  * Requires an additional parameter to confirm the deletion.
- * 
- * Elements in parent database will not be removed
  * 
  * @return {boolean} TRUE, if the database was cleared
  */
