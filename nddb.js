@@ -324,7 +324,6 @@ NDDB.prototype.insert = function (o) {
  */
 NDDB.prototype.breed = function (db) {
     db = db || this.db;
-  			  
     //In case the class was inherited
     return new this.constructor(this.cloneSettings(), db);
 };
@@ -2478,6 +2477,15 @@ QueryBuilder.prototype.reset = function() {
  * ### QueryBuilder.get
  * 
  * Builds up the select function
+ * 
+ * Up to three conditions it builds up a custom function without  
+ * loop. For more than three conditions, a loop is created.
+ * 
+ * Expressions are evaluated from right to left, so that the last one
+ * always decides the overall logic value. E.g. :
+ * 
+ * 	true AND false OR true => false OR true => TRUE
+ * 	true AND true OR false => true OR false => TRUE
  * 
  * @return {function} The select function containing all the specified
  *   conditions
