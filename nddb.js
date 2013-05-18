@@ -257,19 +257,28 @@ NDDB.prototype._autoUpdate = function (options) {
 /**
  * ### NDDB.importDB
  * 
- * Imports a whole array into the current database
+ * Imports an array of items at once
+ * 
+ * Updates to the indexes - if any - are executed after the
+ * whole collection has been imported.
+ * 
+ * If an error occurs during the procedure the variable
+ * `this.__update` must be re-initialized manually, and indexes
+ * rebuilt.
  * 
  * @param {array} db Array of items to import
  */
 NDDB.prototype.importDB = function (db) {
     if (!db) return;
-    if (!this.db) this.db = [];
+    // Disable indexing: do it only after the last item
+    var oldUpdate = this.__update;
+    this.__update = {};
     for (var i = 0; i < db.length; i++) {
         this.insert(db[i]);
     }
-    // <!-- Check this
-    //this._autoUpdate();
-    // -->
+    // Re-set the current updating policies
+    this.__update = oldUpdate;    
+    this._autoUpdate();
 };
     
 /**
@@ -295,20 +304,10 @@ NDDB.prototype.insert = function (o) {
 	if (type === 'undefined') return;
 	if (type === 'string') return;
 	if (type === 'number') return;
-	
-	if (!this.db) this.db = [];
  
 	this.db.push(o);
     this.emit('insert', o);
-    
-	// We save time calling _hashIt only
-    // on the latest inserted element
-    if (this.__update.indexes) {
-    	this._hashIt(o);
-    	this._indexIt(o);
-    }
-	// See above
-    this._autoUpdate({indexes: false});
+    this._autoUpdate();
 };
 
 /**
