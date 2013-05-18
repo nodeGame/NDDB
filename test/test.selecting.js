@@ -158,7 +158,7 @@ describe('NDDB Selecting', function() {
               .db.length.should.equal(5);
          });
         
-        it('should select all paintings from Dali OR Monet OR Jesus that are from before 1928 OR are portrait', function(){
+        it('should select all paintings from Dali AND Jesus (at the same time) OR Monet that are from before 1928 OR are portrait', function(){
             db.select('painter', '=', 'Dali')
               .and('painter', '=', 'Jesus')
               .or('painter', '=', 'Monet')

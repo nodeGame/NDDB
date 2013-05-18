@@ -9,6 +9,8 @@ NDDB provides a simple, lightweight NO-SQL database for node.js and the browser.
 NDDB provides a simple, lightweight, NO-SQL object database 
 for node.js and the browser.
 
+The complete NDDB api is available [here](http://nodegame.github.com/NDDB/docs/nddb.js.html).
+
 Allows to define any number of comparator and indexing functions, 
 which are associated to any of the dimensions (i.e. properties) of 
 the objects stored in the database. 
@@ -19,12 +21,9 @@ is called, and the database is updated.
 Whenever an object is inserted that matches one of the indexing functions
 an hash is produced, and the element is added to one of the indexes.
 
-
 Additional features are: methods chaining, tagging, and iteration 
 through the entries.
 
-NDDB is work in progress. Currently, the following methods are
-implemented:
 
   * Sorting and selecting:
 
@@ -41,8 +40,12 @@ implemented:
   * Advanced operations
  
      - split, join, concat
+     
+  * Selecting
+  
+     - select, and, or
  
-  * Fetching
+  * Fetching and transformation
  
      - fetch, fetchArray, fetchKeyArray, fetchValues, fetchSubObj
  
@@ -69,8 +72,6 @@ implemented:
   * Event listener / emitter
   
      - on, off, emit
-
-The complete NDDB api is available [here](http://nodegame.github.com/NDDB/docs/nddb.js.html).
 
 Different build files available in the build directory.
 
@@ -151,7 +152,8 @@ Fetch all paintings from Dali that are before 1928
 
 ```javascript
     db.select('painter', '=', 'Dali')
-      .select('year', '<', 1928); 
+      .and('year', '<', 1928);
+      .execute() 
       .fetch(); // 1 item
 ```
 
@@ -159,13 +161,15 @@ Fetch all paintings of the beginning of XX's century
 
 ```javascript
     db.select('year', '><', [1900, 1910])
+      .execute()
       .fetch(); // 2 items    
 ```
 
 Fetch separately all the painters and all the dates of execution of the paintings
 
 ```javascript
-    db.select('year', '><', [1900, 1910]) 
+    db.select('year', '><', [1900, 1910])
+      .execute() 
       .fetchValues(['painter', 'title']);
 
 // { painter: [ 'Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet' ],
@@ -287,9 +291,9 @@ Define a custom indexing function that splits that gives direct access to the it
     nddb.init(options);
 ```
 
-## Save and load from file
+## Save and load from file or to localStorage
 
-Only in the node.js environment, it is possible to save the state of the database to a file and load it afterwards.
+In the node.js environment, it is possible to save the state of the database to a file and load it afterwards.
 
 ```javascript
 
@@ -300,6 +304,7 @@ Only in the node.js environment, it is possible to save the state of the databas
    db2.load('./db.out');
 ```
 
+The above command are valid also in the browser environment if [Shelf.js](https://github.com/shakty/shelf.js) is loaded. A string id instead of the path to a file must be given instead.
 
 ## Test
 
