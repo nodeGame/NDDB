@@ -51,7 +51,7 @@ describe('Extending NDDB', function() {
     	
 
         it('should return all entries whose year is multiple of 2',function() {
-            db.query.registerOperation('%', function(d, value, comparator){
+            db.query.registerOperator('%', function(d, value, comparator){
             	return function(elem) {
             		if ((elem[d] % value) === 0) {
             			return elem;

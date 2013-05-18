@@ -195,6 +195,12 @@ NDDB.prototype.init = function(options) {
         	this.__update.sort = options.update.sort;
         }
     }
+    
+    if ('object' === typeof options.operators) {
+    	for (var op in options.operators) {
+    		this.query.registerOperator(op, options.operators[op]);
+    	}
+    }
 };
 
 // ## CORE
@@ -781,7 +787,7 @@ NDDB.prototype._analyzeQuery = function (d, op, value) {
             op = '==';
         }
       
-        if (!(op in this.query.operations)) {
+        if (!(op in this.query.operators)) {
             NDDB.log('Query error. Invalid operator detected: ' + op, 'WARN');
             return false;
         }
@@ -1018,7 +1024,7 @@ NDDB.prototype.reverse = function () {
  *  - a custom comparator function 
  * 
  * A reference to the current NDDB object is returned, so that
- * further operations can be chained. 
+ * further methods can be chained. 
  * 
  * Notice: the order of entries is changed.
  * 
@@ -1277,7 +1283,7 @@ NDDB.prototype.concat = function (key1, key2, pos, select) {
  * By default, the full object is copied in the join, but it is possible to 
  * specify the name of the properties to copy as an input parameter.
  * 
- * A new NDDB object breeded, so that further operations can be chained.
+ * A new NDDB object breeded, so that further methods can be chained.
  * 
  * @api private
  * @param {string} key1 First property to compare  
@@ -2334,8 +2340,8 @@ if (J.isNodeJS()) {
  * Manages the _select_ queries of NDDB
  */	
 function QueryBuilder() {
-	this.operations = {};
-	this.registerDefaultOperations();
+	this.operators = {};
+	this.registerDefaultOperators();
 	this.reset();
 }
 
@@ -2357,7 +2363,7 @@ QueryBuilder.prototype.addCondition = function(type, condition, comparator) {
 };
 
 /**
- * ### QueryBuilder.registerOperation
+ * ### QueryBuilder.registerOperator
  * 
  * Registers a _select_ function under an alphanumeric id
  * 
@@ -2372,42 +2378,42 @@ QueryBuilder.prototype.addCondition = function(type, condition, comparator) {
  *  
  * and return a function that execute the desired operation.  
  * 
- * Registering a new operation under an already existing id will 
- * overwrite the old operation.
+ * Registering a new operator under an already existing id will 
+ * overwrite the old operator.
  * 
- * @param {string} op An alphanumeric id standing for the operation
+ * @param {string} op An alphanumeric id
  * @param {function} cb The callback function
  * 
- * @see QueryBuilder.registerDefaultOperations
+ * @see QueryBuilder.registerDefaultOperators
  */
-QueryBuilder.prototype.registerOperation = function(op, cb) {
-	this.operations[op] = cb;
+QueryBuilder.prototype.registerOperator = function(op, cb) {
+	this.operators[op] = cb;
 };
 
 /**
- * ### QueryBuilder.registerDefaultOperations
+ * ### QueryBuilder.registerDefaultOperators
  * 
- * Register default operations for NDDB
+ * Register default operators for NDDB
  * 
  */
-QueryBuilder.prototype.registerDefaultOperations = function() {
+QueryBuilder.prototype.registerDefaultOperators = function() {
 	
 	// Exists
-	this.operations['E'] = function (d, value, comparator) {
+	this.operators['E'] = function (d, value, comparator) {
 		return function(elem) {
 			if ('undefined' !== typeof J.getNestedValue(d,elem)) return elem;
 		}
 	};
 
 	// (strict) Equals
-	this.operations['=='] = function (d, value, comparator) {
+	this.operators['=='] = function (d, value, comparator) {
 		return function(elem) {
 			if (comparator(elem, value) === 0) return elem;
 		};
 	};
 	
 	// Greater than
-	this.operations['>'] = function (d, value, comparator) {
+	this.operators['>'] = function (d, value, comparator) {
 		return function(elem) {
 			var compared = comparator(elem, value);
 			if (compared === 1 || compared === 0) return elem;
@@ -2415,14 +2421,14 @@ QueryBuilder.prototype.registerDefaultOperations = function() {
 	};
 	
 	// Smaller than
-	this.operations['<'] = function (d, value, comparator) {
+	this.operators['<'] = function (d, value, comparator) {
 		return function(elem) {
 			if (comparator(elem, value) === -1) return elem;
 		};
 	};
 	
 	//  Smaller or equal than
-	this.operations['<='] = function (d, value, comparator) {
+	this.operators['<='] = function (d, value, comparator) {
 		return function(elem) {
 			var compared = comparator(elem, value);
 			if (compared === -1 || compared === 0) return elem;
@@ -2430,7 +2436,7 @@ QueryBuilder.prototype.registerDefaultOperations = function() {
 	};
    
     // Between
-    this.operations['><'] = function (d, value, comparator) {
+    this.operators['><'] = function (d, value, comparator) {
     	return function(elem) {
     		if (comparator(elem, value[0]) > 0 && comparator(elem, value[1]) < 0) {
 	            return elem;
@@ -2438,7 +2444,7 @@ QueryBuilder.prototype.registerDefaultOperations = function() {
     	};
     };
     // Not Between
-    this.operations['<>'] = function (d, value, comparator) {
+    this.operators['<>'] = function (d, value, comparator) {
     	return function(elem) {
 	        if (comparator(elem, value[0]) < 0 && comparator(elem, value[1] > 0)) {
 	            return elem;
@@ -2447,7 +2453,7 @@ QueryBuilder.prototype.registerDefaultOperations = function() {
     };
     
     // In Array
-    this.operations['in'] = function (d, value, comparator) {
+    this.operators['in'] = function (d, value, comparator) {
     	return function(elem) {
 	        if (J.in_array(J.getNestedValue(d,elem), value)) {
 	            return elem;
@@ -2456,7 +2462,7 @@ QueryBuilder.prototype.registerDefaultOperations = function() {
     };
     
     // Not In Array
-    this.operations['!in'] = function (d, value, comparator) {
+    this.operators['!in'] = function (d, value, comparator) {
     	return function(elem) {
 	        if (!J.in_array(J.getNestedValue(d,elem), value)) {
 	            return elem;
@@ -2507,14 +2513,14 @@ QueryBuilder.prototype.reset = function() {
 QueryBuilder.prototype.get = function() {
 	var line, lineLen, f1, f2, f3, type1, type2, i;
 	var query = this.query, pointer = this.pointer;
-	var operations = this.operations;
+	var operators = this.operators;
 	
-	function findCallback(obj, operations) {
+	function findCallback(obj, operators) {
 		var d = obj.d,
 			op = obj.op,
 			value = obj.value,
 			comparator = obj.comparator;
-		return operations[op](d, value, comparator);  
+		return operators[op](d, value, comparator);  
 	};	
 	
 	// Ready to support nested queries, not yet implemented
@@ -2523,12 +2529,12 @@ QueryBuilder.prototype.get = function() {
 		lineLen = line.length; 
 		
 		if (lineLen === 1) {
-			return findCallback(line[0], operations);
+			return findCallback(line[0], operators);
 		}
 		
 		else if (lineLen === 2) {
-			f1 = findCallback(line[0], operations);
-			f2 = findCallback(line[1], operations);
+			f1 = findCallback(line[0], operators);
+			f2 = findCallback(line[1], operators);
 			type1 = line[1].type;
 			
 			switch (type1) {
@@ -2550,9 +2556,9 @@ QueryBuilder.prototype.get = function() {
 		}
 		
 		else if (lineLen === 3) {
-			f1 = findCallback(line[0], operations);
-			f2 = findCallback(line[1], operations);
-			f3 = findCallback(line[2], operations);
+			f1 = findCallback(line[0], operators);
+			f2 = findCallback(line[1], operators);
+			f3 = findCallback(line[2], operators);
 			type1 = line[1].type;
 			type2 = line[2].type;
 			type1 = type1 + '_' + type2;
@@ -2595,7 +2601,7 @@ QueryBuilder.prototype.get = function() {
 				for (i = lineLen-1 ; i > -1 ; i--) {
 					
 			
-					f = findCallback(line[i], operations);
+					f = findCallback(line[i], operators);
 					type = line[i].type,
 					resOK = 'undefined' !== typeof f(elem);
 					

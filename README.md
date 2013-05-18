@@ -281,6 +281,14 @@ Define a custom indexing function that splits that gives direct access to the it
       I:  {},             // Collection of indexing functions
       log: logFunc,       // Default stdout
       nddb_pointer: 4,    // Set the pointer to element of index 4. 
+      operations: {       // Extends NDDB with a new operator available in select queries
+        '%': function(d, value, comparator){
+              return function(elem) {
+                if ((elem[d] % value) === 0) {
+                  return elem;
+                }
+              }
+      }
     }
     
     var nddb = new NDDB(options);
