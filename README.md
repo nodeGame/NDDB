@@ -347,6 +347,15 @@ node make.nddb.js doc
 
 ## ChangeLog
 
+### 0.7.0
+
+  - More efficient selector engine. 
+  - Select queries can be chained with and, and or methods
+  - Select queries are executed with an execute method
+  - Objects are not maskeraded at insertation (no hidden .nddbid property injected)
+  - Remove method does not remove the elements in parent database
+  - Constructor changed, no parent parameter
+
 ### 0.6.0
 
   - fetch accepts no arguments
