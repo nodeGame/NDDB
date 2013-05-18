@@ -1,47 +1,43 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>NDDB by nodeGame</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
+    <title>Nddb by nodeGame</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
+    <header>
+      <div class="inner">
         <h1>Nddb</h1>
-        <p>Javascript lightweight N-dimensional database</p>
+        <h2>Javascript lightweight N-dimensional database</h2>
+        <a href="https://github.com/nodeGame/NDDB" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
 
-        <p class="view"><a href="https://github.com/nodeGame/NDDB">View the Project on GitHub <small>nodeGame/NDDB</small></a></p>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>NDDB</h1>
 
-
-        <ul>
-          <li><a href="https://github.com/nodeGame/NDDB/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/nodeGame/NDDB/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/nodeGame/NDDB">View On <strong>GitHub</strong></a></li>
-        </ul>
-	<br>
-	<h2>Documentation</h2>
-	<p>
-	   <dl>
-		<dt><a href="./docs/nddb.js.html">API</a></dt>
-		<dt><a href="http://github.com/nodeGame/NDDB/wiki">WIKI</a></dt>
-	   </dl>
-	</p>
-      </header>
-      <section>
-        <h1>NDDB</h1>
+<p><a href="https://travis-ci.org/nodeGame/NDDB"><img src="https://travis-ci.org/nodeGame/NDDB.png?branch=master" alt="Build Status"></a></p>
 
 <p>NDDB provides a simple, lightweight NO-SQL database for node.js and the browser.</p>
 
 <hr><p>NDDB provides a simple, lightweight, NO-SQL object database 
-for node.js and the browser. It depends on <a href="jsus.org">JSUS</a>.</p>
+for node.js and the browser.</p>
+
+<p>The complete NDDB api is available <a href="http://nodegame.github.com/NDDB/docs/nddb.js.html">here</a>.</p>
 
 <p>Allows to define any number of comparator and indexing functions, 
 which are associated to any of the dimensions (i.e. properties) of 
@@ -55,9 +51,6 @@ an hash is produced, and the element is added to one of the indexes.</p>
 
 <p>Additional features are: methods chaining, tagging, and iteration 
 through the entries.</p>
-
-<p>NDDB is work in progress. Currently, the following methods are
-implemented:</p>
 
 <ul>
 <li>
@@ -89,10 +82,17 @@ implemented:</p>
 </ul>
 </li>
 <li>
-<p>Fetching</p>
+<p>Selecting</p>
 
 <ul>
-<li>fetch, fetchArray, fetchKeyArray</li>
+<li>select, and, or</li>
+</ul>
+</li>
+<li>
+<p>Fetching and transformation</p>
+
+<ul>
+<li>fetch, fetchArray, fetchKeyArray, fetchValues, fetchSubObj</li>
 </ul>
 </li>
 <li>
@@ -131,13 +131,15 @@ implemented:</p>
 </ul>
 </li>
 <li>
-<p>Updating</p>
+<p>Event listener / emitter</p>
 
 <ul>
-<li>Update must be performed manually after a selection</li>
+<li>on, off, emit</li>
 </ul>
 </li>
-</ul><h2>Usage</h2>
+</ul><p>Different build files available in the build directory.</p>
+
+<h2>Usage</h2>
 
 <p>Create an instance of NDDB</p>
 
@@ -156,7 +158,8 @@ implemented:</p>
 
 <p>Import a collection of items</p>
 
-<div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="p">[</span>
+<div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="nx">painter</span><span class="o">:</span> <span class="s2">"Dali"</span><span class="p">,</span>
             <span class="nx">title</span><span class="o">:</span> <span class="s2">"Portrait of Paul Eluard"</span><span class="p">,</span>
@@ -203,15 +206,29 @@ implemented:</p>
 <div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'portrait'</span><span class="p">);</span> <span class="c1">// 1 item</span>
 </pre></div>
 
-<p>Select all paintings from Dali that are before 1928</p>
+<p>Fetch all paintings from Dali that are before 1928</p>
 
 <div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'painter'</span><span class="p">,</span> <span class="s1">'='</span><span class="p">,</span> <span class="s1">'Dali'</span><span class="p">)</span>
-      <span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'year'</span><span class="p">,</span> <span class="s1">'&lt;'</span><span class="p">,</span> <span class="mi">1928</span><span class="p">);</span> <span class="c1">// 1 item</span>
+      <span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="s1">'year'</span><span class="p">,</span> <span class="s1">'&lt;'</span><span class="p">,</span> <span class="mi">1928</span><span class="p">);</span>
+      <span class="p">.</span><span class="nx">execute</span><span class="p">()</span> 
+      <span class="p">.</span><span class="nx">fetch</span><span class="p">();</span> <span class="c1">// 1 item</span>
 </pre></div>
 
-<p>Select all paintings of the beginning of XX's century</p>
+<p>Fetch all paintings of the beginning of XX's century</p>
 
-<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'year'</span><span class="p">,</span> <span class="s1">'&gt;&lt;'</span><span class="p">,</span> <span class="p">[</span><span class="mi">1900</span><span class="p">,</span> <span class="mi">1910</span><span class="p">]);</span> <span class="c1">// 2 items    </span>
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'year'</span><span class="p">,</span> <span class="s1">'&gt;&lt;'</span><span class="p">,</span> <span class="p">[</span><span class="mi">1900</span><span class="p">,</span> <span class="mi">1910</span><span class="p">])</span>
+      <span class="p">.</span><span class="nx">execute</span><span class="p">()</span>
+      <span class="p">.</span><span class="nx">fetch</span><span class="p">();</span> <span class="c1">// 2 items    </span>
+</pre></div>
+
+<p>Fetch separately all the painters and all the dates of execution of the paintings</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">'year'</span><span class="p">,</span> <span class="s1">'&gt;&lt;'</span><span class="p">,</span> <span class="p">[</span><span class="mi">1900</span><span class="p">,</span> <span class="mi">1910</span><span class="p">])</span>
+      <span class="p">.</span><span class="nx">execute</span><span class="p">()</span> 
+      <span class="p">.</span><span class="nx">fetchValues</span><span class="p">([</span><span class="s1">'painter'</span><span class="p">,</span> <span class="s1">'title'</span><span class="p">]);</span>
+
+<span class="c1">// { painter: [ 'Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet' ],</span>
+<span class="c1">//   year: [ 0, 1929, 1927, 1906, 1891, 1863 ] }</span>
 </pre></div>
 
 <h2>Advanced commands</h2>
@@ -248,7 +265,7 @@ implemented:</p>
 <div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="s1">'painter'</span><span class="p">);</span> <span class="c1">// Picasso is always listed first</span>
 </pre></div>
 
-<p>Define a custom index (hash) function for the name of the painter, which splits the inserted items according to the;</p>
+<p>Define a custom hash function that splits the inserted items according to the name of the painter;</p>
 
 <div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">h</span><span class="p">(</span><span class="s1">'painter'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">)</span> <span class="k">return</span> <span class="kc">undefined</span><span class="p">;</span>
@@ -264,9 +281,32 @@ implemented:</p>
     <span class="nx">db</span><span class="p">.</span><span class="nx">painter</span><span class="p">.</span><span class="nx">Dali</span>     <span class="c1">// NDDB with 2 elements in db</span>
 </pre></div>
 
+<p>Listen on the <code>insert</code> event and modify the inserted items by adding an external index to them;</p>
+
+<div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kd">function</span> <span class="nx">getMyId</span><span class="p">(){</span> <span class="k">return</span> <span class="nx">id</span><span class="o">++</span><span class="p">;</span> <span class="p">};</span>
+
+    <span class="nx">db</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'insert'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">o</span><span class="p">.</span><span class="nx">painter</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">getMyId</span><span class="p">();</span>
+    <span class="p">});</span>
+</pre></div>
+
+<p>Define a custom indexing function that splits that gives direct access to the items of the database;</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">i</span><span class="p">(</span><span class="s1">'pid'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="nx">db</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">pid</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">name</span><span class="p">;</span> <span class="c1">// Picasso    </span>
+
+</pre></div>
+
 <h2>Example of Configuration object</h2>
 
-<div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">logFunc</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">logFunc</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">if</span> <span class="p">(</span><span class="nx">level</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">txt</span><span class="p">);</span>
       <span class="p">}</span>
@@ -281,8 +321,17 @@ implemented:</p>
       <span class="p">},</span>
       <span class="nx">C</span><span class="o">:</span>  <span class="p">{},</span>             <span class="c1">// Collection of comparator functions</span>
       <span class="nx">H</span><span class="o">:</span>  <span class="p">{},</span>             <span class="c1">// Collection of hashing functions</span>
+      <span class="nx">I</span><span class="o">:</span>  <span class="p">{},</span>             <span class="c1">// Collection of indexing functions</span>
       <span class="nx">log</span><span class="o">:</span> <span class="nx">logFunc</span><span class="p">,</span>       <span class="c1">// Default stdout</span>
       <span class="nx">nddb_pointer</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>    <span class="c1">// Set the pointer to element of index 4. </span>
+      <span class="nx">operations</span><span class="o">:</span> <span class="p">{</span>       <span class="c1">// Extends NDDB with a new operator available in select queries</span>
+        <span class="s1">'%'</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">){</span>
+              <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">((</span><span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">]</span> <span class="o">%</span> <span class="nx">value</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                <span class="p">}</span>
+              <span class="p">}</span>
+      <span class="p">}</span>
     <span class="p">}</span>
 
     <span class="kd">var</span> <span class="nx">nddb</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
@@ -293,16 +342,19 @@ implemented:</p>
     <span class="nx">nddb</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
 </pre></div>
 
-<h2>Save and load from file</h2>
+<h2>Save and load from file or to localStorage</h2>
 
-<p>Only in the node.js environment, it is possible to save the state of the database to a file and load it afterwards.</p>
+<p>In the node.js environment, it is possible to save the state of the database to a file and load it afterwards.</p>
 
-<div class="highlight"><pre>   <span class="c1">// database exists and items inserted </span>
+<div class="highlight"><pre>
+   <span class="c1">// database exists and items inserted </span>
    <span class="nx">db</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="s1">'./db.out'</span><span class="p">);</span>
 
    <span class="kd">var</span> <span class="nx">db2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
    <span class="nx">db2</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="s1">'./db.out'</span><span class="p">);</span>
 </pre></div>
+
+<p>The above command are valid also in the browser environment if <a href="https://github.com/shakty/shelf.js">Shelf.js</a> is loaded. A string id instead of the path to a file must be given instead.</p>
 
 <h2>Test</h2>
 
@@ -334,7 +386,48 @@ $ npm test # will run the test suite against nddb.js
 
 <h2>ChangeLog</h2>
 
-<h3>0.3.0</h3>
+<h3>0.7.0</h3>
+
+<ul>
+<li>More efficient selector engine. </li>
+<li>Select queries can be chained with and, and or methods</li>
+<li>Select queries are executed with an execute method</li>
+<li>Objects are not maskeraded at insertation (no hidden .nddbid property injected)</li>
+<li>Remove method does not remove the elements in parent database</li>
+<li>Constructor changed, no parent parameter</li>
+</ul><h3>0.6.0</h3>
+
+<ul>
+<li>fetch accepts no arguments</li>
+<li>fetchValues returns an object containing all the values in the grouped by property</li>
+<li>fetchSubObj</li>
+<li>fetchArray and fetchKeyArray operate only on the first level, and objects in properties are not further flattened</li>
+<li>fetchArray, fetchKeyArray, and fetchValues accept either a string or an array of strings as key-selector parameter</li>
+</ul><h3>0.5.8</h3>
+
+<ul>
+<li>Serialization of functions, null and undefined values</li>
+<li>Removed eval from select queries</li>
+<li>Travis-ci continous integration</li>
+<li>Minor bug fixing</li>
+</ul><h3>0.5.0</h3>
+
+<ul>
+<li>Support for events: 'remove', 'insert'</li>
+<li>NDDB.index(): provides fast access to objects</li>
+<li>NDDB.tag(): accepts also objects</li>
+</ul><h3>0.4.0</h3>
+
+<ul>
+<li>IE compatibility</li>
+<li>Bug fixing</li>
+</ul><h3>0.3.6</h3>
+
+<ul>
+<li>Bug fixing</li>
+<li>NDDB.save beautifies the output by default</li>
+<li>Post install scripts build the libraries</li>
+</ul><h3>0.3.0</h3>
 
 <ul>
 <li>NDDB.skim() and NDDB.keep()</li>
@@ -365,14 +458,26 @@ $ npm test # will run the test suite against nddb.js
 <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
 
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/nodeGame">nodeGame</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/nodeGame/NDDB/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/nodeGame/NDDB/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/nodeGame/NDDB"></a> is maintained by <a href="https://github.com/nodeGame">nodeGame</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
-              <script type="text/javascript">
+
+            <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
