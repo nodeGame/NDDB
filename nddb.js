@@ -2359,13 +2359,26 @@ QueryBuilder.prototype.addCondition = function(type, condition, comparator) {
 /**
  * ### QueryBuilder.registerOperation
  * 
- * Registers a _select_ function with a an alphanumeric string
+ * Registers a _select_ function under an alphanumeric id
  * 
  * When calling `NDDB.select('d','OP','value')` the second parameter (_OP_)
  * will be matched with the callback function specified here.
  * 
- * @param {string} op An alphanumeric string standing for the operation
+ * Callback function must accept three input parameters:
+ * 
+ * 	- d: dimension of comparison
+ *  - value: second-term of comparison
+ *  - comparator: the comparator function as defined by `NDDB.c`
+ *  
+ * and return a function that execute the desired operation.  
+ * 
+ * Registering a new operation under an already existing id will 
+ * overwrite the old operation.
+ * 
+ * @param {string} op An alphanumeric id standing for the operation
  * @param {function} cb The callback function
+ * 
+ * @see QueryBuilder.registerDefaultOperations
  */
 QueryBuilder.prototype.registerOperation = function(op, cb) {
 	this.operations[op] = cb;
@@ -2375,6 +2388,7 @@ QueryBuilder.prototype.registerOperation = function(op, cb) {
  * ### QueryBuilder.registerDefaultOperations
  * 
  * Register default operations for NDDB
+ * 
  */
 QueryBuilder.prototype.registerDefaultOperations = function() {
 	
