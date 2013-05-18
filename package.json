@@ -1,0 +1,36 @@
+{
+  "name": "NDDB",
+  "description": "Javascript lightweight N-dimensional database",
+  "version": "0.7.0",
+  "keywords": [ "db", "no-sql", "cyclic objects", "nddb", "database" ],
+  "author": "Stefano Balietti <futur.dorko@gmail.com>",
+  "licenses": [
+    { "type": "MIT" }
+  ],
+  "dependencies": {
+    "es5-shim": "1.2.10",
+    "shelf.js": ">= 0.3.2",	
+    "commander": "1.0.0",
+    "smoosh": "0.4.0",
+    "JSUS": ">= 0.7.3",
+    "ya-csv": "0.9.2"
+  },
+  "devDependencies": {
+    "docker": "0.2.2",
+    "mocha": ">= 0.3.0",
+    "should": ">= 1.2.1"
+  },
+  "optionalDependencies": {
+    "docker": "0.2.2"
+  },
+  "engines": { "node":  ">=0.2.3" },
+  "main": "nddb.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nodeGame/NDDB.git"
+  },
+  "scripts": {
+    "test": "make test",
+    "prepublish": "node bin/make.js multibuild"
+  }
+}

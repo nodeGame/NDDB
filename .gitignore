@@ -9,3 +9,7 @@ test/NDDB_Test.js
 *.nddb
 
 /nddb2.js
+
+npm-debug.log
+
+_*
