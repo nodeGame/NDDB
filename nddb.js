@@ -12,9 +12,9 @@
  * 
  */
 
-(function (exports, JSUS, store) {
+(function (exports, J, store) {
 
-NDDB.compatibility = JSUS.compatibility();
+NDDB.compatibility = J.compatibility();
 	
 // Expose constructors
 exports.NDDB = NDDB;
@@ -71,7 +71,7 @@ NDDB.retrocycle = function(e) {
 function NDDB (options, db) {                
     options = options || {};
     
-    if (!JSUS) throw new Error('JSUS not found.');
+    if (!J) throw new Error('JSUS not found.');
     
     // ## Public properties
     
@@ -255,7 +255,7 @@ NDDB.prototype._masqueradeDB = function (db) {
  * @param {object} options Optional. Configuration object
  */
 NDDB.prototype._autoUpdate = function (options) {
-	var update = (options) ? JSUS.merge(options, this.__update)
+	var update = (options) ? J.merge(options, this.__update)
 						   : this.__update;
 	
     if (update.pointer) {
@@ -366,7 +366,7 @@ NDDB.prototype.cloneSettings = function () {
     options.tags = 		this.tags;
     options.update = 	this.__update;
     
-    return JSUS.clone(options);
+    return J.clone(options);
 };    
 
 /**
@@ -406,7 +406,7 @@ NDDB.prototype.stringify = function (compressed) {
     this.each(function(e) {
     	// decycle, if possible
     	e = NDDB.decycle(e);
-    	out += JSUS.stringify(e) + ', ';
+    	out += J.stringify(e) + ', ';
     });
     out = out.replace(/, $/,']');
 
@@ -463,8 +463,8 @@ NDDB.prototype.comparator = function (d) {
         if ('undefined' === typeof o1 && 'undefined' === typeof o2) return 0;
         if ('undefined' === typeof o1) return 1;
         if ('undefined' === typeof o2) return -1;        
-        var v1 = JSUS.getNestedValue(d,o1);
-        var v2 = JSUS.getNestedValue(d,o2);
+        var v1 = J.getNestedValue(d,o1);
+        var v2 = J.getNestedValue(d,o2);
 // <!--
 //            NDDB.log(v1);
 //            NDDB.log(v2);
@@ -580,7 +580,7 @@ NDDB.prototype.index = NDDB.prototype.i = function (idx, func) {
 NDDB.prototype.rebuildIndexes = function() {
 	var h = false, i = false;
 	
-	if (!JSUS.isEmpty(this.__H)) {
+	if (!J.isEmpty(this.__H)) {
 		h = true;
 		// Reset current hash-indexes
 		for (var key in this.__H) {
@@ -590,7 +590,7 @@ NDDB.prototype.rebuildIndexes = function() {
 		}
 	}
 	
-	if (!JSUS.isEmpty(this.__I)) {
+	if (!J.isEmpty(this.__I)) {
 		i = true;
 		// Reset current hash-indexes
 		for (var key in this.__I) {
@@ -626,7 +626,7 @@ NDDB.prototype.rebuildIndexes = function() {
  */
 NDDB.prototype._hashIt = function(o) {
   	if (!o) return false;
-	if (JSUS.isEmpty(this.__H)) {
+	if (J.isEmpty(this.__H)) {
 		return false;
 	}
 
@@ -666,7 +666,7 @@ NDDB.prototype._hashIt = function(o) {
  */
 NDDB.prototype._indexIt = function(o) {
   	if (!o) return false;
-	if (JSUS.isEmpty(this.__I)) {
+	if (J.isEmpty(this.__I)) {
 		return false;
 	}
 	
@@ -806,7 +806,7 @@ NDDB.prototype._analyzeQuery = function (d, op, value) {
         }
 
         // Range-queries need an array as third parameter instance of Array
-        if (JSUS.in_array(op,['><', '<>', 'in', '!in'])) {
+        if (J.in_array(op,['><', '<>', 'in', '!in'])) {
         	
             if (!(value instanceof Array)) {
                 NDDB.log('Range-queries need an array as third parameter', 'WARN');
@@ -814,17 +814,17 @@ NDDB.prototype._analyzeQuery = function (d, op, value) {
             }
             if (op === '<>' || op === '><') {
                 
-                value[0] = JSUS.setNestedValue(d, value[0]);
-                value[1] = JSUS.setNestedValue(d, value[1]);
+                value[0] = J.setNestedValue(d, value[0]);
+                value[1] = J.setNestedValue(d, value[1]);
             }
         }
         
-        else if (JSUS.in_array(op, ['>', '==', '>=', '<', '<='])){
+        else if (J.in_array(op, ['>', '==', '>=', '<', '<='])){
         	// Comparison queries need a third parameter
         	if ('undefined' === typeof value) raiseError(d,op,value);
 
         	// Comparison queries need to have the same data structure in the compared object
-            value = JSUS.setNestedValue(d,value);
+            value = J.setNestedValue(d,value);
         }
         
         // other (e.g. user-defined) operators do not have constraints, 
@@ -856,7 +856,7 @@ NDDB.prototype._analyzeQuery = function (d, op, value) {
  *  @see NDDB.fetchValues()
  */
 NDDB.prototype.distinct = function () {
-	return this.breed(JSUS.distinct(this.db));
+	return this.breed(J.distinct(this.db));
 };
 
 /**
@@ -982,7 +982,7 @@ NDDB.prototype.exists = function (o) {
 	if (!o) return false;
 	
 	for (var i = 0 ; i < this.db.length ; i++) {
-		if (JSUS.equals(this.db[i], o)) {
+		if (J.equals(this.db[i], o)) {
 			return true;
 		}
 	}
@@ -1086,7 +1086,7 @@ NDDB.prototype.reverse = function () {
  * @return {NDDB} A a reference to the current instance with shuffled entries
  */
 NDDB.prototype.shuffle = function () {
-    this.db = JSUS.shuffle(this.db);
+    this.db = J.shuffle(this.db);
     return this;
 };
     
@@ -1180,7 +1180,7 @@ NDDB.prototype.update = function (update) {
 	if (!this.db.length || !update) return this;
    	  
 	for (var i = 0; i < this.db.length; i++) {
-		JSUS.mixin(this.db[i], update);
+		J.mixin(this.db[i], update);
     }
 	this.emit('update', this.db);
 	this._autoUpdate();
@@ -1258,7 +1258,7 @@ NDDB.prototype.join = function (key1, key2, pos, select) {
 //            var comparator = JSUS.equals;
 //        }
 // -->	
-    return this._join(key1, key2, JSUS.equals, pos, select);
+    return this._join(key1, key2, J.equals, pos, select);
 };
 
 /**
@@ -1288,7 +1288,7 @@ NDDB.prototype.concat = function (key1, key2, pos, select) {
  * Performs a *left* join across all the entries of the database
  * 
  * The values of two keys (also nested properties are accepted) are compared
- * according to the specified comparator callback, or using JSUS.equals.
+ * according to the specified comparator callback, or using `JSUS.equals`.
  * 
  * If the comparator function returns TRUE, matched entries are appended 
  * as a new property of the matching one. 
@@ -1301,7 +1301,7 @@ NDDB.prototype.concat = function (key1, key2, pos, select) {
  * @api private
  * @param {string} key1 First property to compare  
  * @param {string} key2 Second property to compare
- * @param {function} comparator Optional. A comparator function. Defaults JSUS.equals
+ * @param {function} comparator Optional. A comparator function. Defaults, `JSUS.equals`
  * @param {string} pos Optional. The property under which the join is performed. Defaults 'joined'
  * @param {string|array} select Optional. The properties to copy in the join. Defaults undefined 
  * @return {NDDB} A new database containing the joined entries
@@ -1310,7 +1310,7 @@ NDDB.prototype.concat = function (key1, key2, pos, select) {
 NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
 	if (!key1 || !key2) return this.breed([]);
 	
-    comparator = comparator || JSUS.equals;
+    comparator = comparator || J.equals;
     pos = ('undefined' !== typeof pos) ? pos : 'joined';
     if (select) {
         select = (select instanceof Array) ? select : [select];
@@ -1319,18 +1319,18 @@ NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
     
     for (var i=0; i < this.db.length; i++) {
        
-       foreign_key = JSUS.getNestedValue(key1, this.db[i]);
+       foreign_key = J.getNestedValue(key1, this.db[i]);
        if ('undefined' !== typeof foreign_key) { 
     	   for (var j=i+1; j < this.db.length; j++) {
            
-    		   key = JSUS.getNestedValue(key2, this.db[j]);
+    		   key = J.getNestedValue(key2, this.db[j]);
                
                if ('undefined' !== typeof key) { 
             	   if (comparator(foreign_key, key)) {
 	                    // Inject the matched obj into the
 	                    // reference one
-	                    var o = JSUS.clone(this.db[i]);
-	                    var o2 = (select) ? JSUS.subobj(this.db[j], select) : this.db[j];
+	                    var o = J.clone(this.db[i]);
+	                    var o2 = (select) ? J.subobj(this.db[j], select) : this.db[j];
 	                    o[pos] = o2;
 	                    out.push(o);
             	   }
@@ -1361,7 +1361,7 @@ NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
 NDDB.prototype.split = function (key) {    
     var out = [];
     for (var i=0; i < this.db.length;i++) {
-        out = out.concat(JSUS.split(this.db[i], key));
+        out = out.concat(J.split(this.db[i], key));
     }
     return this.breed(out);
 };
@@ -1427,8 +1427,8 @@ NDDB.prototype.fetchSubObj= function (key) {
 	if (!key) return [];
 	var i, el, out = [];
 	for (i=0; i < this.db.length; i++) {
-	    el = JSUS.subobj(this.db[i], key);
-	    if (!JSUS.isEmpty(el)) out.push(el);
+	    el = J.subobj(this.db[i], key);
+	    if (!J.isEmpty(el)) out.push(el);
     }
     return out;
 };
@@ -1479,14 +1479,14 @@ NDDB.prototype.fetchValues = function(key) {
 	
 	if (typeofkey === 'undefined') {	
 		for (i=0; i < this.db.length; i++) {
-			JSUS.augment(out, this.db[i], JSUS.keys(this.db[i]));
+			J.augment(out, this.db[i], J.keys(this.db[i]));
 		} 
 	}
 	
 	else if (typeofkey === 'string') {
 		out[key] = [];
 		for (i=0; i < this.db.length; i++) {
-			el = JSUS.getNestedValue(key, this.db[i]);
+			el = J.getNestedValue(key, this.db[i]);
 	        if ('undefined' !== typeof el) {
 	        	out[key].push(el);
 	        }
@@ -1495,12 +1495,12 @@ NDDB.prototype.fetchValues = function(key) {
 		
 	}
 		
-	else if (JSUS.isArray(key)) {
-    	out = JSUS.melt(key,JSUS.rep([],key.length)); // object not array  
-        for (i=0; i < this.db.length; i++) {
-        	el = JSUS.subobj(this.db[i], key);
-        	if (!JSUS.isEmpty(el)) {
-            	JSUS.augment(out, el);
+	else if (J.isArray(key)) {
+    	out = J.melt(key, J.rep([], key.length)); // object not array  
+        for ( i = 0 ; i < this.db.length ; i++) {
+        	el = J.subobj(this.db[i], key);
+        	if (!J.isEmpty(el)) {
+            	J.augment(out, el);
             }
         }   
 	}
@@ -1509,41 +1509,40 @@ NDDB.prototype.fetchValues = function(key) {
 };
 
 function getValuesArray(o, key) {
-	return JSUS.obj2Array(o, 1);
+	return J.obj2Array(o, 1);
 };
 
 function getKeyValuesArray(o, key) {
-	return JSUS.obj2KeyedArray(o, 1);
+	return J.obj2KeyedArray(o, 1);
 };
 
 
 function getValuesArray_KeyString(o, key) {
-    var el = JSUS.getNestedValue(key, o);
+    var el = J.getNestedValue(key, o);
     if ('undefined' !== typeof el) {
-        return JSUS.obj2Array(el,1);
+        return J.obj2Array(el,1);
     }
 };
 
 function getValuesArray_KeyArray(o, key) {
-    var el = JSUS.subobj(o, key);
-    if (!JSUS.isEmpty(el)) {
-    	return JSUS.obj2Array(el,1);
+    var el = J.subobj(o, key);
+    if (!J.isEmpty(el)) {
+    	return J.obj2Array(el,1);
 	}
 };
 
 
 function getKeyValuesArray_KeyString(o, key) {
-    var el = JSUS.getNestedValue(key, o);
+    var el = J.getNestedValue(key, o);
     if ('undefined' !== typeof el) {
-        return key.split('.').concat(JSUS.obj2KeyedArray(el));
+        return key.split('.').concat(J.obj2KeyedArray(el));
     }
 };
 
 function getKeyValuesArray_KeyArray(o, key) {
-	var el = JSUS.subobj(o, key);
-    if (!JSUS.isEmpty(el)) {
-        return JSUS.obj2KeyedArray(el);
-    	//return key.split('.').concat(JSUS.obj2KeyedArray(el));
+	var el = J.subobj(o, key);
+    if (!J.isEmpty(el)) {
+        return J.obj2KeyedArray(el);
 	}
 };
 
@@ -1719,13 +1718,13 @@ NDDB.prototype.groupBy = function (key) {
     var groups = [];
     var outs = [];
     for (var i=0; i < this.db.length; i++) {
-        var el = JSUS.getNestedValue(key, this.db[i]);
+        var el = J.getNestedValue(key, this.db[i]);
         if ('undefined' === typeof el) continue;
         // Creates a new group and add entries to it
-        if (!JSUS.in_array(el, groups)) {
+        if (!J.in_array(el, groups)) {
             groups.push(el);
             var out = this.filter(function (elem) {
-                if (JSUS.equals(JSUS.getNestedValue(key, elem), el)) {
+                if (J.equals(J.getNestedValue(key, elem), el)) {
                     return this;
                 }
             });
@@ -1758,7 +1757,7 @@ NDDB.prototype.count = function (key) {
     if ('undefined' === typeof key) return this.db.length;
     var count = 0;
     for (var i = 0; i < this.db.length; i++) {
-        if (JSUS.hasOwnNestedProperty(key, this.db[i])){
+        if (J.hasOwnNestedProperty(key, this.db[i])){
             count++;
         }
     }    
@@ -1782,7 +1781,7 @@ NDDB.prototype.sum = function (key) {
 	if ('undefined' === typeof key) return false;
     var sum = 0;
     for (var i=0; i < this.db.length; i++) {
-        var tmp = JSUS.getNestedValue(key, this.db[i]);
+        var tmp = J.getNestedValue(key, this.db[i]);
         if (!isNaN(tmp)) {
             sum += tmp;
         }
@@ -1808,7 +1807,7 @@ NDDB.prototype.mean = function (key) {
     var sum = 0;
     var count = 0;
     for (var i=0; i < this.db.length; i++) {
-        var tmp = JSUS.getNestedValue(key, this.db[i]);
+        var tmp = J.getNestedValue(key, this.db[i]);
         if (!isNaN(tmp)) { 
             sum += tmp;
             count++;
@@ -1838,7 +1837,7 @@ NDDB.prototype.stddev = function (key) {
     
     var V = 0;
     this.each(function(e){
-        var tmp = JSUS.getNestedValue(key, e);
+        var tmp = J.getNestedValue(key, e);
         if (!isNaN(tmp)) { 
         	V += Math.pow(tmp - mean, 2)
         }
@@ -1865,7 +1864,7 @@ NDDB.prototype.min = function (key) {
 	if ('undefined' === typeof key) return false;
     var min = false;
     for (var i=0; i < this.db.length; i++) {
-        var tmp = JSUS.getNestedValue(key, this.db[i]);
+        var tmp = J.getNestedValue(key, this.db[i]);
         if (!isNaN(tmp) && (tmp < min || min === false)) {
             min = tmp;
         }
@@ -1890,7 +1889,7 @@ NDDB.prototype.max = function (key) {
 	if ('undefined' === typeof key) return false;
     var max = false;
     for (var i=0; i < this.db.length; i++) {
-        var tmp = JSUS.getNestedValue(key, this.db[i]);
+        var tmp = J.getNestedValue(key, this.db[i]);
         if (!isNaN(tmp) && (tmp > max || max === false)) {
             max = tmp;
         }
@@ -1918,8 +1917,8 @@ NDDB.prototype.max = function (key) {
 NDDB.prototype.skim = function (skim) {
     if (!skim) return this;
     return this.breed(this.map(function(e){
-    	var skimmed = JSUS.skim(e, skim); 
-    	if (!JSUS.isEmpty(skimmed)) {
+    	var skimmed = J.skim(e, skim); 
+    	if (!J.isEmpty(skimmed)) {
     		return skimmed;
     	}
     }));
@@ -1944,8 +1943,8 @@ NDDB.prototype.skim = function (skim) {
 NDDB.prototype.keep = function (keep) {
     if (!keep) return this.breed([]);
     return this.breed(this.map(function(e){
-    	var subobj = JSUS.subobj(e, keep);
-    	if (!JSUS.isEmpty(subobj)) {
+    	var subobj = J.subobj(e, keep);
+    	if (!J.isEmpty(subobj)) {
     		return subobj;
     	}
     }));
@@ -1977,7 +1976,7 @@ NDDB.prototype.diff = function (nddb) {
             nddb = nddb.db;
         }
     }
-    return this.breed(JSUS.arrayDiff(this.db, nddb));
+    return this.breed(J.arrayDiff(this.db, nddb));
 };
 
 /**
@@ -2003,7 +2002,7 @@ NDDB.prototype.intersect = function (nddb) {
             var nddb = nddb.db;
         }
     }
-    return this.breed(JSUS.arrayIntersect(this.db, nddb));
+    return this.breed(J.arrayIntersect(this.db, nddb));
 };
 
 // ## Iterator
@@ -2217,7 +2216,7 @@ NDDB.prototype.save = function (file, callback, compress) {
 	compress = compress || false;
 	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!JSUS.isNodeJS()){
+	if (!J.isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
@@ -2267,7 +2266,7 @@ NDDB.prototype.load = function (file, cb, options) {
 	}
 	
 	// Try to save in the browser, e.g. with Shelf.js
-	if (!JSUS.isNodeJS()){
+	if (!J.isNodeJS()){
 		if (!storageAvailable()) {
 			NDDB.log('No support for persistent storage found.', 'ERR');
 			return false;
@@ -2281,7 +2280,7 @@ NDDB.prototype.load = function (file, cb, options) {
 	
 	var loadString = function(s) {
 
-		var items = JSUS.parse(s);
+		var items = J.parse(s);
 		
 		var i;
 		for (i=0; i< items.length; i++) {
@@ -2299,7 +2298,7 @@ NDDB.prototype.load = function (file, cb, options) {
 
 
 //if node
-if (JSUS.isNodeJS()) {   
+if (J.isNodeJS()) {   
 	require('./external/cycle.js');		
 	var fs = require('fs'),
 		csv = require('ya-csv');
@@ -2401,7 +2400,7 @@ QueryBuilder.prototype.registerDefaultOperations = function() {
 	// Exists
 	this.operations['E'] = function (d, value, comparator) {
 		return function(elem) {
-			if ('undefined' !== typeof JSUS.getNestedValue(d,elem)) return elem;
+			if ('undefined' !== typeof J.getNestedValue(d,elem)) return elem;
 		}
 	};
 
@@ -2455,7 +2454,7 @@ QueryBuilder.prototype.registerDefaultOperations = function() {
     // In Array
     this.operations['in'] = function (d, value, comparator) {
     	return function(elem) {
-	        if (JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
+	        if (J.in_array(J.getNestedValue(d,elem), value)) {
 	            return elem;
 	        }
     	};
@@ -2464,7 +2463,7 @@ QueryBuilder.prototype.registerDefaultOperations = function() {
     // Not In Array
     this.operations['!in'] = function (d, value, comparator) {
     	return function(elem) {
-	        if (!JSUS.in_array(JSUS.getNestedValue(d,elem), value)) {
+	        if (!J.in_array(J.getNestedValue(d,elem), value)) {
 	            return elem;
 	        }
     	};
