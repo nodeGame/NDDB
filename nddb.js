@@ -202,12 +202,15 @@ NDDB.prototype.init = function(options) {
 /**
  * ### NDDB.globalCompare
  * 
- * Function used for comparing two items in the database
+ * Dummy compare function
  * 
- * By default, elements are sorted according to their 
- * internal id (FIFO). Override to change.
+ * Used to sort elements in the database
  * 
- * Returns
+ * By default, if both elements are not `undefined`, 
+ * the first object is considered to preceeds the 
+ * second.
+ * 
+ * Override to define a proper compare function, returning:
  * 
  *  - 0 if the objects are the same
  *  - a positive number if o2 precedes o1 
@@ -222,26 +225,7 @@ NDDB.prototype.globalCompare = function(o1, o2) {
     if ('undefined' === typeof o1 && 'undefined' === typeof o2) return 0;
     if ('undefined' === typeof o2) return -1;  
     if ('undefined' === typeof o1) return 1;
-    return 0;
-};
-
-/**
- * ### NDDB._masqueradeDB
- *
- * Masquerades a whole array and returns it
- * 
- * @see NDDB._masquerade
- * @api private
- * @param {array} db Array of items to masquerade
- * 
- */
-NDDB.prototype._masqueradeDB = function (db) {
-    if (!db) return [];
-    var out = [];
-    for (var i = 0; i < db.length; i++) {
-        out[i] = this._masquerade(db[i], out);
-    }
-    return out;
+    return -1;
 };
 
 /**
@@ -284,7 +268,6 @@ NDDB.prototype.importDB = function (db) {
         this.insert(db[i]);
     }
     // <!-- Check this
-    //this.db = this.db.concat(this._masqueradeDB(db));
     //this._autoUpdate();
     // -->
 };
