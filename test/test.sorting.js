@@ -99,7 +99,7 @@ describe('NDDB Sorting', function(){
         });
         
         it('should have Dali\'s Barcelonese Mannequin second', function() {
-            var s = db.get(1); // 0-indexed
+            var s = db.db[1]; // 0-indexed
             s.should.have.property('painter', 'Dali');
             s.should.have.property('title', 'Barcelonese Mannequin');
         });

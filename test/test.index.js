@@ -87,7 +87,7 @@ var indexPainter = function(o) {
 }
 
 
-db.i('painter', indexPainter);
+db.index('painter', indexPainter);
 //db.i('foo_painter', indexPainter);
 
 db.init({update:
@@ -118,7 +118,7 @@ describe('NDDB Indexing Operations:', function() {
     	
         it('should create the special indexes', function() {
             db.painter.should.exist;
-            JSUS.size(db.painter).should.be.eql(indexable.length);
+            db.painter.size().should.be.eql(indexable.length);
         });
         
     });
@@ -137,7 +137,9 @@ describe('NDDB Indexing Operations:', function() {
     
     describe('Elements updated in the index should be updated in the db', function() {
     	before(function(){
-    		db.painter[5].painter = 'M.A.N.E.T.';
+    		db.painter.update(5, {
+    			painter: 'M.A.N.E.T.'
+    		});
     	});
 
     	it('updated property \'painter\' should be reflected in the index', function() {
