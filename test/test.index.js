@@ -95,6 +95,8 @@ db.init({update:
 			}
 });
 
+var tmp;
+
 
 describe('NDDB Indexing Operations:', function() {
     
@@ -130,9 +132,9 @@ describe('NDDB Indexing Operations:', function() {
     		j.painter = 'JSUS';
     	});
     	
-    	
     	it('updated property \'painter\' should be reflected in the index', function() {
-    		//db.painter[0].painter.should.be.eql('JSUS');
+    		db.painter.get(1).painter.should.be.eql('JSUS');
+    		
         });
     });
     
@@ -147,7 +149,7 @@ describe('NDDB Indexing Operations:', function() {
     		db.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(1);
         });
     });
-    
+
     describe('Rebuilding the indexes multiple times should not change them', function() {
     	before(function(){
     		db.rebuildIndexes();
@@ -156,6 +158,20 @@ describe('NDDB Indexing Operations:', function() {
 
     	it('updated property \'painter\' should be reflected in the index', function() {
     		db.painter.size().should.be.eql(indexable.length);
+        });
+    });
+    
+    describe('Elements removed from the index are removed also in the main db', function() {
+    	before(function(){
+    		tmp = db.painter.pop(5);
+    		console.log(tmp)
+    	});
+    	
+    	it('removed element should be \'M.A.N.E.T.\'', function() {
+    		tmp.painter.should.be.eql('M.A.N.E.T.');
+        });
+    	it('element should be removed from db too', function() {
+    		db.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(0);
         });
     });
     

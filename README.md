@@ -256,7 +256,17 @@ Define a custom indexing function that gives fast, direct access to the items of
     });
     
     db.rebuildIndexes();
-    db.pid[0].name; // Picasso    
+    
+    db.pid.get(0).name; // Picasso
+    
+    db.pid.update(0, {
+      comment: "Good job Pablo!"
+    });
+    
+    db.selexec('comment').count(); // 1
+    
+    var picasso = db.pid.pop(0);
+    db.length; //(-1)
 
 ```  
 
@@ -349,6 +359,19 @@ node make.nddb.js doc
 ```
 
 ## ChangeLog
+
+### 0.8.0
+
+  - New faster and more powerful indexing engine
+  - Indexes are now objects with own methods: `#get()`, `#update()`, `#pop()`, `#size()`
+  - Support for multiple _views_ on the database
+  - `#comparator()` becomes `#getComparator()`, and `#compare()` becomes `#comparator()`
+  - Deprecated `c`,`h`,`i`; use human readable `comparator`, `hash`, `index` from now on!
+  - `#current()` replaces the old `#get()`
+  - `#get()` always returns the element at the specified ordinal position in the database
+  - Callback functions of hash and index functions must always be specified
+  - Hash functions creates NDDB instances of constructor
+  
 
 ### 0.7.2
 
