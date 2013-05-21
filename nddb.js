@@ -113,12 +113,16 @@ function NDDB (options, db) {
     this.__C = {};
     
     // ### __H
-    // List of hashing functions
+    // List of hash functions
     this.__H = {};
     
     // ### __I
-    // List of hashing functions
+    // List of index functions
     this.__I = {};
+    
+    // ### __I
+    // List of view functions
+    this.__V = {};
     
     // ### __update
     // Auto update options container
@@ -169,6 +173,10 @@ NDDB.prototype.init = function(options) {
 	
 	if (options.I) {
 		this.__I = options.I;
+	}
+	
+	if (options.V) {
+		this.__V = options.V;
 	}
 	
 	if (options.tags) {
@@ -351,6 +359,7 @@ NDDB.prototype.cloneSettings = function () {
     options.H = 		this.__H;
     options.I = 		this.__I;
     options.C = 		this.__C;
+    options.V = 		this.__V;
     options.tags = 		this.tags;
     options.update = 	this.__update;
     options.hooks = 	this.hooks;
@@ -504,30 +513,7 @@ NDDB.prototype._isValidIndex = function (idx) {
 	return true;
 };
 
-/**
- * ### NDDB.hash | NDDB.h
- *
- * Registers a new hashing function
- * 
- * Hashing functions creates nested NDDB database 
- * where objects are automatically added 
- * 
- * If no function is specified Object.toString is used.
- * 
- * @param {string} idx The name of index
- * @param {function} func The hashing function
- * @return {boolean} TRUE, if registration was successful
- * 
- * @see NDDB.isReservedWord
- * @see NDDB.rebuildIndexes
- * 
- */
-NDDB.prototype.hash = NDDB.prototype.h = function (idx, func) {
-	if (!this._isValidIndex(idx)) return false;
-	this.__H[idx] = func || Object.toString;
-	this[idx] = {};
-	return true;
-};
+
 
 
 /**
@@ -535,10 +521,15 @@ NDDB.prototype.hash = NDDB.prototype.h = function (idx, func) {
  *
  * Registers a new indexing function
  * 
- * Hashing functions automatically creates indexes 
- * to have direct access to objects
+ * Indexing functions give fast direct access to the 
+ * entries of the dataset.
  * 
- * If no function is specified Object.toString is used.
+ * A new object `NDDB[idx]` is created, whose properties 
+ * are the elements indexed by the function.
+ * 
+ * An indexing function must return a _string_ with a unique name of  
+ * the property under which the entry will registered, or _undefined_ if
+ * the entry does not need to be indexed.
  * 
  * @param {string} idx The name of index
  * @param {function} func The hashing function
@@ -549,59 +540,169 @@ NDDB.prototype.hash = NDDB.prototype.h = function (idx, func) {
  * 
  */
 NDDB.prototype.index = NDDB.prototype.i = function (idx, func) {
-	if (!this._isValidIndex(idx)) return false;
-	this.__I[idx] = func || Object.toString;
-	this[idx] = {};
+	if (!func || !this._isValidIndex(idx)) return false;
+	this.__I[idx] = func, this[idx] = {};
 	return true;
 };
 
+/**
+ * ### NDDB.view
+ *
+ * Registers a new view function
+ * 
+ * View functions create a _view_ on the database that
+ * excludes automatically some of the entries.
+ * 
+ * A nested NDDB dataset is created as `NDDB[idx]`, containing 
+ * all the items that the callback function returns. If the 
+ * callback returns _undefined_ the entry will be ignored.
+ * 
+ * @param {string} idx The name of index
+ * @param {function} func The hashing function
+ * @return {boolean} TRUE, if registration was successful
+ * 
+ * @see NDDB.hash
+ * @see NDDB.isReservedWord
+ * @see NDDB.rebuildIndexes
+ * 
+ */
+NDDB.prototype.view = function (idx, func) {
+	if (!func || !this._isValidIndex(idx)) return false;
+	this.__V[idx] = func, this[idx] = new this.constructor();
+	return true;
+};
 
+/**
+ * ### NDDB.hash | NDDB.h
+ *
+ * Registers a new hashing function
+ * 
+ * Hash functions create an index containing multiple sub-_views_.
+ * 
+ * A new object `NDDB[idx]` is created, whose properties 
+ * are _views_ on the original dataset.
+ * 
+ * An hashing function must return a _string_ representing the 
+ * view under which the entry will be added, or _undefined_ if
+ * the entry does not belong to any view of the index.
+ * 
+ * @param {string} idx The name of index
+ * @param {function} func The hashing function
+ * @return {boolean} TRUE, if registration was successful
+ * 
+ * @see NDDB.view
+ * @see NDDB.isReservedWord
+ * @see NDDB.rebuildIndexes
+ * 
+ */
+NDDB.prototype.hash = NDDB.prototype.h = function (idx, func) {
+	if (!func || !this._isValidIndex(idx)) return false;
+	this.__H[idx] = func, this[idx] = {};
+	return true;
+};
 
 /**
  * ### NDDB.rebuildIndexes
  *
- * Resets and rebuilds all the database indexes 
+ * Rebuilds all the database indexes, hashs, and views 
  * 
- * Indexes are defined by the hashing functions
- * 
+ * @see NDDB.index
+ * @see NDDB.view
  * @see NDDB.hash
  */
 NDDB.prototype.rebuildIndexes = function() {
-	var h = false, i = false;
+	var h = !(J.isEmpty(this.__H)),
+		i = !(J.isEmpty(this.__I)),
+		v = !(J.isEmpty(this.__V));
 	
-	if (!J.isEmpty(this.__H)) {
-		h = true;
-		// Reset current hash-indexes
-		for (var key in this.__H) {
-			if (this.__H.hasOwnProperty(key)) {
-				this[key] = {};
-			}
+	var cb;
+	if (!h && !i && !v) return;
+	
+	if (h && !i && !v) {
+		cb = this._hashIt;
+	}
+	else if (!h && i && !v) {
+		cb = this._indexIt;
+	}
+	else if (!h && !i && v) {
+		cb = this._viewIt;
+	}
+	else if (h && i && !v) {
+		cb = function(o) {
+			this._hashIt(o);
+			this._indexIt(o);
+		};
+	}
+	else if (!h && i && v) {
+		cb = function(o) {
+			this._indexIt(o);
+			this._viewIt(o);
+		};
+	}
+	else if (h && !i && v) {
+		cb = function(o) {
+			this._hashIt(o);
+			this._viewIt(o);
+		};
+	}
+	else {
+		cb = function(o) {
+			this._indexIt(o);
+			this._hashIt(o);
+			this._viewIt(o);
+		};
+	}
+	
+	this.each(cb);
+};
+
+/**
+ * ### NDDB._hashIt
+ *
+ * Indexes an element
+ * 
+ * @param {object} o The element to index
+ */
+NDDB.prototype._indexIt = function(o) {
+  	if (!o || J.isEmpty(this.__I)) return;
+	
+	var func, id, index;
+	
+	for (var key in this.__I) {
+		if (this.__I.hasOwnProperty(key)) {
+			func = this.__I[key];	    			
+			index = func(o);
+
+			if ('undefined' === typeof index) continue;
+			
+			if (!this[key]) this[key] = {};
+			this[key][index] = o;
 		}
 	}
+};
+
+/**
+ * ### NDDB._viewIt
+ *
+ * Adds an element to a view
+ * 
+ * @param {object} o The element to index
+ */
+NDDB.prototype._viewIt = function(o) {
+  	if (!o || J.isEmpty(this.__V)) return;
 	
-	if (!J.isEmpty(this.__I)) {
-		i = true;
-		// Reset current hash-indexes
-		for (var key in this.__I) {
-			if (this.__I.hasOwnProperty(key)) {
-				this[key] = {};
-			}
+	var func, id, index;
+	
+	for (var key in this.__V) {
+		if (this.__V.hasOwnProperty(key)) {
+			func = this.__V[key];
+			index = func(o);
+			if ('undefined' === typeof index) continue;
+			
+			if (!this[key]) this[key] = new this.constructor();
+			this[key].insert(o);
 		}
 	}
-	
-	if (h && !i) {
-		this.each(this._hashIt);
-	}
-	else if (!h && i) {
-		this.each(this._indexIt);
-	}
-	else if (h && i) {
-		this.each(function(o){
-			this.hashIt(o);
-			this.indexIt(o);
-		});
-	}
-	
 };
 
 /**
@@ -619,60 +720,20 @@ NDDB.prototype._hashIt = function(o) {
 		return false;
 	}
 
-	var h = null,
-		id = null,
-		hash = null;
+	var h, id, hash;
 	
 	for (var key in this.__H) {
 		if (this.__H.hasOwnProperty(key)) {
 			h = this.__H[key];	    			
 			hash = h(o);
 
-			if ('undefined' === typeof hash) {
-				continue;
-			}
-
-			if (!this[key]) {
-				this[key] = {};
-			}
+			if ('undefined' === typeof hash) continue;
+			if (!this[key]) this[key] = {};
 			
 			if (!this[key][hash]) {
-				this[key][hash] = new NDDB();
+				this[key][hash] = new this.constructor();
 			}
 			this[key][hash].insert(o);		
-		}
-	}
-};
-
-/**
- * ### NDDB._hashIt
- *
- * Indexes an element
- * 
- * @param {object} o The element to index
- * @return {boolean} TRUE, if insertion to an index was successful
- * 
- */
-NDDB.prototype._indexIt = function(o) {
-  	if (!o) return false;
-	if (J.isEmpty(this.__I)) {
-		return false;
-	}
-	
-	var func = null,
-		id = null,
-		index = null;
-	
-	for (var key in this.__I) {
-		if (this.__I.hasOwnProperty(key)) {
-			func = this.__I[key];	    			
-			index = func(o);
-
-			if ('undefined' === typeof index) {
-				continue;
-			}
-			if (!this[key]) this[key] = {};
-			this[key][index] = o;
 		}
 	}
 };

@@ -12,7 +12,7 @@ var clients = ['a','b','c','d'];
 var states = [1,2,3,4];
 var ids = ['z','x'];//['z','x','c','v'];
 
-var hashable = [
+var art_items = [
 			 {
 				 painter: "Jesus",
 				 title: "Tea in the desert",
@@ -47,7 +47,7 @@ var hashable = [
                           
 ];
 
-var not_hashable = [
+var not_art_items = [
                     {
                     	car: "Ferrari",
                     	model: "F10",
@@ -65,7 +65,7 @@ var not_hashable = [
                     },
 ];
 
-var nitems = hashable.length + not_hashable.length;
+var nitems = art_items.length + not_art_items.length;
 
 
 var element = {
@@ -75,44 +75,45 @@ var element = {
 };
 
 
-var hashPainter = function(o) {
+var paintersView = function(o) {
 	if (!o) return undefined;
 	return o.painter;
 }
 
+var carsView = function(o) {
+	if (!o) return undefined;
+	return o.car;
+}
 
-db.hash('painter', hashPainter);
-db.hash('foo_painter', hashPainter);
+db.view('art', paintersView);
+db.view('cars', carsView);
 
-db.init({update:
-			{
-			indexes: true,
-			}
-});
+db.init({update:{ indexes: true, } });
 
 
-describe('NDDB Hashing Operations:', function() {
+describe('NDDB Views Operations:', function() {
     
-	describe('Importing not-hashable items', function() {
+	describe('Importing not-art_items', function() {
     	before(function(){
-    		db.importDB(not_hashable);
+    		db.importDB(not_art_items);
     	});
     	
-        it('should not create the special indexes', function() {
-            db.painter.should.not.exist;
-            db.length.should.eql(not_hashable.length);
+        it('should populate the car view', function() {
+        	('undefined' !== typeof db.cars).should.be.true;
+        	db.cars.length.should.eql(not_art_items.length);
         });
     });
 	
 	
-    describe('Importing hashable items', function() {
+    describe('Importing art_items', function() {
     	before(function(){
-    		db.importDB(hashable);
+    		db.importDB(art_items);
     	});
     	
-        it('should create the special indexes', function() {
-            db.painter.should.exist;
-            db.painter.Monet.length.should.be.eql(2);
+        it('should populate the art view', function() {
+        	('undefined' !== typeof db.art).should.be.true;
+        	db.art.length.should.eql(art_items.length);
+            
         });
         
         it('should increase the length of the database', function() {
@@ -120,34 +121,29 @@ describe('NDDB Hashing Operations:', function() {
         });
     });
 	
-    describe('Elements updated in the db should be updated in the indexes', function() {
+    describe('Elements updated in the db should be updated in the views', function() {
     	before(function(){
-    		var j = db.select('painter', '=', 'Jesus').execute().first();
-    		j.painter = 'JSUS';
+    		var j = db.selexec('painter', '=', 'Jesus').update({
+    			painter: 'JSUS'
+    		});
     	});
     	
     	
     	it('updated property \'painter\' should be reflected in the index', function() {
-    		var j = db.painter.Jesus.first();
-    		j.painter.should.be.eql('JSUS');
+    		db.art.selexec('painter', '=', 'JSUS').count().should.be.eql(1);
+    		
         });
     });
     
-    describe('Elements updated in the index should be updated in the db', function() {
+    describe('Elements updated in the views should be updated in the db', function() {
     	before(function(){
-    		db.painter.Manet.first().painter = 'M.A.N.E.T.';
+    		var j = db.art.selexec('painter', '=', 'JSUS').update({
+    			painter: 'Jesus'
+    		});
     	});
 
     	it('updated property \'painter\' should be reflected in the index', function() {
-    		db.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(1);
-        });
-    });
-    
-    
-    describe('Index should be created regardless if that is the name of a property of the object', function() {
-        it('should create the special indexes', function() {
-            db.foo_painter.should.exist;
-            db.foo_painter.Monet.length.should.be.eql(2);
+    		db.selexec('painter', '=', 'Jesus').count().should.be.eql(1);
         });
     });
     
