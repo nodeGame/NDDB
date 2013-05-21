@@ -43,7 +43,7 @@ Insert an item into the database
 
 ```javascript
     db.insert({
-        painter: "Picasso", `
+        painter: "Picasso",
         title: "Les Demoiselles d'Avignon",
         year: 1907
     });
@@ -174,6 +174,8 @@ Sort all the paintings by painter
 
 ### Views
 
+Splits the database in sub-database, each containing semantically consistent set of entries
+
 ```javascript
   
     // Let us add some cars to our previous database of paintings
@@ -206,8 +208,8 @@ Sort all the paintings by painter
     db.rebuildIndexes();
     
     db.length;          // 9
-    db.art.length;      // 6
-    db.cars.length;     // 3
+    db.art.length;      // NDDB with 6 art entries
+    db.cars.length;     // NDDB with 3 car entries
     
 ```  
 
@@ -232,7 +234,7 @@ Define a custom hash function that creates a new view on each of the painters in
 
 ### Listenting to events
 
-Listen on the `insert` event and modify the inserted items by adding an external index to them;
+Listen to the `insert` event and modify the inserted items by adding an external index to them;
     
 ```javascript
 
@@ -246,7 +248,7 @@ Listen on the `insert` event and modify the inserted items by adding an external
   
 ### Indexes
 
-Define a custom indexing function that gives fast direct access to the items of the database;
+Define a custom indexing function that gives fast, direct access to the items of the database;
     
 ```javascript
     db.index('pid', function(o) {
@@ -279,6 +281,7 @@ Define a custom indexing function that gives fast direct access to the items of 
       C:  {},             // Collection of comparator functions
       H:  {},             // Collection of hashing functions
       I:  {},             // Collection of indexing functions
+      V:  {},             // Collection of view functions
       log: logFunc,       // Default stdout
       nddb_pointer: 4,    // Set the pointer to element of index 4. 
       operators: {       // Extends NDDB with new operators for select queries
