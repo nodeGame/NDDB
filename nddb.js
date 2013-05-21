@@ -1456,15 +1456,14 @@ NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
  * New entries are created and a new NDDB object is
  * breeded to allows method chaining.
  * 
- * @param {string} key The dimension along which splitting the entries
+ * @param {string} key The dimension along which items will be split
  * @return {NDDB} A new database containing the split entries
  * 
- * @see NDDB._split
- * 
+ * @see JSUS.split
  */
 NDDB.prototype.split = function (key) {    
-    var out = [];
-    for (var i=0; i < this.db.length;i++) {
+    var out = [], i;
+    for (i = 0; i < this.db.length; i++) {
         out = out.concat(J.split(this.db[i], key));
     }
     return this.breed(out);

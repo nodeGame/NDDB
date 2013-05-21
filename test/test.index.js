@@ -149,6 +149,18 @@ describe('NDDB Indexing Operations:', function() {
         });
     });
     
+    describe('Rebuilding the indexes multiple times should not change them', function() {
+    	before(function(){
+    		db.rebuildIndexes();
+    		db.rebuildIndexes();
+    	});
+
+    	it('updated property \'painter\' should be reflected in the index', function() {
+    		db.painter.size().should.be.eql(indexable.length);
+        });
+    });
+    
+    
 });
 
 
