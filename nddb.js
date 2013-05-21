@@ -412,7 +412,7 @@ NDDB.prototype.stringify = function (compressed) {
 
 
 /**
- * ### NDDB.compare | NDDB.c 
+ * ### NDDB.comparator
  *
  * Registers a comparator function for dimension d
  * 
@@ -425,7 +425,7 @@ NDDB.prototype.stringify = function (compressed) {
  * @return {boolean} TRUE, if registration was successful
  * 
  */
-NDDB.prototype.compare = NDDB.prototype.c = function (d, comparator) {
+NDDB.prototype.comparator = function (d, comparator) {
     if (!d || !comparator) {
         NDDB.log('Cannot set empty property or empty comparator', 'ERR');
         return false;
@@ -434,8 +434,12 @@ NDDB.prototype.compare = NDDB.prototype.c = function (d, comparator) {
     return true;
 };
 
+// ### NDDB.c
+// @deprecated 
+NDDB.prototype.c = NDDB.prototype.comparator;
+
 /**
- * ### NDDB.comparator
+ * ### NDDB.getComparator
  *
  * Retrieves the comparator function for dimension d.
  *  
@@ -447,7 +451,7 @@ NDDB.prototype.compare = NDDB.prototype.c = function (d, comparator) {
  * 
  * @see NDDB.compare
  */
-NDDB.prototype.comparator = function (d) {
+NDDB.prototype.getComparator = function (d) {
     if ('undefined' !== typeof this.__C[d]) {
     	return this.__C[d]; 
     }
@@ -488,7 +492,6 @@ NDDB.prototype.isReservedWord = function (key) {
 	return (this[key]) ? true : false; 
 };
 
-
 /**
  * ### NDDB._isValidIndex
  *
@@ -512,11 +515,8 @@ NDDB.prototype._isValidIndex = function (idx) {
 	return true;
 };
 
-
-
-
 /**
- * ### NDDB.index | NDDB.i
+ * ### NDDB.index
  *
  * Registers a new indexing function
  * 
@@ -538,11 +538,16 @@ NDDB.prototype._isValidIndex = function (idx) {
  * @see NDDB.rebuildIndexes
  * 
  */
-NDDB.prototype.index = NDDB.prototype.i = function (idx, func) {
+NDDB.prototype.index = function (idx, func) {
 	if (!func || !this._isValidIndex(idx)) return false;
 	this.__I[idx] = func, this[idx] = {};
 	return true;
 };
+
+
+// ### NDDB.i
+// @deprecated
+NDDB.prototype.i = NDDB.prototype.index;
 
 /**
  * ### NDDB.view
@@ -572,7 +577,7 @@ NDDB.prototype.view = function (idx, func) {
 };
 
 /**
- * ### NDDB.hash | NDDB.h
+ * ### NDDB.hash
  *
  * Registers a new hashing function
  * 
@@ -594,11 +599,15 @@ NDDB.prototype.view = function (idx, func) {
  * @see NDDB.rebuildIndexes
  * 
  */
-NDDB.prototype.hash = NDDB.prototype.h = function (idx, func) {
+NDDB.prototype.hash = function (idx, func) {
 	if (!func || !this._isValidIndex(idx)) return false;
 	this.__H[idx] = func, this[idx] = {};
 	return true;
 };
+
+//### NDDB.h
+//@deprecated
+NDDB.prototype.h = NDDB.prototype.hash; 
 
 /**
  * ### NDDB.rebuildIndexes
@@ -965,7 +974,7 @@ NDDB.prototype.and = function (d, op, value) {
 //	else {
 		var condition = this._analyzeQuery(d, op, value);        
 	    if (!condition) return false;
-	    this.query.addCondition('AND', condition, this.comparator(d));
+	    this.query.addCondition('AND', condition, this.getComparator(d));
 //	}			
 	return this;
 };
@@ -992,7 +1001,7 @@ NDDB.prototype.or = function (d, op, value) {
 //	else {
 		var condition = this._analyzeQuery(d, op, value);        
 	    if (!condition) return false;
-	    this.query.addCondition('OR', condition, this.comparator(d));
+	    this.query.addCondition('OR', condition, this.getComparator(d));
 //	}			
 	return this;
 };
@@ -1136,7 +1145,7 @@ NDDB.prototype.reverse = function () {
       var that = this;
       var func = function (a,b) {
         for (var i=0; i < d.length; i++) {
-          var result = that.comparator(d[i]).call(that,a,b);
+          var result = that.getComparator(d[i]).call(that,a,b);
           if (result !== 0) return result;
         }
         return result;
@@ -1145,7 +1154,7 @@ NDDB.prototype.reverse = function () {
     
     // SINGLE dimension
     else {
-      var func = this.comparator(d);
+      var func = this.getComparator(d);
     }
     
     this.db.sort(func);
