@@ -24,54 +24,20 @@ an hash is produced, and the element is added to one of the indexes.
 Additional features are: methods chaining, tagging, and iteration 
 through the entries.
 
+## List of features
 
-  * Sorting and selecting:
-
-     - select, sort, reverse, last, first, limit, distinct, shuffle
- 
-  * Custom callbacks
- 
-     - map, each, filter
- 
-  * Deletion
- 
-     - remove, clear
- 
-  * Advanced operations
- 
-     - split, join, concat
-     
-  * Selecting
-  
-     - select, and, or
- 
-  * Fetching and transformation
- 
-     - fetch, fetchArray, fetchKeyArray, fetchValues, fetchSubObj
- 
-  * Statistics operator
- 
-     - count, max, min, mean, stddev
- 
-  * Diff
- 
-     - diff, intersect
-
-  * Skim
-
-     - skim, keep
- 
-  * Iterator
- 
-     - previous, next, first, last
-
-  * Tagging
- 
-     - tag
-        
-  * Event listener / emitter
-  
-     - on, off, emit
+- Selecting: `select`, `and`, `or`, `selexec`
+- Sorting: `sort`, `reverse`, `last`, `first`, `limit`, `distinct`, `shuffle`
+- Custom callbacks: `map`, `each`, `filter`
+- Deletion: `remove`, `clear`
+- Advanced operations: `split`, `join`, `concat`
+- Fetching and transformations: `fetch`, fetchArray`, `fetchKeyArray`, `fetchValues`, `fetchSubObj`
+- Statistics operator: `count`, `max`, `min`, `mean`, `stddev`
+- Diff: `diff`, `intersect`
+- Skim: `skim`, `keep`
+- Iterator: `previous`, `next`, `first`, `last`
+- Tagging: `tag`
+- Event listener / emitter: `on`, `off`, `emit`
 
 Different build files available in the build directory.
 
@@ -88,7 +54,7 @@ Insert an item into the database
 
 ```javascript
     db.insert({
-        painter: "Picasso",
+        painter: "Picasso", `
         title: "Les Demoiselles d'Avignon",
         year: 1907
     });
