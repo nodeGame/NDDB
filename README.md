@@ -21,25 +21,22 @@ is called, and the database is updated.
 Whenever an object is inserted that matches one of the indexing functions
 an hash is produced, and the element is added to one of the indexes.
 
-Additional features are: methods chaining, tagging, and iteration 
-through the entries.
 
 ## List of features
 
 - Selecting: `select`, `and`, `or`, `selexec`
 - Sorting: `sort`, `reverse`, `last`, `first`, `limit`, `distinct`, `shuffle`
+- Indexing: `index`, `hash`, `comparator`
 - Custom callbacks: `map`, `each`, `filter`
 - Deletion: `remove`, `clear`
 - Advanced operations: `split`, `join`, `concat`
-- Fetching and transformations: `fetch`, fetchArray`, `fetchKeyArray`, `fetchValues`, `fetchSubObj`
+- Fetching and transformations: `fetch`, `fetchArray`, `fetchKeyArray`, `fetchValues`, `fetchSubObj`
 - Statistics operator: `count`, `max`, `min`, `mean`, `stddev`
 - Diff: `diff`, `intersect`
 - Skim: `skim`, `keep`
 - Iterator: `previous`, `next`, `first`, `last`
 - Tagging: `tag`
 - Event listener / emitter: `on`, `off`, `emit`
-
-Different build files available in the build directory.
 
 ## Usage
 
