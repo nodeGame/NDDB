@@ -2159,9 +2159,8 @@ NDDB.prototype.last = function (key) {
  * the latter case, the current valye of `nddb_pointer` 
  * is used to create the reference.
  * 
- * The tag is independent from shuffling and sorting operations.
- * 
- * @TODO: tag should be updated with delete
+ * The tag is independent from sorting and deleting operations,
+ * but changes on update of the elements of the database.
  * 
  * @param {string} tag An alphanumeric id
  * @param {mixed} idx Optional. The reference to the object. Defaults, `nddb_pointer`
@@ -2195,7 +2194,7 @@ NDDB.prototype.tag = function (tag, idx) {
     }
     
     this.tags[tag] = ref;
-    return true;
+    return ref;
 };
 
 /**
@@ -2207,7 +2206,6 @@ NDDB.prototype.tag = function (tag, idx) {
  * @return {object} The object associated with the tag
  * 
  * @see NDDB.tag
- * @status: experimental
  */
 NDDB.prototype.resolveTag = function (tag) {
     if ('undefined' === typeof tag) {

@@ -80,6 +80,28 @@ describe('NDDB Tagging', function() {
                 Object.keys(db.tags).length.should.eql(3);
             });
         });
+        
+        describe('tagging and other operations',function() {
+            it('tag should not change with sorting',function() {
+            	var tagged = db.tag('someone');
+                db.reverse();
+                db.resolveTag('someone').should.be.eql(tagged);
+                db.reverse();
+                db.resolveTag('someone').should.be.eql(tagged);
+            });
+            it('tag should not change with shuffling',function() {
+            	var tagged = db.tag('someone');
+                db.shuffle();
+                db.resolveTag('someone').should.be.eql(tagged);
+            });
+            it('tag should change with update',function() {
+            	db.sort('year');
+            	var tagged = db.tag('someone', 0);
+            	db.selexec('painter','=','Jesus').update({painter: 'JSUS'});
+                db.resolveTag('someone').should.be.eql(tagged);
+            });
+        });
+        
     });
     
 
