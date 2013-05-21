@@ -162,7 +162,8 @@ describe('NDDB Advanced Operation', function() {
 
     describe('#split()',function() {
         before(function() {
-            split_db = db.split('title');            
+            split_db = db.split('title');
+            split_db.rebuildIndexes();
             split_db_2 = db.split('painter');
         });
         describe('splitting titles',function() {

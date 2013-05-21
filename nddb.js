@@ -268,16 +268,18 @@ NDDB.prototype._autoUpdate = function (options) {
 };
 
 
-function nddb_insert(o) {
+function nddb_insert(o, update) {
 	if (o === null) return;
 	var type = typeof(o);
 	if (type === 'undefined') return;
 	if (type === 'string') return;
 	if (type === 'number') return;
 	this.db.push(o);
-	this._indexIt(o, (this.db.length-1));
-	this._hashIt(o);
-	this._viewIt(o);
+	if (update) {
+		this._indexIt(o, (this.db.length-1));
+		this._hashIt(o);
+		this._viewIt(o);
+	}
     this.emit('insert', o);
 }
 
@@ -291,9 +293,9 @@ function nddb_insert(o) {
 NDDB.prototype.importDB = function (db) {
     if (!db) return;
     for (var i = 0; i < db.length; i++) {
-        nddb_insert.call(this, db[i]);
+        nddb_insert.call(this, db[i], this.__update.indexes);
     }
-    this._autoUpdate({indexes: false, cacca: true});
+    this._autoUpdate({indexes: false});
 };
     
 /**
@@ -314,7 +316,7 @@ NDDB.prototype.importDB = function (db) {
  * @see NDDB._insert
  */
 NDDB.prototype.insert = function (o) {
-	nddb_insert.call(this, o)
+	nddb_insert.call(this, o, this.__update.indexes);
     this._autoUpdate({indexes: false});
 };
 
