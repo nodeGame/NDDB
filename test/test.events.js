@@ -76,19 +76,15 @@ describe('NDDB Events', function() {
     describe('#on(\'update\') ',function() {
     	before(function() {
         	copy2 = [];
-        	db.clear(true);
-        	
+        	db = new NDDB();
         	
         	db.on('update', function(o){
         		copy2.push(o);
         	});
         	db.on('update', function(o){
-        		console.log(o)
         		db.tag(o.year, o);
         	});        	
         	db.importDB(items);
-        	console.log(db.tags)
-        	
         	db.selexec('painter', '=', 'Jesus').update({comment: "Was he a painter !?"});
 
         });

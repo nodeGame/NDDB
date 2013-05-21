@@ -1240,7 +1240,7 @@ NDDB.prototype.remove = function () {
 NDDB.prototype.clear = function (confirm) {
     if (confirm) {
         this.db = [];
-        this.tags = [];
+        this.tags = {};
         this.query.reset();
         this.nddb_pointer = 0;
         
@@ -2152,13 +2152,19 @@ NDDB.prototype.last = function (key) {
 /**
  * ### NDDB.tag
  *
- * Registers a tag associated to an id, or the nddb_pointer, or an object
+ * Registers a tag associated to an object
  * 
- * @TODO: tag should be updated with shuffling and sorting
- * operations.
+ * The second parameter can be the index of an object 
+ * in the database, the object itself, or undefined. In 
+ * the latter case, the current valye of `nddb_pointer` 
+ * is used to create the reference.
+ * 
+ * The tag is independent from shuffling and sorting operations.
+ * 
+ * @TODO: tag should be updated with delete
  * 
  * @param {string} tag An alphanumeric id
- * @param {string} idx Optional. The index in the database, or the. Defaults nddb_pointer
+ * @param {mixed} idx Optional. The reference to the object. Defaults, `nddb_pointer`
  * @return {boolean} TRUE, if registration is successful
  * 
  * @see NDDB.resolveTag
@@ -2168,6 +2174,8 @@ NDDB.prototype.tag = function (tag, idx) {
         NDDB.log('Cannot register empty tag.', 'ERR');
         return false;
     }
+    
+//    console.log(tag, idx)
     
     var ref = null, typeofIdx = typeof idx;
     

@@ -151,7 +151,7 @@ describe('NDDB Remove Operations:', function() {
         });
         
         it('should clear all tags',function() {
-            db.tags.length.should.eql(0);
+            JSUS.size(db.tags).should.eql(0);
         });
         
         it('should clear indexes and hashes',function() {
