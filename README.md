@@ -330,8 +330,8 @@ NDDB relies on [mocha](http://visionmedia.github.com/mocha/) and [should.js](htt
 Create your customized build of NDDB using the make file in the `bin` directory
 
 ```javascript
-node make.nddb.js build // Standard build, about 28Kb minified
-node make.nddb.js build -a -o nddb-full // Full build, about 40Kb minified
+node make.nddb.js build // Standard build, 
+node make.nddb.js build -a -o nddb-full // Full build
 ```
 
 ### Help

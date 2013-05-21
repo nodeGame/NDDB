@@ -3,8 +3,7 @@
  * 
  * MIT Licensed
  * 
- * NDDB provides a simple, lightweight, NO-SQL object database 
- * for node.js and the browser.
+ * NDDB is a powerful and versatile object database for node.js and the browser.
  *
  * See README.md for help.
  * 
