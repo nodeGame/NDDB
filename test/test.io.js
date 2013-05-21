@@ -124,7 +124,7 @@ var hashPainter = function(o) {
 	return o.painter;
 }
 
-db.h('painter', hashPainter);
+db.hash('painter', hashPainter);
 
 var filename = './db.out';
 

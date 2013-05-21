@@ -88,7 +88,6 @@ var indexPainter = function(o) {
 
 
 db.index('painter', indexPainter);
-//db.i('foo_painter', indexPainter);
 
 db.init({update:
 			{

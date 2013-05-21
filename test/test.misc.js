@@ -45,7 +45,7 @@ describe('NDDB Misc Operation', function() {
 
     before(function() {
         db.importDB(items);
-        db.h('painter', function(o) {
+        db.hash('painter', function(o) {
             if (!o) return undefined;
             return o.painter;
         });
