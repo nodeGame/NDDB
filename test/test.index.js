@@ -123,6 +123,8 @@ describe('NDDB Indexing Operations:', function() {
         
     });
 	
+    
+    
     describe('Elements updated in the db should be updated in the indexes', function() {
     	before(function(){
     		var j = db.select('painter', '=', 'Jesus').execute().first();

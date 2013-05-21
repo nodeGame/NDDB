@@ -253,8 +253,7 @@ NDDB.prototype.globalCompare = function(o1, o2) {
  * @param {object} options Optional. Configuration object
  */
 NDDB.prototype._autoUpdate = function (options) {
-	var update = (options) ? J.merge(options, this.__update)
-						   : this.__update;
+	var update = options ? J.merge(this.__update, options) : this.__update;
 	
     if (update.pointer) {
         this.nddb_pointer = this.db.length-1;
@@ -264,9 +263,22 @@ NDDB.prototype._autoUpdate = function (options) {
     }
     
     if (update.indexes) {
-    	console.log('a')
         this.rebuildIndexes();
     }
+};
+
+
+function nddb_insert(o) {
+	if (o === null) return;
+	var type = typeof(o);
+	if (type === 'undefined') return;
+	if (type === 'string') return;
+	if (type === 'number') return;
+	this.db.push(o);
+	this._indexIt(o, (this.db.length-1));
+	this._hashIt(o);
+	this._viewIt(o);
+    this.emit('insert', o);
 }
 
 /**
@@ -274,26 +286,14 @@ NDDB.prototype._autoUpdate = function (options) {
  * 
  * Imports an array of items at once
  * 
- * Updates to the indexes - if any - are executed after the
- * whole collection has been imported.
- * 
- * If an error occurs during the procedure the variable
- * `this.__update` must be re-initialized manually, and indexes
- * rebuilt.
- * 
  * @param {array} db Array of items to import
  */
 NDDB.prototype.importDB = function (db) {
     if (!db) return;
-    // Disable indexing: do it only after the last item
-    var oldUpdate = this.__update;
-    this.__update = {};
     for (var i = 0; i < db.length; i++) {
-        this.insert(db[i]);
+        nddb_insert.call(this, db[i]);
     }
-    // Re-set the current updating policies
-    this.__update = oldUpdate;    
-    this._autoUpdate();
+    this._autoUpdate({indexes: false, cacca: true});
 };
     
 /**
@@ -314,21 +314,7 @@ NDDB.prototype.importDB = function (db) {
  * @see NDDB._insert
  */
 NDDB.prototype.insert = function (o) {
-	if (o === null) return;
-	var type = typeof(o);
-	if (type === 'undefined') return;
-	if (type === 'string') return;
-	if (type === 'number') return;
- 
-	this.db.push(o);
-	this.emit('insert', o);
-    this._autoUpdate();
-    return;
-    
-	this._indexIt(o, (this.db.length-1));
-	this._hashIt(o);
-	this._viewIt(o);
-    this.emit('insert', o);
+	nddb_insert.call(this, o)
     this._autoUpdate({indexes: false});
 };
 
@@ -548,7 +534,7 @@ NDDB.prototype._isValidIndex = function (idx) {
  */
 NDDB.prototype.index = function (idx, func) {
 	if (!func || !this._isValidIndex(idx)) return false;
-	this.__I[idx] = func, this[idx] = new NDDBIndex(idx, this.db);
+	this.__I[idx] = func, this[idx] = new NDDBIndex(idx, this);
 	return true;
 };
 
@@ -688,7 +674,6 @@ NDDB.prototype.rebuildIndexes = function() {
  */
 NDDB.prototype._indexIt = function(o, dbidx) {
   	if (!o || J.isEmpty(this.__I)) return;
-	console.log(o, dbidx)
 	var func, id, index;
 	
 	for (var key in this.__I) {
@@ -698,7 +683,7 @@ NDDB.prototype._indexIt = function(o, dbidx) {
 
 			if ('undefined' === typeof index) continue;
 			
-			if (!this[key]) this[key] = new NDDBIndex(key, this.db);
+			if (!this[key]) this[key] = new NDDBIndex(key, this);
 			this[key]._add(index, dbidx);
 		}
 	}
@@ -2805,9 +2790,9 @@ QueryBuilder.prototype.get = function() {
  * @param {string} The name of the index
  * @param {array} The reference to the original database
  */	
-function NDDBIndex(idx, db) {
+function NDDBIndex(idx, nddb) {
 	this.idx = idx;
-	this.db = db;
+	this.nddb = nddb;
 	this.resolve = {};
 }
 
@@ -2863,7 +2848,7 @@ NDDBIndex.prototype.size = function () {
  * @see NDDBIndex.update
  */
 NDDBIndex.prototype.get = function (idx) {
-    return this.db[this.resolve[idx]];
+    return this.nddb.db[this.resolve[idx]];
 };
 
 /**
@@ -2882,9 +2867,9 @@ NDDBIndex.prototype.pop = function (idx) {
 	var o, dbidx;
 	dbidx = this.resolve[idx];
 	if ('undefined' === typeof dbidx) return false;
-	o = this.db.splice[dbidx,1];
-	this.emit('remove', o);
-	this._autoUpdate();
+	o = this.nddb.db.splice[dbidx,1];
+	this.nddb.emit('remove', o);
+	this.nddb._autoUpdate();
 	return o;
 };
 
@@ -2904,11 +2889,10 @@ NDDBIndex.prototype.update = function (idx, update) {
 	var o, dbidx;
 	dbidx = this.resolve[idx];
 	if ('undefined' === typeof dbidx) return false;
-	o = this.db[dbidx];
-	console.log(o)
+	o = this.nddb.db[dbidx];
 	J.mixin(o, update);
-	this.emit('update', o);
-	this._autoUpdate();
+	this.nddb.emit('update', o);
+	this.nddb._autoUpdate();
 	return o;
 };
 
