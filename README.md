@@ -37,6 +37,7 @@ an hash is produced, and the element is added to one of the indexes.
 - Iterator: `previous`, `next`, `first`, `last`
 - Tagging: `tag`
 - Event listener / emitter: `on`, `off`, `emit`
+- Saving and Loading: `save`, `load`, `load.csv`
 
 ## Usage
 
