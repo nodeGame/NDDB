@@ -761,21 +761,6 @@ NDDB.prototype._hashIt = function(o) {
 	}
 };
 
-/**
- * ### NDDB.setPrimaryIndex
- * 
- * Sets the primary index for default get operations
- * 
- */
-NDDB.prototype.setPrimaryIndex = function(d) {
-	if (!this.__I[d]) {
-		NDDB.log('Index ' + d + ' not found', 'ERR');
-		return false;
-	}
-	
-	this.primaryIndex = d;
-};
-
 // ## Event emitter / listener
 
 /**
