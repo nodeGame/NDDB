@@ -1226,7 +1226,12 @@ NDDB.prototype.remove = function () {
 /**
  * ### NDDB.clear
  *
- * Removes all entries from the database. 
+ * Removes all volatile data
+ * 
+ * Removes all entries, indexes, hashes and tags, 
+ * and resets the current query selection  
+ * 
+ * Hooks, indexing, comparator, and hash functions are not deleted.
  * 
  * Requires an additional parameter to confirm the deletion.
  * 
@@ -1235,7 +1240,20 @@ NDDB.prototype.remove = function () {
 NDDB.prototype.clear = function (confirm) {
     if (confirm) {
         this.db = [];
-        this._autoUpdate();
+        this.tags = [];
+        this.query.reset();
+        this.nddb_pointer = 0;
+        
+        var i;
+        for (i in this.__H) {
+        	if (this[i]) delete this[i]
+        }
+        for (i in this.__C) {
+        	if (this[i]) delete this[i]
+        }
+        for (var i in this.__I) {
+        	if (this[i]) delete this[i]
+        }
     }
     else {
         NDDB.log('Do you really want to clear the current dataset? Please use clear(true)', 'WARN');
@@ -2134,7 +2152,7 @@ NDDB.prototype.last = function (key) {
 /**
  * ### NDDB.tag
  *
- * Registers a tag associated to an internal id.
+ * Registers a tag associated to an id, or the nddb_pointer, or an object
  * 
  * @TODO: tag should be updated with shuffling and sorting
  * operations.
