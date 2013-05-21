@@ -2,25 +2,14 @@
 
 [![Build Status](https://travis-ci.org/nodeGame/NDDB.png?branch=master)](https://travis-ci.org/nodeGame/NDDB)
 
-NDDB provides a simple, lightweight NO-SQL database for node.js and the browser.
+NDDB is a powerful and versatile object database for node.js and the browser.
 
 ---
 
-NDDB provides a simple, lightweight, NO-SQL object database 
-for node.js and the browser.
+NDDB (N-Dimensional DataBase) supports indexes, views, joins, basic statistics, custom operations, 
+saving and loading from file system and browser localStorage and much more.
 
-The complete NDDB api is available [here](http://nodegame.github.com/NDDB/docs/nddb.js.html).
-
-Allows to define any number of comparator and indexing functions, 
-which are associated to any of the dimensions (i.e. properties) of 
-the objects stored in the database. 
-
-Whenever a comparison is needed, the corresponding comparator function 
-is called, and the database is updated.
-
-Whenever an object is inserted that matches one of the indexing functions
-an hash is produced, and the element is added to one of the indexes.
-
+Developer-friendly thanks to an easy api, detailed documentation, and full unit tests coverage.
 
 ## List of features
 
@@ -28,7 +17,7 @@ an hash is produced, and the element is added to one of the indexes.
 - Sorting: `sort`, `reverse`, `last`, `first`, `limit`, `distinct`, `shuffle`
 - Indexing: `index`, `hash`, `comparator`
 - Custom callbacks: `map`, `each`, `filter`
-- Deletion: `remove`, `clear`
+- Updating and Deletion: `update`, `remove`, `clear`
 - Advanced operations: `split`, `join`, `concat`
 - Fetching and transformations: `fetch`, `fetchArray`, `fetchKeyArray`, `fetchValues`, `fetchSubObj`
 - Statistics operator: `count`, `max`, `min`, `mean`, `stddev`
@@ -38,6 +27,8 @@ an hash is produced, and the element is added to one of the indexes.
 - Tagging: `tag`
 - Event listener / emitter: `on`, `off`, `emit`
 - Saving and Loading: `save`, `load`, `load.csv`
+
+The complete NDDB api documentation is available [here](http://nodegame.github.com/NDDB/docs/nddb.js.html).
 
 ## Usage
 
@@ -140,9 +131,9 @@ Fetch separately all the painters and all the dates of execution of the painting
 //   year: [ 0, 1929, 1927, 1906, 1891, 1863 ] }
 ```
 
-
-
 ## Advanced commands
+
+### Sorting
 
 Define a global comparator function that sorts all the entries chronologically
 
@@ -181,10 +172,51 @@ Sort all the paintings by painter
     db.sort('painter'); // Picasso is always listed first
 ```
 
-Define a custom hash function that splits the inserted items according to the name of the painter;
+### Views
+
+```javascript
+  
+    // Let us add some cars to our previous database of paintings
+    var not_art_items = [
+        {
+          car: "Ferrari",
+          model: "F10",
+          speed: 350,
+        },
+        {
+          car: "Fiat",
+          model: "500",
+          speed: 100,
+        },
+        {
+          car: "BMW",
+          model: "Z4",
+          speed: 250,
+        },
+    ];
+  
+    db.view('art', function(o) {
+      return o.painter;
+    });
+    
+    db.view('cars', function(o) {
+      return o.car;
+    });
+      
+    db.rebuildIndexes();
+    
+    db.length;          // 9
+    db.art.length;      // 6
+    db.cars.length;     // 3
+    
+```  
+
+### Hashing
+
+Define a custom hash function that creates a new view on each of the painters in the database;
     
 ```javascript
-    db.h('painter', function(o) {
+    db.hash('painter', function(o) {
         if (!o) return undefined;
         return o.painter;
     });
@@ -198,6 +230,8 @@ Define a custom hash function that splits the inserted items according to the na
     db.painter.Dali     // NDDB with 2 elements in db
 ```
 
+### Listenting to events
+
 Listen on the `insert` event and modify the inserted items by adding an external index to them;
     
 ```javascript
@@ -210,10 +244,12 @@ Listen on the `insert` event and modify the inserted items by adding an external
     });
 ```  
   
+### Indexes
+
 Define a custom indexing function that gives fast direct access to the items of the database;
     
 ```javascript
-    db.i('pid', function(o) {
+    db.index('pid', function(o) {
         return o.id;
     });
     
@@ -221,9 +257,9 @@ Define a custom indexing function that gives fast direct access to the items of 
     db.pid[0].name; // Picasso    
 
 ```  
-  
 
-## Example of Configuration object
+
+## Example of a configuration object
 
 ```javascript
 
@@ -235,7 +271,7 @@ Define a custom indexing function that gives fast direct access to the items of 
 
     var options = {
       tags:  {},          // Collection of tags
-      update: {           // On every insert and remove:
+      update: {           // On every insert, remove and update:
         indexes:  true,   // updates the indexes, if any  
         sort:     true,   // sorts the items of the database 
         pointer:  true,   // moves the iterator pointer to the last inserted element
