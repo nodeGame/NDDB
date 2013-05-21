@@ -87,7 +87,8 @@ function NDDB (options, db) {
     // The list of hooks and associated callbacks
     this.hooks = {
 		insert: [],
-    	remove: []	
+    	remove: [],
+    	update: []
     };
     
     // ### nddb_pointer
@@ -179,7 +180,7 @@ NDDB.prototype.init = function(options) {
 	}
     
     if (options.hooks) {
-    	this.hooks = options.hook;
+    	this.hooks = options.hooks;
     }
     
     if (options.update) {
@@ -352,6 +353,7 @@ NDDB.prototype.cloneSettings = function () {
     options.C = 		this.__C;
     options.tags = 		this.tags;
     options.update = 	this.__update;
+    options.hooks = 	this.hooks;
     
     return J.clone(options);
 };    
@@ -748,7 +750,9 @@ NDDB.prototype.off = function(event, func) {
  * 
  */
 NDDB.prototype.emit = function(event, o) {
-	if (!event || !this.hooks[event] || !this.hooks[event].length) return;
+	if (!event || !this.hooks[event] || !this.hooks[event].length) {		
+		return;
+	}
 	
 	for (var i=0; i < this.hooks[event].length; i++) {
 		this.hooks[event][i].call(this, o);
@@ -933,6 +937,30 @@ NDDB.prototype.or = function (d, op, value) {
 	return this;
 };
 
+
+/**
+ * ### NDDB.selexec
+ * 
+ * Short hand for select and execute methods
+ * 
+ * Adds a single select condition and executes it.
+ *  
+ * @param {string} d The dimension of comparison
+ * @param {string} op Optional. The operation to perform
+ * @param {mixed} value Optional. The right-hand element of comparison
+ * @return {NDDB} A new NDDB instance with the currently selected items in memory
+ * 
+ * @see NDDB.select
+ * @see NDDB.and
+ * @see NDDB.or
+ * @see NDDB.execute
+ * @see NDDB.fetch
+ * 
+ */
+NDDB.prototype.selexec = function (d, op, value) {
+    return this.select(d, op, value).execute();
+};
+
 /**
  * ### NDDB.execute
  * 
@@ -944,9 +972,10 @@ NDDB.prototype.or = function (d, op, value) {
  * @param {string} d The dimension of comparison
  * @param {string} op Optional. The operation to perform
  * @param {mixed} value Optional. The right-hand element of comparison
- * @return {NDDB} A new NDDB instance with the currently selected items in memory
+ * @return {NDDB} A new NDDB instance with the previously selected items in the db 
  * 
  * @see NDDB.select
+ * @see NDDB.selexec
  * @see NDDB.and
  * @see NDDB.or
  */
@@ -1168,8 +1197,9 @@ NDDB.prototype.update = function (update) {
    	  
 	for (var i = 0; i < this.db.length; i++) {
 		J.mixin(this.db[i], update);
+		this.emit('update', this.db[i]);
     }
-	this.emit('update', this.db);
+	
 	this._autoUpdate();
 	return this;
 };  
