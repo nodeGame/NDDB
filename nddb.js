@@ -87,7 +87,8 @@ function NDDB (options, db) {
     // The list of hooks and associated callbacks
     this.hooks = {
 		insert: [],
-    	remove: []	
+    	remove: [],
+    	update: []
     };
     
     // ### nddb_pointer
@@ -179,7 +180,7 @@ NDDB.prototype.init = function(options) {
 	}
     
     if (options.hooks) {
-    	this.hooks = options.hook;
+    	this.hooks = options.hooks;
     }
     
     if (options.update) {
@@ -352,6 +353,7 @@ NDDB.prototype.cloneSettings = function () {
     options.C = 		this.__C;
     options.tags = 		this.tags;
     options.update = 	this.__update;
+    options.hooks = 	this.hooks;
     
     return J.clone(options);
 };    
@@ -748,7 +750,9 @@ NDDB.prototype.off = function(event, func) {
  * 
  */
 NDDB.prototype.emit = function(event, o) {
-	if (!event || !this.hooks[event] || !this.hooks[event].length) return;
+	if (!event || !this.hooks[event] || !this.hooks[event].length) {		
+		return;
+	}
 	
 	for (var i=0; i < this.hooks[event].length; i++) {
 		this.hooks[event][i].call(this, o);
@@ -933,6 +937,30 @@ NDDB.prototype.or = function (d, op, value) {
 	return this;
 };
 
+
+/**
+ * ### NDDB.selexec
+ * 
+ * Shorthand for select and execute methods
+ * 
+ * Adds a single select condition and executes it.
+ *  
+ * @param {string} d The dimension of comparison
+ * @param {string} op Optional. The operation to perform
+ * @param {mixed} value Optional. The right-hand element of comparison
+ * @return {NDDB} A new NDDB instance with the currently selected items in memory
+ * 
+ * @see NDDB.select
+ * @see NDDB.and
+ * @see NDDB.or
+ * @see NDDB.execute
+ * @see NDDB.fetch
+ * 
+ */
+NDDB.prototype.selexec = function (d, op, value) {
+    return this.select(d, op, value).execute();
+};
+
 /**
  * ### NDDB.execute
  * 
@@ -944,9 +972,10 @@ NDDB.prototype.or = function (d, op, value) {
  * @param {string} d The dimension of comparison
  * @param {string} op Optional. The operation to perform
  * @param {mixed} value Optional. The right-hand element of comparison
- * @return {NDDB} A new NDDB instance with the currently selected items in memory
+ * @return {NDDB} A new NDDB instance with the previously selected items in the db 
  * 
  * @see NDDB.select
+ * @see NDDB.selexec
  * @see NDDB.and
  * @see NDDB.or
  */
@@ -1168,8 +1197,9 @@ NDDB.prototype.update = function (update) {
    	  
 	for (var i = 0; i < this.db.length; i++) {
 		J.mixin(this.db[i], update);
+		this.emit('update', this.db[i]);
     }
-	this.emit('update', this.db);
+	
 	this._autoUpdate();
 	return this;
 };  
@@ -1196,7 +1226,12 @@ NDDB.prototype.remove = function () {
 /**
  * ### NDDB.clear
  *
- * Removes all entries from the database. 
+ * Removes all volatile data
+ * 
+ * Removes all entries, indexes, hashes and tags, 
+ * and resets the current query selection  
+ * 
+ * Hooks, indexing, comparator, and hash functions are not deleted.
  * 
  * Requires an additional parameter to confirm the deletion.
  * 
@@ -1205,7 +1240,20 @@ NDDB.prototype.remove = function () {
 NDDB.prototype.clear = function (confirm) {
     if (confirm) {
         this.db = [];
-        this._autoUpdate();
+        this.tags = {};
+        this.query.reset();
+        this.nddb_pointer = 0;
+        
+        var i;
+        for (i in this.__H) {
+        	if (this[i]) delete this[i]
+        }
+        for (i in this.__C) {
+        	if (this[i]) delete this[i]
+        }
+        for (var i in this.__I) {
+        	if (this[i]) delete this[i]
+        }
     }
     else {
         NDDB.log('Do you really want to clear the current dataset? Please use clear(true)', 'WARN');
@@ -2104,13 +2152,18 @@ NDDB.prototype.last = function (key) {
 /**
  * ### NDDB.tag
  *
- * Registers a tag associated to an internal id.
+ * Registers a tag associated to an object
  * 
- * @TODO: tag should be updated with shuffling and sorting
- * operations.
+ * The second parameter can be the index of an object 
+ * in the database, the object itself, or undefined. In 
+ * the latter case, the current valye of `nddb_pointer` 
+ * is used to create the reference.
+ * 
+ * The tag is independent from sorting and deleting operations,
+ * but changes on update of the elements of the database.
  * 
  * @param {string} tag An alphanumeric id
- * @param {string} idx Optional. The index in the database, or the. Defaults nddb_pointer
+ * @param {mixed} idx Optional. The reference to the object. Defaults, `nddb_pointer`
  * @return {boolean} TRUE, if registration is successful
  * 
  * @see NDDB.resolveTag
@@ -2120,6 +2173,8 @@ NDDB.prototype.tag = function (tag, idx) {
         NDDB.log('Cannot register empty tag.', 'ERR');
         return false;
     }
+    
+//    console.log(tag, idx)
     
     var ref = null, typeofIdx = typeof idx;
     
@@ -2139,7 +2194,7 @@ NDDB.prototype.tag = function (tag, idx) {
     }
     
     this.tags[tag] = ref;
-    return true;
+    return ref;
 };
 
 /**
@@ -2151,7 +2206,6 @@ NDDB.prototype.tag = function (tag, idx) {
  * @return {object} The object associated with the tag
  * 
  * @see NDDB.tag
- * @status: experimental
  */
 NDDB.prototype.resolveTag = function (tag) {
     if ('undefined' === typeof tag) {

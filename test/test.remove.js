@@ -80,11 +80,6 @@ var hashPainter = function(o) {
 	return o.painter;
 }
 
-//db.h('painter', hashPainter);
-//
-//db.importDB(not_hashable);
-//db.importDB(hashable);
-
 describe('NDDB Remove Operations:', function() {
 
 	before(function(){
@@ -142,20 +137,26 @@ describe('NDDB Remove Operations:', function() {
         });
     
     });
-       
-
 	
 	describe('#clear()',function() {
 
         before(function() {
             db.importDB(hashable);
+            db.tag('A', db.first());
+            db.clear(true);
         });
 
         it('should clear all items',function() {
-            var before = db.db.length;
-            db.clear(true);
-            db.db.length.should.not.eql(before);
-        })
+            db.db.length.should.eql(0);
+        });
+        
+        it('should clear all tags',function() {
+            JSUS.size(db.tags).should.eql(0);
+        });
+        
+        it('should clear indexes and hashes',function() {
+            ('undefined' === typeof db.painter).should.be.true;
+        });
     });
 
 });

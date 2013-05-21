@@ -40,7 +40,7 @@ var items = [
              
 ];
 
-var copy = null;
+var copy = null, copy2 = null;
 
 
 
@@ -68,6 +68,38 @@ describe('NDDB Events', function() {
                  painter: "Manet",
                  title: "Olympia",
                  year: 1863
+            });
+        });
+
+    });
+    
+    describe('#on(\'update\') ',function() {
+    	before(function() {
+        	copy2 = [];
+        	db = new NDDB();
+        	
+        	db.on('update', function(o){
+        		copy2.push(o);
+        	});
+        	db.on('update', function(o){
+        		db.tag(o.year, o);
+        	});        	
+        	db.importDB(items);
+        	db.selexec('painter', '=', 'Jesus').update({comment: "Was he a painter !?"});
+
+        });
+       
+        it('copy should have length 1', function() {
+        	copy2.length.should.be.eql(1);
+        });
+
+        it('should add a tag for each updated element', function() {
+        	J.size(db.tags).should.eql(1);
+            db.tags['0'].should.eql({ 
+            	painter: 'Jesus',
+            	title: 'Tea in the desert',
+            	year: 0,
+            	comment: 'Was he a painter !?' 
             });
         });
 

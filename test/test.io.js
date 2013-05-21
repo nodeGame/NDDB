@@ -129,7 +129,7 @@ db.h('painter', hashPainter);
 var filename = './db.out';
 
 var deleteIfExist = function(cb) {
-	if (path.existsSync(filename)) {
+	if (JSUS.existsSync(filename)) {
 		fs.unlinkSync(filename);
 		if (cb) cb();
 	}
@@ -153,7 +153,7 @@ var testSaveLoad = function(items, compareToImport, compareToLoad) {
 		});
 		
 		it('should create a dump file', function() {
-			path.existsSync(filename).should.be.true;
+			JSUS.existsSync(filename).should.be.true;
 		});
 		
 		it('original database should be unchanged', function() {

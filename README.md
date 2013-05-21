@@ -51,7 +51,7 @@ through the entries.
  
   * Statistics operator
  
-     - count, max, min, mean
+     - count, max, min, mean, stddev
  
   * Diff
  
@@ -246,7 +246,7 @@ Listen on the `insert` event and modify the inserted items by adding an external
     });
 ```  
   
-Define a custom indexing function that splits that gives direct access to the items of the database;
+Define a custom indexing function that gives fast direct access to the items of the database;
     
 ```javascript
     db.i('pid', function(o) {
@@ -281,7 +281,7 @@ Define a custom indexing function that splits that gives direct access to the it
       I:  {},             // Collection of indexing functions
       log: logFunc,       // Default stdout
       nddb_pointer: 4,    // Set the pointer to element of index 4. 
-      operations: {       // Extends NDDB with a new operator available in select queries
+      operators: {       // Extends NDDB with new operators for select queries
         '%': function(d, value, comparator){
               return function(elem) {
                 if ((elem[d] % value) === 0) {
@@ -346,6 +346,14 @@ node make.nddb.js doc
 ```
 
 ## ChangeLog
+
+### 0.7.2
+
+  - #selexec() shorthand  for select().execute()
+  - Fixed bug on emit('update')
+  - #tag() returns the tagged element
+  - #clear() removes all volatile data, not just the entries in the database
+  - Minor doc improvements
 
 ### 0.7.0
 
