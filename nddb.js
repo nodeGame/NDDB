@@ -941,7 +941,7 @@ NDDB.prototype.or = function (d, op, value) {
 /**
  * ### NDDB.selexec
  * 
- * Short hand for select and execute methods
+ * Shorthand for select and execute methods
  * 
  * Adds a single select condition and executes it.
  *  
