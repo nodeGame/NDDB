@@ -605,11 +605,57 @@ NDDB.prototype.hash = function (idx, func) {
 //@deprecated
 NDDB.prototype.h = NDDB.prototype.hash; 
 
+
+/**
+ * ### NDDB.resetIndexes
+ *
+ * Resets all the database indexes, hashs, and views 
+ * 
+ * @see NDDB.rebuildIndexes
+ * @see NDDB.index
+ * @see NDDB.view
+ * @see NDDB.hash
+ * @see NDDB._indexIt
+ * @see NDDB._viewIt
+ * @see NDDB._hashIt
+ */
+NDDB.prototype.resetIndexes = function(options) {
+	var reset = options || J.merge({
+		h: true,
+		v: true,
+		i: true
+	}, options);
+	var key;
+	if (reset.h) {
+	  for (key in this.__H) {
+		  if (this.__H.hasOwnProperty(key)) {
+			  this[key] = {};
+		  }
+	  }
+	}
+	if (reset.v) {
+	  for (key in this.__V) {
+		  if (this.__V.hasOwnProperty(key)) {
+			  this[key] = new this.constructor();
+		  }
+	  }
+	}
+	if (reset.v) {
+	  for (key in this.__I) {
+		  if (this.__I.hasOwnProperty(key)) {
+			  this[key] = new NDDBIndex(key, this);
+		  }
+	  }
+	}
+
+};
+
 /**
  * ### NDDB.rebuildIndexes
  *
  * Rebuilds all the database indexes, hashs, and views 
  * 
+ * @see NDDB.resetIndexes
  * @see NDDB.index
  * @see NDDB.view
  * @see NDDB.hash
@@ -625,10 +671,8 @@ NDDB.prototype.rebuildIndexes = function() {
 	var cb, idx;
 	if (!h && !i && !v) return;
 	
-	// TODO: Reset current indexes
-//    for (var key in this.__H) {
-//    	if (this.__H.hasOwnProperty(key)) this[key] = {}
-//    }
+	// Reset current indexes
+	this.resetIndexes({h: h, v: v, i: i});
 	
 	if (h && !i && !v) {
 		cb = this._hashIt;
@@ -2260,8 +2304,6 @@ NDDB.prototype.tag = function (tag, idx) {
         NDDB.log('Cannot register empty tag.', 'ERR');
         return false;
     }
-    
-//    console.log(tag, idx)
     
     var ref = null, typeofIdx = typeof idx;
     

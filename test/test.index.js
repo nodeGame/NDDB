@@ -89,6 +89,7 @@ var indexPainter = function(o) {
 
 db.index('painter', indexPainter);
 db.view('pview', indexPainter);
+db.hash('phash', indexPainter);
 db.init( { update: { indexes: true } } );
 
 var tmp;
@@ -136,8 +137,8 @@ describe('NDDB Indexing Operations:', function() {
     
     describe('Rebuilding the indexes multiple times', function() {
     	before(function(){
-//    		db.rebuildIndexes();
-//    		db.rebuildIndexes();
+    		db.rebuildIndexes();
+    		db.rebuildIndexes();
     	});
 
     	it('should not change the index', function() {
@@ -145,6 +146,9 @@ describe('NDDB Indexing Operations:', function() {
         });
     	it('should not change the view', function() {
     		db.pview.length.should.be.eql(indexable.length);
+        });
+    	it('should not change the hash', function() {
+    		JSUS.size(db.phash).should.be.eql(indexable.length);
         });
     });
     
@@ -180,7 +184,6 @@ describe('NDDB Indexing Operations:', function() {
     		db.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(0);
         });
     	it('should remove element from the view too', function() {
-    		console.log(db.pview.db.length)
     		db.pview.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(0);
         });
     });
