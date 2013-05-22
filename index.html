@@ -32,22 +32,12 @@
 
 <p><a href="https://travis-ci.org/nodeGame/NDDB"><img src="https://travis-ci.org/nodeGame/NDDB.png?branch=master" alt="Build Status"></a></p>
 
-<p>NDDB provides a simple, lightweight NO-SQL database for node.js and the browser.</p>
+<p>NDDB is a powerful and versatile object database for node.js and the browser.</p>
 
-<hr><p>NDDB provides a simple, lightweight, NO-SQL object database 
-for node.js and the browser.</p>
+<hr><p>NDDB (N-Dimensional DataBase) supports indexes, views, joins, basic statistics, custom operations, 
+saving and loading from file system and browser localStorage and much more.</p>
 
-<p>The complete NDDB api is available <a href="http://nodegame.github.com/NDDB/docs/nddb.js.html">here</a>.</p>
-
-<p>Allows to define any number of comparator and indexing functions, 
-which are associated to any of the dimensions (i.e. properties) of 
-the objects stored in the database. </p>
-
-<p>Whenever a comparison is needed, the corresponding comparator function 
-is called, and the database is updated.</p>
-
-<p>Whenever an object is inserted that matches one of the indexing functions
-an hash is produced, and the element is added to one of the indexes.</p>
+<p>Developer-friendly thanks to an easy api, detailed documentation, and full unit tests coverage.</p>
 
 <h2>List of features</h2>
 
@@ -60,7 +50,7 @@ an hash is produced, and the element is added to one of the indexes.</p>
 </li>
 <li>Custom callbacks: <code>map</code>, <code>each</code>, <code>filter</code>
 </li>
-<li>Deletion: <code>remove</code>, <code>clear</code>
+<li>Updating and Deletion: <code>update</code>, <code>remove</code>, <code>clear</code>
 </li>
 <li>Advanced operations: <code>split</code>, <code>join</code>, <code>concat</code>
 </li>
@@ -80,7 +70,9 @@ an hash is produced, and the element is added to one of the indexes.</p>
 </li>
 <li>Saving and Loading: <code>save</code>, <code>load</code>, <code>load.csv</code>
 </li>
-</ul><h2>Usage</h2>
+</ul><p>The complete NDDB api documentation is available <a href="http://nodegame.github.com/NDDB/docs/nddb.js.html">here</a>.</p>
+
+<h2>Usage</h2>
 
 <p>Create an instance of NDDB</p>
 
@@ -91,7 +83,7 @@ an hash is produced, and the element is added to one of the indexes.</p>
 <p>Insert an item into the database</p>
 
 <div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span>
-        <span class="nx">painter</span><span class="o">:</span> <span class="s2">"Picasso"</span><span class="p">,</span> <span class="err">`</span>
+        <span class="nx">painter</span><span class="o">:</span> <span class="s2">"Picasso"</span><span class="p">,</span>
         <span class="nx">title</span><span class="o">:</span> <span class="s2">"Les Demoiselles d'Avignon"</span><span class="p">,</span>
         <span class="nx">year</span><span class="o">:</span> <span class="mi">1907</span>
     <span class="p">});</span>
@@ -174,6 +166,8 @@ an hash is produced, and the element is added to one of the indexes.</p>
 
 <h2>Advanced commands</h2>
 
+<h3>Sorting</h3>
+
 <p>Define a global comparator function that sorts all the entries chronologically</p>
 
 <div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">globalCompator</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">)</span> <span class="p">{</span>
@@ -206,9 +200,51 @@ an hash is produced, and the element is added to one of the indexes.</p>
 <div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="s1">'painter'</span><span class="p">);</span> <span class="c1">// Picasso is always listed first</span>
 </pre></div>
 
-<p>Define a custom hash function that splits the inserted items according to the name of the painter;</p>
+<h3>Views</h3>
 
-<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">h</span><span class="p">(</span><span class="s1">'painter'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+<p>Splits the database in sub-database, each containing semantically consistent set of entries</p>
+
+<div class="highlight"><pre>
+    <span class="c1">// Let us add some cars to our previous database of paintings</span>
+    <span class="kd">var</span> <span class="nx">not_art_items</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="nx">car</span><span class="o">:</span> <span class="s2">"Ferrari"</span><span class="p">,</span>
+          <span class="nx">model</span><span class="o">:</span> <span class="s2">"F10"</span><span class="p">,</span>
+          <span class="nx">speed</span><span class="o">:</span> <span class="mi">350</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+          <span class="nx">car</span><span class="o">:</span> <span class="s2">"Fiat"</span><span class="p">,</span>
+          <span class="nx">model</span><span class="o">:</span> <span class="s2">"500"</span><span class="p">,</span>
+          <span class="nx">speed</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+          <span class="nx">car</span><span class="o">:</span> <span class="s2">"BMW"</span><span class="p">,</span>
+          <span class="nx">model</span><span class="o">:</span> <span class="s2">"Z4"</span><span class="p">,</span>
+          <span class="nx">speed</span><span class="o">:</span> <span class="mi">250</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">];</span>
+
+    <span class="nx">db</span><span class="p">.</span><span class="nx">view</span><span class="p">(</span><span class="s1">'art'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">painter</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="nx">db</span><span class="p">.</span><span class="nx">view</span><span class="p">(</span><span class="s1">'cars'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">car</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="nx">db</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
+
+    <span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>          <span class="c1">// 9</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">art</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>      <span class="c1">// NDDB with 6 art entries</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">cars</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>     <span class="c1">// NDDB with 3 car entries</span>
+
+</pre></div>
+
+<h3>Hashing</h3>
+
+<p>Define a custom hash function that creates a new view on each of the painters in the database;</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">'painter'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">)</span> <span class="k">return</span> <span class="kc">undefined</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">painter</span><span class="p">;</span>
     <span class="p">});</span>
@@ -222,7 +258,9 @@ an hash is produced, and the element is added to one of the indexes.</p>
     <span class="nx">db</span><span class="p">.</span><span class="nx">painter</span><span class="p">.</span><span class="nx">Dali</span>     <span class="c1">// NDDB with 2 elements in db</span>
 </pre></div>
 
-<p>Listen on the <code>insert</code> event and modify the inserted items by adding an external index to them;</p>
+<h3>Listenting to events</h3>
+
+<p>Listen to the <code>insert</code> event and modify the inserted items by adding an external index to them;</p>
 
 <div class="highlight"><pre>
     <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -233,18 +271,31 @@ an hash is produced, and the element is added to one of the indexes.</p>
     <span class="p">});</span>
 </pre></div>
 
-<p>Define a custom indexing function that gives fast direct access to the items of the database;</p>
+<h3>Indexes</h3>
 
-<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">i</span><span class="p">(</span><span class="s1">'pid'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+<p>Define a custom indexing function that gives fast, direct access to the items of the database;</p>
+
+<div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">index</span><span class="p">(</span><span class="s1">'pid'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
     <span class="p">});</span>
 
     <span class="nx">db</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
-    <span class="nx">db</span><span class="p">.</span><span class="nx">pid</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">name</span><span class="p">;</span> <span class="c1">// Picasso    </span>
+
+    <span class="nx">db</span><span class="p">.</span><span class="nx">pid</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">name</span><span class="p">;</span> <span class="c1">// Picasso</span>
+
+    <span class="nx">db</span><span class="p">.</span><span class="nx">pid</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">{</span>
+      <span class="nx">comment</span><span class="o">:</span> <span class="s2">"Good job Pablo!"</span>
+    <span class="p">});</span>
+
+    <span class="c1">// Changes are reflected in the main database    </span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">selexec</span><span class="p">(</span><span class="s1">'comment'</span><span class="p">).</span><span class="nx">count</span><span class="p">();</span> <span class="c1">// 1</span>
+
+    <span class="kd">var</span> <span class="nx">picasso</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">pid</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="c1">//(-1)</span>
 
 </pre></div>
 
-<h2>Example of Configuration object</h2>
+<h2>Example of a configuration object</h2>
 
 <div class="highlight"><pre>
     <span class="kd">var</span> <span class="nx">logFunc</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
@@ -255,7 +306,7 @@ an hash is produced, and the element is added to one of the indexes.</p>
 
     <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
       <span class="nx">tags</span><span class="o">:</span>  <span class="p">{},</span>          <span class="c1">// Collection of tags</span>
-      <span class="nx">update</span><span class="o">:</span> <span class="p">{</span>           <span class="c1">// On every insert and remove:</span>
+      <span class="nx">update</span><span class="o">:</span> <span class="p">{</span>           <span class="c1">// On every insert, remove and update:</span>
         <span class="nx">indexes</span><span class="o">:</span>  <span class="kc">true</span><span class="p">,</span>   <span class="c1">// updates the indexes, if any  </span>
         <span class="nx">sort</span><span class="o">:</span>     <span class="kc">true</span><span class="p">,</span>   <span class="c1">// sorts the items of the database </span>
         <span class="nx">pointer</span><span class="o">:</span>  <span class="kc">true</span><span class="p">,</span>   <span class="c1">// moves the iterator pointer to the last inserted element</span>
@@ -263,6 +314,7 @@ an hash is produced, and the element is added to one of the indexes.</p>
       <span class="nx">C</span><span class="o">:</span>  <span class="p">{},</span>             <span class="c1">// Collection of comparator functions</span>
       <span class="nx">H</span><span class="o">:</span>  <span class="p">{},</span>             <span class="c1">// Collection of hashing functions</span>
       <span class="nx">I</span><span class="o">:</span>  <span class="p">{},</span>             <span class="c1">// Collection of indexing functions</span>
+      <span class="nx">V</span><span class="o">:</span>  <span class="p">{},</span>             <span class="c1">// Collection of view functions</span>
       <span class="nx">log</span><span class="o">:</span> <span class="nx">logFunc</span><span class="p">,</span>       <span class="c1">// Default stdout</span>
       <span class="nx">nddb_pointer</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>    <span class="c1">// Set the pointer to element of index 4. </span>
       <span class="nx">operators</span><span class="o">:</span> <span class="p">{</span>       <span class="c1">// Extends NDDB with new operators for select queries</span>
@@ -309,8 +361,8 @@ $ npm test # will run the test suite against nddb.js
 
 <p>Create your customized build of NDDB using the make file in the <code>bin</code> directory</p>
 
-<div class="highlight"><pre><span class="nx">node</span> <span class="nx">make</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">js</span> <span class="nx">build</span> <span class="c1">// Standard build, about 28Kb minified</span>
-<span class="nx">node</span> <span class="nx">make</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">js</span> <span class="nx">build</span> <span class="o">-</span><span class="nx">a</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">nddb</span><span class="o">-</span><span class="nx">full</span> <span class="c1">// Full build, about 40Kb minified</span>
+<div class="highlight"><pre><span class="nx">node</span> <span class="nx">make</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">js</span> <span class="nx">build</span> <span class="c1">// Standard build, </span>
+<span class="nx">node</span> <span class="nx">make</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">js</span> <span class="nx">build</span> <span class="o">-</span><span class="nx">a</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">nddb</span><span class="o">-</span><span class="nx">full</span> <span class="c1">// Full build</span>
 </pre></div>
 
 <h3>Help</h3>
@@ -327,7 +379,25 @@ $ npm test # will run the test suite against nddb.js
 
 <h2>ChangeLog</h2>
 
-<h3>0.7.2</h3>
+<h3>0.8.0</h3>
+
+<ul>
+<li>New faster and more powerful indexing engine</li>
+<li>Indexes are now objects with own methods: <code>#get()</code>, <code>#update()</code>, <code>#pop()</code>, <code>#size()</code>
+</li>
+<li>Support for multiple <em>views</em> on the database</li>
+<li>
+<code>#comparator()</code> becomes <code>#getComparator()</code>, and <code>#compare()</code> becomes <code>#comparator()</code>
+</li>
+<li>Deprecated <code>c</code>,<code>h</code>,<code>i</code>; use human readable <code>comparator</code>, <code>hash</code>, <code>index</code> from now on!</li>
+<li>
+<code>#current()</code> replaces the old <code>#get()</code>
+</li>
+<li>
+<code>#get()</code> always returns the element at the specified ordinal position in the database</li>
+<li>Callback functions of hash and index functions must always be specified</li>
+<li>Hash functions creates NDDB instances of constructor</li>
+</ul><h3>0.7.2</h3>
 
 <ul>
 <li>#selexec() shorthand  for select().execute()</li>
