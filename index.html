@@ -293,6 +293,12 @@ saving and loading from file system and browser localStorage and much more.</p>
     <span class="kd">var</span> <span class="nx">picasso</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">pid</span><span class="p">.</span><span class="nx">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
     <span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="c1">//(-1)</span>
 
+    <span class="c1">// Get all available keys in the index</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">painter</span><span class="p">.</span><span class="nx">getAllKeys</span><span class="p">();</span> <span class="c1">// ['0','1', ... ]</span>
+
+    <span class="c1">// Get all elements indexed by their key in one object</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">painter</span><span class="p">.</span><span class="nx">getAllKeyElements</span><span class="p">();</span> 
+
 </pre></div>
 
 <h2>Example of a configuration object</h2>
