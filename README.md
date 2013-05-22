@@ -268,6 +268,12 @@ Define a custom indexing function that gives fast, direct access to the items of
     
     var picasso = db.pid.pop(0);
     db.length; //(-1)
+    
+    // Get all available keys in the index
+    db.painter.getAllKeys(); // ['0','1', ... ]
+    
+    // Get all elements indexed by their key in one object
+    db.painter.getAllKeyElements(); 
 
 ```  
 

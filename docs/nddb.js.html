@@ -399,6 +399,12 @@
       <div class="heading h3">
         <a href="#nddbindex.update">NDDBIndex.update</a>
       </div>
+      <div class="heading h3">
+        <a href="#nddbindex.getallkeys">NDDBIndex.getAllKeys</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nddbindex.getallkeyelements">NDDBIndex.getAllKeyElements</a>
+      </div>
       <div class="heading h2">
         <a href="#closure">Closure</a>
       </div>
@@ -6432,6 +6438,78 @@ always decides the overall logic value. E.g. :</p>
   <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">_autoUpdate</span><span class="p">();</span>
   <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nddbindex.getallkeys">
+  <h3>
+    <a href="#nddbindex.getallkeys" class="pilcrow">&#182;</a>
+    NDDBIndex.getAllKeys
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the list of all keys in the index</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span>The array of alphanumeric keys in the index</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDBIndex.getAllKeyElements
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getAllKeys</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">);</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nddbindex.getallkeyelements">
+  <h3>
+    <a href="#nddbindex.getallkeyelements" class="pilcrow">&#182;</a>
+    NDDBIndex.getAllKeyElements
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns all the elements indexed by their key in one object</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>The object of key-elements</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDBIndex.getAllKeys
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getAllKeyElements</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">idx</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idx</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">out</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">[</span><span class="nx">idx</span><span class="p">]];</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
