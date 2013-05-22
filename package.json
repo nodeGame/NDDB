@@ -1,8 +1,8 @@
 {
   "name": "NDDB",
   "description": "Javascript lightweight N-dimensional database",
-  "version": "0.7.2",
-  "keywords": [ "db", "no-sql", "cyclic objects", "nddb", "database" ],
+  "version": "0.8.0",
+  "keywords": [ "db", "no-sql", "cyclic objects", "nddb", "database", "index", "views" ],
   "author": "Stefano Balietti <futur.dorko@gmail.com>",
   "licenses": [
     { "type": "MIT" }
