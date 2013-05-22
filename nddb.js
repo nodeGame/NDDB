@@ -2949,11 +2949,11 @@ NDDBIndex.prototype.update = function (idx, update) {
 /**
  * ### NDDBIndex.getAllKeys
  *
- * Returns the list of currently registered indexes
+ * Returns the list of all keys in the index
  * 
- * @return {array} The array of alphanumeric indexes
+ * @return {array} The array of alphanumeric keys in the index
  * 
- * @see NDDB.index
+ * @see NDDBIndex.getAllKeyElements
  */
 NDDBIndex.prototype.getAllKeys = function () {
 	return J.keys(this.resolve);
@@ -2962,11 +2962,11 @@ NDDBIndex.prototype.getAllKeys = function () {
 /**
  * ### NDDBIndex.getAllKeyElements
  *
- * Returns the list of currently registered indexes
+ * Returns all the elements indexed by their key in one object
  * 
- * @return {object} The array of alphanumeric indexes
+ * @return {object} The object of key-elements
  * 
- * @see NDDB.index
+ * @see NDDBIndex.getAllKeys
  */
 NDDBIndex.prototype.getAllKeyElements = function () {
 	var out = {}, idx;
