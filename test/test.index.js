@@ -188,6 +188,32 @@ describe('NDDB Indexing Operations:', function() {
         });
     });
     
+    describe('#NDDBIndex.getAllKeys()', function() {
+    	before(function(){
+    		tmp = db.painter.getAllKeys();
+    	});
+    	
+    	it('should return all the indexes', function() {
+    		tmp.should.be.eql(['1','2','3','4','5']);
+        });   	
+    });
+    
+    describe('#NDDBIndex.getAllKeyElements()', function() {
+    	before(function(){
+    		tmp = db.painter.getAllKeyElements();
+    	});
+    	
+    	it('should return all the indexes', function() {
+    		var o = {}, item, i;
+    		// length -1 : one element removed
+    		for (i = 0; i < indexable.length-1; i++) {
+    			item = indexable[i];
+    			o[item.id] = item;
+    		}
+    		tmp.should.be.eql(o);
+        });   	
+    });
+    
     
 });
 

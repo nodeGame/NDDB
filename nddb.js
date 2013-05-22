@@ -2897,6 +2897,7 @@ NDDBIndex.prototype.get = function (idx) {
     return this.nddb.db[this.resolve[idx]];
 };
 
+
 /**
  * ### NDDBIndex.pop
  *
@@ -2945,6 +2946,37 @@ NDDBIndex.prototype.update = function (idx, update) {
 	return o;
 };
 
+/**
+ * ### NDDBIndex.getAllKeys
+ *
+ * Returns the list of currently registered indexes
+ * 
+ * @return {array} The array of alphanumeric indexes
+ * 
+ * @see NDDB.index
+ */
+NDDBIndex.prototype.getAllKeys = function () {
+	return J.keys(this.resolve);
+};
+
+/**
+ * ### NDDBIndex.getAllKeyElements
+ *
+ * Returns the list of currently registered indexes
+ * 
+ * @return {object} The array of alphanumeric indexes
+ * 
+ * @see NDDB.index
+ */
+NDDBIndex.prototype.getAllKeyElements = function () {
+	var out = {}, idx;
+	for (idx in this.resolve) {
+		if (this.resolve.hasOwnProperty(idx)) {
+			out[idx] = this.nddb.db[this.resolve[idx]];
+		}
+	}
+	return out;
+};
 
 // ## Closure    
 })(
