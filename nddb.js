@@ -625,6 +625,11 @@ NDDB.prototype.rebuildIndexes = function() {
 	var cb, idx;
 	if (!h && !i && !v) return;
 	
+	// TODO: Reset current indexes
+//    for (var key in this.__H) {
+//    	if (this.__H.hasOwnProperty(key)) this[key] = {}
+//    }
+	
 	if (h && !i && !v) {
 		cb = this._hashIt;
 	}

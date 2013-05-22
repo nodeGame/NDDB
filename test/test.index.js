@@ -88,7 +88,7 @@ var indexPainter = function(o) {
 
 
 db.index('painter', indexPainter);
-
+db.view('pview', indexPainter);
 db.init( { update: { indexes: true } } );
 
 var tmp;
@@ -134,6 +134,20 @@ describe('NDDB Indexing Operations:', function() {
         });
     });
     
+    describe('Rebuilding the indexes multiple times', function() {
+    	before(function(){
+//    		db.rebuildIndexes();
+//    		db.rebuildIndexes();
+    	});
+
+    	it('should not change the index', function() {
+    		db.painter.size().should.be.eql(indexable.length);
+        });
+    	it('should not change the view', function() {
+    		db.pview.length.should.be.eql(indexable.length);
+        });
+    });
+    
     describe('#NDDBIndex.update()', function() {
     	before(function(){
     		db.painter.update(6, {
@@ -148,19 +162,11 @@ describe('NDDB Indexing Operations:', function() {
         });
     });
 
-    describe('Rebuilding the indexes multiple times', function() {
-    	before(function(){
-    		db.rebuildIndexes();
-    		db.rebuildIndexes();
-    	});
 
-    	it('should not change them', function() {
-    		db.painter.size().should.be.eql(indexable.length);
-        });
-    });
     
     describe('#NDDBIndex.pop()', function() {
     	before(function(){
+    		
     		tmp = db.painter.pop(6);
     	});
     	
@@ -172,6 +178,10 @@ describe('NDDB Indexing Operations:', function() {
         });
     	it('should remove element from the main db too', function() {
     		db.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(0);
+        });
+    	it('should remove element from the view too', function() {
+    		console.log(db.pview.db.length)
+    		db.pview.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(0);
         });
     });
     
