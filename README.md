@@ -263,6 +263,7 @@ Define a custom indexing function that gives fast, direct access to the items of
       comment: "Good job Pablo!"
     });
     
+    // Changes are reflected in the main database    
     db.selexec('comment').count(); // 1
     
     var picasso = db.pid.pop(0);
