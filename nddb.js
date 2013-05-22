@@ -659,10 +659,10 @@ NDDB.prototype.rebuildIndexes = function() {
 			this._viewIt(o);
 		};
 	}
-	this.each(cb);
+	
 	for (idx = 0 ; idx < this.db.length ; idx++) {
 		// _hashIt and viewIt do not need idx, it is no harm anyway
-		cb.apply(this, this.db[idx], idx);
+		cb.call(this, this.db[idx], idx);
 	}
 };
 
@@ -725,11 +725,8 @@ NDDB.prototype._viewIt = function(o) {
  * 
  */
 NDDB.prototype._hashIt = function(o) {
-  	if (!o) return false;
-	if (J.isEmpty(this.__H)) {
-		return false;
-	}
-
+  	if (!o || J.isEmpty(this.__H)) return false;
+	
 	var h, id, hash;
 	
 	for (var key in this.__H) {
@@ -2842,13 +2839,14 @@ NDDBIndex.prototype.size = function () {
  * Gets the entry from database with the given id
  * 
  * @param {mixed} idx The id of the item to get
- * @return {object|boolean} The requested entry, or FALSE if none is found
+ * @return {object|boolean} The requested entry, or FALSE if the index is invalid
  * 
  * @see NDDB.index
  * @see NDDBIndex.pop
  * @see NDDBIndex.update
  */
 NDDBIndex.prototype.get = function (idx) {
+	if (!this.resolve[idx]) return false
     return this.nddb.db[this.resolve[idx]];
 };
 
@@ -2858,7 +2856,7 @@ NDDBIndex.prototype.get = function (idx) {
  * Removes and entry from the database with the given id and returns it
  * 
  * @param {mixed} idx The id of item to remove 
- * @return {object|boolean} The removed item, or FALSE if none is found
+ * @return {object|boolean} The removed item, or FALSE if the index is invalid
  * 
  * @see NDDB.index
  * @see NDDBIndex.get
@@ -2868,7 +2866,10 @@ NDDBIndex.prototype.pop = function (idx) {
 	var o, dbidx;
 	dbidx = this.resolve[idx];
 	if ('undefined' === typeof dbidx) return false;
-	o = this.nddb.db.splice[dbidx,1];
+	o = this.nddb.db[dbidx];
+	if ('undefined' === typeof o) return;
+	this.nddb.db.splice(dbidx,1);
+	delete this.resolve[idx];
 	this.nddb.emit('remove', o);
 	this.nddb._autoUpdate();
 	return o;
@@ -2880,7 +2881,7 @@ NDDBIndex.prototype.pop = function (idx) {
  * Removes and entry from the database with the given id and returns it
  * 
  * @param {mixed} idx The id of item to update 
- * @return {object|boolean} The updated item, or FALSE if none is found
+ * @return {object|boolean} The updated item, or FALSE if the index is invalid
  * 
  * @see NDDB.index
  * @see NDDBIndex.get

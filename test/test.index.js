@@ -89,11 +89,7 @@ var indexPainter = function(o) {
 
 db.index('painter', indexPainter);
 
-db.init({update:
-			{
-			indexes: true,
-			}
-});
+db.init( { update: { indexes: true } } );
 
 var tmp;
 
@@ -138,39 +134,43 @@ describe('NDDB Indexing Operations:', function() {
         });
     });
     
-    describe('Elements updated in the index should be updated in the db', function() {
+    describe('#NDDBIndex.update()', function() {
     	before(function(){
-    		db.painter.update(5, {
+    		db.painter.update(6, {
     			painter: 'M.A.N.E.T.'
     		});
     	});
 
     	it('updated property \'painter\' should be reflected in the index', function() {
-    		db.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(1);
+    		var elem = db.select('painter', '=', 'M.A.N.E.T.').execute().fetch();
+    		elem.length.should.be.eql(1);
+    		elem[0].id.should.be.eql(6)
         });
     });
 
-    describe('Rebuilding the indexes multiple times should not change them', function() {
+    describe('Rebuilding the indexes multiple times', function() {
     	before(function(){
     		db.rebuildIndexes();
     		db.rebuildIndexes();
     	});
 
-    	it('updated property \'painter\' should be reflected in the index', function() {
+    	it('should not change them', function() {
     		db.painter.size().should.be.eql(indexable.length);
         });
     });
     
-    describe('Elements removed from the index are removed also in the main db', function() {
+    describe('#NDDBIndex.pop()', function() {
     	before(function(){
-    		tmp = db.painter.pop(5);
-    		console.log(tmp)
+    		tmp = db.painter.pop(6);
     	});
     	
-    	it('removed element should be \'M.A.N.E.T.\'', function() {
+    	it('should return element \'M.A.N.E.T.\'', function() {
     		tmp.painter.should.be.eql('M.A.N.E.T.');
         });
-    	it('element should be removed from db too', function() {
+    	it('should remove element from index', function() {
+    		db.painter.get(6).should.be.false;
+        });
+    	it('should remove element from the main db too', function() {
     		db.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(0);
         });
     });
