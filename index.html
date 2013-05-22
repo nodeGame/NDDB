@@ -49,97 +49,38 @@ is called, and the database is updated.</p>
 <p>Whenever an object is inserted that matches one of the indexing functions
 an hash is produced, and the element is added to one of the indexes.</p>
 
-<p>Additional features are: methods chaining, tagging, and iteration 
-through the entries.</p>
+<h2>List of features</h2>
 
 <ul>
-<li>
-<p>Sorting and selecting:</p>
-
-<ul>
-<li>select, sort, reverse, last, first, limit, distinct, shuffle</li>
-</ul>
+<li>Selecting: <code>select</code>, <code>and</code>, <code>or</code>, <code>selexec</code>
 </li>
-<li>
-<p>Custom callbacks</p>
-
-<ul>
-<li>map, each, filter</li>
-</ul>
+<li>Sorting: <code>sort</code>, <code>reverse</code>, <code>last</code>, <code>first</code>, <code>limit</code>, <code>distinct</code>, <code>shuffle</code>
 </li>
-<li>
-<p>Deletion</p>
-
-<ul>
-<li>remove, clear</li>
-</ul>
+<li>Indexing: <code>index</code>, <code>hash</code>, <code>comparator</code>
 </li>
-<li>
-<p>Advanced operations</p>
-
-<ul>
-<li>split, join, concat</li>
-</ul>
+<li>Custom callbacks: <code>map</code>, <code>each</code>, <code>filter</code>
 </li>
-<li>
-<p>Selecting</p>
-
-<ul>
-<li>select, and, or</li>
-</ul>
+<li>Deletion: <code>remove</code>, <code>clear</code>
 </li>
-<li>
-<p>Fetching and transformation</p>
-
-<ul>
-<li>fetch, fetchArray, fetchKeyArray, fetchValues, fetchSubObj</li>
-</ul>
+<li>Advanced operations: <code>split</code>, <code>join</code>, <code>concat</code>
 </li>
-<li>
-<p>Statistics operator</p>
-
-<ul>
-<li>count, max, min, mean</li>
-</ul>
+<li>Fetching and transformations: <code>fetch</code>, <code>fetchArray</code>, <code>fetchKeyArray</code>, <code>fetchValues</code>, <code>fetchSubObj</code>
 </li>
-<li>
-<p>Diff</p>
-
-<ul>
-<li>diff, intersect</li>
-</ul>
+<li>Statistics operator: <code>count</code>, <code>max</code>, <code>min</code>, <code>mean</code>, <code>stddev</code>
 </li>
-<li>
-<p>Skim</p>
-
-<ul>
-<li>skim, keep</li>
-</ul>
+<li>Diff: <code>diff</code>, <code>intersect</code>
 </li>
-<li>
-<p>Iterator</p>
-
-<ul>
-<li>previous, next, first, last</li>
-</ul>
+<li>Skim: <code>skim</code>, <code>keep</code>
 </li>
-<li>
-<p>Tagging</p>
-
-<ul>
-<li>tag</li>
-</ul>
+<li>Iterator: <code>previous</code>, <code>next</code>, <code>first</code>, <code>last</code>
 </li>
-<li>
-<p>Event listener / emitter</p>
-
-<ul>
-<li>on, off, emit</li>
-</ul>
+<li>Tagging: <code>tag</code>
 </li>
-</ul><p>Different build files available in the build directory.</p>
-
-<h2>Usage</h2>
+<li>Event listener / emitter: <code>on</code>, <code>off</code>, <code>emit</code>
+</li>
+<li>Saving and Loading: <code>save</code>, <code>load</code>, <code>load.csv</code>
+</li>
+</ul><h2>Usage</h2>
 
 <p>Create an instance of NDDB</p>
 
@@ -150,7 +91,7 @@ through the entries.</p>
 <p>Insert an item into the database</p>
 
 <div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span>
-        <span class="nx">painter</span><span class="o">:</span> <span class="s2">"Picasso"</span><span class="p">,</span>
+        <span class="nx">painter</span><span class="o">:</span> <span class="s2">"Picasso"</span><span class="p">,</span> <span class="err">`</span>
         <span class="nx">title</span><span class="o">:</span> <span class="s2">"Les Demoiselles d'Avignon"</span><span class="p">,</span>
         <span class="nx">year</span><span class="o">:</span> <span class="mi">1907</span>
     <span class="p">});</span>
@@ -292,7 +233,7 @@ through the entries.</p>
     <span class="p">});</span>
 </pre></div>
 
-<p>Define a custom indexing function that splits that gives direct access to the items of the database;</p>
+<p>Define a custom indexing function that gives fast direct access to the items of the database;</p>
 
 <div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">i</span><span class="p">(</span><span class="s1">'pid'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
@@ -324,7 +265,7 @@ through the entries.</p>
       <span class="nx">I</span><span class="o">:</span>  <span class="p">{},</span>             <span class="c1">// Collection of indexing functions</span>
       <span class="nx">log</span><span class="o">:</span> <span class="nx">logFunc</span><span class="p">,</span>       <span class="c1">// Default stdout</span>
       <span class="nx">nddb_pointer</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>    <span class="c1">// Set the pointer to element of index 4. </span>
-      <span class="nx">operations</span><span class="o">:</span> <span class="p">{</span>       <span class="c1">// Extends NDDB with a new operator available in select queries</span>
+      <span class="nx">operators</span><span class="o">:</span> <span class="p">{</span>       <span class="c1">// Extends NDDB with new operators for select queries</span>
         <span class="s1">'%'</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">){</span>
               <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">((</span><span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">]</span> <span class="o">%</span> <span class="nx">value</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
@@ -386,7 +327,15 @@ $ npm test # will run the test suite against nddb.js
 
 <h2>ChangeLog</h2>
 
-<h3>0.7.0</h3>
+<h3>0.7.2</h3>
+
+<ul>
+<li>#selexec() shorthand  for select().execute()</li>
+<li>Fixed bug on emit('update')</li>
+<li>#tag() returns the tagged element</li>
+<li>#clear() removes all volatile data, not just the entries in the database</li>
+<li>Minor doc improvements</li>
+</ul><h3>0.7.0</h3>
 
 <ul>
 <li>More efficient selector engine. </li>
