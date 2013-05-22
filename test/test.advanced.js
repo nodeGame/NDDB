@@ -120,7 +120,7 @@ describe('NDDB Advanced Operation', function() {
     before(function() {
 
         db.importDB(items);
-        db.h('painter', function(o) {
+        db.hash('painter', function(o) {
             if (!o) return undefined;
             return o.painter;
         });
@@ -163,25 +163,21 @@ describe('NDDB Advanced Operation', function() {
     describe('#split()',function() {
         before(function() {
             split_db = db.split('title');
-
             split_db.rebuildIndexes();
-            
             split_db_2 = db.split('painter');
-            split_db_2.rebuildIndexes();
-            
         });
         describe('splitting titles',function() {
             it('db should have two more entries',function() {
                 split_db.length.should.eql(db.length+2);
             });
-            it('should have two more Dalis after rebuilding indexes',function() {
+            it('should have two more Dalis',function() {
                 split_db.painter.Dali.length.should.eql(5);
             });
             it('should have only one picture per new split entry',function() {
                 Object.keys(split_db.get(4)['title']).length.should.eql(1);
             });
             it('should have some specific new items',function() {
-                var it_should_be_like_this = [{painter: "Dali",title: "Monet",year: 1902},{ painter: 'Dali',title: { '0': 'Portrait of Paul Eluard' },year: 1929,portrait: true },{ painter: 'Dali',title: { '1': 'Das Rätsel der Begierde' },year: 1929,portrait: true },{ painter: 'Dali',title: { '2': 'Das finstere Spiel oder Unheilvolles Spiel' },year: 1929,portrait: true },{ painter: 'Dali', title: 'Barcelonese Mannequin', year: 1927 } ];
+                var it_should_be_like_this = [{painter: "Dali", title: "Monet", year: 1902}, { painter: 'Dali',title: { '0': 'Portrait of Paul Eluard' },year: 1929,portrait: true },{ painter: 'Dali',title: { '1': 'Das Rätsel der Begierde' },year: 1929,portrait: true },{ painter: 'Dali',title: { '2': 'Das finstere Spiel oder Unheilvolles Spiel' },year: 1929,portrait: true },{ painter: 'Dali', title: 'Barcelonese Mannequin', year: 1927 } ];
                 split_db.painter.Dali.db.should.eql(it_should_be_like_this);
             })
         });
@@ -192,9 +188,7 @@ describe('NDDB Advanced Operation', function() {
         });
                 
     });
-
-
-        
+     
     describe('#join()',function() {
     	
     	describe('parameter set (painter, painter)',function() {

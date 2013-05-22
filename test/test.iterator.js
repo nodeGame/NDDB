@@ -73,10 +73,10 @@ describe('NDDB Iterator', function() {
     	});
 	});
 	
-	describe('#get()', function() {
+	describe('#current()', function() {
 
 		it('should return the current element (first item)', function() {
-	        db.get().should.equal(items[1]);
+	        db.current().should.equal(items[1]);
 	    });
 	});
 	
@@ -92,16 +92,16 @@ describe('NDDB Iterator', function() {
 	    	db.next().should.equal(items[(items.length-1)]);
 	    });
 	    
-	    it('should make get() to return the last element of the collection', function() {
-	    	db.get().should.equal(items[(items.length-1)]);
+	    it('should make current() to return the last element of the collection', function() {
+	    	db.current().should.equal(items[(items.length-1)]);
 	    });
 	    
 	    it('should move nddb_pointer to 4', function() {
     		db.nddb_pointer.should.equal((items.length-1));
     	});
 	    
-	    it('should make get() equivalent to last()', function() {
-	    	db.get().should.equal(db.last());
+	    it('should make current() equivalent to last()', function() {
+	    	db.current().should.equal(db.last());
 	    });
 	    
 	});
@@ -134,16 +134,16 @@ describe('NDDB Iterator', function() {
 	    	db.previous().should.equal(items[0]);
 	    });
 	    
-	    it('should make get() to return the last element of the collection', function() {
-	    	db.get().should.equal(items[0]);
+	    it('should make current() to return the last element of the collection', function() {
+	    	db.current().should.equal(items[0]);
 	    });
 	    
 	    it('should move nddb_pointer to 0', function() {
     		db.nddb_pointer.should.equal(0);
     	});
 	    
-	    it('should make get() equivalent to first()', function() {
-	    	db.get().should.equal(db.first());
+	    it('should make current() equivalent to first()', function() {
+	    	db.current().should.equal(db.first());
 	    });
 	    
 	});

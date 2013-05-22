@@ -87,14 +87,12 @@ var indexPainter = function(o) {
 }
 
 
-db.i('painter', indexPainter);
-//db.i('foo_painter', indexPainter);
+db.index('painter', indexPainter);
+db.view('pview', indexPainter);
+db.hash('phash', indexPainter);
+db.init( { update: { indexes: true } } );
 
-db.init({update:
-			{
-			indexes: true,
-			}
-});
+var tmp;
 
 
 describe('NDDB Indexing Operations:', function() {
@@ -118,32 +116,78 @@ describe('NDDB Indexing Operations:', function() {
     	
         it('should create the special indexes', function() {
             db.painter.should.exist;
-            JSUS.size(db.painter).should.be.eql(indexable.length);
+            db.painter.size().should.be.eql(indexable.length);
         });
         
     });
 	
+    
+    
     describe('Elements updated in the db should be updated in the indexes', function() {
     	before(function(){
     		var j = db.select('painter', '=', 'Jesus').execute().first();
     		j.painter = 'JSUS';
     	});
     	
-    	
     	it('updated property \'painter\' should be reflected in the index', function() {
-    		//db.painter[0].painter.should.be.eql('JSUS');
+    		db.painter.get(1).painter.should.be.eql('JSUS');
+    		
         });
     });
     
-    describe('Elements updated in the index should be updated in the db', function() {
+    describe('Rebuilding the indexes multiple times', function() {
     	before(function(){
-    		db.painter[5].painter = 'M.A.N.E.T.';
+    		db.rebuildIndexes();
+    		db.rebuildIndexes();
+    	});
+
+    	it('should not change the index', function() {
+    		db.painter.size().should.be.eql(indexable.length);
+        });
+    	it('should not change the view', function() {
+    		db.pview.length.should.be.eql(indexable.length);
+        });
+    	it('should not change the hash', function() {
+    		JSUS.size(db.phash).should.be.eql(indexable.length);
+        });
+    });
+    
+    describe('#NDDBIndex.update()', function() {
+    	before(function(){
+    		db.painter.update(6, {
+    			painter: 'M.A.N.E.T.'
+    		});
     	});
 
     	it('updated property \'painter\' should be reflected in the index', function() {
-    		db.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(1);
+    		var elem = db.select('painter', '=', 'M.A.N.E.T.').execute().fetch();
+    		elem.length.should.be.eql(1);
+    		elem[0].id.should.be.eql(6)
         });
     });
+
+
+    
+    describe('#NDDBIndex.pop()', function() {
+    	before(function(){
+    		
+    		tmp = db.painter.pop(6);
+    	});
+    	
+    	it('should return element \'M.A.N.E.T.\'', function() {
+    		tmp.painter.should.be.eql('M.A.N.E.T.');
+        });
+    	it('should remove element from index', function() {
+    		db.painter.get(6).should.be.false;
+        });
+    	it('should remove element from the main db too', function() {
+    		db.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(0);
+        });
+    	it('should remove element from the view too', function() {
+    		db.pview.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(0);
+        });
+    });
+    
     
 });
 

@@ -88,7 +88,7 @@ describe('NDDB Remove Operations:', function() {
 				indexes: true,
 			}
 		});
-		db.h('painter', hashPainter);
+		db.hash('painter', hashPainter);
 
 		db.importDB(not_hashable);
 		db.importDB(hashable);
