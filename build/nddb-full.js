@@ -4682,8 +4682,7 @@ JSUS.extend(PARSE);
  * 
  * MIT Licensed
  * 
- * NDDB provides a simple, lightweight, NO-SQL object database 
- * for node.js and the browser.
+ * NDDB is a powerful and versatile object database for node.js and the browser.
  *
  * See README.md for help.
  * 
@@ -4792,12 +4791,16 @@ function NDDB (options, db) {
     this.__C = {};
     
     // ### __H
-    // List of hashing functions
+    // List of hash functions
     this.__H = {};
     
     // ### __I
-    // List of hashing functions
+    // List of index functions
     this.__I = {};
+    
+    // ### __I
+    // List of view functions
+    this.__V = {};
     
     // ### __update
     // Auto update options container
@@ -4848,6 +4851,10 @@ NDDB.prototype.init = function(options) {
 	
 	if (options.I) {
 		this.__I = options.I;
+	}
+	
+	if (options.V) {
+		this.__V = options.V;
 	}
 	
 	if (options.tags) {
@@ -4925,8 +4932,7 @@ NDDB.prototype.globalCompare = function(o1, o2) {
  * @param {object} options Optional. Configuration object
  */
 NDDB.prototype._autoUpdate = function (options) {
-	var update = (options) ? J.merge(options, this.__update)
-						   : this.__update;
+	var update = options ? J.merge(this.__update, options) : this.__update;
 	
     if (update.pointer) {
         this.nddb_pointer = this.db.length-1;
@@ -4938,6 +4944,22 @@ NDDB.prototype._autoUpdate = function (options) {
     if (update.indexes) {
         this.rebuildIndexes();
     }
+};
+
+
+function nddb_insert(o, update) {
+	if (o === null) return;
+	var type = typeof(o);
+	if (type === 'undefined') return;
+	if (type === 'string') return;
+	if (type === 'number') return;
+	this.db.push(o);
+	if (update) {
+		this._indexIt(o, (this.db.length-1));
+		this._hashIt(o);
+		this._viewIt(o);
+	}
+    this.emit('insert', o);
 }
 
 /**
@@ -4945,26 +4967,14 @@ NDDB.prototype._autoUpdate = function (options) {
  * 
  * Imports an array of items at once
  * 
- * Updates to the indexes - if any - are executed after the
- * whole collection has been imported.
- * 
- * If an error occurs during the procedure the variable
- * `this.__update` must be re-initialized manually, and indexes
- * rebuilt.
- * 
  * @param {array} db Array of items to import
  */
 NDDB.prototype.importDB = function (db) {
     if (!db) return;
-    // Disable indexing: do it only after the last item
-    var oldUpdate = this.__update;
-    this.__update = {};
     for (var i = 0; i < db.length; i++) {
-        this.insert(db[i]);
+        nddb_insert.call(this, db[i], this.__update.indexes);
     }
-    // Re-set the current updating policies
-    this.__update = oldUpdate;    
-    this._autoUpdate();
+    this._autoUpdate({indexes: false});
 };
     
 /**
@@ -4985,15 +4995,8 @@ NDDB.prototype.importDB = function (db) {
  * @see NDDB._insert
  */
 NDDB.prototype.insert = function (o) {
-	if (o === null) return;
-	var type = typeof(o);
-	if (type === 'undefined') return;
-	if (type === 'string') return;
-	if (type === 'number') return;
- 
-	this.db.push(o);
-    this.emit('insert', o);
-    this._autoUpdate();
+	nddb_insert.call(this, o, this.__update.indexes);
+    this._autoUpdate({indexes: false});
 };
 
 /**
@@ -5030,6 +5033,7 @@ NDDB.prototype.cloneSettings = function () {
     options.H = 		this.__H;
     options.I = 		this.__I;
     options.C = 		this.__C;
+    options.V = 		this.__V;
     options.tags = 		this.tags;
     options.update = 	this.__update;
     options.hooks = 	this.hooks;
@@ -5083,7 +5087,7 @@ NDDB.prototype.stringify = function (compressed) {
 
 
 /**
- * ### NDDB.compare | NDDB.c 
+ * ### NDDB.comparator
  *
  * Registers a comparator function for dimension d
  * 
@@ -5096,7 +5100,7 @@ NDDB.prototype.stringify = function (compressed) {
  * @return {boolean} TRUE, if registration was successful
  * 
  */
-NDDB.prototype.compare = NDDB.prototype.c = function (d, comparator) {
+NDDB.prototype.comparator = function (d, comparator) {
     if (!d || !comparator) {
         NDDB.log('Cannot set empty property or empty comparator', 'ERR');
         return false;
@@ -5105,8 +5109,12 @@ NDDB.prototype.compare = NDDB.prototype.c = function (d, comparator) {
     return true;
 };
 
+// ### NDDB.c
+// @deprecated 
+NDDB.prototype.c = NDDB.prototype.comparator;
+
 /**
- * ### NDDB.comparator
+ * ### NDDB.getComparator
  *
  * Retrieves the comparator function for dimension d.
  *  
@@ -5118,7 +5126,7 @@ NDDB.prototype.compare = NDDB.prototype.c = function (d, comparator) {
  * 
  * @see NDDB.compare
  */
-NDDB.prototype.comparator = function (d) {
+NDDB.prototype.getComparator = function (d) {
     if ('undefined' !== typeof this.__C[d]) {
     	return this.__C[d]; 
     }
@@ -5159,7 +5167,6 @@ NDDB.prototype.isReservedWord = function (key) {
 	return (this[key]) ? true : false; 
 };
 
-
 /**
  * ### NDDB._isValidIndex
  *
@@ -5184,40 +5191,19 @@ NDDB.prototype._isValidIndex = function (idx) {
 };
 
 /**
- * ### NDDB.hash | NDDB.h
- *
- * Registers a new hashing function
- * 
- * Hashing functions creates nested NDDB database 
- * where objects are automatically added 
- * 
- * If no function is specified Object.toString is used.
- * 
- * @param {string} idx The name of index
- * @param {function} func The hashing function
- * @return {boolean} TRUE, if registration was successful
- * 
- * @see NDDB.isReservedWord
- * @see NDDB.rebuildIndexes
- * 
- */
-NDDB.prototype.hash = NDDB.prototype.h = function (idx, func) {
-	if (!this._isValidIndex(idx)) return false;
-	this.__H[idx] = func || Object.toString;
-	this[idx] = {};
-	return true;
-};
-
-
-/**
- * ### NDDB.index | NDDB.i
+ * ### NDDB.index
  *
  * Registers a new indexing function
  * 
- * Hashing functions automatically creates indexes 
- * to have direct access to objects
+ * Indexing functions give fast direct access to the 
+ * entries of the dataset.
  * 
- * If no function is specified Object.toString is used.
+ * A new object `NDDB[idx]` is created, whose properties 
+ * are the elements indexed by the function.
+ * 
+ * An indexing function must return a _string_ with a unique name of  
+ * the property under which the entry will registered, or _undefined_ if
+ * the entry does not need to be indexed.
  * 
  * @param {string} idx The name of index
  * @param {function} func The hashing function
@@ -5227,60 +5213,234 @@ NDDB.prototype.hash = NDDB.prototype.h = function (idx, func) {
  * @see NDDB.rebuildIndexes
  * 
  */
-NDDB.prototype.index = NDDB.prototype.i = function (idx, func) {
-	if (!this._isValidIndex(idx)) return false;
-	this.__I[idx] = func || Object.toString;
-	this[idx] = {};
+NDDB.prototype.index = function (idx, func) {
+	if (!func || !this._isValidIndex(idx)) return false;
+	this.__I[idx] = func, this[idx] = new NDDBIndex(idx, this);
 	return true;
 };
 
 
+// ### NDDB.i
+// @deprecated
+NDDB.prototype.i = NDDB.prototype.index;
+
+/**
+ * ### NDDB.view
+ *
+ * Registers a new view function
+ * 
+ * View functions create a _view_ on the database that
+ * excludes automatically some of the entries.
+ * 
+ * A nested NDDB dataset is created as `NDDB[idx]`, containing 
+ * all the items that the callback function returns. If the 
+ * callback returns _undefined_ the entry will be ignored.
+ * 
+ * @param {string} idx The name of index
+ * @param {function} func The hashing function
+ * @return {boolean} TRUE, if registration was successful
+ * 
+ * @see NDDB.hash
+ * @see NDDB.isReservedWord
+ * @see NDDB.rebuildIndexes
+ * 
+ */
+NDDB.prototype.view = function (idx, func) {
+	if (!func || !this._isValidIndex(idx)) return false;
+	this.__V[idx] = func, this[idx] = new this.constructor();
+	return true;
+};
+
+/**
+ * ### NDDB.hash
+ *
+ * Registers a new hashing function
+ * 
+ * Hash functions create an index containing multiple sub-_views_.
+ * 
+ * A new object `NDDB[idx]` is created, whose properties 
+ * are _views_ on the original dataset.
+ * 
+ * An hashing function must return a _string_ representing the 
+ * view under which the entry will be added, or _undefined_ if
+ * the entry does not belong to any view of the index.
+ * 
+ * @param {string} idx The name of index
+ * @param {function} func The hashing function
+ * @return {boolean} TRUE, if registration was successful
+ * 
+ * @see NDDB.view
+ * @see NDDB.isReservedWord
+ * @see NDDB.rebuildIndexes
+ * 
+ */
+NDDB.prototype.hash = function (idx, func) {
+	if (!func || !this._isValidIndex(idx)) return false;
+	this.__H[idx] = func, this[idx] = {};
+	return true;
+};
+
+//### NDDB.h
+//@deprecated
+NDDB.prototype.h = NDDB.prototype.hash; 
+
+
+/**
+ * ### NDDB.resetIndexes
+ *
+ * Resets all the database indexes, hashs, and views 
+ * 
+ * @see NDDB.rebuildIndexes
+ * @see NDDB.index
+ * @see NDDB.view
+ * @see NDDB.hash
+ * @see NDDB._indexIt
+ * @see NDDB._viewIt
+ * @see NDDB._hashIt
+ */
+NDDB.prototype.resetIndexes = function(options) {
+	var reset = options || J.merge({
+		h: true,
+		v: true,
+		i: true
+	}, options);
+	var key;
+	if (reset.h) {
+	  for (key in this.__H) {
+		  if (this.__H.hasOwnProperty(key)) {
+			  this[key] = {};
+		  }
+	  }
+	}
+	if (reset.v) {
+	  for (key in this.__V) {
+		  if (this.__V.hasOwnProperty(key)) {
+			  this[key] = new this.constructor();
+		  }
+	  }
+	}
+	if (reset.v) {
+	  for (key in this.__I) {
+		  if (this.__I.hasOwnProperty(key)) {
+			  this[key] = new NDDBIndex(key, this);
+		  }
+	  }
+	}
+
+};
 
 /**
  * ### NDDB.rebuildIndexes
  *
- * Resets and rebuilds all the database indexes 
+ * Rebuilds all the database indexes, hashs, and views 
  * 
- * Indexes are defined by the hashing functions
- * 
+ * @see NDDB.resetIndexes
+ * @see NDDB.index
+ * @see NDDB.view
  * @see NDDB.hash
+ * @see NDDB._indexIt
+ * @see NDDB._viewIt
+ * @see NDDB._hashIt
  */
 NDDB.prototype.rebuildIndexes = function() {
-	var h = false, i = false;
+	var h = !(J.isEmpty(this.__H)),
+		i = !(J.isEmpty(this.__I)),
+		v = !(J.isEmpty(this.__V));
 	
-	if (!J.isEmpty(this.__H)) {
-		h = true;
-		// Reset current hash-indexes
-		for (var key in this.__H) {
-			if (this.__H.hasOwnProperty(key)) {
-				this[key] = {};
-			}
+	var cb, idx;
+	if (!h && !i && !v) return;
+	
+	// Reset current indexes
+	this.resetIndexes({h: h, v: v, i: i});
+	
+	if (h && !i && !v) {
+		cb = this._hashIt;
+	}
+	else if (!h && i && !v) {
+		cb = this._indexIt;
+	}
+	else if (!h && !i && v) {
+		cb = this._viewIt;
+	}
+	else if (h && i && !v) {
+		cb = function(o, idx) {
+			this._hashIt(o);
+			this._indexIt(o, idx);
+		};
+	}
+	else if (!h && i && v) {
+		cb = function(o, idx) {
+			this._indexIt(o, idx);
+			this._viewIt(o);
+		};
+	}
+	else if (h && !i && v) {
+		cb = function(o, idx) {
+			this._hashIt(o);
+			this._viewIt(o);
+		};
+	}
+	else {
+		cb = function(o, idx) {
+			this._indexIt(o, idx);
+			this._hashIt(o);
+			this._viewIt(o);
+		};
+	}
+	
+	for (idx = 0 ; idx < this.db.length ; idx++) {
+		// _hashIt and viewIt do not need idx, it is no harm anyway
+		cb.call(this, this.db[idx], idx);
+	}
+};
+
+/**
+ * ### NDDB._indexIt
+ *
+ * Indexes an element
+ * 
+ * @param {object} o The element to index
+ * @param {object} o The position of the element in the database array
+ */
+NDDB.prototype._indexIt = function(o, dbidx) {
+  	if (!o || J.isEmpty(this.__I)) return;
+	var func, id, index;
+	
+	for (var key in this.__I) {
+		if (this.__I.hasOwnProperty(key)) {
+			func = this.__I[key];	    			
+			index = func(o);
+
+			if ('undefined' === typeof index) continue;
+			
+			if (!this[key]) this[key] = new NDDBIndex(key, this);
+			this[key]._add(index, dbidx);
 		}
 	}
+};
+
+/**
+ * ### NDDB._viewIt
+ *
+ * Adds an element to a view
+ * 
+ * @param {object} o The element to index
+ */
+NDDB.prototype._viewIt = function(o) {
+  	if (!o || J.isEmpty(this.__V)) return;
 	
-	if (!J.isEmpty(this.__I)) {
-		i = true;
-		// Reset current hash-indexes
-		for (var key in this.__I) {
-			if (this.__I.hasOwnProperty(key)) {
-				this[key] = {};
-			}
+	var func, id, index;
+	
+	for (var key in this.__V) {
+		if (this.__V.hasOwnProperty(key)) {
+			func = this.__V[key];
+			index = func(o);
+			if ('undefined' === typeof index) continue;
+			
+			if (!this[key]) this[key] = new this.constructor();
+			this[key].insert(o);
 		}
 	}
-	
-	if (h && !i) {
-		this.each(this._hashIt);
-	}
-	else if (!h && i) {
-		this.each(this._indexIt);
-	}
-	else if (h && i) {
-		this.each(function(o){
-			this.hashIt(o);
-			this.indexIt(o);
-		});
-	}
-	
 };
 
 /**
@@ -5293,65 +5453,22 @@ NDDB.prototype.rebuildIndexes = function() {
  * 
  */
 NDDB.prototype._hashIt = function(o) {
-  	if (!o) return false;
-	if (J.isEmpty(this.__H)) {
-		return false;
-	}
-
-	var h = null,
-		id = null,
-		hash = null;
+  	if (!o || J.isEmpty(this.__H)) return false;
+	
+	var h, id, hash;
 	
 	for (var key in this.__H) {
 		if (this.__H.hasOwnProperty(key)) {
 			h = this.__H[key];	    			
 			hash = h(o);
 
-			if ('undefined' === typeof hash) {
-				continue;
-			}
-
-			if (!this[key]) {
-				this[key] = {};
-			}
+			if ('undefined' === typeof hash) continue;
+			if (!this[key]) this[key] = {};
 			
 			if (!this[key][hash]) {
-				this[key][hash] = new NDDB();
+				this[key][hash] = new this.constructor();
 			}
 			this[key][hash].insert(o);		
-		}
-	}
-};
-
-/**
- * ### NDDB._hashIt
- *
- * Indexes an element
- * 
- * @param {object} o The element to index
- * @return {boolean} TRUE, if insertion to an index was successful
- * 
- */
-NDDB.prototype._indexIt = function(o) {
-  	if (!o) return false;
-	if (J.isEmpty(this.__I)) {
-		return false;
-	}
-	
-	var func = null,
-		id = null,
-		index = null;
-	
-	for (var key in this.__I) {
-		if (this.__I.hasOwnProperty(key)) {
-			func = this.__I[key];	    			
-			index = func(o);
-
-			if ('undefined' === typeof index) {
-				continue;
-			}
-			if (!this[key]) this[key] = {};
-			this[key][index] = o;
 		}
 	}
 };
@@ -5584,7 +5701,7 @@ NDDB.prototype.and = function (d, op, value) {
 //	else {
 		var condition = this._analyzeQuery(d, op, value);        
 	    if (!condition) return false;
-	    this.query.addCondition('AND', condition, this.comparator(d));
+	    this.query.addCondition('AND', condition, this.getComparator(d));
 //	}			
 	return this;
 };
@@ -5611,7 +5728,7 @@ NDDB.prototype.or = function (d, op, value) {
 //	else {
 		var condition = this._analyzeQuery(d, op, value);        
 	    if (!condition) return false;
-	    this.query.addCondition('OR', condition, this.comparator(d));
+	    this.query.addCondition('OR', condition, this.getComparator(d));
 //	}			
 	return this;
 };
@@ -5755,7 +5872,7 @@ NDDB.prototype.reverse = function () {
       var that = this;
       var func = function (a,b) {
         for (var i=0; i < d.length; i++) {
-          var result = that.comparator(d[i]).call(that,a,b);
+          var result = that.getComparator(d[i]).call(that,a,b);
           if (result !== 0) return result;
         }
         return result;
@@ -5764,7 +5881,7 @@ NDDB.prototype.reverse = function () {
     
     // SINGLE dimension
     else {
-      var func = this.comparator(d);
+      var func = this.getComparator(d);
     }
     
     this.db.sort(func);
@@ -6066,15 +6183,14 @@ NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
  * New entries are created and a new NDDB object is
  * breeded to allows method chaining.
  * 
- * @param {string} key The dimension along which splitting the entries
+ * @param {string} key The dimension along which items will be split
  * @return {NDDB} A new database containing the split entries
  * 
- * @see NDDB._split
- * 
+ * @see JSUS.split
  */
 NDDB.prototype.split = function (key) {    
-    var out = [];
-    for (var i=0; i < this.db.length;i++) {
+    var out = [], i;
+    for (i = 0; i < this.db.length; i++) {
         out = out.concat(J.split(this.db[i], key));
     }
     return this.breed(out);
@@ -6719,29 +6835,42 @@ NDDB.prototype.intersect = function (nddb) {
     return this.breed(J.arrayIntersect(this.db, nddb));
 };
 
-// ## Iterator
 
+// ## Iterator
 
 /**
  * ### NDDB.get
+ *   
+ * Returns the entry at the given numerical position
+ * 
+ * @param {number} pos The position of the entry
+ * @return {object|boolean} The requested item, or FALSE if 
+ * 	the index is invalid 
+ */
+NDDB.prototype.get = function (pos) {
+	if ('undefined' === typeof pos || pos < 0 || pos > (this.db.length-1)) {
+		return false;
+	}
+	return this.db[pos];
+};
+
+/**
+ * ### NDDB.current
  *
  * Returns the entry in the database, at which 
  * the iterator is currently pointing 
  * 
- * If a parameter is passed, then returns the entry
- * with the same internal id. The pointer is *not*
- * automatically updated. 
+ * The pointer is *not* updated. 
  * 
  * Returns false, if the pointer is at an invalid position.
  * 
  * @return {object|boolean} The current entry, or FALSE if none is found
  */
-NDDB.prototype.get = function (pos) {
-    var pos = pos || this.nddb_pointer;
-    if (pos < 0 || pos > (this.db.length-1)) {
+NDDB.prototype.current = function () {
+    if (this.nddb_pointer < 0 || this.nddb_pointer > (this.db.length-1)) {
     	return false;
     }
-    return this.db[pos];
+    return this.db[this.nddb_pointer];
 };
     
 /**
@@ -6757,7 +6886,8 @@ NDDB.prototype.get = function (pos) {
  * 
  */
 NDDB.prototype.next = function () {
-    var el = NDDB.prototype.get.call(this, ++this.nddb_pointer);
+	this.nddb_pointer++;
+    var el = NDDB.prototype.current.call(this);
     if (!el) this.nddb_pointer--;
     return el;
 };
@@ -6774,7 +6904,8 @@ NDDB.prototype.next = function () {
  * @return {object|boolean} The previous entry, or FALSE if none is found
  */
 NDDB.prototype.previous = function () {
-    var el = NDDB.prototype.get.call(this, --this.nddb_pointer);
+	this.nddb_pointer--;
+    var el = NDDB.prototype.current.call(this);
     if (!el) this.nddb_pointer++;
     return el;
 };
@@ -6852,8 +6983,6 @@ NDDB.prototype.tag = function (tag, idx) {
         NDDB.log('Cannot register empty tag.', 'ERR');
         return false;
     }
-    
-//    console.log(tag, idx)
     
     var ref = null, typeofIdx = typeof idx;
     
@@ -7364,8 +7493,137 @@ QueryBuilder.prototype.get = function() {
 		}
 		
 	}
-	
 };
+
+/**
+ * # NDDBIndex
+ * 
+ * MIT Licensed
+ * 
+ * Helper class for NDDB indexing
+ * 
+ * ---
+ * 
+ */
+
+/**
+ * ## NDDBIndex Constructor
+ * 
+ * Creates direct access index objects for NDDB
+ * 
+ * @param {string} The name of the index
+ * @param {array} The reference to the original database
+ */	
+function NDDBIndex(idx, nddb) {
+	this.idx = idx;
+	this.nddb = nddb;
+	this.resolve = {};
+}
+
+/**
+ * ### NDDBIndex._add
+ *
+ * Adds an item to the index
+ * 
+ * @param {mixed} idx The id of the item
+ * @param {number} dbidx The numerical id of the item in the original array
+ */
+NDDBIndex.prototype._add = function (idx, dbidx) {
+    this.resolve[idx] = dbidx;
+};
+
+/**
+ * ### NDDBIndex._remove
+ *
+ * Adds an item to the index
+ * 
+ * @param {mixed} idx The id to remove from the index
+ */
+NDDBIndex.prototype._remove = function (idx) {
+    delete this.resolve[idx];
+};
+
+/**
+ * ### NDDBIndex.get
+ *
+ * Gets the entry from database with the given id
+ * 
+ * @param {mixed} idx The id of the item to get
+ * @return {object|boolean} The requested entry, or FALSE if none is found
+ * 
+ * @see NDDB.index
+ * @see NDDBIndex.pop
+ * @see NDDBIndex.update
+ */
+NDDBIndex.prototype.size = function () {
+    return J.size(this.resolve);
+};
+
+/**
+ * ### NDDBIndex.get
+ *
+ * Gets the entry from database with the given id
+ * 
+ * @param {mixed} idx The id of the item to get
+ * @return {object|boolean} The requested entry, or FALSE if the index is invalid
+ * 
+ * @see NDDB.index
+ * @see NDDBIndex.pop
+ * @see NDDBIndex.update
+ */
+NDDBIndex.prototype.get = function (idx) {
+	if (!this.resolve[idx]) return false
+    return this.nddb.db[this.resolve[idx]];
+};
+
+/**
+ * ### NDDBIndex.pop
+ *
+ * Removes and entry from the database with the given id and returns it
+ * 
+ * @param {mixed} idx The id of item to remove 
+ * @return {object|boolean} The removed item, or FALSE if the index is invalid
+ * 
+ * @see NDDB.index
+ * @see NDDBIndex.get
+ * @see NDDBIndex.update
+ */
+NDDBIndex.prototype.pop = function (idx) {
+	var o, dbidx;
+	dbidx = this.resolve[idx];
+	if ('undefined' === typeof dbidx) return false;
+	o = this.nddb.db[dbidx];
+	if ('undefined' === typeof o) return;
+	this.nddb.db.splice(dbidx,1);
+	delete this.resolve[idx];
+	this.nddb.emit('remove', o);
+	this.nddb._autoUpdate();
+	return o;
+};
+
+/**
+ * ### NDDBIndex.update
+ *
+ * Removes and entry from the database with the given id and returns it
+ * 
+ * @param {mixed} idx The id of item to update 
+ * @return {object|boolean} The updated item, or FALSE if the index is invalid
+ * 
+ * @see NDDB.index
+ * @see NDDBIndex.get
+ * @see NDDBIndex.pop
+ */
+NDDBIndex.prototype.update = function (idx, update) {
+	var o, dbidx;
+	dbidx = this.resolve[idx];
+	if ('undefined' === typeof dbidx) return false;
+	o = this.nddb.db[dbidx];
+	J.mixin(o, update);
+	this.nddb.emit('update', o);
+	this.nddb._autoUpdate();
+	return o;
+};
+
 
 // ## Closure    
 })(
