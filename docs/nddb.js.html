@@ -4278,10 +4278,9 @@ dimension will be skipped</p>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">groupBy</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">key</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">;</span>
     
-    <span class="kd">var</span> <span class="nx">groups</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="kd">var</span> <span class="nx">outs</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+    <span class="kd">var</span> <span class="nx">groups</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">outs</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">out</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">el</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">el</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -4294,12 +4293,11 @@ dimension will be skipped</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">groups</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">groups</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
-            <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">out</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">elem</span><span class="p">),</span> <span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
                     <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
                 <span class="p">}</span>
-            <span class="p">});</span>
-            </pre></div>
+            <span class="p">});</span>   </pre></div>
         </td>
       </tr>
       <tr>
@@ -4310,10 +4308,8 @@ dimension will be skipped</p>
 <p>Reset nddb_pointer in subgroups</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="nx">out</span><span class="p">.</span><span class="nx">nddb_pointer</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-            
             <span class="nx">outs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">out</span><span class="p">);</span>
         <span class="p">}</span>
-        
     <span class="p">}</span>
     <span class="k">return</span> <span class="nx">outs</span><span class="p">;</span>
 <span class="p">};</span>    </pre></div>
@@ -6324,7 +6320,7 @@ always decides the overall logic value. E.g. :</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">[</span><span class="nx">idx</span><span class="p">])</span> <span class="k">return</span> <span class="kc">false</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">[</span><span class="nx">idx</span><span class="p">])</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">[</span><span class="nx">idx</span><span class="p">]];</span>
 <span class="p">};</span></pre></div>
         </td>
