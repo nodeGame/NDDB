@@ -2889,7 +2889,7 @@ NDDBIndex.prototype.size = function () {
  * @see NDDBIndex.update
  */
 NDDBIndex.prototype.get = function (idx) {
-	if (!this.resolve[idx]) return false
+	if ('undefined' === typeof this.resolve[idx]) return false;
     return this.nddb.db[this.resolve[idx]];
 };
 
