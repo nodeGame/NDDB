@@ -52,7 +52,7 @@ function build(options) {
 	//shelf.js
 	var shelfDir = J.resolveModuleDir('shelf.js', __dirname);
 	var nddb_shelf = [
-	  shelfDir + "/build/shelf.js",
+	  shelfDir + "/build/shelf-amplify.js",
 	];
 	
 	// nddb

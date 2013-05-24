@@ -13,3 +13,4 @@ test/NDDB_Test.js
 npm-debug.log
 
 _*
+.idea
