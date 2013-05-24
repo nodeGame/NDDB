@@ -1,7 +1,7 @@
 {
   "name": "NDDB",
   "description": "Powerful and versatile 100% javascript object database",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "keywords": [ "db", "no-sql", "cyclic objects", "nddb", "database", "index", "views" ],
   "author": "Stefano Balietti <futur.dorko@gmail.com>",
   "licenses": [
