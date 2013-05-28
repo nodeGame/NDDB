@@ -388,10 +388,10 @@ node make.nddb.js doc
 
 ### 0.7.2
 
-  - #selexec() shorthand  for select().execute()
+  - `#selexec()` shorthand  for `select().execute()`
   - Fixed bug on emit('update')
-  - #tag() returns the tagged element
-  - #clear() removes all volatile data, not just the entries in the database
+  - `#tag()` returns the tagged element
+  - `#clear()` removes all volatile data, not just the entries in the database
   - Minor doc improvements
 
 ### 0.7.0
