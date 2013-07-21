@@ -367,7 +367,7 @@ node make.nddb.js doc
 
 ## ChangeLog
 
-### 0.8.3
+### 0.8.4
 
   - NDDBIndexes: `#getAllKeys()` and `#getAllKeyElements`
   - Integration with updated version of Shelf.js
