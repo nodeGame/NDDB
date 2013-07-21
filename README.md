@@ -367,6 +367,10 @@ node make.nddb.js doc
 
 ## ChangeLog
 
+### 0.8.5
+  - `#loadCSV`: load the content of a csv file into the database
+  - Minor fixes
+
 ### 0.8.4
 
   - NDDBIndexes: `#getAllKeys()` and `#getAllKeyElements`
