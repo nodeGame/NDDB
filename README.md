@@ -26,7 +26,7 @@ Developer-friendly thanks to an easy api, detailed documentation, and full unit 
 - Iterator: `previous`, `next`, `first`, `last`
 - Tagging: `tag`
 - Event listener / emitter: `on`, `off`, `emit`
-- Saving and Loading: `save`, `load`, `load.csv`
+- Saving and Loading: `save`, `load`, `loadCSV`
 
 The complete NDDB api documentation is available [here](http://nodegame.github.com/NDDB/docs/nddb.js.html).
 
