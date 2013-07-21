@@ -28,18 +28,20 @@
     <div id="content-wrapper">
       <div class="inner clearfix">
         <section id="main-content">
-          <h1>NDDB</h1>
+          <h1>
+<a name="nddb" class="anchor" href="#nddb"><span class="octicon octicon-link"></span></a>NDDB</h1>
 
 <p><a href="https://travis-ci.org/nodeGame/NDDB"><img src="https://travis-ci.org/nodeGame/NDDB.png?branch=master" alt="Build Status"></a></p>
 
 <p>NDDB is a powerful and versatile object database for node.js and the browser.</p>
 
-<hr><p>NDDB (N-Dimensional DataBase) supports indexes, views, joins, basic statistics, custom operations, 
-saving and loading from file system and browser localStorage and much more.</p>
+<hr><p>NDDB (N-Dimensional DataBase) supports indexes, views, joins, group-by, basic statistics, 
+custom operations, saving and loading from file system and browser localStorage and much more.</p>
 
 <p>Developer-friendly thanks to an easy api, detailed documentation, and full unit tests coverage.</p>
 
-<h2>List of features</h2>
+<h2>
+<a name="list-of-features" class="anchor" href="#list-of-features"><span class="octicon octicon-link"></span></a>List of features</h2>
 
 <ul>
 <li>Selecting: <code>select</code>, <code>and</code>, <code>or</code>, <code>selexec</code>
@@ -52,7 +54,7 @@ saving and loading from file system and browser localStorage and much more.</p>
 </li>
 <li>Updating and Deletion: <code>update</code>, <code>remove</code>, <code>clear</code>
 </li>
-<li>Advanced operations: <code>split</code>, <code>join</code>, <code>concat</code>
+<li>Advanced operations: <code>split</code>, <code>join</code>, <code>concat</code>, <code>groupBy</code>
 </li>
 <li>Fetching and transformations: <code>fetch</code>, <code>fetchArray</code>, <code>fetchKeyArray</code>, <code>fetchValues</code>, <code>fetchSubObj</code>
 </li>
@@ -72,7 +74,8 @@ saving and loading from file system and browser localStorage and much more.</p>
 </li>
 </ul><p>The complete NDDB api documentation is available <a href="http://nodegame.github.com/NDDB/docs/nddb.js.html">here</a>.</p>
 
-<h2>Usage</h2>
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
 
 <p>Create an instance of NDDB</p>
 
@@ -164,9 +167,11 @@ saving and loading from file system and browser localStorage and much more.</p>
 <span class="c1">//   year: [ 0, 1929, 1927, 1906, 1891, 1863 ] }</span>
 </pre></div>
 
-<h2>Advanced commands</h2>
+<h2>
+<a name="advanced-commands" class="anchor" href="#advanced-commands"><span class="octicon octicon-link"></span></a>Advanced commands</h2>
 
-<h3>Sorting</h3>
+<h3>
+<a name="sorting" class="anchor" href="#sorting"><span class="octicon octicon-link"></span></a>Sorting</h3>
 
 <p>Define a global comparator function that sorts all the entries chronologically</p>
 
@@ -200,7 +205,8 @@ saving and loading from file system and browser localStorage and much more.</p>
 <div class="highlight"><pre>    <span class="nx">db</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="s1">'painter'</span><span class="p">);</span> <span class="c1">// Picasso is always listed first</span>
 </pre></div>
 
-<h3>Views</h3>
+<h3>
+<a name="views" class="anchor" href="#views"><span class="octicon octicon-link"></span></a>Views</h3>
 
 <p>Splits the database in sub-database, each containing semantically consistent set of entries</p>
 
@@ -240,7 +246,8 @@ saving and loading from file system and browser localStorage and much more.</p>
 
 </pre></div>
 
-<h3>Hashing</h3>
+<h3>
+<a name="hashing" class="anchor" href="#hashing"><span class="octicon octicon-link"></span></a>Hashing</h3>
 
 <p>Define a custom hash function that creates a new view on each of the painters in the database;</p>
 
@@ -258,7 +265,8 @@ saving and loading from file system and browser localStorage and much more.</p>
     <span class="nx">db</span><span class="p">.</span><span class="nx">painter</span><span class="p">.</span><span class="nx">Dali</span>     <span class="c1">// NDDB with 2 elements in db</span>
 </pre></div>
 
-<h3>Listenting to events</h3>
+<h3>
+<a name="listenting-to-events" class="anchor" href="#listenting-to-events"><span class="octicon octicon-link"></span></a>Listenting to events</h3>
 
 <p>Listen to the <code>insert</code> event and modify the inserted items by adding an external index to them;</p>
 
@@ -271,7 +279,8 @@ saving and loading from file system and browser localStorage and much more.</p>
     <span class="p">});</span>
 </pre></div>
 
-<h3>Indexes</h3>
+<h3>
+<a name="indexes" class="anchor" href="#indexes"><span class="octicon octicon-link"></span></a>Indexes</h3>
 
 <p>Define a custom indexing function that gives fast, direct access to the items of the database;</p>
 
@@ -301,7 +310,8 @@ saving and loading from file system and browser localStorage and much more.</p>
 
 </pre></div>
 
-<h2>Example of a configuration object</h2>
+<h2>
+<a name="example-of-a-configuration-object" class="anchor" href="#example-of-a-configuration-object"><span class="octicon octicon-link"></span></a>Example of a configuration object</h2>
 
 <div class="highlight"><pre>
     <span class="kd">var</span> <span class="nx">logFunc</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">txt</span><span class="p">,</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
@@ -341,7 +351,8 @@ saving and loading from file system and browser localStorage and much more.</p>
     <span class="nx">nddb</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
 </pre></div>
 
-<h2>Save and load from file or to localStorage</h2>
+<h2>
+<a name="save-and-load-from-file-or-to-localstorage" class="anchor" href="#save-and-load-from-file-or-to-localstorage"><span class="octicon octicon-link"></span></a>Save and load from file or to localStorage</h2>
 
 <p>In the node.js environment, it is possible to save the state of the database to a file and load it afterwards.</p>
 
@@ -355,7 +366,8 @@ saving and loading from file system and browser localStorage and much more.</p>
 
 <p>The above command are valid also in the browser environment if <a href="https://github.com/shakty/shelf.js">Shelf.js</a> is loaded. A string id instead of the path to a file must be given instead.</p>
 
-<h2>Test</h2>
+<h2>
+<a name="test" class="anchor" href="#test"><span class="octicon octicon-link"></span></a>Test</h2>
 
 <p>NDDB relies on <a href="http://visionmedia.github.com/mocha/">mocha</a> and <a href="http://github.com/visionmedia/should.js">should.js</a> for testing.</p>
 
@@ -363,7 +375,8 @@ saving and loading from file system and browser localStorage and much more.</p>
 $ npm test # will run the test suite against nddb.js
 </code></pre>
 
-<h2>Build</h2>
+<h2>
+<a name="build" class="anchor" href="#build"><span class="octicon octicon-link"></span></a>Build</h2>
 
 <p>Create your customized build of NDDB using the make file in the <code>bin</code> directory</p>
 
@@ -371,28 +384,33 @@ $ npm test # will run the test suite against nddb.js
 <span class="nx">node</span> <span class="nx">make</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">js</span> <span class="nx">build</span> <span class="o">-</span><span class="nx">a</span> <span class="o">-</span><span class="nx">o</span> <span class="nx">nddb</span><span class="o">-</span><span class="nx">full</span> <span class="c1">// Full build</span>
 </pre></div>
 
-<h3>Help</h3>
+<h3>
+<a name="help" class="anchor" href="#help"><span class="octicon octicon-link"></span></a>Help</h3>
 
 <div class="highlight"><pre><span class="nx">node</span> <span class="nx">make</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">js</span> <span class="o">--</span><span class="nx">help</span>
 </pre></div>
 
-<h2>API Documentation</h2>
+<h2>
+<a name="api-documentation" class="anchor" href="#api-documentation"><span class="octicon octicon-link"></span></a>API Documentation</h2>
 
 <p>Create html API documentation using the make file in the bin directory  </p>
 
 <div class="highlight"><pre><span class="nx">node</span> <span class="nx">make</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">js</span> <span class="nx">doc</span>
 </pre></div>
 
-<h2>ChangeLog</h2>
+<h2>
+<a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>ChangeLog</h2>
 
-<h3>0.8.2</h3>
+<h3>
+<a name="084" class="anchor" href="#084"><span class="octicon octicon-link"></span></a>0.8.4</h3>
 
 <ul>
 <li>NDDBIndexes: <code>#getAllKeys()</code> and <code>#getAllKeyElements</code>
 </li>
 <li>Integration with updated version of Shelf.js</li>
 <li>Minor fixes</li>
-</ul><h3>0.8.0</h3>
+</ul><h3>
+<a name="080" class="anchor" href="#080"><span class="octicon octicon-link"></span></a>0.8.0</h3>
 
 <ul>
 <li>New faster and more powerful indexing engine</li>
@@ -410,15 +428,21 @@ $ npm test # will run the test suite against nddb.js
 <code>#get()</code> always returns the element at the specified ordinal position in the database</li>
 <li>Callback functions of hash and index functions must always be specified</li>
 <li>Hash functions creates NDDB instances of constructor</li>
-</ul><h3>0.7.2</h3>
+</ul><h3>
+<a name="072" class="anchor" href="#072"><span class="octicon octicon-link"></span></a>0.7.2</h3>
 
 <ul>
-<li>#selexec() shorthand  for select().execute()</li>
+<li>
+<code>#selexec()</code> shorthand  for <code>select().execute()</code>
+</li>
 <li>Fixed bug on emit('update')</li>
-<li>#tag() returns the tagged element</li>
-<li>#clear() removes all volatile data, not just the entries in the database</li>
+<li>
+<code>#tag()</code> returns the tagged element</li>
+<li>
+<code>#clear()</code> removes all volatile data, not just the entries in the database</li>
 <li>Minor doc improvements</li>
-</ul><h3>0.7.0</h3>
+</ul><h3>
+<a name="070" class="anchor" href="#070"><span class="octicon octicon-link"></span></a>0.7.0</h3>
 
 <ul>
 <li>More efficient selector engine. </li>
@@ -427,7 +451,8 @@ $ npm test # will run the test suite against nddb.js
 <li>Objects are not maskeraded at insertation (no hidden .nddbid property injected)</li>
 <li>Remove method does not remove the elements in parent database</li>
 <li>Constructor changed, no parent parameter</li>
-</ul><h3>0.6.0</h3>
+</ul><h3>
+<a name="060" class="anchor" href="#060"><span class="octicon octicon-link"></span></a>0.6.0</h3>
 
 <ul>
 <li>fetch accepts no arguments</li>
@@ -435,31 +460,36 @@ $ npm test # will run the test suite against nddb.js
 <li>fetchSubObj</li>
 <li>fetchArray and fetchKeyArray operate only on the first level, and objects in properties are not further flattened</li>
 <li>fetchArray, fetchKeyArray, and fetchValues accept either a string or an array of strings as key-selector parameter</li>
-</ul><h3>0.5.8</h3>
+</ul><h3>
+<a name="058" class="anchor" href="#058"><span class="octicon octicon-link"></span></a>0.5.8</h3>
 
 <ul>
 <li>Serialization of functions, null and undefined values</li>
 <li>Removed eval from select queries</li>
 <li>Travis-ci continous integration</li>
 <li>Minor bug fixing</li>
-</ul><h3>0.5.0</h3>
+</ul><h3>
+<a name="050" class="anchor" href="#050"><span class="octicon octicon-link"></span></a>0.5.0</h3>
 
 <ul>
 <li>Support for events: 'remove', 'insert'</li>
 <li>NDDB.index(): provides fast access to objects</li>
 <li>NDDB.tag(): accepts also objects</li>
-</ul><h3>0.4.0</h3>
+</ul><h3>
+<a name="040" class="anchor" href="#040"><span class="octicon octicon-link"></span></a>0.4.0</h3>
 
 <ul>
 <li>IE compatibility</li>
 <li>Bug fixing</li>
-</ul><h3>0.3.6</h3>
+</ul><h3>
+<a name="036" class="anchor" href="#036"><span class="octicon octicon-link"></span></a>0.3.6</h3>
 
 <ul>
 <li>Bug fixing</li>
 <li>NDDB.save beautifies the output by default</li>
 <li>Post install scripts build the libraries</li>
-</ul><h3>0.3.0</h3>
+</ul><h3>
+<a name="030" class="anchor" href="#030"><span class="octicon octicon-link"></span></a>0.3.0</h3>
 
 <ul>
 <li>NDDB.skim() and NDDB.keep()</li>
@@ -467,7 +497,8 @@ $ npm test # will run the test suite against nddb.js
 <li>Make file in bin directory</li>
 <li>Custom builds</li>
 <li>Bug fixing</li>
-</ul><h3>0.2.5</h3>
+</ul><h3>
+<a name="025" class="anchor" href="#025"><span class="octicon octicon-link"></span></a>0.2.5</h3>
 
 <ul>
 <li>NDDB.distinct() + test</li>
@@ -475,13 +506,15 @@ $ npm test # will run the test suite against nddb.js
 <li>NDDB.stddev()</li>
 <li>Bug fixing</li>
 <li>More tests</li>
-</ul><h3>0.2</h3>
+</ul><h3>
+<a name="02" class="anchor" href="#02"><span class="octicon octicon-link"></span></a>0.2</h3>
 
 <ul>
 <li>Introduced indexing. Indexes are created with NDDB.h() or the alias NDDB.hash()</li>
 <li>NDDB.set() was already deprecated and it has been removed. NDDB.c() or the alias NDDB.compare() should be used instead.</li>
 <li>NDDB.init() can sets the configuration of the database</li>
-</ul><h2>License</h2>
+</ul><h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>Copyright (C) 2012 Stefano Balietti</p>
 
@@ -504,7 +537,7 @@ $ npm test # will run the test suite against nddb.js
 
           <p class="repo-owner"><a href="https://github.com/nodeGame/NDDB"></a> is maintained by <a href="https://github.com/nodeGame">nodeGame</a>.</p>
 
-          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
         </aside>
       </div>
     </div>
