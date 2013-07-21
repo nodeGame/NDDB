@@ -100,6 +100,9 @@
         <a href="#nddb.insert">NDDB.insert</a>
       </div>
       <div class="heading h3">
+        <a href="#nddb.size">NDDB.size</a>
+      </div>
+      <div class="heading h3">
         <a href="#nddb.breed">NDDB.breed</a>
       </div>
       <div class="heading h3">
@@ -350,6 +353,9 @@
       </div>
       <div class="heading h3">
         <a href="#nddb.load">NDDB.load</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nddb.loadcsv">NDDB.loadCSV</a>
       </div>
       <div class="heading h1">
         <a href="#querybuilder">QueryBuilder</a>
@@ -1140,6 +1146,34 @@ configuration</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="nddb.size">
+  <h3>
+    <a href="#nddb.size" class="pilcrow">&#182;</a>
+    NDDB.size
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the number of elements in the database</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.length
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="p">};</span>
+    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="nddb.breed">
   <h3>
     <a href="#nddb.breed" class="pilcrow">&#182;</a>
@@ -1177,7 +1211,7 @@ preserve their prototype.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>In case the class was inherited</p>
         </td>
@@ -1308,7 +1342,7 @@ and returns it</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>decycle, if possible</p>
         </td>
@@ -1432,7 +1466,7 @@ comparator function. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <!--        
            NDDB.log('1' + o1);
@@ -1449,7 +1483,7 @@ comparator function. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <!--
            NDDB.log(v1);
@@ -1900,7 +1934,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Reset current indexes</p>
         </td>
@@ -1947,7 +1981,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>_hashIt and viewIt do not need idx, it is no harm anyway</p>
         </td>
@@ -2316,7 +2350,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>Verify input </p>
         </td>
@@ -2335,7 +2369,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>Range-queries need an array as third parameter instance of Array</p>
         </td>
@@ -2358,7 +2392,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
 <p>Comparison queries need a third parameter</p>
         </td>
@@ -2368,7 +2402,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>Comparison queries need to have the same data structure in the compared object</p>
         </td>
@@ -2380,7 +2414,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
 <p>other (e.g. user-defined) operators do not have constraints, 
 e.g. no need to transform the value</p>
@@ -2571,7 +2605,7 @@ further selections can be chained with the <code>or</code>, and <code>and</code>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
 <p>TODO: Support for nested query <br />
 if (!arguments.length) {
@@ -2587,7 +2621,7 @@ else {</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
+  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
 </div>
 <p>}            </p>
         </td>
@@ -2653,7 +2687,7 @@ else {</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
 </div>
 <p>TODO: Support for nested query <br />
 if (!arguments.length) {
@@ -2669,7 +2703,7 @@ else {</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
 </div>
 <p>}            </p>
         </td>
@@ -2988,7 +3022,7 @@ further methods can be chained. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
+  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
 </div>
 <p>GLOBAL compare  </p>
         </td>
@@ -3001,7 +3035,7 @@ further methods can be chained. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
+  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
 </div>
 <p>FUNCTION  </p>
         </td>
@@ -3014,7 +3048,7 @@ further methods can be chained. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
+  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
 </div>
 <p>ARRAY of dimensions</p>
         </td>
@@ -3034,7 +3068,7 @@ further methods can be chained. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
+  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
 </div>
 <p>SINGLE dimension</p>
         </td>
@@ -3460,7 +3494,7 @@ and resets the current query selection  </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
+  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
 </div>
 <!--    
 Construct a better comparator function
@@ -3631,7 +3665,7 @@ specify the name of the properties to copy as an input parameter.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
+  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
 </div>
 <p>Inject the matched obj into the
 reference one</p>
@@ -4287,7 +4321,7 @@ dimension will be skipped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
+  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
 </div>
 <p>Creates a new group and add entries to it</p>
         </td>
@@ -4303,7 +4337,7 @@ dimension will be skipped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
+  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
 </div>
 <p>Reset nddb_pointer in subgroups</p>
         </td>
@@ -5358,7 +5392,7 @@ are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-135" id="section-135">&#182;</a>
+  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
 </div>
 <p>Try to save in the browser, e.g. with Shelf.js</p>
         </td>
@@ -5378,7 +5412,7 @@ are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
+  <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
 </div>
 <p>Save in Node.js</p>
         </td>
@@ -5432,6 +5466,10 @@ using the standard <code>fs.readFileSync</code> or <code>fs.readFile</code> meth
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.loadCSV</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
       <span class="dox_type">NDDB.save</span>
     </div>
     <div class="dox_tag_title">See</div>
@@ -5462,7 +5500,7 @@ using the standard <code>fs.readFileSync</code> or <code>fs.readFile</code> meth
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-138" id="section-138">&#182;</a>
+  <a class="pilcrow" href="#section-139" id="section-139">&#182;</a>
 </div>
 <p>Try to save in the browser, e.g. with Shelf.js</p>
         </td>
@@ -5489,7 +5527,7 @@ using the standard <code>fs.readFileSync</code> or <code>fs.readFile</code> meth
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-139" id="section-139">&#182;</a>
+  <a class="pilcrow" href="#section-140" id="section-140">&#182;</a>
 </div>
 <p>retrocycle if possible</p>
         </td>
@@ -5508,7 +5546,7 @@ using the standard <code>fs.readFileSync</code> or <code>fs.readFile</code> meth
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-140" id="section-140">&#182;</a>
+  <a class="pilcrow" href="#section-141" id="section-141">&#182;</a>
 </div>
 <p>if node</p>
         </td>
@@ -5516,52 +5554,103 @@ using the standard <code>fs.readFileSync</code> or <code>fs.readFile</code> meth
   <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./external/cycle.js&#39;</span><span class="p">);</span>   
   <span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">),</span>
   <span class="nx">csv</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;ya-csv&#39;</span><span class="p">);</span>
-  
-  <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span><span class="p">.</span><span class="nx">csv</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;You must specify a valid CSV file.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-      <span class="p">}</span>
-      </pre></div>
+  </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nddb.loadcsv">
+  <h3>
+    <a href="#nddb.loadcsv" class="pilcrow">&#182;</a>
+    NDDB.loadCSV
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Loads the content of a csv file into the database</p>
+
+<p>Uses <code>ya-csv</code> to load the csv file</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">file</span>
+      <span class="dox_type">string</span>
+      <span>The path to the file to load,</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">cb</span>
+      <span class="dox_type">function</span>
+      <span>Optional. A callback to execute after the database was saved</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. A configuration object to pass to 
+ <code>ya-csv.createCsvFileReader</code></span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if operation is successful</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.load</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <a href=" ">https://github.com/koles/ya-csv
+</a>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">loadCSV</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">reader</span><span class="p">,</span> <span class="nx">that</span><span class="p">;</span>
+            <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+            </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-141" id="section-141">&#182;</a>
+  <a class="pilcrow" href="#section-143" id="section-143">&#182;</a>
 </div>
 <p>Mix options</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>      <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-      
-      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">columnsFromHeader</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">columnsFromHeader</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-      <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">columnsFromHeader</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">options</span><span class="p">.</span><span class="nx">columnsFromHeader</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+            
+            <span class="nx">reader</span> <span class="o">=</span> <span class="nx">csv</span><span class="p">.</span><span class="nx">createCsvFileReader</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">columnNames</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">reader</span><span class="p">.</span><span class="nx">setColumnNames</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">columnNames</span><span class="p">);</span>
+            <span class="p">}</span>
+            
+            <span class="nx">reader</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+           <span class="nx">that</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">});</span>
+            
+            <span class="nx">reader</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">cb</span><span class="p">();</span>
+            <span class="p">});</span>
+            
+            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">};</span>
 
-
-      <span class="kd">var</span> <span class="nx">reader</span> <span class="o">=</span> <span class="nx">csv</span><span class="p">.</span><span class="nx">createCsvStreamReader</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-
-      <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">columnNames</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">reader</span><span class="p">.</span><span class="nx">setColumnNames</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">columnNames</span><span class="p">);</span>
-      <span class="p">}</span>
-      
-      <span class="nx">reader</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-      <span class="p">});</span>
-      
-      <span class="nx">reader</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">callback</span><span class="p">();</span>
-      <span class="p">});</span>
-      
-      <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="p">};</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-142" id="section-142">&#182;</a>
+  <a class="pilcrow" href="#section-144" id="section-144">&#182;</a>
 </div>
 <p>end node  </p>
         </td>
@@ -5730,7 +5819,7 @@ overwrite the old operator.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
+  <a class="pilcrow" href="#section-150" id="section-150">&#182;</a>
 </div>
 <p>Exists</p>
         </td>
@@ -5744,7 +5833,7 @@ overwrite the old operator.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-149" id="section-149">&#182;</a>
+  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
 </div>
 <p>(strict) Equals</p>
         </td>
@@ -5759,7 +5848,7 @@ overwrite the old operator.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-150" id="section-150">&#182;</a>
+  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
 </div>
 <p>Greater than</p>
         </td>
@@ -5775,7 +5864,7 @@ overwrite the old operator.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
+  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
 </div>
 <p>Smaller than</p>
         </td>
@@ -5790,7 +5879,7 @@ overwrite the old operator.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
+  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
 </div>
 <p>Smaller or equal than</p>
         </td>
@@ -5806,7 +5895,7 @@ overwrite the old operator.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
+  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
 </div>
 <p>Between</p>
         </td>
@@ -5822,7 +5911,7 @@ overwrite the old operator.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
+  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
 </div>
 <p>Not Between</p>
         </td>
@@ -5839,7 +5928,7 @@ overwrite the old operator.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
+  <a class="pilcrow" href="#section-157" id="section-157">&#182;</a>
 </div>
 <p>In Array</p>
         </td>
@@ -5856,7 +5945,7 @@ overwrite the old operator.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
+  <a class="pilcrow" href="#section-158" id="section-158">&#182;</a>
 </div>
 <p>Not In Array</p>
         </td>
@@ -5964,7 +6053,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-160" id="section-160">&#182;</a>
+  <a class="pilcrow" href="#section-162" id="section-162">&#182;</a>
 </div>
 <p>Ready to support nested queries, not yet implemented</p>
         </td>
@@ -6055,7 +6144,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-161" id="section-161">&#182;</a>
+  <a class="pilcrow" href="#section-163" id="section-163">&#182;</a>
 </div>
 <p>Current condition is TRUE OR</p>
         </td>
@@ -6067,7 +6156,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-162" id="section-162">&#182;</a>
+  <a class="pilcrow" href="#section-164" id="section-164">&#182;</a>
 </div>
 <p>Current condition is FALSE AND </p>
         </td>
@@ -6080,7 +6169,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-163" id="section-163">&#182;</a>
+  <a class="pilcrow" href="#section-165" id="section-165">&#182;</a>
 </div>
 <p>Previous check was an AND or a FALSE OR</p>
         </td>
@@ -6094,7 +6183,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-164" id="section-164">&#182;</a>
+  <a class="pilcrow" href="#section-166" id="section-166">&#182;</a>
 </div>
 <p>A previous OR is TRUE also if follows a TRUE AND </p>
         </td>
