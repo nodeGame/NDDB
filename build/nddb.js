@@ -4932,7 +4932,7 @@ JSUS.extend(PARSE);
     };
 
     /**
-     * ### NDDBIndex.get
+     * ### NDDBIndex.size
      *
      * Gets the entry from database with the given id
      * 
