@@ -6397,16 +6397,11 @@ JSUS.extend(PARSE);
     };
 
     /**
-     * ### NDDBIndex.get
+     * ### NDDBIndex.size
      *
-     * Gets the entry from database with the given id
+     * Returns the size of the index
      * 
-     * @param {mixed} idx The id of the item to get
-     * @return {object|boolean} The requested entry, or FALSE if none is found
-     * 
-     * @see NDDB.index
-     * @see NDDBIndex.pop
-     * @see NDDBIndex.update
+     * @return {number} The number of elements in the index
      */
     NDDBIndex.prototype.size = function () {
         return J.size(this.resolve);
