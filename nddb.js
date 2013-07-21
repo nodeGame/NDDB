@@ -321,6 +321,18 @@
     };
 
     /**
+     * ### NDDB.size
+     * 
+     * Returns the number of elements in the database
+     * 
+     * @see NDDB.length
+     */
+    NDDB.prototype.size = function () {
+        return this.db.length;
+    };
+    
+
+    /**
      * ### NDDB.breed
      *
      * Creates a clone of the current NDDB object
@@ -2469,12 +2481,10 @@
 	var fs = require('fs'),
 	csv = require('ya-csv');
 	
-	NDDB.prototype.load.csv = function (file, cb, options) {
-	    if (!file) {
-		NDDB.log('You must specify a valid CSV file.', 'ERR');
-		return false;
-	    }
-	    
+	NDDB.prototype.loadCSV = function (file, cb, options) {
+            var reader, that;
+	    that = this;
+            
 	    // Mix options
 	    options = options || {};
 	    
@@ -2482,19 +2492,18 @@
 		options.columnsFromHeader = true;
 	    }
 
-
-	    var reader = csv.createCsvStreamReader(file, options);
+	    reader = csv.createCsvFileReader(file, options);
 
 	    if (options.columnNames) {
 		reader.setColumnNames(options.columnNames);
 	    }
 	    
 	    reader.addListener('data', function(data) {
-		this.insert(data);
+		that.insert(data);
 	    });
 	    
 	    reader.addListener('end', function(data) {
-		if (cb) callback();
+		if (cb) cb();
 	    });
 	    
 	    return true;
