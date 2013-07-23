@@ -2617,7 +2617,6 @@
 	// Exists
 	this.operators['E'] = function (d, value, comparator) {
 	    return function(elem) {
-                            debugger;
                 if ('undefined' !== typeof elem[d]) {
                     return elem;
                 }

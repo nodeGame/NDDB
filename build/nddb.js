@@ -2523,7 +2523,10 @@ JSUS.extend(PARSE);
      * Retrieves the comparator function for dimension d.
      *  
      * If no comparator function is found, returns a generic
-     * comparator function. 
+     * comparator function. The generic comparator function
+     * supports nested attributes search, but if a property
+     * containing dots with the same name is found, this will
+     * returned first.
      * 
      * @param {string} d The name of the dimension
      * @return {function} The comparator function
@@ -2536,19 +2539,26 @@ JSUS.extend(PARSE);
         }
         
         return function (o1, o2) {
-            // <!--    	
-            //            NDDB.log('1' + o1);
-            //            NDDB.log('2' + o2);
-            // -->    	
+            var v1, v2;
             if ('undefined' === typeof o1 && 'undefined' === typeof o2) return 0;
             if ('undefined' === typeof o1) return 1;
-            if ('undefined' === typeof o2) return -1;        
-            var v1 = J.getNestedValue(d,o1);
-            var v2 = J.getNestedValue(d,o2);
-            // <!--
-            //            NDDB.log(v1);
-            //            NDDB.log(v2);
-            // -->        
+            if ('undefined' === typeof o2) return -1;
+            
+            
+            if ('undefined' !== typeof o1[d]) {
+                v1 = o1[d];
+            }
+            else if (d.lastIndexOf('.') !== -1) {
+                v1 = J.getNestedValue(d, o1);
+            }
+
+            if ('undefined' !== typeof o2[d]) {
+                v2 = o2[d];
+            }
+            else if (d.lastIndexOf('.') !== -1) {
+                v2 = J.getNestedValue(d, o2);
+            }
+            
             if ('undefined' === typeof v1 && 'undefined' === typeof v2) return 0;
             if ('undefined' === typeof v1) return 1;
             if ('undefined' === typeof v2) return -1;
@@ -4673,11 +4683,17 @@ JSUS.extend(PARSE);
      * 
      */
     QueryBuilder.prototype.registerDefaultOperators = function() {
-	
+	var that = this;
+        
 	// Exists
 	this.operators['E'] = function (d, value, comparator) {
 	    return function(elem) {
-		if ('undefined' !== typeof J.getNestedValue(d,elem)) return elem;
+                if ('undefined' !== typeof elem[d]) {
+                    return elem;
+                }
+                else if ('undefined' !== typeof J.getNestedValue(d,elem)) {
+                    return elem;
+                }
 	    }
 	};
 
@@ -4727,24 +4743,53 @@ JSUS.extend(PARSE);
 	        }
     	    };
         };
-        
+
         // In Array
         this.operators['in'] = function (d, value, comparator) {
     	    return function(elem) {
-	        if (J.in_array(J.getNestedValue(d,elem), value)) {
-	            return elem;
-	        }
-    	    };
+                var i, obj;
+                obj = {};
+                for (i = 0; i < value.length; i++) {
+                    obj[d] = value[i];
+                    if (comparator(elem, obj) === 0) {
+                        return elem;
+                    }
+                }
+            };
         };
         
         // Not In Array
         this.operators['!in'] = function (d, value, comparator) {
     	    return function(elem) {
-	        if (!J.in_array(J.getNestedValue(d,elem), value)) {
-	            return elem;
-	        }
-    	    };
+                var i, obj;
+                obj = {};
+                for (i = 0; i < value.length; i++) {
+                    obj[d] = value[i];
+                    if (comparator(elem, obj) !== 0) {
+                        return elem;
+                    }
+                }
+            }
         };
+
+
+//        // In Array
+//        this.operators['in'] = function (d, value, comparator) {
+//            return function(elem) {
+//                if (J.in_array(J.getNestedValue(d,elem), value)) {
+//                    return elem;
+//                }
+//            };
+//        };
+//        
+//        // Not In Array
+//        this.operators['!in'] = function (d, value, comparator) {
+//            return function(elem) {
+//                if (!J.in_array(J.getNestedValue(d,elem), value)) {
+//                    return elem;
+//                }
+//            };
+//        };
     };
 
     /**
