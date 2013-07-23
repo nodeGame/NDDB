@@ -321,6 +321,18 @@
     };
 
     /**
+     * ### NDDB.size
+     * 
+     * Returns the number of elements in the database
+     * 
+     * @see NDDB.length
+     */
+    NDDB.prototype.size = function () {
+        return this.db.length;
+    };
+    
+
+    /**
      * ### NDDB.breed
      *
      * Creates a clone of the current NDDB object
@@ -2419,6 +2431,7 @@
      * @param {function} cb Optional. A callback to execute after the database was saved
      * @return {boolean} TRUE, if operation is successful
      * 
+     * @see NDDB.loadCSV
      * @see NDDB.save
      * @see NDDB.stringify
      * @see JSUS.parse
@@ -2462,43 +2475,56 @@
 	return true;
     };
 
-
     //if node
     if (J.isNodeJS()) {   
 	require('./external/cycle.js');		
 	var fs = require('fs'),
 	csv = require('ya-csv');
 	
-	NDDB.prototype.load.csv = function (file, cb, options) {
-	    if (!file) {
-		NDDB.log('You must specify a valid CSV file.', 'ERR');
-		return false;
-	    }
-	    
-	    // Mix options
-	    options = options || {};
-	    
-	    if ('undefined' === typeof options.columnsFromHeader) {
-		options.columnsFromHeader = true;
-	    }
+        /**
+         * ### NDDB.loadCSV
+         *
+         * Loads the content of a csv file into the database
+         *
+         * Uses `ya-csv` to load the csv file
+         *
+         * @param {string} file The path to the file to load,
+         * @param {function} cb Optional. A callback to execute after the database was saved
+         * @param {object} options Optional. A configuration object to pass to 
+         *  `ya-csv.createCsvFileReader`
+         * @return {boolean} TRUE, if operation is successful
+         * 
+         * @see NDDB.load
+         * @see https://github.com/koles/ya-csv
+         */
+        NDDB.prototype.loadCSV = function (file, cb, options) {
+            var reader, that;
+            that = this;
+            
+            // Mix options
+            options = options || {};
+            
+            if ('undefined' === typeof options.columnsFromHeader) {
+     	        options.columnsFromHeader = true;
+            }
+            
+            reader = csv.createCsvFileReader(file, options);
+            
+            if (options.columnNames) {
+     	        reader.setColumnNames(options.columnNames);
+            }
+            
+            reader.addListener('data', function(data) {
+     	     that.insert(data);
+            });
+            
+            reader.addListener('end', function(data) {
+     	        if (cb) cb();
+            });
+            
+            return true;
+        };
 
-
-	    var reader = csv.createCsvStreamReader(file, options);
-
-	    if (options.columnNames) {
-		reader.setColumnNames(options.columnNames);
-	    }
-	    
-	    reader.addListener('data', function(data) {
-		this.insert(data);
-	    });
-	    
-	    reader.addListener('end', function(data) {
-		if (cb) callback();
-	    });
-	    
-	    return true;
-	};
     };
     //end node  
 
