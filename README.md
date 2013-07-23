@@ -367,6 +367,9 @@ node make.nddb.js doc
 
 ## ChangeLog
 
+### 0.8.6
+  - Support for property names containing dots
+
 ### 0.8.5
   - `#loadCSV`: load the content of a csv file into the database
   - Minor fixes
