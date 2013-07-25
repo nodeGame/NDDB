@@ -944,6 +944,7 @@
                 }
                 if (op === '<>' || op === '><') {
                     
+                    // TODO: when to nest and when keep the '.' in the name?
                     value[0] = J.setNestedValue(d, value[0]);
                     value[1] = J.setNestedValue(d, value[1]);
                 }
@@ -952,7 +953,8 @@
             else if (J.in_array(op, ['>', '==', '>=', '<', '<='])){
         	// Comparison queries need a third parameter
         	if ('undefined' === typeof value) raiseError(d,op,value);
-
+                
+                 // TODO: when to nest and when keep the '.' in the name?
         	// Comparison queries need to have the same data structure in the compared object
                 value = J.setNestedValue(d,value);
             }
@@ -1998,21 +2000,25 @@
      * @return {number|boolean} The mean of the values for the dimension, or FALSE if it does not exist
      * 
      * @see NDDB.mean
+     *
+     * TODO: using computation formula of stdev
      */
     NDDB.prototype.stddev = function (key) {
-	if ('undefined' === typeof key) return false;
-        var mean = this.mean(key);
+	var V, mean, count;
+        if ('undefined' === typeof key) return false;
+        mean = this.mean(key);
         if (isNaN(mean)) return false;
         
-        var V = 0;
-        this.each(function(e){
+        V = 0, count = 0;
+        this.each(function(e) {
             var tmp = J.getNestedValue(key, e);
             if (!isNaN(tmp)) { 
         	V += Math.pow(tmp - mean, 2)
+                count++;
             }
         });
         
-        return (V !== 0) ? Math.sqrt(V) : 0;
+        return (V !== 0) ? Math.sqrt(V) / (count-1) : 0;
     };
 
 
