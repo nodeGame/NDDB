@@ -128,10 +128,7 @@ describe('NDDB Misc Operation', function() {
             ('undefined' === typeof db1.__V.a).should.be.true;
         });
         it('log function should always be shared',function() {
-            // find a nice way to test it
-            // @see http://stackoverflow.com/questions/9609393/catching-console-log-in-node-js
-            //db1.comparator();
-            //db2.comparator();
+            db1.log("a!").should.be.eql(db2.log("a2!"));
         });
         
        
