@@ -1,43 +1,43 @@
 
 var util = require('util'),
-    should = require('should'),
-    NDDB = require('./../nddb').NDDB;
+should = require('should'),
+NDDB = require('./../nddb').NDDB;
 
 var db = new NDDB();
 
 var items = [
-			 {
-				 painter: "Jesus",
-				 title: "Tea in the desert",
-				 year: 0
-			 },
-             {
-                 painter: "Dali",
-                 title:  ["Portrait of Paul Eluard", "Das Rätsel der Begierde", "Das finstere Spiel oder Unheilvolles Spiel"],
-                 year: 1929,
-                 portrait: true
-             },
-             {
-                 painter: "Dali",
-                 title: "Barcelonese Mannequin",
-                 year: 1927
-             },
-             {
-                 painter: "Monet",
-                 title: "Water Lilies",
-                 year: 1906
-             },
-             {
-                 painter: "Monet",
-                 title: "Wheatstacks (End of Summer)",
-                 year: 1891
-             },
-             {
-                 painter: "Manet",
-                 title: "Olympia",
-                 year: 1863
-             }
-             
+    {
+	painter: "Jesus",
+	title: "Tea in the desert",
+	year: 0
+    },
+    {
+        painter: "Dali",
+        title:  ["Portrait of Paul Eluard", "Das Rätsel der Begierde", "Das finstere Spiel oder Unheilvolles Spiel"],
+        year: 1929,
+        portrait: true
+    },
+    {
+        painter: "Dali",
+        title: "Barcelonese Mannequin",
+        year: 1927
+    },
+    {
+        painter: "Monet",
+        title: "Water Lilies",
+        year: 1906
+    },
+    {
+        painter: "Monet",
+        title: "Wheatstacks (End of Summer)",
+        year: 1891
+    },
+    {
+        painter: "Manet",
+        title: "Olympia",
+        year: 1863
+    }
+    
 ];
 
 
@@ -95,4 +95,46 @@ describe('NDDB Misc Operation', function() {
             }
         });
     });
+
+    describe('shared objects and #breed()', function() {
+        var db1 = null;
+        var db2 = null;
+        var sharedObj = {
+            a: "a",
+            b: "b"
+        };
+        before(function() {
+            db1 = new NDDB({
+                log: function(a) { return "AA"; },
+                shared: {
+                    sh: sharedObj
+                }
+            });
+            db2 = db1.breed();
+        });
+        it('breeding should share the object',function() {
+            db2.__shared.sh.should.equal(db1.__shared.sh);
+        });
+        it('modifications to shared objects should cascade',function() {
+            db2.__shared.sh.a = "a1";
+            db1.__shared.sh.a.should.equal("a1");
+        });
+        it('selexec should breed new NDDB with shared objects',function() {
+            var tmp = db1.selexec('a','=',"a1");
+            tmp.__shared.sh.a.should.equal("a1");
+        });
+        it('modifications to non-shared objects should not cascade',function() {
+            db2.__V.a = "a";
+            ('undefined' === typeof db1.__V.a).should.be.true;
+        });
+        it('log function should always be shared',function() {
+            // find a nice way to test it
+            // @see http://stackoverflow.com/questions/9609393/catching-console-log-in-node-js
+            //db1.comparator();
+            //db2.comparator();
+        });
+        
+       
+    });
+
 });
