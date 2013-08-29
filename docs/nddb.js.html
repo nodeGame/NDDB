@@ -22,9 +22,6 @@
         <a href="#nddb--n-dimensional-database">NDDB: N-Dimensional Database</a>
       </div>
       <div class="heading h3">
-        <a href="#nddb.log">NDDB.log</a>
-      </div>
-      <div class="heading h3">
         <a href="#nddb.decycle">NDDB.decycle</a>
       </div>
       <div class="heading h3">
@@ -80,6 +77,9 @@
       </div>
       <div class="heading h3">
         <a href="#__shared">__shared</a>
+      </div>
+      <div class="heading h3">
+        <a href="#log">log</a>
       </div>
       <div class="heading h2">
         <a href="#methods">METHODS</a>
@@ -460,21 +460,6 @@
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap" id="nddb.log">
-  <h3>
-    <a href="#nddb.log" class="pilcrow">&#182;</a>
-    NDDB.log
-  </h3>
-</div>
-
-
-<p>Stdout redirect</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
 <div class="pilwrap" id="nddb.decycle">
@@ -836,7 +821,20 @@
 
 <p>Objects here will be shared (and not cloned) among all breeded NBB instances</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">__shared</span> <span class="o">=</span> <span class="p">{};</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">__shared</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="log">
+  <h3>
+    <a href="#log" class="pilcrow">&#182;</a>
+    log
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">db</span><span class="p">);</span>
@@ -886,7 +884,7 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">__options</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">C</span><span class="p">)</span> <span class="p">{</span>
@@ -1268,14 +1266,14 @@ a new NDDB instance</p>
         <span class="kd">var</span> <span class="nx">options</span><span class="p">;</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__options</span> <span class="o">||</span> <span class="p">{};</span>
 
-        <span class="nx">options</span><span class="p">.</span><span class="nx">H</span> <span class="o">=</span>             <span class="k">this</span><span class="p">.</span><span class="nx">__H</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">I</span> <span class="o">=</span>             <span class="k">this</span><span class="p">.</span><span class="nx">__I</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">C</span> <span class="o">=</span>             <span class="k">this</span><span class="p">.</span><span class="nx">__C</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">V</span> <span class="o">=</span>             <span class="k">this</span><span class="p">.</span><span class="nx">__V</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">tags</span> <span class="o">=</span>          <span class="k">this</span><span class="p">.</span><span class="nx">tags</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span>        <span class="k">this</span><span class="p">.</span><span class="nx">__update</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">hooks</span> <span class="o">=</span>         <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">;</span>
-
+        <span class="nx">options</span><span class="p">.</span><span class="nx">H</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__H</span><span class="p">;</span>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">I</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__I</span><span class="p">;</span>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">C</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__C</span><span class="p">;</span>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">V</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__V</span><span class="p">;</span>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">tags</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">tags</span><span class="p">;</span>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__update</span><span class="p">;</span>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">hooks</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">;</span>
+    
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
         <span class="nx">options</span><span class="p">.</span><span class="nx">shared</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__shared</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">options</span><span class="p">;</span>
@@ -1416,7 +1414,7 @@ comparator function will be used.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">comparator</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">d</span> <span class="o">||</span> <span class="o">!</span><span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cannot set empty property or empty comparator&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cannot set empty property or empty comparator&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">__C</span><span class="p">[</span><span class="nx">d</span><span class="p">]</span> <span class="o">=</span> <span class="nx">comparator</span><span class="p">;</span>
@@ -1582,13 +1580,13 @@ displays an error and returns FALSE.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_isValidIndex</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;A valid index name must be provided&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;A valid index name must be provided&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isReservedWord</span><span class="p">(</span><span class="nx">idx</span><span class="p">))</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;A reserved word have been selected as an index. &#39;</span><span class="p">;</span>
             <span class="nx">str</span> <span class="o">+=</span> <span class="s1">&#39;Please select another one: &#39;</span> <span class="o">+</span> <span class="nx">idx</span><span class="p">;</span>
-            <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
@@ -2348,13 +2346,15 @@ the entry does not belong to any view of the index.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_analyzeQuery</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">op</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
 
-        <span class="kd">var</span> <span class="nx">raiseError</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">op</span><span class="p">,</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">function</span> <span class="nx">raiseError</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">op</span><span class="p">,</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">miss</span> <span class="o">=</span> <span class="s1">&#39;(?)&#39;</span><span class="p">;</span>
             <span class="kd">var</span> <span class="nx">err</span> <span class="o">=</span> <span class="s1">&#39;Malformed query: &#39;</span> <span class="o">+</span> <span class="nx">d</span> <span class="o">||</span> <span class="nx">miss</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">op</span> <span class="o">||</span> <span class="nx">miss</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">value</span> <span class="o">||</span> <span class="nx">miss</span><span class="p">;</span>
-            <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="p">};</span>
+        <span class="p">}</span>
 
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span><span class="p">)</span> <span class="nx">raiseError</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">op</span><span class="p">,</span><span class="nx">value</span><span class="p">);</span></pre></div>
@@ -2374,7 +2374,7 @@ the entry does not belong to any view of the index.</p>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">op</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">operators</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Query error. Invalid operator detected: &#39;</span> <span class="o">+</span> <span class="nx">op</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Query error. Invalid operator detected: &#39;</span> <span class="o">+</span> <span class="nx">op</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span></pre></div>
         </td>
@@ -2389,7 +2389,7 @@ the entry does not belong to any view of the index.</p>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">op</span><span class="p">,[</span><span class="s1">&#39;&gt;&lt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;!in&#39;</span><span class="p">]))</span> <span class="p">{</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">value</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Range-queries need an array as third parameter&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Range-queries need an array as third parameter&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
                     <span class="nx">raiseError</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">op</span><span class="p">,</span><span class="nx">value</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;&lt;&gt;&#39;</span> <span class="o">||</span> <span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;&gt;&lt;&#39;</span><span class="p">)</span> <span class="p">{</span></pre></div>
@@ -3436,7 +3436,7 @@ and resets the current query selection</p>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Do you really want to clear the current dataset? Please use clear(true)&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Do you really want to clear the current dataset? Please use clear(true)&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">confirm</span><span class="p">;</span>
@@ -5252,7 +5252,7 @@ but changes on update of the elements of the database.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">tag</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">tag</span><span class="p">,</span> <span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">tag</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cannot register empty tag.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cannot register empty tag.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
 
@@ -5264,7 +5264,7 @@ but changes on update of the elements of the database.</p>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">typeofIdx</span> <span class="o">===</span> <span class="s1">&#39;number&#39;</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">length</span> <span class="o">||</span> <span class="nx">idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Invalid index provided for tag registration&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Invalid index provided for tag registration&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="nx">ref</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
@@ -5314,7 +5314,7 @@ but changes on update of the elements of the database.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">resolveTag</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">tag</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">tag</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cannot resolve empty tag.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cannot resolve empty tag.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tags</span><span class="p">[</span><span class="nx">tag</span><span class="p">];</span>
@@ -5402,7 +5402,7 @@ are restored.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">save</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">compress</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;You must specify a valid file / id.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;You must specify a valid file / id.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
 
@@ -5418,7 +5418,7 @@ are restored.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isNodeJS</span><span class="p">()){</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">storageAvailable</span><span class="p">())</span> <span class="p">{</span>
-                <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;No support for persistent storage found.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;No support for persistent storage found.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
 
@@ -5510,7 +5510,7 @@ using the standard <code>fs.readFileSync</code> or <code>fs.readFile</code> meth
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;You must specify a valid file / id.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;You must specify a valid file / id.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span></pre></div>
         </td>
@@ -5524,7 +5524,7 @@ using the standard <code>fs.readFileSync</code> or <code>fs.readFile</code> meth
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isNodeJS</span><span class="p">()){</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">storageAvailable</span><span class="p">())</span> <span class="p">{</span>
-                <span class="nx">NDDB</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;No support for persistent storage found.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;No support for persistent storage found.&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
 
