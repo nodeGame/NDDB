@@ -18,10 +18,6 @@
     // Expose constructors
     exports.NDDB = NDDB;
 
-    // ### NDDB.log
-    // Stdout redirect
-    NDDB.log = console.log;
-
     /**
      * ### NDDB.decycle
      *
@@ -142,6 +138,9 @@
         // Objects here will be shared (and not cloned) among all breeded NBB instances
         this.__shared = {};
 
+        // ### log
+        this.log = console.log;
+
         this.init(options);
         this.importDB(db);
     };
@@ -163,7 +162,7 @@
         this.__options = options;
 
         if (options.log) {
-            NDDB.log = options.log;
+            this.log = options.log;
         }
 
         if (options.C) {
@@ -386,14 +385,14 @@
         var options;
         options = this.__options || {};
 
-        options.H =             this.__H;
-        options.I =             this.__I;
-        options.C =             this.__C;
-        options.V =             this.__V;
-        options.tags =          this.tags;
-        options.update =        this.__update;
-        options.hooks =         this.hooks;
-
+        options.H = this.__H;
+        options.I = this.__I;
+        options.C = this.__C;
+        options.V = this.__V;
+        options.tags = this.tags;
+        options.update = this.__update;
+        options.hooks = this.hooks;
+    
         options = J.clone(options);
         options.shared = this.__shared;
         return options;
@@ -460,7 +459,7 @@
      */
     NDDB.prototype.comparator = function (d, comparator) {
         if (!d || !comparator) {
-            NDDB.log('Cannot set empty property or empty comparator', 'ERR');
+            this.log('Cannot set empty property or empty comparator', 'ERR');
             return false;
         }
         this.__C[d] = comparator;
@@ -546,13 +545,13 @@
      */
     NDDB.prototype._isValidIndex = function (idx) {
         if ('undefined' === typeof idx) {
-            NDDB.log('A valid index name must be provided', 'ERR');
+            this.log('A valid index name must be provided', 'ERR');
             return false;
         }
         if (this.isReservedWord(idx)) {
             var str = 'A reserved word have been selected as an index. ';
             str += 'Please select another one: ' + idx;
-            NDDB.log(str, 'ERR');
+            this.log(str, 'ERR');
             return false;
         }
         return true;
@@ -937,13 +936,15 @@
      * @return {boolean|object} The object-query or FALSE if an error was detected
      */
     NDDB.prototype._analyzeQuery = function (d, op, value) {
+        var that;
+        that = this;
 
-        var raiseError = function (d,op,value) {
+        function raiseError(d,op,value) {
             var miss = '(?)';
             var err = 'Malformed query: ' + d || miss + ' ' + op || miss + ' ' + value || miss;
-            NDDB.log(err, 'WARN');
+            that.log(err, 'WARN');
             return false;
-        };
+        }
 
 
         if ('undefined' === typeof d) raiseError(d,op,value);
@@ -956,7 +957,7 @@
             }
 
             if (!(op in this.query.operators)) {
-                NDDB.log('Query error. Invalid operator detected: ' + op, 'WARN');
+                this.log('Query error. Invalid operator detected: ' + op, 'WARN');
                 return false;
             }
 
@@ -964,7 +965,7 @@
             if (J.in_array(op,['><', '<>', 'in', '!in'])) {
 
                 if (!(value instanceof Array)) {
-                    NDDB.log('Range-queries need an array as third parameter', 'WARN');
+                    this.log('Range-queries need an array as third parameter', 'WARN');
                     raiseError(d,op,value);
                 }
                 if (op === '<>' || op === '><') {
@@ -1422,7 +1423,7 @@
             }
         }
         else {
-            NDDB.log('Do you really want to clear the current dataset? Please use clear(true)', 'WARN');
+            this.log('Do you really want to clear the current dataset? Please use clear(true)', 'WARN');
         }
 
         return confirm;
@@ -2350,7 +2351,7 @@
      */
     NDDB.prototype.tag = function (tag, idx) {
         if ('undefined' === typeof tag) {
-            NDDB.log('Cannot register empty tag.', 'ERR');
+            this.log('Cannot register empty tag.', 'ERR');
             return false;
         }
 
@@ -2362,7 +2363,7 @@
         else if (typeofIdx === 'number') {
 
             if (idx > this.length || idx < 0) {
-                NDDB.log('Invalid index provided for tag registration', 'ERR');
+                this.log('Invalid index provided for tag registration', 'ERR');
                 return false;
             }
             ref = this.db[idx];
@@ -2387,7 +2388,7 @@
      */
     NDDB.prototype.resolveTag = function (tag) {
         if ('undefined' === typeof tag) {
-            NDDB.log('Cannot resolve empty tag.', 'ERR');
+            this.log('Cannot resolve empty tag.', 'ERR');
             return false;
         }
         return this.tags[tag];
@@ -2428,7 +2429,7 @@
      */
     NDDB.prototype.save = function (file, callback, compress) {
         if (!file) {
-            NDDB.log('You must specify a valid file / id.', 'ERR');
+            this.log('You must specify a valid file / id.', 'ERR');
             return false;
         }
 
@@ -2437,7 +2438,7 @@
         // Try to save in the browser, e.g. with Shelf.js
         if (!J.isNodeJS()){
             if (!storageAvailable()) {
-                NDDB.log('No support for persistent storage found.', 'ERR');
+                this.log('No support for persistent storage found.', 'ERR');
                 return false;
             }
 
@@ -2481,14 +2482,14 @@
      */
     NDDB.prototype.load = function (file, cb, options) {
         if (!file) {
-            NDDB.log('You must specify a valid file / id.', 'ERR');
+            this.log('You must specify a valid file / id.', 'ERR');
             return false;
         }
 
         // Try to save in the browser, e.g. with Shelf.js
         if (!J.isNodeJS()){
             if (!storageAvailable()) {
-                NDDB.log('No support for persistent storage found.', 'ERR');
+                this.log('No support for persistent storage found.', 'ERR');
                 return false;
             }
 

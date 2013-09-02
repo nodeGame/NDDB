@@ -139,6 +139,10 @@
         this.__shared = {};
 
         // ### log
+        // Std out. Can be overriden in options by another function. The function will be
+        // executed with this instance of PlayerList as context, so if it is a method of
+        // another class it might not work. In case you will need to inherit or add
+        // properties and methods from the other class into this PlayerList instance.
         this.log = console.log;
 
         this.init(options);
@@ -162,7 +166,7 @@
         this.__options = options;
 
         if (options.log) {
-            this.log = options.log;
+            this.initLog(options.log, options.logCtx);
         }
 
         if (options.C) {
@@ -222,6 +226,23 @@
         }
 
     };
+
+    
+    /**
+     * ### NDDB.initLog
+     *
+     * Setups and external log function to be executed in the proper context
+     *
+     * @param {function} cb The logging function
+     * @param {object} ctx Optional. The context of the log function 
+     *
+     */
+    NDDB.prototype.initLog = function(cb, ctx) {
+        ctx = ctx || this;
+        this.log = function(){
+            return cb.apply(ctx, arguments);
+        };
+    }
 
     // ## CORE
 
