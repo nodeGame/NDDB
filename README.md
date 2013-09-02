@@ -367,9 +367,10 @@ node make.nddb.js doc
 
 ## ChangeLog
 
-### 0.8.8
+### 0.8.9
   - Support for shared objects across all breeded instances of NDDB
   - NDDB.log -> this.log
+  - `#initLog()` to execute the log function in the proper context
 
 ### 0.8.6
   - Support for property names containing dots
