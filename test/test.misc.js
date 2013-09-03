@@ -134,4 +134,27 @@ describe('NDDB Misc Operation', function() {
        
     });
 
+    describe('indices and views on empty DB', function() {
+        var db = null;
+        before(function() {
+            db = new NDDB({
+                I: {
+                    myIdx: function(o) { return o.count > 100 ? o.id : undefined; }
+                },
+                V: {
+                     myView: function(o) { return o.count > 100 ? o.id : undefined; }
+                }
+               });
+            });
+        it('should create an empty index', function() {
+            ('undefined' !== typeof db.myIdx).should.be.true;
+        });
+        it('should create an empty view', function() {
+            ('undefined' !== typeof db.myView).should.be.true;
+        });
+
+        
+       
+    });
+
 });

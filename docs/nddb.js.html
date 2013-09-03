@@ -886,6 +886,7 @@ properties and methods from the other class into this PlayerList instance.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">op</span><span class="p">,</span> <span class="nx">sh</span><span class="p">;</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
@@ -905,10 +906,20 @@ properties and methods from the other class into this PlayerList instance.</p>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">I</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">__I</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">I</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">options</span><span class="p">.</span><span class="nx">I</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">I</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">index</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">I</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">__V</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">V</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">options</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">V</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">view</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">V</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">tags</span><span class="p">)</span> <span class="p">{</span>
@@ -6035,20 +6046,20 @@ overwrite the old operator.</p>
   <a class="pilcrow" href="#section-160" id="section-160">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code>   <span class="sr">//</span> <span class="n">In</span> <span class="n">Array</span>
-   <span class="n">this</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="s">&#39;in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">comparator</span><span class="p">)</span> <span class="p">{</span>
-       <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="p">{</span>
-           <span class="k">if</span> <span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">in_array</span><span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">getNestedValue</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">elem</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span> <span class="p">{</span>
-               <span class="k">return</span> <span class="n">elem</span><span class="p">;</span>
+<div class="highlight"><pre><code>   <span class="c1">// In Array</span>
+   <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="cp">[</span><span class="s1">&#39;in&#39;</span><span class="cp">]</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+       <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+           <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">elem</span><span class="p">),</span> <span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
+               <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
            <span class="p">}</span>
        <span class="p">};</span>
    <span class="p">};</span>
 
-   <span class="sr">//</span> <span class="n">Not</span> <span class="n">In</span> <span class="n">Array</span>
-   <span class="n">this</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="s">&#39;!in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">comparator</span><span class="p">)</span> <span class="p">{</span>
-       <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="p">{</span>
-           <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">J</span><span class="o">.</span><span class="n">in_array</span><span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">getNestedValue</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">elem</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span> <span class="p">{</span>
-               <span class="k">return</span> <span class="n">elem</span><span class="p">;</span>
+   <span class="c1">// Not In Array</span>
+   <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="cp">[</span><span class="s1">&#39;!in&#39;</span><span class="cp">]</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+       <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+           <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">elem</span><span class="p">),</span> <span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
+               <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
            <span class="p">}</span>
        <span class="p">};</span>
    <span class="p">};</span>
