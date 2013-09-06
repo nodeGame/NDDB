@@ -1245,26 +1245,28 @@
      *
      * Notice: the order of entries is changed.
      *
-     * @param {string|arrat|function} d Optional. The criterium of sorting
+     * @param {string|array|function} d Optional. The criterium of sorting
      * @return {NDDB} A sorted copy of the current instance of NDDB
      */
     NDDB.prototype.sort = function (d) {
+        var func, that;
         // GLOBAL compare
         if (!d) {
-            var func = this.globalCompare;
+            func = this.globalCompare;
         }
 
         // FUNCTION
         else if ('function' === typeof d) {
-            var func = d;
+            func = d;
         }
 
         // ARRAY of dimensions
         else if (d instanceof Array) {
-            var that = this;
-            var func = function (a,b) {
-                for (var i=0; i < d.length; i++) {
-                    var result = that.getComparator(d[i]).call(that,a,b);
+            that = this;
+            func = function (a,b) {
+                var i, result;
+                for (i = 0; i < d.length; i++) {
+                    result = that.getComparator(d[i]).call(that,a,b);
                     if (result !== 0) return result;
                 }
                 return result;
@@ -1273,7 +1275,7 @@
 
         // SINGLE dimension
         else {
-            var func = this.getComparator(d);
+            func = this.getComparator(d);
         }
 
         this.db.sort(func);
