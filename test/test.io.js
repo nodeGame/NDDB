@@ -147,8 +147,8 @@ var testSaveLoad = function(items, compareToImport, compareToLoad) {
 	    deleteIfExist(function(){
 		db2.clear(true);
 		db = new NDDB();
-		db.importDB(items);
-		db.save(filename);
+                db.importDB(items);
+               	db.save(filename);
 	    });
 	});
 	
@@ -205,7 +205,10 @@ describe('NDDB io operations.', function(){
 	});
 	
 	describe('Weirdos items.', function(){
-	    testSaveLoad(weirdos, weirdos_import);
+            //(function(){
+                testSaveLoad(weirdos, weirdos_import);   
+            //}).should.throw(/^NDDB.*/);
+	    
 	});
 	
 	describe('Cycles items', function(){

@@ -342,6 +342,26 @@
         this.emit('insert', o);
     }
 
+// TODO: To test
+//    function nddb_insert(o, update) {
+//        if (o === null) {
+//            throw new TypeError(this._getConstrName() +
+//                     '.insert: null received.');
+//        }
+//        if (('object' !== typeof o) && ('function' !== typeof o)) {
+//            throw new TypeError(this._getConstrName() +
+//                                '.insert: expects object or function, ' +
+//                                typeof o + ' received.');
+//        }
+//        this.db.push(o);
+//        if (update) {
+//            this._indexIt(o, (this.db.length-1));
+//            this._hashIt(o);
+//            this._viewIt(o);
+//        }
+//        this.emit('insert', o);
+//    }
+
     /**
      * ### NDDB.importDB
      *
@@ -835,10 +855,10 @@
      * @param {object} o The position of the element in the database array
      */
     NDDB.prototype._indexIt = function(o, dbidx) {
+        var func, id, index, key;
         if (!o || J.isEmpty(this.__I)) return;
-        var func, id, index;
 
-        for (var key in this.__I) {
+        for (key in this.__I) {
             if (this.__I.hasOwnProperty(key)) {
                 func = this.__I[key];
                 index = func(o);
@@ -860,7 +880,7 @@
      */
     NDDB.prototype._viewIt = function(o) {
         var func, id, index, key;
-        if (!o || J.isEmpty(this.__V)) return;
+        if (!o || J.isEmpty(this.__V)) return false;
 
         for (key in this.__V) {
             if (this.__V.hasOwnProperty(key)) {
@@ -881,7 +901,6 @@
      *
      * @param {object} o The element to hash
      * @return {boolean} TRUE, if insertion to an index was successful
-     *
      */
     NDDB.prototype._hashIt = function(o) {
         var h, id, hash, key;
@@ -896,9 +915,19 @@
                 if (!this[key]) this[key] = {};
 
                 if (!this[key][hash]) {
-                    this[key][hash] = new NDDB();
+                    this[key][hash] = new this.constructor();
                 }
-                this[key][hash].insert(o);
+                // TODO: see if we can improve here
+                // In order to avoid infinite recursion we
+                // cannot call directly this[key][hash].insert(o);
+                // We need to perform the same operations excluding
+                // a new hashing of the object that would create
+                // the infinite loop.
+                nddb_insert.call(this[key][hash], o, false);
+                this._indexIt.call(this[key][hash], o);
+                this._viewIt.call(this[key][hash], o);
+                this._autoUpdate({indexes: false});
+
             }
         }
     };
