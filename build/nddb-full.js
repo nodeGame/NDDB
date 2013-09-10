@@ -3700,6 +3700,7 @@ JSUS.extend(PARSE);
      *
      */
     NDDB.prototype.init = function(options) {
+        var i;
         var op, sh;
         options = options || {};
 
@@ -3719,10 +3720,20 @@ JSUS.extend(PARSE);
 
         if (options.I) {
             this.__I = options.I;
+            for (i in options.I) {
+                if (options.I.hasOwnProperty(i)) {
+                    this.index(i, options.I[i]);
+                }
+            }
         }
 
         if (options.V) {
             this.__V = options.V;
+            for (i in options.V) {
+                if (options.V.hasOwnProperty(i)) {
+                    this.view(i, options.V[i]);
+                }
+            }
         }
 
         if (options.tags) {
