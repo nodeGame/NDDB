@@ -3536,17 +3536,14 @@ JSUS.extend(PARSE);
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 /**
  * # NDDB: N-Dimensional Database
- *
+ * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
  *
  * See README.md for help.
- *
  * ---
- *
  */
-
 (function (exports, J, store) {
 
     NDDB.compatibility = J.compatibility();
@@ -3682,7 +3679,7 @@ JSUS.extend(PARSE);
         this.log = console.log;
 
         this.init(options);
-        
+
         // Importing items, if any
         if (db) {
             this.importDB(db);
@@ -3778,14 +3775,14 @@ JSUS.extend(PARSE);
 
     };
 
-    
+
     /**
      * ### NDDB.initLog
      *
      * Setups and external log function to be executed in the proper context
      *
      * @param {function} cb The logging function
-     * @param {object} ctx Optional. The context of the log function 
+     * @param {object} ctx Optional. The context of the log function
      *
      */
     NDDB.prototype.initLog = function(cb, ctx) {
@@ -3794,6 +3791,17 @@ JSUS.extend(PARSE);
             return cb.apply(ctx, arguments);
         };
     }
+
+    /**
+     * ## NDDB._getCons
+     *
+     * Returns 'NDDB' or the name of the inheriting class.
+     *
+     */
+    NDDB.prototype._getConstrName = function() {
+        return this.constructor && this.constructor.name ?
+            this.constructor.name : 'NDDB';
+    };
 
     // ## CORE
 
@@ -3836,7 +3844,7 @@ JSUS.extend(PARSE);
      * @api private
      * @param {object} options Optional. Configuration object
      */
-    NDDB.prototype._autoUpdate = function (options) {
+    NDDB.prototype._autoUpdate = function(options) {
         var update = options ? J.merge(this.__update, options) : this.__update;
 
         if (update.pointer) {
@@ -3874,10 +3882,11 @@ JSUS.extend(PARSE);
      *
      * @param {array} db Array of items to import
      */
-    NDDB.prototype.importDB = function (db) {
+    NDDB.prototype.importDB = function(db) {
         var i;
         if (!J.isArray(db)) {
-            throw new TypeError('NDDB.importDB expects an array.');
+            throw new TypeError(this._getConstrName() +
+                                '.importDB expects an array.');
         }
         for (i = 0; i < db.length; i++) {
             nddb_insert.call(this, db[i], this.__update.indexes);
@@ -3902,7 +3911,7 @@ JSUS.extend(PARSE);
      * @param {object} o The item or array of items to insert
      * @see NDDB._insert
      */
-    NDDB.prototype.insert = function (o) {
+    NDDB.prototype.insert = function(o) {
         nddb_insert.call(this, o, this.__update.indexes);
         this._autoUpdate({indexes: false});
     };
@@ -3914,7 +3923,7 @@ JSUS.extend(PARSE);
      *
      * @see NDDB.length
      */
-    NDDB.prototype.size = function () {
+    NDDB.prototype.size = function() {
         return this.db.length;
     };
 
@@ -3931,7 +3940,7 @@ JSUS.extend(PARSE);
      * @param {array} db Array of items to import in the new database
      * @return {NDDB} The new database
      */
-    NDDB.prototype.breed = function (db) {
+    NDDB.prototype.breed = function(db) {
         db = db || this.db;
         //In case the class was inherited
         return new this.constructor(this.cloneSettings(), db);
@@ -3948,7 +3957,7 @@ JSUS.extend(PARSE);
      *  - the current tags
      *  - the update settings
      *  - the callback hooks
-     * 
+     *
      * Copies by reference:
      *  - the shared objects
      *
@@ -3956,7 +3965,7 @@ JSUS.extend(PARSE);
      *   plus the shared objects
      *
      */
-    NDDB.prototype.cloneSettings = function () {
+    NDDB.prototype.cloneSettings = function() {
         var options;
         options = this.__options || {};
 
@@ -3967,7 +3976,7 @@ JSUS.extend(PARSE);
         options.tags = this.tags;
         options.update = this.__update;
         options.hooks = this.hooks;
-        
+
         options = J.clone(options);
         options.shared = this.__shared;
         return options;
@@ -3980,7 +3989,7 @@ JSUS.extend(PARSE);
      *
      * @return {string} out A human-readable representation of the database
      */
-    NDDB.prototype.toString = function () {
+    NDDB.prototype.toString = function() {
         var out = '';
         for (var i=0; i< this.db.length; i++) {
             out += this.db[i] + "\n";
@@ -4000,7 +4009,7 @@ JSUS.extend(PARSE);
      *
      * @see JSUS.stringify
      */
-    NDDB.prototype.stringify = function (compressed) {
+    NDDB.prototype.stringify = function(compressed) {
         if (!this.length) return '[]';
         compressed = ('undefined' === typeof compressed) ? true : compressed;
 
@@ -4032,12 +4041,14 @@ JSUS.extend(PARSE);
      * @return {boolean} TRUE, if registration was successful
      *
      */
-    NDDB.prototype.comparator = function (d, comparator) {
+    NDDB.prototype.comparator = function(d, comparator) {
         if ('undefined' === typeof d) {
-            throw new TypeError('NDDB.comparator: undefined dimension.');
+            throw new TypeError(this._getConstrName() +
+                                '.comparator: undefined dimension.');
         }
         if ('function' !== typeof comparator) {
-            throw new TypeError('NDDB.comparator: comparator must be function.');
+            throw new TypeError(this._getConstrName() +
+                                '.comparator: comparator must be function.');
         }
         this.__C[d] = comparator;
         return true;
@@ -4063,12 +4074,12 @@ JSUS.extend(PARSE);
      *
      * @see NDDB.compare
      */
-    NDDB.prototype.getComparator = function (d) {
+    NDDB.prototype.getComparator = function(d) {
         if ('undefined' !== typeof this.__C[d]) {
             return this.__C[d];
         }
 
-        return function (o1, o2) {
+        return function(o1, o2) {
             var v1, v2;
             if ('undefined' === typeof o1 && 'undefined' === typeof o2) return 0;
             if ('undefined' === typeof o1) return 1;
@@ -4107,7 +4118,7 @@ JSUS.extend(PARSE);
      * @param {string} key The name of the property
      * @return {boolean} TRUE, if the property exists
      */
-    NDDB.prototype.isReservedWord = function (key) {
+    NDDB.prototype.isReservedWord = function(key) {
         return (this[key]) ? true : false;
     };
 
@@ -4120,15 +4131,17 @@ JSUS.extend(PARSE);
      * @param {string} key The name of the property
      * @return {boolean} TRUE, if the index has a valid name
      */
-    NDDB.prototype._isValidIndex = function(idx, method) { 
+    NDDB.prototype._isValidIndex = function(idx, method) {
         if ('undefined' === typeof idx) {
-            this.log('NDDB.' + method + ': no name provided', 'ERR');
+            this.log(this._getConstrName() + '.' + method +
+                     ': no name provided', 'ERR');
             return false;
         }
         if (this.isReservedWord(idx)) {
             var str = 'A reserved word have been selected as an index. ';
             str += 'Please select another one: ' + idx;
-            this.log('NDDB.' + method + ': ' + str, 'ERR');
+            this.log(this._getConstrName() + '.' + method +
+                     ': ' + str, 'ERR');
             return false;
         }
         return true;
@@ -4157,7 +4170,7 @@ JSUS.extend(PARSE);
      * @see NDDB.rebuildIndexes
      *
      */
-    NDDB.prototype.index = function (idx, func) {
+    NDDB.prototype.index = function(idx, func) {
         if (!func || !this._isValidIndex(idx, 'index')) return false;
         this.__I[idx] = func, this[idx] = new NDDBIndex(idx, this);
         return true;
@@ -4189,7 +4202,7 @@ JSUS.extend(PARSE);
      * @see NDDB.rebuildIndexes
      *
      */
-    NDDB.prototype.view = function (idx, func) {
+    NDDB.prototype.view = function(idx, func) {
         if (!func || !this._isValidIndex(idx, 'view')) return false;
         this.__V[idx] = func, this[idx] = new this.constructor();
         return true;
@@ -4218,7 +4231,7 @@ JSUS.extend(PARSE);
      * @see NDDB.rebuildIndexes
      *
      */
-    NDDB.prototype.hash = function (idx, func) {
+    NDDB.prototype.hash = function(idx, func) {
         if (!func || !this._isValidIndex(idx, 'hash')) return false;
         this.__H[idx] = func, this[idx] = {};
         return true;
@@ -4249,7 +4262,7 @@ JSUS.extend(PARSE);
             v: true,
             i: true
         }, options);
-        
+
         if (reset.h) {
             for (key in this.__H) {
                 if (this.__H.hasOwnProperty(key)) {
@@ -4396,7 +4409,7 @@ JSUS.extend(PARSE);
      * @return {boolean} TRUE, if insertion to an index was successful
      *
      */
-    NDDB.prototype._hashIt = function(o) {        
+    NDDB.prototype._hashIt = function(o) {
         var h, id, hash, key;
         if (!o || J.isEmpty(this.__H)) return false;
 
@@ -4511,7 +4524,7 @@ JSUS.extend(PARSE);
      * @param {string} value The right-hand element of comparison
      * @return {boolean|object} The object-query or FALSE if an error was detected
      */
-    NDDB.prototype._analyzeQuery = function (d, op, value) {
+    NDDB.prototype._analyzeQuery = function(d, op, value) {
         var that;
         that = this;
 
@@ -4589,7 +4602,7 @@ JSUS.extend(PARSE);
      *  @see NDDB.fetch()
      *  @see NDDB.fetchValues()
      */
-    NDDB.prototype.distinct = function () {
+    NDDB.prototype.distinct = function() {
         return this.breed(J.distinct(this.db));
     };
 
@@ -4621,7 +4634,7 @@ JSUS.extend(PARSE);
      * @see NDDB.fetch()
      *
      */
-    NDDB.prototype.select = function (d, op, value) {
+    NDDB.prototype.select = function(d, op, value) {
         this.query.reset();
         return arguments.length ? this.and(d, op, value) : this;
     };
@@ -4640,7 +4653,7 @@ JSUS.extend(PARSE);
      * @see NDDB.or
      * @see NDDB.execute()
      */
-    NDDB.prototype.and = function (d, op, value) {
+    NDDB.prototype.and = function(d, op, value) {
         // TODO: Support for nested query
         //      if (!arguments.length) {
         //              addBreakInQuery();
@@ -4667,7 +4680,7 @@ JSUS.extend(PARSE);
      * @see NDDB.and
      * @see NDDB.execute()
      */
-    NDDB.prototype.or = function (d, op, value) {
+    NDDB.prototype.or = function(d, op, value) {
         // TODO: Support for nested query
         //      if (!arguments.length) {
         //              addBreakInQuery();
@@ -4700,7 +4713,7 @@ JSUS.extend(PARSE);
      * @see NDDB.fetch
      *
      */
-    NDDB.prototype.selexec = function (d, op, value) {
+    NDDB.prototype.selexec = function(d, op, value) {
         return this.select(d, op, value).execute();
     };
 
@@ -4722,7 +4735,7 @@ JSUS.extend(PARSE);
      * @see NDDB.and
      * @see NDDB.or
      */
-    NDDB.prototype.execute = function () {
+    NDDB.prototype.execute = function() {
         return this.filter(this.query.get.call(this.query));
     };
 
@@ -4737,7 +4750,7 @@ JSUS.extend(PARSE);
      *
      * @see JSUS.equals
      */
-    NDDB.prototype.exists = function (o) {
+    NDDB.prototype.exists = function(o) {
         if (!o) return false;
 
         for (var i = 0 ; i < this.db.length ; i++) {
@@ -4764,7 +4777,7 @@ JSUS.extend(PARSE);
      * @see NDDB.first
      * @see NDDB.last
      */
-    NDDB.prototype.limit = function (limit) {
+    NDDB.prototype.limit = function(limit) {
         limit = limit || 0;
         if (limit === 0) return this.breed();
         var db = (limit > 0) ? this.db.slice(0, limit) :
@@ -4780,7 +4793,7 @@ JSUS.extend(PARSE);
      *
      * @see NDDB.sort
      */
-    NDDB.prototype.reverse = function () {
+    NDDB.prototype.reverse = function() {
         this.db.reverse();
         return this;
     };
@@ -4803,7 +4816,7 @@ JSUS.extend(PARSE);
      * @param {string|array|function} d Optional. The criterium of sorting
      * @return {NDDB} A sorted copy of the current instance of NDDB
      */
-    NDDB.prototype.sort = function (d) {
+    NDDB.prototype.sort = function(d) {
         var func, that;
         // GLOBAL compare
         if (!d) {
@@ -4818,7 +4831,7 @@ JSUS.extend(PARSE);
         // ARRAY of dimensions
         else if (d instanceof Array) {
             that = this;
-            func = function (a,b) {
+            func = function(a,b) {
                 var i, result;
                 for (i = 0; i < d.length; i++) {
                     result = that.getComparator(d[i]).call(that,a,b);
@@ -4832,7 +4845,7 @@ JSUS.extend(PARSE);
         else {
             func = this.getComparator(d);
         }
-        
+
         this.db.sort(func);
         return this;
     };
@@ -4846,7 +4859,7 @@ JSUS.extend(PARSE);
      *
      * @return {NDDB} A a reference to the current instance with shuffled entries
      */
-    NDDB.prototype.shuffle = function () {
+    NDDB.prototype.shuffle = function() {
         this.db = J.shuffle(this.db);
         return this;
     };
@@ -4867,7 +4880,7 @@ JSUS.extend(PARSE);
      * @see NDDB.breed
      *
      */
-    NDDB.prototype.filter = function (func) {
+    NDDB.prototype.filter = function(func) {
         return this.breed(this.db.filter(func));
     };
 
@@ -4883,7 +4896,7 @@ JSUS.extend(PARSE);
      *
      * @see NDDB.map
      */
-    NDDB.prototype.each = NDDB.prototype.forEach = function () {
+    NDDB.prototype.each = NDDB.prototype.forEach = function() {
         if (arguments.length === 0) return;
         var func = arguments[0], i;
         for (i = 0 ; i < this.db.length ; i++) {
@@ -4906,7 +4919,7 @@ JSUS.extend(PARSE);
      * @see NDDB.each
      *
      */
-    NDDB.prototype.map = function () {
+    NDDB.prototype.map = function() {
         if (arguments.length === 0) return;
         var func = arguments[0],
         out = [], o, i;
@@ -4937,7 +4950,7 @@ JSUS.extend(PARSE);
      *
      * @see JSUS.mixin
      */
-    NDDB.prototype.update = function (update) {
+    NDDB.prototype.update = function(update) {
         if (!this.db.length || !update) return this;
 
         for (var i = 0; i < this.db.length; i++) {
@@ -4959,7 +4972,7 @@ JSUS.extend(PARSE);
      *
      * @return {NDDB} A new instance of NDDB with no entries
      */
-    NDDB.prototype.remove = function () {
+    NDDB.prototype.remove = function() {
         if (!this.length) return this;
 
         this.emit('remove', this.db);
@@ -4982,7 +4995,7 @@ JSUS.extend(PARSE);
      *
      * @return {boolean} TRUE, if the database was cleared
      */
-    NDDB.prototype.clear = function (confirm) {
+    NDDB.prototype.clear = function(confirm) {
         if (confirm) {
             this.db = [];
             this.tags = {};
@@ -5024,7 +5037,7 @@ JSUS.extend(PARSE);
      * @see NDDB._join
      * @see NDDB.breed
      */
-    NDDB.prototype.join = function (key1, key2, pos, select) {
+    NDDB.prototype.join = function(key1, key2, pos, select) {
         // <!--
         // Construct a better comparator function
         // than the generic JSUS.equals
@@ -5058,7 +5071,7 @@ JSUS.extend(PARSE);
      *  @see NDDB._join
      *  @see JSUS.join
      */
-    NDDB.prototype.concat = function (key1, key2, pos, select) {
+    NDDB.prototype.concat = function(key1, key2, pos, select) {
         return this._join(key1, key2, function(){ return true;}, pos, select);
     };
 
@@ -5087,7 +5100,7 @@ JSUS.extend(PARSE);
      * @return {NDDB} A new database containing the joined entries
      * @see NDDB.breed
      */
-    NDDB.prototype._join = function (key1, key2, comparator, pos, select) {
+    NDDB.prototype._join = function(key1, key2, comparator, pos, select) {
         if (!key1 || !key2) return this.breed([]);
 
         comparator = comparator || J.equals;
@@ -5137,7 +5150,7 @@ JSUS.extend(PARSE);
      *
      * @see JSUS.split
      */
-    NDDB.prototype.split = function (key) {
+    NDDB.prototype.split = function(key) {
         var out = [], i;
         for (i = 0; i < this.db.length; i++) {
             out = out.concat(J.split(this.db[i], key));
@@ -5172,7 +5185,7 @@ JSUS.extend(PARSE);
      * @see NDDB.fetchSubObj
      *
      */
-    NDDB.prototype.fetch = function () {
+    NDDB.prototype.fetch = function() {
         return this.db;
     };
 
@@ -5202,7 +5215,7 @@ JSUS.extend(PARSE);
      * @see NDDB.fetchArray
      * @see NDDB.fetchKeyArray
      */
-    NDDB.prototype.fetchSubObj= function (key) {
+    NDDB.prototype.fetchSubObj= function(key) {
         if (!key) return [];
         var i, el, out = [];
         for (i=0; i < this.db.length; i++) {
@@ -5364,7 +5377,7 @@ JSUS.extend(PARSE);
      * @return {array} out The fetched values
      *
      */
-    NDDB.prototype._fetchArray = function (key, keyed) {
+    NDDB.prototype._fetchArray = function(key, keyed) {
 
         var cb, out, el, i;
 
@@ -5423,7 +5436,7 @@ JSUS.extend(PARSE);
      * @see NDDB.fetchKeyArray
      * @see NDDB.fetchSubObj
      */
-    NDDB.prototype.fetchArray = function (key) {
+    NDDB.prototype.fetchArray = function(key) {
         return this._fetchArray(key);
     };
 
@@ -5454,7 +5467,7 @@ JSUS.extend(PARSE);
      * @see NDDB.fetchValues
      * @see NDDB.fetchSubObj
      */
-    NDDB.prototype.fetchKeyArray = function (key) {
+    NDDB.prototype.fetchKeyArray = function(key) {
         return this._fetchArray(key, true);
     };
 
@@ -5491,7 +5504,7 @@ JSUS.extend(PARSE);
      * @return {array} outs The array of groups
      *
      */
-    NDDB.prototype.groupBy = function (key) {
+    NDDB.prototype.groupBy = function(key) {
         if (!key) return this.db;
 
         var groups = [], outs = [], i, el, out;
@@ -5501,7 +5514,7 @@ JSUS.extend(PARSE);
             // Creates a new group and add entries to it
             if (!J.in_array(el, groups)) {
                 groups.push(el);
-                out = this.filter(function (elem) {
+                out = this.filter(function(elem) {
                     if (J.equals(J.getNestedValue(key, elem), el)) {
                         return this;
                     }
@@ -5528,7 +5541,7 @@ JSUS.extend(PARSE);
      *
      * @see NDDB.length
      */
-    NDDB.prototype.count = function (key) {
+    NDDB.prototype.count = function(key) {
         if ('undefined' === typeof key) return this.db.length;
         var count = 0;
         for (var i = 0; i < this.db.length; i++) {
@@ -5552,7 +5565,7 @@ JSUS.extend(PARSE);
      * @return {number|boolean} sum The sum of the values for the dimension, or FALSE if it does not exist
      *
      */
-    NDDB.prototype.sum = function (key) {
+    NDDB.prototype.sum = function(key) {
         if ('undefined' === typeof key) return false;
         var sum = 0;
         for (var i=0; i < this.db.length; i++) {
@@ -5577,7 +5590,7 @@ JSUS.extend(PARSE);
      * @return {number|boolean} The mean of the values for the dimension, or FALSE if it does not exist
      *
      */
-    NDDB.prototype.mean = function (key) {
+    NDDB.prototype.mean = function(key) {
         if ('undefined' === typeof key) return false;
         var sum = 0;
         var count = 0;
@@ -5607,7 +5620,7 @@ JSUS.extend(PARSE);
      *
      * TODO: using computation formula of stdev
      */
-    NDDB.prototype.stddev = function (key) {
+    NDDB.prototype.stddev = function(key) {
         var V, mean, count;
         if ('undefined' === typeof key) return false;
         mean = this.mean(key);
@@ -5639,7 +5652,7 @@ JSUS.extend(PARSE);
      *
      * @see NDDB.max
      */
-    NDDB.prototype.min = function (key) {
+    NDDB.prototype.min = function(key) {
         if ('undefined' === typeof key) return false;
         var min = false;
         for (var i=0; i < this.db.length; i++) {
@@ -5664,7 +5677,7 @@ JSUS.extend(PARSE);
      *
      * @see NDDB.min
      */
-    NDDB.prototype.max = function (key) {
+    NDDB.prototype.max = function(key) {
         if ('undefined' === typeof key) return false;
         var max = false;
         for (var i=0; i < this.db.length; i++) {
@@ -5693,7 +5706,7 @@ JSUS.extend(PARSE);
      * @see NDDB.keep
      * @see JSUS.skim
      */
-    NDDB.prototype.skim = function (skim) {
+    NDDB.prototype.skim = function(skim) {
         if (!skim) return this;
         return this.breed(this.map(function(e){
             var skimmed = J.skim(e, skim);
@@ -5719,7 +5732,7 @@ JSUS.extend(PARSE);
      * @see NDDB.skim
      * @see JSUS.keep
      */
-    NDDB.prototype.keep = function (keep) {
+    NDDB.prototype.keep = function(keep) {
         if (!keep) return this.breed([]);
         return this.breed(this.map(function(e){
             var subobj = J.subobj(e, keep);
@@ -5748,7 +5761,7 @@ JSUS.extend(PARSE);
      * @see NDDB.intersect
      * @see JSUS.arrayDiff
      */
-    NDDB.prototype.diff = function (nddb) {
+    NDDB.prototype.diff = function(nddb) {
         if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
@@ -5774,7 +5787,7 @@ JSUS.extend(PARSE);
      * @see NDDB.diff
      * @see JSUS.arrayIntersect
      */
-    NDDB.prototype.intersect = function (nddb) {
+    NDDB.prototype.intersect = function(nddb) {
         if (!nddb || !nddb.length) return this;
         if ('object' === typeof nddb) {
             if (nddb instanceof NDDB || nddb instanceof this.constructor) {
@@ -5796,7 +5809,7 @@ JSUS.extend(PARSE);
      * @return {object|boolean} The requested item, or FALSE if
      *  the index is invalid
      */
-    NDDB.prototype.get = function (pos) {
+    NDDB.prototype.get = function(pos) {
         if ('undefined' === typeof pos || pos < 0 || pos > (this.db.length-1)) {
             return false;
         }
@@ -5815,7 +5828,7 @@ JSUS.extend(PARSE);
      *
      * @return {object|boolean} The current entry, or FALSE if none is found
      */
-    NDDB.prototype.current = function () {
+    NDDB.prototype.current = function() {
         if (this.nddb_pointer < 0 || this.nddb_pointer > (this.db.length-1)) {
             return false;
         }
@@ -5834,7 +5847,7 @@ JSUS.extend(PARSE);
      * @return {object|boolean} The next entry, or FALSE if none is found
      *
      */
-    NDDB.prototype.next = function () {
+    NDDB.prototype.next = function() {
         this.nddb_pointer++;
         var el = NDDB.prototype.current.call(this);
         if (!el) this.nddb_pointer--;
@@ -5852,7 +5865,7 @@ JSUS.extend(PARSE);
      *
      * @return {object|boolean} The previous entry, or FALSE if none is found
      */
-    NDDB.prototype.previous = function () {
+    NDDB.prototype.previous = function() {
         this.nddb_pointer--;
         var el = NDDB.prototype.current.call(this);
         if (!el) this.nddb_pointer++;
@@ -5873,7 +5886,7 @@ JSUS.extend(PARSE);
      *
      * @see NDDB.last
      */
-    NDDB.prototype.first = function (key) {
+    NDDB.prototype.first = function(key) {
         var db = this.fetch(key);
         if (db.length) {
             this.nddb_pointer = 0;
@@ -5896,7 +5909,7 @@ JSUS.extend(PARSE);
      *
      * @see NDDB.first
      */
-    NDDB.prototype.last = function (key) {
+    NDDB.prototype.last = function(key) {
         var db = this.fetch(key);
         if (db.length) {
             this.nddb_pointer = db.length-1;
@@ -5921,29 +5934,29 @@ JSUS.extend(PARSE);
      * The tag is independent from sorting and deleting operations,
      * but changes on update of the elements of the database.
      *
-     * @param {string} tag An alphanumeric id
+     * @param {string|number} tag An alphanumeric id
      * @param {mixed} idx Optional. The reference to the object. Defaults, `nddb_pointer`
-     * @return {boolean} TRUE, if registration is successful
+     * @return {object} ref A reference to the tagged object
      *
      * @see NDDB.resolveTag
      */
-    NDDB.prototype.tag = function (tag, idx) {
+    NDDB.prototype.tag = function(tag, idx) {
         var ref, typeofIdx;
-        if ('undefined' === typeof tag) {
-            this.log('NDDB.tag: cannot register empty tag.', 'ERR');
-            return false;
+        if (('string' !== typeof tag) && ('number' !== typeof tag)) {
+            throw new TypeError(this._getConstrName() +
+                                '.tag: tag must be string or number.');
         }
-        
+
         ref = null, typeofIdx = typeof idx;
-        
+
         if (typeofIdx === 'undefined') {
             ref = this.db[this.nddb_pointer];
         }
         else if (typeofIdx === 'number') {
 
             if (idx > this.length || idx < 0) {
-                this.log('NDDB.tag: invalid index provided', 'ERR');
-                return false;
+                throw new TypeError(this._getConstrName() +
+                                    '.tag: invalid index provided');
             }
             ref = this.db[idx];
         }
@@ -5965,17 +5978,27 @@ JSUS.extend(PARSE);
      *
      * @see NDDB.tag
      */
-    NDDB.prototype.resolveTag = function (tag) {
-        if ('undefined' === typeof tag) {
-            this.log('NDDB.resolveTag: cannot resolve empty tag.', 'ERR');
-            return false;
+    NDDB.prototype.resolveTag = function(tag) {
+        if ('string' !== typeof tag) {
+            throw new TypeError(this._getConstrName() +
+                                '.resolveTag: tag must be string.');
         }
         return this.tags[tag];
     };
 
     // ## Persistance
 
-    var storageAvailable = function() {
+    /**
+     * ### NDDB.storageAvailable
+     *
+     * Returns true if db can be saved to a persistent medium
+     *
+     * It checks for the existence of a global `store` object,
+     * usually provided  by libraries like `shelf.js`.
+     *
+     * return {boolean} TRUE, if storage is available
+     */
+    NDDB.prototype.storageAvailable = function() {
         return ('function' === typeof store);
     }
 
@@ -6003,15 +6026,16 @@ JSUS.extend(PARSE);
 
      *
      */
-    NDDB.prototype.save = function (file, callback, compress) {
-        if (!file) {
-            this.log('NDDB.save: you must specify a valid file / id.', 'ERR');
-            return false;
+    NDDB.prototype.save = function(file, callback, compress) {
+        if ('string' !== typeof file) {
+            throw new TypeError(this._getConstrName() +
+                                'load: you must specify a valid file name.');
         }
         compress = compress || false;
         // Try to save in the browser, e.g. with Shelf.js
-        if (!storageAvailable()) {
-            this.log('NDDB.save: no support for persistent storage.', 'ERR');
+        if (!this.storageAvailable()) {
+            throw new Error(this._getConstrName() +
+                            '.save: no support for persistent storage.');
             return false;
         }
         store(file, this.stringify(compress));
@@ -6042,27 +6066,30 @@ JSUS.extend(PARSE);
      * @see https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
      *
      */
-    NDDB.prototype.load = function (file, cb, options) {
+    NDDB.prototype.load = function(file, cb, options) {
         var items, i;
-        if (!file) {
-            this.log('NDDB.load: you must specify a valid file / id.', 'ERR');
-            return false;
+        if ('string' !== typeof file) {
+            throw new TypeError(this._getConstrName() +
+                                '.load: you must specify a valid file name.');
         }
-        if (!storageAvailable()) {
-            this.log('NDDB.load: no support for persistent storage.', 'ERR');
-            return false;
+        if (!this.storageAvailable()) {
+            throw new Error(this._getConstrName() +
+                            '.load: no support for persistent storage found.');
         }
-        
+
         items = store(file);
-        
+
         if ('undefined' === typeof items) {
-            this.log('NDDB.load: nothing found to load', 'ERR');
+            this.log(this._getConstrName() +
+                     '.load: nothing found to load', 'WARN');
+            return false;
         }
         if ('string' === typeof items) {
             items = J.parse(items);
         }
         if (!J.isArray(items)) {
-            throw new TypeError('NDDB.load: expects to load an array.');
+            throw new TypeError(this._getConstrName() +
+                                '.load: expects to load an array.');
         }
         for (i = 0; i < items.length; i++) {
             // retrocycle if possible
@@ -6149,7 +6176,7 @@ JSUS.extend(PARSE);
         var that = this;
 
         // Exists
-        this.operators['E'] = function (d, value, comparator) {
+        this.operators['E'] = function(d, value, comparator) {
             return function(elem) {
                 if ('undefined' !== typeof elem[d]) {
                     return elem;
@@ -6161,14 +6188,14 @@ JSUS.extend(PARSE);
         };
 
         // (strict) Equals
-        this.operators['=='] = function (d, value, comparator) {
+        this.operators['=='] = function(d, value, comparator) {
             return function(elem) {
                 if (comparator(elem, value) === 0) return elem;
             };
         };
 
         // Greater than
-        this.operators['>'] = function (d, value, comparator) {
+        this.operators['>'] = function(d, value, comparator) {
             return function(elem) {
                 var compared = comparator(elem, value);
                 if (compared === 1 || compared === 0) return elem;
@@ -6176,14 +6203,14 @@ JSUS.extend(PARSE);
         };
 
         // Smaller than
-        this.operators['<'] = function (d, value, comparator) {
+        this.operators['<'] = function(d, value, comparator) {
             return function(elem) {
                 if (comparator(elem, value) === -1) return elem;
             };
         };
 
         //  Smaller or equal than
-        this.operators['<='] = function (d, value, comparator) {
+        this.operators['<='] = function(d, value, comparator) {
             return function(elem) {
                 var compared = comparator(elem, value);
                 if (compared === -1 || compared === 0) return elem;
@@ -6191,7 +6218,7 @@ JSUS.extend(PARSE);
         };
 
         // Between
-        this.operators['><'] = function (d, value, comparator) {
+        this.operators['><'] = function(d, value, comparator) {
             return function(elem) {
                 if (comparator(elem, value[0]) > 0 && comparator(elem, value[1]) < 0) {
                     return elem;
@@ -6199,7 +6226,7 @@ JSUS.extend(PARSE);
             };
         };
         // Not Between
-        this.operators['<>'] = function (d, value, comparator) {
+        this.operators['<>'] = function(d, value, comparator) {
             return function(elem) {
                 if (comparator(elem, value[0]) < 0 && comparator(elem, value[1] > 0)) {
                     return elem;
@@ -6208,7 +6235,7 @@ JSUS.extend(PARSE);
         };
 
         // In Array
-        this.operators['in'] = function (d, value, comparator) {
+        this.operators['in'] = function(d, value, comparator) {
             return function(elem) {
                 var i, obj;
                 obj = {};
@@ -6222,7 +6249,7 @@ JSUS.extend(PARSE);
         };
 
         // Not In Array
-        this.operators['!in'] = function (d, value, comparator) {
+        this.operators['!in'] = function(d, value, comparator) {
             return function(elem) {
                 var i, obj;
                 obj = {};
@@ -6237,7 +6264,7 @@ JSUS.extend(PARSE);
 
 
         //        // In Array
-        //        this.operators['in'] = function (d, value, comparator) {
+        //        this.operators['in'] = function(d, value, comparator) {
         //            return function(elem) {
         //                if (J.in_array(J.getNestedValue(d,elem), value)) {
         //                    return elem;
@@ -6246,7 +6273,7 @@ JSUS.extend(PARSE);
         //        };
         //
         //        // Not In Array
-        //        this.operators['!in'] = function (d, value, comparator) {
+        //        this.operators['!in'] = function(d, value, comparator) {
         //            return function(elem) {
         //                if (!J.in_array(J.getNestedValue(d,elem), value)) {
         //                    return elem;
@@ -6450,7 +6477,7 @@ JSUS.extend(PARSE);
      * @param {mixed} idx The id of the item
      * @param {number} dbidx The numerical id of the item in the original array
      */
-    NDDBIndex.prototype._add = function (idx, dbidx) {
+    NDDBIndex.prototype._add = function(idx, dbidx) {
         this.resolve[idx] = dbidx;
     };
 
@@ -6461,7 +6488,7 @@ JSUS.extend(PARSE);
      *
      * @param {mixed} idx The id to remove from the index
      */
-    NDDBIndex.prototype._remove = function (idx) {
+    NDDBIndex.prototype._remove = function(idx) {
         delete this.resolve[idx];
     };
 
@@ -6472,7 +6499,7 @@ JSUS.extend(PARSE);
      *
      * @return {number} The number of elements in the index
      */
-    NDDBIndex.prototype.size = function () {
+    NDDBIndex.prototype.size = function() {
         return J.size(this.resolve);
     };
 
@@ -6488,7 +6515,7 @@ JSUS.extend(PARSE);
      * @see NDDBIndex.pop
      * @see NDDBIndex.update
      */
-    NDDBIndex.prototype.get = function (idx) {
+    NDDBIndex.prototype.get = function(idx) {
         if ('undefined' === typeof this.resolve[idx]) return false;
         return this.nddb.db[this.resolve[idx]];
     };
@@ -6506,7 +6533,7 @@ JSUS.extend(PARSE);
      * @see NDDBIndex.get
      * @see NDDBIndex.update
      */
-    NDDBIndex.prototype.pop = function (idx) {
+    NDDBIndex.prototype.pop = function(idx) {
         var o, dbidx;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
@@ -6531,7 +6558,7 @@ JSUS.extend(PARSE);
      * @see NDDBIndex.get
      * @see NDDBIndex.pop
      */
-    NDDBIndex.prototype.update = function (idx, update) {
+    NDDBIndex.prototype.update = function(idx, update) {
         var o, dbidx;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
@@ -6551,7 +6578,7 @@ JSUS.extend(PARSE);
      *
      * @see NDDBIndex.getAllKeyElements
      */
-    NDDBIndex.prototype.getAllKeys = function () {
+    NDDBIndex.prototype.getAllKeys = function() {
         return J.keys(this.resolve);
     };
 
@@ -6564,7 +6591,7 @@ JSUS.extend(PARSE);
      *
      * @see NDDBIndex.getAllKeys
      */
-    NDDBIndex.prototype.getAllKeyElements = function () {
+    NDDBIndex.prototype.getAllKeyElements = function() {
         var out = {}, idx;
         for (idx in this.resolve) {
             if (this.resolve.hasOwnProperty(idx)) {

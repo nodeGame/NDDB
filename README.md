@@ -373,6 +373,8 @@ node make.nddb.js doc
   - Fixed bug in loading from browser storage
   - Better error messages
   - Code for Node.js and browser clearly separated
+  - NDDB methods throw errors instead of returning false if input parameters are
+    incorrect
 
 ### 0.8.10
   - Support for shared objects across all breeded instances of NDDB
