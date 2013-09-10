@@ -15,7 +15,7 @@ Developer-friendly thanks to an easy api, detailed documentation, and full unit 
 
 - Selecting: `select`, `and`, `or`, `selexec`
 - Sorting: `sort`, `reverse`, `last`, `first`, `limit`, `distinct`, `shuffle`
-- Indexing: `index`, `hash`, `comparator`
+- Indexing: `view`, `index`, `hash`, `comparator`
 - Custom callbacks: `map`, `each`, `filter`
 - Updating and Deletion: `update`, `remove`, `clear`
 - Advanced operations: `split`, `join`, `concat`, `groupBy`
