@@ -367,6 +367,13 @@ node make.nddb.js doc
 
 ## ChangeLog
 
+### 0.9.0
+  - Fixed bug with views and hashs created within constructor of inheriting class
+  - `#hash()` and `#view()` nows creates NDDB objects and not inheriting class objects
+  - Fixed bug in loading from browser storage
+  - Better error messages
+  - Code for Node.js and browser clearly separated
+
 ### 0.8.9
   - Support for shared objects across all breeded instances of NDDB
   - NDDB.log -> this.log

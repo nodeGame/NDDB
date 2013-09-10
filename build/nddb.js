@@ -2491,7 +2491,7 @@ JSUS.extend(PARSE);
         options.tags = this.tags;
         options.update = this.__update;
         options.hooks = this.hooks;
-    
+        
         options = J.clone(options);
         options.shared = this.__shared;
         return options;
@@ -2557,9 +2557,11 @@ JSUS.extend(PARSE);
      *
      */
     NDDB.prototype.comparator = function (d, comparator) {
-        if (!d || !comparator) {
-            this.log('Cannot set empty property or empty comparator', 'ERR');
-            return false;
+        if ('undefined' === typeof d) {
+            throw new TypeError('NDDB.comparator: undefined dimension.');
+        }
+        if ('function' !== typeof comparator) {
+            throw new TypeError('NDDB.comparator: comparator must be function.');
         }
         this.__C[d] = comparator;
         return true;
@@ -2642,15 +2644,15 @@ JSUS.extend(PARSE);
      * @param {string} key The name of the property
      * @return {boolean} TRUE, if the index has a valid name
      */
-    NDDB.prototype._isValidIndex = function (idx) {
+    NDDB.prototype._isValidIndex = function(idx, method) { 
         if ('undefined' === typeof idx) {
-            this.log('A valid index name must be provided', 'ERR');
+            this.log('NDDB.' + method + ': no name provided', 'ERR');
             return false;
         }
         if (this.isReservedWord(idx)) {
             var str = 'A reserved word have been selected as an index. ';
             str += 'Please select another one: ' + idx;
-            this.log(str, 'ERR');
+            this.log('NDDB.' + method + ': ' + str, 'ERR');
             return false;
         }
         return true;
@@ -2680,7 +2682,7 @@ JSUS.extend(PARSE);
      *
      */
     NDDB.prototype.index = function (idx, func) {
-        if (!func || !this._isValidIndex(idx)) return false;
+        if (!func || !this._isValidIndex(idx, 'index')) return false;
         this.__I[idx] = func, this[idx] = new NDDBIndex(idx, this);
         return true;
     };
@@ -2712,7 +2714,7 @@ JSUS.extend(PARSE);
      *
      */
     NDDB.prototype.view = function (idx, func) {
-        if (!func || !this._isValidIndex(idx)) return false;
+        if (!func || !this._isValidIndex(idx, 'view')) return false;
         this.__V[idx] = func, this[idx] = new this.constructor();
         return true;
     };
@@ -2741,7 +2743,7 @@ JSUS.extend(PARSE);
      *
      */
     NDDB.prototype.hash = function (idx, func) {
-        if (!func || !this._isValidIndex(idx)) return false;
+        if (!func || !this._isValidIndex(idx, 'hash')) return false;
         this.__H[idx] = func, this[idx] = {};
         return true;
     };
@@ -2765,12 +2767,13 @@ JSUS.extend(PARSE);
      * @see NDDB._hashIt
      */
     NDDB.prototype.resetIndexes = function(options) {
-        var reset = options || J.merge({
+        var key, reset;
+        reset = options || J.merge({
             h: true,
             v: true,
             i: true
         }, options);
-        var key;
+        
         if (reset.h) {
             for (key in this.__H) {
                 if (this.__H.hasOwnProperty(key)) {
@@ -2781,11 +2784,11 @@ JSUS.extend(PARSE);
         if (reset.v) {
             for (key in this.__V) {
                 if (this.__V.hasOwnProperty(key)) {
-                    this[key] = new this.constructor();
+                    this[key] = new NDDB();
                 }
             }
         }
-        if (reset.v) {
+        if (reset.i) {
             for (key in this.__I) {
                 if (this.__I.hasOwnProperty(key)) {
                     this[key] = new NDDBIndex(key, this);
@@ -2893,17 +2896,16 @@ JSUS.extend(PARSE);
      * @param {object} o The element to index
      */
     NDDB.prototype._viewIt = function(o) {
+        var func, id, index, key;
         if (!o || J.isEmpty(this.__V)) return;
 
-        var func, id, index;
-
-        for (var key in this.__V) {
+        for (key in this.__V) {
             if (this.__V.hasOwnProperty(key)) {
                 func = this.__V[key];
                 index = func(o);
                 if ('undefined' === typeof index) continue;
 
-                if (!this[key]) this[key] = new this.constructor();
+                if (!this[key]) this[key] = new NDDB();
                 this[key].insert(o);
             }
         }
@@ -2918,12 +2920,11 @@ JSUS.extend(PARSE);
      * @return {boolean} TRUE, if insertion to an index was successful
      *
      */
-    NDDB.prototype._hashIt = function(o) {
+    NDDB.prototype._hashIt = function(o) {        
+        var h, id, hash, key;
         if (!o || J.isEmpty(this.__H)) return false;
 
-        var h, id, hash;
-
-        for (var key in this.__H) {
+        for (key in this.__H) {
             if (this.__H.hasOwnProperty(key)) {
                 h = this.__H[key];
                 hash = h(o);
@@ -2932,7 +2933,7 @@ JSUS.extend(PARSE);
                 if (!this[key]) this[key] = {};
 
                 if (!this[key][hash]) {
-                    this[key][hash] = new this.constructor();
+                    this[key][hash] = new NDDB();
                 }
                 this[key][hash].insert(o);
             }
@@ -4451,20 +4452,21 @@ JSUS.extend(PARSE);
      * @see NDDB.resolveTag
      */
     NDDB.prototype.tag = function (tag, idx) {
+        var ref, typeofIdx;
         if ('undefined' === typeof tag) {
-            this.log('Cannot register empty tag.', 'ERR');
+            this.log('NDDB.tag: cannot register empty tag.', 'ERR');
             return false;
         }
-
-        var ref = null, typeofIdx = typeof idx;
-
+        
+        ref = null, typeofIdx = typeof idx;
+        
         if (typeofIdx === 'undefined') {
             ref = this.db[this.nddb_pointer];
         }
         else if (typeofIdx === 'number') {
 
             if (idx > this.length || idx < 0) {
-                this.log('Invalid index provided for tag registration', 'ERR');
+                this.log('NDDB.tag: invalid index provided', 'ERR');
                 return false;
             }
             ref = this.db[idx];
@@ -4489,7 +4491,7 @@ JSUS.extend(PARSE);
      */
     NDDB.prototype.resolveTag = function (tag) {
         if ('undefined' === typeof tag) {
-            this.log('Cannot resolve empty tag.', 'ERR');
+            this.log('NDDB.resolveTag: cannot resolve empty tag.', 'ERR');
             return false;
         }
         return this.tags[tag];
@@ -4527,13 +4529,13 @@ JSUS.extend(PARSE);
      */
     NDDB.prototype.save = function (file, callback, compress) {
         if (!file) {
-            this.log('You must specify a valid file / id.', 'ERR');
+            this.log('NDDB.save: you must specify a valid file / id.', 'ERR');
             return false;
         }
         compress = compress || false;
         // Try to save in the browser, e.g. with Shelf.js
         if (!storageAvailable()) {
-            this.log('No support for persistent storage found.', 'ERR');
+            this.log('NDDB.save: no support for persistent storage.', 'ERR');
             return false;
         }
         store(file, this.stringify(compress));
@@ -4580,11 +4582,9 @@ JSUS.extend(PARSE);
         if ('undefined' === typeof items) {
             this.log('NDDB.load: nothing found to load', 'ERR');
         }
-
         if ('string' === typeof items) {
             items = J.parse(items);
         }
-        debugger
         if (!J.isArray(items)) {
             throw new TypeError('NDDB.load: expects to load an array.');
         }
