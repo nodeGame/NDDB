@@ -2217,7 +2217,11 @@ JSUS.extend(PARSE);
         this.log = console.log;
 
         this.init(options);
-        this.importDB(db);
+        
+        // Importing items, if any
+        if (db) {
+            this.importDB(db);
+        }
     };
 
     // ## METHODS
@@ -2395,8 +2399,11 @@ JSUS.extend(PARSE);
      * @param {array} db Array of items to import
      */
     NDDB.prototype.importDB = function (db) {
-        if (!db) return;
-        for (var i = 0; i < db.length; i++) {
+        var i;
+        if (!J.isArray(db)) {
+            throw new TypeError('NDDB.importDB expects an array.');
+        }
+        for (i = 0; i < db.length; i++) {
             nddb_insert.call(this, db[i], this.__update.indexes);
         }
         this._autoUpdate({indexes: false});
@@ -3316,26 +3323,28 @@ JSUS.extend(PARSE);
      *
      * Notice: the order of entries is changed.
      *
-     * @param {string|arrat|function} d Optional. The criterium of sorting
+     * @param {string|array|function} d Optional. The criterium of sorting
      * @return {NDDB} A sorted copy of the current instance of NDDB
      */
     NDDB.prototype.sort = function (d) {
+        var func, that;
         // GLOBAL compare
         if (!d) {
-            var func = this.globalCompare;
+            func = this.globalCompare;
         }
 
         // FUNCTION
         else if ('function' === typeof d) {
-            var func = d;
+            func = d;
         }
 
         // ARRAY of dimensions
         else if (d instanceof Array) {
-            var that = this;
-            var func = function (a,b) {
-                for (var i=0; i < d.length; i++) {
-                    var result = that.getComparator(d[i]).call(that,a,b);
+            that = this;
+            func = function (a,b) {
+                var i, result;
+                for (i = 0; i < d.length; i++) {
+                    result = that.getComparator(d[i]).call(that,a,b);
                     if (result !== 0) return result;
                 }
                 return result;
@@ -3344,9 +3353,9 @@ JSUS.extend(PARSE);
 
         // SINGLE dimension
         else {
-            var func = this.getComparator(d);
+            func = this.getComparator(d);
         }
-
+        
         this.db.sort(func);
         return this;
     };
@@ -4497,13 +4506,10 @@ JSUS.extend(PARSE);
      *
      * Saves the database to a persistent medium in JSON format
      *
-     * If NDDB is executed in the browser, it tries to use the `store` method -
-     * usually associated to shelf.js - to write to the browser database.
+     * Looks for a global store` method to load from the browser database.
+     * The `store` method is supploed by shelf.js.
      * If no `store` object is found, an error is issued and the database
      * is not saved.
-     *
-     * If NDDB is executed in the Node.JS environment it saves to the file system
-     * using the standard `fs.writeFile` method.
      *
      * Cyclic objects are decycled, and do not cause errors. Upon loading, the cycles
      * are restored.
@@ -4524,26 +4530,15 @@ JSUS.extend(PARSE);
             this.log('You must specify a valid file / id.', 'ERR');
             return false;
         }
-
         compress = compress || false;
-
         // Try to save in the browser, e.g. with Shelf.js
-        if (!J.isNodeJS()){
-            if (!storageAvailable()) {
-                this.log('No support for persistent storage found.', 'ERR');
-                return false;
-            }
-
-            store(file, this.stringify(compress));
-            if (callback) callback();
-            return true;
+        if (!storageAvailable()) {
+            this.log('No support for persistent storage found.', 'ERR');
+            return false;
         }
-
-        // Save in Node.js
-        fs.writeFileSync(file, this.stringify(compress), 'utf-8');
+        store(file, this.stringify(compress));
         if (callback) callback();
         return true;
-
     };
 
     /**
@@ -4551,13 +4546,10 @@ JSUS.extend(PARSE);
      *
      * Loads a JSON object into the database from a persistent medium
      *
-     * If NDDB is executed in the browser, it tries to use the `store` method -
-     * usually associated to shelf.js - to load from the browser database.
+     * Looks for a global store` method to load from the browser database.
+     * The `store` method is supploed by shelf.js.
      * If no `store` object is found, an error is issued and the database
      * is not loaded.
-     *
-     * If NDDB is executed in the Node.JS environment it loads from the file system
-     * using the standard `fs.readFileSync` or `fs.readFile` method.
      *
      * Cyclic objects previously decycled will be retrocycled.
      *
@@ -4573,94 +4565,36 @@ JSUS.extend(PARSE);
      *
      */
     NDDB.prototype.load = function (file, cb, options) {
+        var items, i;
         if (!file) {
-            this.log('You must specify a valid file / id.', 'ERR');
+            this.log('NDDB.load: you must specify a valid file / id.', 'ERR');
             return false;
         }
-
-        // Try to save in the browser, e.g. with Shelf.js
-        if (!J.isNodeJS()){
-            if (!storageAvailable()) {
-                this.log('No support for persistent storage found.', 'ERR');
-                return false;
-            }
-
-            var items = store(file);
-            this.importDB(items);
-            if (cb) cb();
-            return true;
+        if (!storageAvailable()) {
+            this.log('NDDB.load: no support for persistent storage.', 'ERR');
+            return false;
+        }
+        
+        items = store(file);
+        
+        if ('undefined' === typeof items) {
+            this.log('NDDB.load: nothing found to load', 'ERR');
         }
 
-        var loadString = function(s) {
-
-            var items = J.parse(s);
-
-            var i;
-            for (i=0; i< items.length; i++) {
-                // retrocycle if possible
-                items[i] = NDDB.retrocycle(items[i]);
-            }
-
-            this.importDB(items);
+        if ('string' === typeof items) {
+            items = J.parse(items);
         }
-
-        var s = fs.readFileSync(file, 'utf-8');
-        loadString.call(this, s);
+        debugger
+        if (!J.isArray(items)) {
+            throw new TypeError('NDDB.load: expects to load an array.');
+        }
+        for (i = 0; i < items.length; i++) {
+            // retrocycle if possible
+            items[i] = NDDB.retrocycle(items[i]);
+        }
+        this.importDB(items);
         return true;
     };
-
-    //if node
-    if (J.isNodeJS()) {
-        require('./external/cycle.js');
-        var fs = require('fs'),
-        csv = require('ya-csv');
-
-        /**
-         * ### NDDB.loadCSV
-         *
-         * Loads the content of a csv file into the database
-         *
-         * Uses `ya-csv` to load the csv file
-         *
-         * @param {string} file The path to the file to load,
-         * @param {function} cb Optional. A callback to execute after the database was saved
-         * @param {object} options Optional. A configuration object to pass to
-         *  `ya-csv.createCsvFileReader`
-         * @return {boolean} TRUE, if operation is successful
-         *
-         * @see NDDB.load
-         * @see https://github.com/koles/ya-csv
-         */
-        NDDB.prototype.loadCSV = function (file, cb, options) {
-            var reader, that;
-            that = this;
-
-            // Mix options
-            options = options || {};
-
-            if ('undefined' === typeof options.columnsFromHeader) {
-                options.columnsFromHeader = true;
-            }
-
-            reader = csv.createCsvFileReader(file, options);
-
-            if (options.columnNames) {
-                reader.setColumnNames(options.columnNames);
-            }
-
-            reader.addListener('data', function(data) {
-                that.insert(data);
-            });
-
-            reader.addListener('end', function(data) {
-                if (cb) cb();
-            });
-
-            return true;
-        };
-
-    };
-    //end node
 
     /**
      * # QueryBuilder

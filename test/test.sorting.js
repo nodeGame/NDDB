@@ -1,44 +1,44 @@
 
 var util = require('util'),
-    should = require('should'),
-    NDDB = require('./../nddb').NDDB;
+should = require('should'),
+NDDB = require('./../nddb').NDDB;
 
 var db = new NDDB();
 
 
 var items = [
-			 {
-				 painter: "Jesus",
-				 title: "Tea in the desert",
-				 year: 0,
-			 },
-             {
-                 painter: "Dali",
-                 title: "Portrait of Paul Eluard",
-                 year: 1929,
-                 portrait: true
-             },
-             {
-                 painter: "Dali",
-                 title: "Barcelonese Mannequin",
-                 year: 1927
-             },
-             {
-                 painter: "Monet",
-                 title: "Water Lilies",
-                 year: 1906
-             },
-             {
-                 painter: "Monet",
-                 title: "Wheatstacks (End of Summer)",
-                 year: 1891
-             },
-             {
-                 painter: "Manet",
-                 title: "Olympia",
-                 year: 1863
-             },
-             
+    {
+	painter: "Jesus",
+	title: "Tea in the desert",
+	year: 0,
+    },
+    {
+        painter: "Dali",
+        title: "Portrait of Paul Eluard",
+        year: 1929,
+        portrait: true
+    },
+    {
+        painter: "Dali",
+        title: "Barcelonese Mannequin",
+        year: 1927
+    },
+    {
+        painter: "Monet",
+        title: "Water Lilies",
+        year: 1906
+    },
+    {
+        painter: "Monet",
+        title: "Wheatstacks (End of Summer)",
+        year: 1891
+    },
+    {
+        painter: "Manet",
+        title: "Olympia",
+        year: 1863
+    },
+    
 ];
 
 
@@ -51,14 +51,14 @@ describe('NDDB Sorting', function(){
         });
         
     });
-      
+    
     describe('#reverse()', function() {  
         it('should reverse the order of the elements (it sorts by nddbid)', function(){
             db.reverse().first().should.equal(items[(items.length-1)]);
             db.last().should.equal(items[0]);
         });
     });
-             
+    
     describe('#sort(\'year\')', function() {  
         it('should have Jesus first', function() {
             db.sort('year');

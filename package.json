@@ -1,7 +1,7 @@
 {
   "name": "NDDB",
   "description": "Powerful and versatile 100% javascript object database",
-  "version": "0.8.9",
+  "version": "0.8.10",
   "keywords": [ "db", "no-sql", "cyclic objects", "nddb", "database", "index", "views" ],
   "author": "Stefano Balietti <futur.dorko@gmail.com>",
   "licenses": [
@@ -24,7 +24,7 @@
     "docker": "0.2.2"
   },
   "engines": { "node":  ">=0.2.3" },
-  "main": "nddb.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/nodeGame/NDDB.git"
