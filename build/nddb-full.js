@@ -4132,9 +4132,9 @@ JSUS.extend(PARSE);
      * @return {boolean} TRUE, if the index has a valid name
      */
     NDDB.prototype._isValidIndex = function(idx, method) {
-        if ('undefined' === typeof idx) {
+        if (('string' !== typeof idx) && ('number' !== typeof idx)) {
             this.log(this._getConstrName() + '.' + method +
-                     ': no name provided', 'ERR');
+                     ': idx must be string or number', 'ERR');
             return false;
         }
         if (this.isReservedWord(idx)) {
@@ -4171,7 +4171,12 @@ JSUS.extend(PARSE);
      *
      */
     NDDB.prototype.index = function(idx, func) {
-        if (!func || !this._isValidIndex(idx, 'index')) return false;
+        if ('function' !== typeof func) {
+            throw new TypeError('NDDB.index: func must be function.');
+        }
+        if (!this._isValidIndex(idx, 'index')) {
+            return false;
+        }
         this.__I[idx] = func, this[idx] = new NDDBIndex(idx, this);
         return true;
     };
@@ -4203,8 +4208,13 @@ JSUS.extend(PARSE);
      *
      */
     NDDB.prototype.view = function(idx, func) {
-        if (!func || !this._isValidIndex(idx, 'view')) return false;
-        this.__V[idx] = func, this[idx] = new this.constructor();
+        if ('function' !== typeof func) {
+            throw new TypeError('NDDB.view: func must be function.');
+        }
+        if (!this._isValidIndex(idx, 'view')) {
+            return false;
+        }
+        this.__V[idx] = func, this[idx] = new NDDB();
         return true;
     };
 
@@ -4232,7 +4242,12 @@ JSUS.extend(PARSE);
      *
      */
     NDDB.prototype.hash = function(idx, func) {
-        if (!func || !this._isValidIndex(idx, 'hash')) return false;
+        if ('function' !== typeof func) {
+            throw new TypeError('NDDB.hash: func must be function.');
+        }
+        if (!this._isValidIndex(idx, 'hash')) {
+            return false;
+        }
         this.__H[idx] = func, this[idx] = {};
         return true;
     };
