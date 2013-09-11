@@ -111,7 +111,7 @@ describe('NDDB Events', function() {
         	copy = o;
             });
             db.importDB(items);
-            db.remove('year');
+            db.removeAllEntries();
         });
         
         it('should copy all the inserted elements', function() {
