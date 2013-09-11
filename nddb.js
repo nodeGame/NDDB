@@ -1492,17 +1492,15 @@
 
     //## Deletion
 
-
     /**
-     * ### NDDB.remove
+     * ### NDDB.removeAllEntries
      *
      * Removes all entries from the database
      *
      * @return {NDDB} A new instance of NDDB with no entries
      */
-    NDDB.prototype.remove = function() {
-        if (!this.length) return this;
-
+    NDDB.prototype.removeAllEntries = function() {
+        if (!this.db.length) return this;
         this.emit('remove', this.db);
         this.db = [];
         this._autoUpdate();
@@ -1514,10 +1512,10 @@
      *
      * Removes all volatile data
      *
-     * Removes all entries, indexes, hashes and tags,
+     * Removes all entries, indexes, hashes, views, and tags,
      * and resets the current query selection
      *
-     * Hooks, indexing, comparator, and hash functions are not deleted.
+     * Hooks, indexing, comparator, views, and hash functions are not deleted.
      *
      * Requires an additional parameter to confirm the deletion.
      *

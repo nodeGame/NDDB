@@ -34,29 +34,11 @@ function ADB() {
     }); 
 }
 
-function ADB_confObj() {
-    var options = {};
-    options.update = {};
-    options.update.indexes = true;      
-    options.I = {
-        id: function(i) {
-            return i.id;
-        }
-    };
-    options.V = {
-        vi: function(i) {
-            return i.id;
-        }
-    };
-    options.H = {
-        ha: function(i) {
-            return i.id;
-        }
-    };
-    NDDB.call(this, options); 
-}
+ADB.prototype.remove = function(id) {
+    this.id.remove(id);
+};
 
-var adb;
+var adb, adb2;
 
 describe('ADB inherited class with view, index, and hash', function() {	
     before(function() {
@@ -106,6 +88,16 @@ describe('ADB inherited class with view, index, and hash', function() {
             ('undefined' !== typeof adb.vi.ha[1]).should.be.true;
             adb.vi.ha[1].size().should.be.eql(1);
         });
+    });
+
+    describe("#breed()",function() {
+    	before(function() {
+            adb2 = adb.breed();
+        });
+        it("adb2 should be instance of ADB", function() {
+            adb.constructor.name.should.equal('ADB');
+            ('function' === typeof adb.remove).should.be.true;
+        });    
     });
 
     describe("removing from index",function() {

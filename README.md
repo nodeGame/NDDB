@@ -370,6 +370,9 @@ node make.nddb.js doc
 
 ## ChangeLog
 
+### 0.9.2
+  - `#remove()` -> `#removeAllEntries()`
+
 ### 0.9.1
   - On request, views, and hashes are now hybrid. They are NDDB object, but they tries to load all current settings, avoiding to creating infinite loops
   - `#cloneSettings()` accepts a leaveOut parameter
