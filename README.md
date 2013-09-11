@@ -372,6 +372,7 @@ node make.nddb.js doc
 
 ### 0.9.2
   - `#remove()` -> `#removeAllEntries()`
+  - `#NDDBIndex.pop() -> #NDDBIndex.remove()` pop is deprecated now
 
 ### 0.9.1
   - On request, views, and hashes are now hybrid. They are NDDB object, but they tries to load all current settings, avoiding to creating infinite loops

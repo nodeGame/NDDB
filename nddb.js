@@ -3041,7 +3041,7 @@
      * @return {object|boolean} The requested entry, or FALSE if the index is invalid
      *
      * @see NDDB.index
-     * @see NDDBIndex.pop
+     * @see NDDBIndex.remove
      * @see NDDBIndex.update
      */
     NDDBIndex.prototype.get = function(idx) {
@@ -3051,18 +3051,18 @@
 
 
     /**
-     * ### NDDBIndex.pop
+     * ### NDDBIndex.remove
      *
      * Removes and entry from the database with the given id and returns it
      *
      * @param {mixed} idx The id of item to remove
-     * @return {object|boolean} The removed item, or FALSE if the index is invalid
+     * @return {object|boolean} The removed item, or FALSE if index is invalid
      *
      * @see NDDB.index
      * @see NDDBIndex.get
      * @see NDDBIndex.update
      */
-    NDDBIndex.prototype.pop = function(idx) {
+    NDDBIndex.prototype.remove = function(idx) {
         var o, dbidx;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
@@ -3075,17 +3075,21 @@
         return o;
     };
 
+    // ### NDDBIndex.pop
+    // @deprecated
+    NDDBIndex.prototype.pop = NDDBIndex.prototype.remove;
+
     /**
      * ### NDDBIndex.update
      *
      * Removes and entry from the database with the given id and returns it
      *
      * @param {mixed} idx The id of item to update
-     * @return {object|boolean} The updated item, or FALSE if the index is invalid
+     * @return {object|boolean} The updated item, or FALSE if index is invalid
      *
      * @see NDDB.index
      * @see NDDBIndex.get
-     * @see NDDBIndex.pop
+     * @see NDDBIndex.remove
      */
     NDDBIndex.prototype.update = function(idx, update) {
         var o, dbidx;
