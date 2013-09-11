@@ -3595,23 +3595,23 @@ JSUS.extend(PARSE);
      * @param {db} db Optional. An initial set of items to import
      *
      */
-    function NDDB (options, db) {
+    function NDDB(options, db) {
         options = options || {};
 
         if (!J) throw new Error('JSUS not found.');
 
-        // ## Public properties
+        // ## Public properties.
 
         // ### db
-        // The default database
+        // The default database.
         this.db = [];
 
         // ###tags
-        // The tags list
+        // The tags list.
         this.tags = {};
 
         // ### hooks
-        // The list of hooks and associated callbacks
+        // The list of hooks and associated callbacks.
         this.hooks = {
             insert: [],
             remove: [],
@@ -3619,68 +3619,84 @@ JSUS.extend(PARSE);
         };
 
         // ### nddb_pointer
-        // Pointer for iterating along all the elements
+        // Pointer for iterating along all the elements.
         this.nddb_pointer = 0;
 
         // ### length
-        // The number of items in the database
+        // The number of items in the database.
         if (NDDB.compatibility.getter) {
-            this.__defineGetter__('length', function() { return this.db.length; });
+            this.__defineGetter__('length',
+                                  function() { return this.db.length; });
         }
         else {
             this.length = null;
         }
 
         // ### query
-        // QueryBuilder obj
+        // QueryBuilder obj.
         this.query = new QueryBuilder();
 
         // ### __C
-        // List of comparator functions
+        // List of comparator functions.
         this.__C = {};
 
         // ### __H
-        // List of hash functions
+        // List of hash functions.
         this.__H = {};
 
         // ### __I
-        // List of index functions
+        // List of index functions.
         this.__I = {};
 
         // ### __I
-        // List of view functions
+        // List of view functions.
         this.__V = {};
 
         // ### __update
-        // Auto update options container
+        // Auto update options container.
         this.__update = {};
 
         // ### __update.pointer
-        // If TRUE, nddb_pointer always points to the last insert
+        // If TRUE, nddb_pointer always points to the last insert.
         this.__update.pointer = false;
 
         // ### __update.indexes
-        // If TRUE, rebuild indexes on every insert and remove
+        // If TRUE, rebuild indexes on every insert and remove.
         this.__update.indexes = false;
 
         // ### __update.sort
-        // If TRUE, sort db on every insert and remove
+        // If TRUE, sort db on every insert and remove.
         this.__update.sort = false;
 
         // ### __shared
-        // Objects here will be shared (and not cloned) among all breeded NBB instances
+        // Objects inserted here will be shared (and not cloned)
+        // among all breeded NDDB instances.
         this.__shared = {};
 
         // ### log
-        // Std out. Can be overriden in options by another function. The function will be
-        // executed with this instance of PlayerList as context, so if it is a method of
-        // another class it might not work. In case you will need to inherit or add
-        // properties and methods from the other class into this PlayerList instance.
+        // Std out. Can be overriden in options by another function.
+        // The function will be executed with this instance of PlayerList
+        // as context, so if it is a method of another class it might not
+        // work. In case you will need to inherit or add properties
+        // and methods from the other class into this PlayerList instance.
         this.log = console.log;
 
+        // ### globalCompare
+        // Dummy compare function used to sort elements in the database.
+        // Override with a compare function returning:
+        //
+        //  - 0 if the objects are the same
+        //  - a positive number if o2 precedes o1
+        //  - a negative number if o1 precedes o2
+        //
+        this.globalCompare = function(o1, o2) {
+            return -1;
+        };
+
+        // Mixing in user options and defaults.
         this.init(options);
 
-        // Importing items, if any
+        // Importing items, if any.
         if (db) {
             this.importDB(db);
         }
@@ -3695,43 +3711,13 @@ JSUS.extend(PARSE);
      *
      * @param {object} options Optional. Configuration options
      *
+     * TODO: type checking on input params
      */
     NDDB.prototype.init = function(options) {
-        var i;
-        var op, sh;
+        var op, sh, i;
         options = options || {};
 
         this.__options = options;
-
-        if (options.log) {
-            this.initLog(options.log, options.logCtx);
-        }
-
-        if (options.C) {
-            this.__C = options.C;
-        }
-
-        if (options.H) {
-            this.__H = options.H;
-        }
-
-        if (options.I) {
-            this.__I = options.I;
-            for (i in options.I) {
-                if (options.I.hasOwnProperty(i)) {
-                    this.index(i, options.I[i]);
-                }
-            }
-        }
-
-        if (options.V) {
-            this.__V = options.V;
-            for (i in options.V) {
-                if (options.V.hasOwnProperty(i)) {
-                    this.view(i, options.V[i]);
-                }
-            }
-        }
 
         if (options.tags) {
             this.tags = options.tags;
@@ -3743,6 +3729,10 @@ JSUS.extend(PARSE);
 
         if (options.hooks) {
             this.hooks = options.hooks;
+        }
+
+        if (options.globalCompare) {
+            this.globalCompare = options.globalCompare;
         }
 
         if (options.update) {
@@ -3773,8 +3763,42 @@ JSUS.extend(PARSE);
             }
         }
 
-    };
+        if (options.log) {
+            this.initLog(options.log, options.logCtx);
+        }
 
+        if (options.C) {
+            this.__C = options.C;
+        }
+
+        if (options.H) {
+            for (i in options.H) {
+                if (options.H.hasOwnProperty(i)) {
+                    this.hash(i, options.H[i]);
+                }
+            }
+        }
+
+        if (options.I) {
+            this.__I = options.I;
+            for (i in options.I) {
+                if (options.I.hasOwnProperty(i)) {
+                    this.index(i, options.I[i]);
+                }
+            }
+        }
+        // Views must be created at the end because they are cloning
+        // all the previous settings (the method would also pollute
+        // this.__options if called before all options in init are set).
+        if (options.V) {
+            this.__V = options.V;
+            for (i in options.V) {
+                if (options.V.hasOwnProperty(i)) {
+                    this.view(i, options.V[i]);
+                }
+            }
+        }
+    };
 
     /**
      * ### NDDB.initLog
@@ -3804,35 +3828,6 @@ JSUS.extend(PARSE);
     };
 
     // ## CORE
-
-    /**
-     * ### NDDB.globalCompare
-     *
-     * Dummy compare function
-     *
-     * Used to sort elements in the database
-     *
-     * By default, if both elements are not `undefined`,
-     * the first object is considered to preceeds the
-     * second.
-     *
-     * Override to define a proper compare function, returning:
-     *
-     *  - 0 if the objects are the same
-     *  - a positive number if o2 precedes o1
-     *  - a negative number if o1 precedes o2
-     *
-     * @param {object} o1 The first object to compare
-     * @param {object} o1 The second object to compare
-     * @return {number} The result of the comparison
-     *
-     */
-    NDDB.prototype.globalCompare = function(o1, o2) {
-        if ('undefined' === typeof o1 && 'undefined' === typeof o2) return 0;
-        if ('undefined' === typeof o2) return -1;
-        if ('undefined' === typeof o1) return 1;
-        return -1;
-    };
 
     /**
      * ### NDDB._autoUpdate
@@ -3874,6 +3869,26 @@ JSUS.extend(PARSE);
         }
         this.emit('insert', o);
     }
+
+// TODO: To test
+//    function nddb_insert(o, update) {
+//        if (o === null) {
+//            throw new TypeError(this._getConstrName() +
+//                     '.insert: null received.');
+//        }
+//        if (('object' !== typeof o) && ('function' !== typeof o)) {
+//            throw new TypeError(this._getConstrName() +
+//                                '.insert: expects object or function, ' +
+//                                typeof o + ' received.');
+//        }
+//        this.db.push(o);
+//        if (update) {
+//            this._indexIt(o, (this.db.length-1));
+//            this._hashIt(o);
+//            this._viewIt(o);
+//        }
+//        this.emit('insert', o);
+//    }
 
     /**
      * ### NDDB.importDB
@@ -3941,33 +3956,38 @@ JSUS.extend(PARSE);
      * @return {NDDB} The new database
      */
     NDDB.prototype.breed = function(db) {
-        db = db || this.db;
         //In case the class was inherited
-        return new this.constructor(this.cloneSettings(), db);
+        return new this.constructor(this.cloneSettings(), db || this.db);
     };
 
     /**
      * ### NDDB.cloneSettings
      *
-     * Creates a configuration object to initialize
-     * a new NDDB instance
+     * Creates a clone of the configuration of this instance
      *
      * Clones:
      *  - the hashing, indexing, comparator, and view functions
      *  - the current tags
      *  - the update settings
      *  - the callback hooks
+     *  - the globalCompare callback
      *
      * Copies by reference:
      *  - the shared objects
      *
+     * It is possible to specifies the name of the properties to leave out
+     * out of the cloned object as a parameter. By default, all options
+     * are cloned.
+     *
+     * @param {object} leaveOut Optional. An object containing the name of
+     *   the properties to leave out of the clone as keys.
      * @return {object} options A copy of the current settings
      *   plus the shared objects
-     *
      */
-    NDDB.prototype.cloneSettings = function() {
-        var options;
+    NDDB.prototype.cloneSettings = function(leaveOut) {
+        var options, keepShared;
         options = this.__options || {};
+        keepShared = true;
 
         options.H = this.__H;
         options.I = this.__I;
@@ -3976,9 +3996,23 @@ JSUS.extend(PARSE);
         options.tags = this.tags;
         options.update = this.__update;
         options.hooks = this.hooks;
+        options.globalCompare = this.globalCompare;
 
         options = J.clone(options);
-        options.shared = this.__shared;
+
+        for (i in leaveOut) {
+            if (leaveOut.hasOwnProperty(i)) {
+                if (i === 'shared') {
+                    // 'shared' is not in `options`, we just have
+                    // to remember not to add it later.
+                    keepShared = false;
+                    continue;
+                }
+                delete options[i];
+            }
+        }
+        
+        if (keepShared) options.shared = this.__shared;
         return options;
     };
 
@@ -4123,31 +4157,6 @@ JSUS.extend(PARSE);
     };
 
     /**
-     * ### NDDB._isValidIndex
-     *
-     * Returns TRUE if the index is not a reserved word, otherwise
-     * displays an error and returns FALSE.
-     *
-     * @param {string} key The name of the property
-     * @return {boolean} TRUE, if the index has a valid name
-     */
-    NDDB.prototype._isValidIndex = function(idx, method) {
-        if (('string' !== typeof idx) && ('number' !== typeof idx)) {
-            this.log(this._getConstrName() + '.' + method +
-                     ': idx must be string or number', 'ERR');
-            return false;
-        }
-        if (this.isReservedWord(idx)) {
-            var str = 'A reserved word have been selected as an index. ';
-            str += 'Please select another one: ' + idx;
-            this.log(this._getConstrName() + '.' + method +
-                     ': ' + str, 'ERR');
-            return false;
-        }
-        return true;
-    };
-
-    /**
      * ### NDDB.index
      *
      * Registers a new indexing function
@@ -4171,11 +4180,17 @@ JSUS.extend(PARSE);
      *
      */
     NDDB.prototype.index = function(idx, func) {
-        if ('function' !== typeof func) {
-            throw new TypeError('NDDB.index: func must be function.');
+        if (('string' !== typeof idx) && ('number' !== typeof idx)) {
+            throw new TypeError(this._getConstrName() + '.index: ' +
+                                'idx must be string or number.');
         }
-        if (!this._isValidIndex(idx, 'index')) {
-            return false;
+        if (this.isReservedWord(idx)) {
+            throw new Error(this._getConstrName() + '.index: ' +
+                            'idx is reserved word (' + idx + ')');
+        }
+        if ('function' !== typeof func) {
+            throw new TypeError(this._getConstrName() + '.view: ' +
+                                'func must be function.');
         }
         this.__I[idx] = func, this[idx] = new NDDBIndex(idx, this);
         return true;
@@ -4205,16 +4220,26 @@ JSUS.extend(PARSE);
      * @see NDDB.hash
      * @see NDDB.isReservedWord
      * @see NDDB.rebuildIndexes
-     *
      */
     NDDB.prototype.view = function(idx, func) {
+        var settings;
+        if (('string' !== typeof idx) && ('number' !== typeof idx)) {
+            throw new TypeError(this._getConstrName() + '.view: ' +
+                                'idx must be string or number.');
+        }
+        if (this.isReservedWord(idx)) {
+            throw new Error(this._getConstrName() + '.view: ' +
+                            'idx is reserved word (' + idx + ')');
+        }
         if ('function' !== typeof func) {
-            throw new TypeError('NDDB.view: func must be function.');
+            throw new TypeError(this._getConstrName() + '.view: ' +
+                                'func must be function.');
         }
-        if (!this._isValidIndex(idx, 'view')) {
-            return false;
-        }
-        this.__V[idx] = func, this[idx] = new NDDB();
+
+        // Create a copy of the current settings, without the views
+        // functions, else we create an infinite loop in the constructor.
+        settings = this.cloneSettings({V: ''});
+        this.__V[idx] = func, this[idx] = new NDDB(settings);
         return true;
     };
 
@@ -4242,11 +4267,17 @@ JSUS.extend(PARSE);
      *
      */
     NDDB.prototype.hash = function(idx, func) {
-        if ('function' !== typeof func) {
-            throw new TypeError('NDDB.hash: func must be function.');
+        if (('string' !== typeof idx) && ('number' !== typeof idx)) {
+            throw new TypeError(this._getConstrName() + '.hash: ' +
+                                'idx must be string or number.');
         }
-        if (!this._isValidIndex(idx, 'hash')) {
-            return false;
+        if (this.isReservedWord(idx)) {
+            throw new Error(this._getConstrName() + '.hash: ' +
+                            'idx is reserved word (' + idx + ')');
+        }
+        if ('function' !== typeof func) {
+            throw new TypeError(this._getConstrName() + '.hash: ' +
+                                'func must be function.');
         }
         this.__H[idx] = func, this[idx] = {};
         return true;
@@ -4288,7 +4319,7 @@ JSUS.extend(PARSE);
         if (reset.v) {
             for (key in this.__V) {
                 if (this.__V.hasOwnProperty(key)) {
-                    this[key] = new NDDB();
+                    this[key] = new this.constructor();
                 }
             }
         }
@@ -4376,10 +4407,10 @@ JSUS.extend(PARSE);
      * @param {object} o The position of the element in the database array
      */
     NDDB.prototype._indexIt = function(o, dbidx) {
+        var func, id, index, key;
         if (!o || J.isEmpty(this.__I)) return;
-        var func, id, index;
 
-        for (var key in this.__I) {
+        for (key in this.__I) {
             if (this.__I.hasOwnProperty(key)) {
                 func = this.__I[key];
                 index = func(o);
@@ -4400,16 +4431,23 @@ JSUS.extend(PARSE);
      * @param {object} o The element to index
      */
     NDDB.prototype._viewIt = function(o) {
-        var func, id, index, key;
-        if (!o || J.isEmpty(this.__V)) return;
+        var func, id, index, key, settings;
+        if (!o || J.isEmpty(this.__V)) return false;
 
         for (key in this.__V) {
             if (this.__V.hasOwnProperty(key)) {
                 func = this.__V[key];
                 index = func(o);
                 if ('undefined' === typeof index) continue;
-
-                if (!this[key]) this[key] = new NDDB();
+                //this.__V[idx] = func, this[idx] = new this.constructor();
+                if (!this[key]) {
+                    // Create a copy of the current settings,
+                    // without the views functions, otherwise
+                    // we establish an infinite loop in the
+                    // constructor.
+                    settings = this.cloneSettings({V: ''});
+                    this[key] = new NDDB(settings);
+                }
                 this[key].insert(o);
             }
         }
@@ -4422,10 +4460,9 @@ JSUS.extend(PARSE);
      *
      * @param {object} o The element to hash
      * @return {boolean} TRUE, if insertion to an index was successful
-     *
      */
     NDDB.prototype._hashIt = function(o) {
-        var h, id, hash, key;
+        var h, id, hash, key, settings;
         if (!o || J.isEmpty(this.__H)) return false;
 
         for (key in this.__H) {
@@ -4437,7 +4474,11 @@ JSUS.extend(PARSE);
                 if (!this[key]) this[key] = {};
 
                 if (!this[key][hash]) {
-                    this[key][hash] = new NDDB();
+                    // Create a copy of the current settings,
+                    // without the hashing functions, otherwise
+                    // we crate an infinite loop at first insert.
+                    settings = this.cloneSettings({H: ''});
+                    this[key][hash] = new NDDB(settings);
                 }
                 this[key][hash].insert(o);
             }
@@ -4490,20 +4531,19 @@ JSUS.extend(PARSE);
      * @return Boolean TRUE, if the removal is successful
      */
     NDDB.prototype.off = function(event, func) {
+        var i;
         if (!event || !this.hooks[event] || !this.hooks[event].length) return;
 
         if (!func) {
             this.hooks[event] = [];
             return true;
         }
-
-        for (var i=0; i < this.hooks[event].length; i++) {
+        for (i = 0; i < this.hooks[event].length; i++) {
             if (this.hooks[event][i] == func) {
                 this.hooks[event].splice(i, 1);
                 return true;
             }
         }
-
         return false;
     }
 
@@ -4514,14 +4554,14 @@ JSUS.extend(PARSE);
      *
      * @param event {string} The event name
      * @param {object} o Optional. A parameter to be passed to the listener
-     *
      */
     NDDB.prototype.emit = function(event, o) {
+        var i;
         if (!event || !this.hooks[event] || !this.hooks[event].length) {
             return;
         }
 
-        for (var i=0; i < this.hooks[event].length; i++) {
+        for (i = 0; i < this.hooks[event].length; i++) {
             this.hooks[event][i].call(this, o);
         }
     };
@@ -4537,7 +4577,8 @@ JSUS.extend(PARSE);
      * @param {string} d The dimension of comparison
      * @param {string} op The operation to perform
      * @param {string} value The right-hand element of comparison
-     * @return {boolean|object} The object-query or FALSE if an error was detected
+     * @return {boolean|object} The object-query or FALSE,
+     *   if an error was detected
      */
     NDDB.prototype._analyzeQuery = function(d, op, value) {
         var that;
@@ -4585,7 +4626,8 @@ JSUS.extend(PARSE);
                 if ('undefined' === typeof value) raiseError(d,op,value);
 
                 // TODO: when to nest and when keep the '.' in the name?
-                // Comparison queries need to have the same data structure in the compared object
+                // Comparison queries need to have the same
+                // data structure in the compared object
                 value = J.setNestedValue(d,value);
             }
 
@@ -4629,19 +4671,23 @@ JSUS.extend(PARSE);
      * Input parameters:
      *
      * - d: the string representation of the dimension used to filter. Mandatory.
-     * - op: operator for selection. Allowed: >, <, >=, <=, = (same as ==), ==, ===,
-     *          !=, !==, in (in array), !in, >< (not in interval), <> (in interval)
-     *  - value: values of comparison. Operators: in, !in, ><, <> require an array.
+     * - op: operator for selection. Allowed: >, <, >=, <=, = (same as ==),
+     *   ==, ===, !=, !==, in (in array), !in, >< (not in interval),
+     *   <> (in interval)
+     * - value: values of comparison. The following operators require
+     *   an array: in, !in, ><, <>.
      *
-     * No actual selection is performed until the `execute` method is called, so that
-     * further selections can be chained with the `or`, and `and` methods.
+     * Important!! No actual selection is performed until
+     * the `execute` method is called, so that further selections
+     * can be chained with the `or`, and `and` methods.
      *
      * To retrieve the items use one of the fetching methods.
      *
      * @param {string} d The dimension of comparison
      * @param {string} op Optional. The operation to perform
      * @param {mixed} value Optional. The right-hand element of comparison
-     * @return {NDDB} A new NDDB instance with the currently selected items in memory
+     * @return {NDDB} A new NDDB instance with the currently
+     *   selected items in memory
      *
      * @see NDDB.and
      * @see NDDB.or
@@ -4662,7 +4708,8 @@ JSUS.extend(PARSE);
      * @param {string} d The dimension of comparison
      * @param {string} op Optional. The operation to perform
      * @param {mixed} value Optional. The right-hand element of comparison
-     * @return {NDDB} A new NDDB instance with the currently selected items in memory
+     * @return {NDDB} A new NDDB instance with the currently
+     *   selected items in memory
      *
      * @see NDDB.select
      * @see NDDB.or
@@ -4689,7 +4736,8 @@ JSUS.extend(PARSE);
      * @param {string} d The dimension of comparison
      * @param {string} op Optional. The operation to perform
      * @param {mixed} value Optional. The right-hand element of comparison
-     * @return {NDDB} A new NDDB instance with the currently selected items in memory
+     * @return {NDDB} A new NDDB instance with the currently
+     *   selected items in memory
      *
      * @see NDDB.select
      * @see NDDB.and
@@ -4719,7 +4767,8 @@ JSUS.extend(PARSE);
      * @param {string} d The dimension of comparison
      * @param {string} op Optional. The operation to perform
      * @param {mixed} value Optional. The right-hand element of comparison
-     * @return {NDDB} A new NDDB instance with the currently selected items in memory
+     * @return {NDDB} A new NDDB instance with the currently
+     *   selected items in memory
      *
      * @see NDDB.select
      * @see NDDB.and
@@ -4735,7 +4784,7 @@ JSUS.extend(PARSE);
     /**
      * ### NDDB.execute
      *
-     * Implements the criteria for selection previously specified by `select` queries
+     * Executes a search with the criteria specified by `select` statements
      *
      * Does not reset the query object, and it is possible to reuse the current
      * selection multiple times
@@ -5029,7 +5078,8 @@ JSUS.extend(PARSE);
             }
         }
         else {
-            this.log('Do you really want to clear the current dataset? Please use clear(true)', 'WARN');
+            this.log('Do you really want to clear the current dataset? ' +
+                     'Please use clear(true)', 'WARN');
         }
 
         return confirm;
@@ -5045,8 +5095,10 @@ JSUS.extend(PARSE);
      *
      * @param {string} key1 First property to compare
      * @param {string} key2 Second property to compare
-     * @param {string} pos Optional. The property under which the join is performed. Defaults 'joined'
-     * @param {string|array} select Optional. The properties to copy in the join. Defaults undefined
+     * @param {string} pos Optional. The property under which the join
+     *   is performed. Defaults 'joined'
+     * @param {string|array} select Optional. The properties to copy
+     *   in the join. Defaults undefined
      * @return {NDDB} A new database containing the joined entries
      *
      * @see NDDB._join
@@ -5109,9 +5161,12 @@ JSUS.extend(PARSE);
      * @api private
      * @param {string} key1 First property to compare
      * @param {string} key2 Second property to compare
-     * @param {function} comparator Optional. A comparator function. Defaults, `JSUS.equals`
-     * @param {string} pos Optional. The property under which the join is performed. Defaults 'joined'
-     * @param {string|array} select Optional. The properties to copy in the join. Defaults undefined
+     * @param {function} comparator Optional. A comparator function.
+     *   Defaults, `JSUS.equals`
+     * @param {string} pos Optional. The property under which the join
+     *   is performed. Defaults 'joined'
+     * @param {string|array} select Optional. The properties to copy
+     *   in the join. Defaults undefined
      * @return {NDDB} A new database containing the joined entries
      * @see NDDB.breed
      */
@@ -5209,7 +5264,6 @@ JSUS.extend(PARSE);
      *
      * Fetches all the entries in the database and trims out unwanted properties
      *
-     *
      * Examples
      *
      * ```javascript
@@ -5222,7 +5276,8 @@ JSUS.extend(PARSE);
      *
      * No further chaining is permitted after fetching.
      *
-     * @param {string|array} key Optional. If set, returned objects will have only such properties
+     * @param {string|array} key Optional. If set, returned objects will
+     *   have only such properties
      * @return {array} out The fetched objects
      *
      * @see NDDB.fetch
@@ -5247,9 +5302,9 @@ JSUS.extend(PARSE);
      * Fetches all the values of the entries in the database
      *
      * The type of the input parameter determines the return value:
-     *  - if it is `string`, returned value is a one-dimensional array.
-     *  - if it is `array`, returned value is an object whose properties are arrays containing
-     * all the values found in the database for those keys.
+     *  - `string`: returned value is a one-dimensional array.
+     *  - `array`: returned value is an object whose properties
+     *    are arrays containing all the values found for those keys.
      *
      * Nested properties can be specified too.
      *
@@ -5270,14 +5325,14 @@ JSUS.extend(PARSE);
      *
      * No further chaining is permitted after fetching.
      *
-     * @param {string|array} key Optional. If set, returns only the value from the specified property
+     * @param {string|array} key Optional. If set, returns only
+     *   the value from the specified property
      * @return {array} out The fetched values
      *
      * @see NDDB.fetch
      * @see NDDB.fetchArray
      * @see NDDB.fetchKeyArray
      * @see NDDB.fetchSubObj
-     *
      */
     NDDB.prototype.fetchValues = function(key) {
         var el, i, out, typeofkey;
@@ -5298,8 +5353,6 @@ JSUS.extend(PARSE);
                     out[key].push(el);
                 }
             }
-
-
         }
 
         else if (J.isArray(key)) {
@@ -6467,7 +6520,6 @@ JSUS.extend(PARSE);
      * Helper class for NDDB indexing
      *
      * ---
-     *
      */
 
     /**

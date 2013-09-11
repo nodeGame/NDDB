@@ -300,7 +300,10 @@ Define a custom indexing function that gives fast, direct access to the items of
       I:  {},             // Collection of indexing functions
       V:  {},             // Collection of view functions
       log: logFunc,       // Default stdout
-      nddb_pointer: 4,    // Set the pointer to element of index 4. 
+      nddb_pointer: 4,    // Set the pointer to element of index 4
+      globalCompare: function(o1, o2) {
+        // comparing code
+      },
       operators: {       // Extends NDDB with new operators for select queries
         '%': function(d, value, comparator){
               return function(elem) {
@@ -366,6 +369,11 @@ node make.nddb.js doc
 ```
 
 ## ChangeLog
+
+### 0.9.1
+  - On request, views, and hashes are now hybrid. They are NDDB object, but they tries to load all current settings, avoiding to creating infinite loops
+  - `#cloneSettings()` accepts a leaveOut parameter
+  - Empty hash objects are created by the constructor, if an hash function is specified
 
 ### 0.9.0
   - Fixed bug with views and hashs created within constructor of inheriting class
