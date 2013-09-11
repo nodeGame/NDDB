@@ -241,7 +241,7 @@
         <a href="#deletion">Deletion</a>
       </div>
       <div class="heading h3">
-        <a href="#nddb.remove">NDDB.remove</a>
+        <a href="#nddb.removeallentries">NDDB.removeAllEntries</a>
       </div>
       <div class="heading h3">
         <a href="#nddb.clear">NDDB.clear</a>
@@ -407,6 +407,9 @@
       </div>
       <div class="heading h3">
         <a href="#nddbindex.get">NDDBIndex.get</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nddbindex.remove">NDDBIndex.remove</a>
       </div>
       <div class="heading h3">
         <a href="#nddbindex.pop">NDDBIndex.pop</a>
@@ -3563,10 +3566,10 @@ the selected items will be created.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nddb.remove">
+<div class="pilwrap" id="nddb.removeallentries">
   <h3>
-    <a href="#nddb.remove" class="pilcrow">&#182;</a>
-    NDDB.remove
+    <a href="#nddb.removeallentries" class="pilcrow">&#182;</a>
+    NDDB.removeAllEntries
   </h3>
 </div>
 
@@ -3583,9 +3586,8 @@ the selected items will be created.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeAllEntries</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;remove&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">db</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_autoUpdate</span><span class="p">();</span>
@@ -3606,10 +3608,10 @@ the selected items will be created.</p>
   </div>
   <div class="body"><p>Removes all volatile data</p>
 
-<p>Removes all entries, indexes, hashes and tags,
+<p>Removes all entries, indexes, hashes, views, and tags,
 and resets the current query selection</p>
 
-<p>Hooks, indexing, comparator, and hash functions are not deleted.</p>
+<p>Hooks, indexing, comparator, views, and hash functions are not deleted.</p>
 
 <p>Requires an additional parameter to confirm the deletion.</p>
   </div>
@@ -6521,7 +6523,7 @@ always decides the overall logic value. E.g. :</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">NDDBIndex.pop</span>
+      <span class="dox_type">NDDBIndex.remove</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -6540,10 +6542,10 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nddbindex.pop">
+<div class="pilwrap" id="nddbindex.remove">
   <h3>
-    <a href="#nddbindex.pop" class="pilcrow">&#182;</a>
-    NDDBIndex.pop
+    <a href="#nddbindex.remove" class="pilcrow">&#182;</a>
+    NDDBIndex.remove
   </h3>
 </div>
 
@@ -6562,7 +6564,7 @@ always decides the overall logic value. E.g. :</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
       <span class="dox_type">boolean</span>
-      <span>The removed item, or FALSE if the index is invalid</span>
+      <span>The removed item, or FALSE if index is invalid</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -6580,7 +6582,7 @@ always decides the overall logic value. E.g. :</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pop</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">dbidx</span><span class="p">;</span>
         <span class="nx">dbidx</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">dbidx</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
@@ -6592,6 +6594,21 @@ always decides the overall logic value. E.g. :</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">_autoUpdate</span><span class="p">();</span>
         <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="nddbindex.pop">
+  <h3>
+    <a href="#nddbindex.pop" class="pilcrow">&#182;</a>
+    NDDBIndex.pop
+  </h3>
+</div>
+
+
+<p>@deprecated</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">pop</span> <span class="o">=</span> <span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -6619,7 +6636,7 @@ always decides the overall logic value. E.g. :</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
       <span class="dox_type">boolean</span>
-      <span>The updated item, or FALSE if the index is invalid</span>
+      <span>The updated item, or FALSE if index is invalid</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -6631,7 +6648,7 @@ always decides the overall logic value. E.g. :</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">NDDBIndex.pop
+      <span class="dox_type">NDDBIndex.remove
   </span>
     </div>
   </div>

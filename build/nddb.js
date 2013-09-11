@@ -3563,17 +3563,15 @@ JSUS.extend(PARSE);
 
     //## Deletion
 
-
     /**
-     * ### NDDB.remove
+     * ### NDDB.removeAllEntries
      *
      * Removes all entries from the database
      *
      * @return {NDDB} A new instance of NDDB with no entries
      */
-    NDDB.prototype.remove = function() {
-        if (!this.length) return this;
-
+    NDDB.prototype.removeAllEntries = function() {
+        if (!this.db.length) return this;
         this.emit('remove', this.db);
         this.db = [];
         this._autoUpdate();
@@ -3585,10 +3583,10 @@ JSUS.extend(PARSE);
      *
      * Removes all volatile data
      *
-     * Removes all entries, indexes, hashes and tags,
+     * Removes all entries, indexes, hashes, views, and tags,
      * and resets the current query selection
      *
-     * Hooks, indexing, comparator, and hash functions are not deleted.
+     * Hooks, indexing, comparator, views, and hash functions are not deleted.
      *
      * Requires an additional parameter to confirm the deletion.
      *
@@ -5114,7 +5112,7 @@ JSUS.extend(PARSE);
      * @return {object|boolean} The requested entry, or FALSE if the index is invalid
      *
      * @see NDDB.index
-     * @see NDDBIndex.pop
+     * @see NDDBIndex.remove
      * @see NDDBIndex.update
      */
     NDDBIndex.prototype.get = function(idx) {
@@ -5124,18 +5122,18 @@ JSUS.extend(PARSE);
 
 
     /**
-     * ### NDDBIndex.pop
+     * ### NDDBIndex.remove
      *
      * Removes and entry from the database with the given id and returns it
      *
      * @param {mixed} idx The id of item to remove
-     * @return {object|boolean} The removed item, or FALSE if the index is invalid
+     * @return {object|boolean} The removed item, or FALSE if index is invalid
      *
      * @see NDDB.index
      * @see NDDBIndex.get
      * @see NDDBIndex.update
      */
-    NDDBIndex.prototype.pop = function(idx) {
+    NDDBIndex.prototype.remove = function(idx) {
         var o, dbidx;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
@@ -5148,17 +5146,21 @@ JSUS.extend(PARSE);
         return o;
     };
 
+    // ### NDDBIndex.pop
+    // @deprecated
+    NDDBIndex.prototype.pop = NDDBIndex.prototype.remove;
+
     /**
      * ### NDDBIndex.update
      *
      * Removes and entry from the database with the given id and returns it
      *
      * @param {mixed} idx The id of item to update
-     * @return {object|boolean} The updated item, or FALSE if the index is invalid
+     * @return {object|boolean} The updated item, or FALSE if index is invalid
      *
      * @see NDDB.index
      * @see NDDBIndex.get
-     * @see NDDBIndex.pop
+     * @see NDDBIndex.remove
      */
     NDDBIndex.prototype.update = function(idx, update) {
         var o, dbidx;
