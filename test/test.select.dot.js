@@ -63,7 +63,7 @@ describe('NDDB Selecting with DOT', function() {
              .db.length.should.equal(1); 
         });
         
-        it('should select all painting between 1900 and 1999', function(){
+        it('should select all painting *not* between 1900 and 1999', function(){
            db.select('year', '<>', [1900, 1999])
                 .execute()
                 .db.length.should.equal(3); 
