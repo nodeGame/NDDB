@@ -55,6 +55,9 @@
         <a href="#query">query</a>
       </div>
       <div class="heading h3">
+        <a href="#filters">filters</a>
+      </div>
+      <div class="heading h3">
         <a href="#__c">__C</a>
       </div>
       <div class="heading h3">
@@ -86,6 +89,12 @@
       </div>
       <div class="heading h3">
         <a href="#globalcompare">globalCompare</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nddb.addfilter">NDDB.addFilter</a>
+      </div>
+      <div class="heading h3">
+        <a href="#querybuilder.registerdefaultoperators">QueryBuilder.registerDefaultOperators</a>
       </div>
       <div class="heading h2">
         <a href="#methods">METHODS</a>
@@ -376,12 +385,6 @@
         <a href="#querybuilder.addcondition">QueryBuilder.addCondition</a>
       </div>
       <div class="heading h3">
-        <a href="#querybuilder.registeroperator">QueryBuilder.registerOperator</a>
-      </div>
-      <div class="heading h3">
-        <a href="#querybuilder.registerdefaultoperators">QueryBuilder.registerDefaultOperators</a>
-      </div>
-      <div class="heading h3">
         <a href="#querybuilder.addbreak">QueryBuilder.addBreak</a>
       </div>
       <div class="heading h3">
@@ -587,6 +590,8 @@ MIT Licensed</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NDDB</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">)</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;JSUS not found.&#39;</span><span class="p">);</span></pre></div>
@@ -703,6 +708,21 @@ MIT Licensed</p>
 <p>QueryBuilder obj.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">query</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">QueryBuilder</span><span class="p">();</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="filters">
+  <h3>
+    <a href="#filters" class="pilcrow">&#182;</a>
+    filters
+  </h3>
+</div>
+
+
+<p>Available db filters</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultFilters</span><span class="p">();</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -887,7 +907,66 @@ Override with a compare function returning:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+</div>
+<p>TODO see where placing</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+</div>
+<p>TODO: maybe give users the option to overwrite it.
+Adding the compareInAllFields function</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>       <span class="k">this</span><span class="p">.</span><span class="nx">comparator</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">trigger1</span><span class="p">,</span> <span class="nx">trigger2</span><span class="p">)</span> <span class="p">{</span>
+           <span class="kd">var</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
+           <span class="k">for</span> <span class="p">(</span><span class="nx">d</span> <span class="k">in</span> <span class="nx">o1</span><span class="p">)</span> <span class="p">{</span>
+               <span class="nx">c</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getComparator</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
+               <span class="nx">o2</span><span class="p">[</span><span class="nx">d</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o2</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">];</span>
+               <span class="nx">res</span> <span class="o">=</span> <span class="nx">c</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">);</span>
+               <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="nx">trigger1</span><span class="p">)</span> <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
+               <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="nx">trigger2</span> <span class="o">&amp;&amp;</span> <span class="nx">res</span> <span class="o">===</span> <span class="nx">trigger2</span><span class="p">)</span> <span class="k">return</span> <span class="nx">res</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+</div>
+<p>No need to delete o2[d] afer comparison.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>           <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+</div>
+<p>We are not interested in sorting.
+Figuring out the right return value</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>           <span class="k">if</span> <span class="p">(</span><span class="nx">trigger1</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+               <span class="k">return</span> <span class="nx">trigger2</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
+           <span class="p">}</span>
+           <span class="k">if</span> <span class="p">(</span><span class="nx">trigger1</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+               <span class="k">return</span> <span class="nx">trigger2</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+           <span class="p">}</span>
+           
+           <span class="k">return</span> <span class="nx">trigger2</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span> 
+
+       <span class="p">});</span>      </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Mixing in user options and defaults.</p>
         </td>
@@ -897,13 +976,386 @@ Override with a compare function returning:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Importing items, if any.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">db</span><span class="p">);</span>
         <span class="p">}</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nddb.addfilter">
+  <h3>
+    <a href="#nddb.addfilter" class="pilcrow">&#182;</a>
+    NDDB.addFilter
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Registers a <em>select</em> function under an alphanumeric id</p>
+
+<p>When calling <code>NDDB.select('d','OP','value')</code> the second parameter (<em>OP</em>)
+will be matched with the callback function specified here.</p>
+
+<p>Callback function must accept three input parameters:</p>
+
+<ul>
+<li>d: dimension of comparison</li>
+<li>value: second-term of comparison</li>
+<li>comparator: the comparator function as defined by <code>NDDB.c</code></li>
+</ul>
+
+<p>and return a function that execute the desired operation.</p>
+
+<p>Registering a new operator under an already existing id will
+overwrite the old operator.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">op</span>
+      <span class="dox_type">string</span>
+      <span>An alphanumeric id</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">cb</span>
+      <span class="dox_type">function</span>
+      <span>The callback function</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">QueryBuilder.registerDefaultOperators
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addFilter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">op</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="nx">op</span><span class="p">]</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="querybuilder.registerdefaultoperators">
+  <h3>
+    <a href="#querybuilder.registerdefaultoperators" class="pilcrow">&#182;</a>
+    QueryBuilder.registerDefaultOperators
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Register default operators for NDDB</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultFilters</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">filters</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
+        <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+</div>
+<p>Exists</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;E&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">c</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">d</span> <span class="k">in</span> <span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">c</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getComparator</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
+                        <span class="nx">value</span><span class="p">[</span><span class="nx">d</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;*&#39;</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">value</span><span class="p">[</span><span class="nx">d</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;*&#39;</span><span class="p">]</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">elem</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">elem</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+</div>
+<p>(strict) Equals</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;==&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                
+                <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+            <span class="p">};</span>
+        <span class="p">};</span>
+
+        </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+</div>
+<p>Smaller than</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span> <span class="o">||</span> <span class="nx">d</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>                
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span> 
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="k">return</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+        <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+</div>
+<p>Greater than</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;&gt;=&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span> <span class="o">||</span> <span class="nx">d</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">compared</span> <span class="o">=</span> <span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">compared</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">||</span> <span class="nx">compared</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                <span class="p">};</span>  
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="k">return</span><span class="p">;</span>
+                    <span class="kd">var</span> <span class="nx">compared</span> <span class="o">=</span> <span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">compared</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">||</span> <span class="nx">compared</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+        <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+</div>
+<p>Smaller than</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;&lt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span> <span class="o">||</span> <span class="nx">d</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>                
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span> 
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="k">return</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+        <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+</div>
+<p>Smaller or equal than</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;&lt;=&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span> <span class="o">||</span> <span class="nx">d</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">compared</span> <span class="o">=</span> <span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">compared</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="nx">compared</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                <span class="p">};</span>  
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="k">return</span><span class="p">;</span>
+                    <span class="kd">var</span> <span class="nx">compared</span> <span class="o">=</span> <span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">compared</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="nx">compared</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+        <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+</div>
+<p>Between</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;&gt;&lt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+                    <span class="nx">len</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span>
+                            <span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">d</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">c</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">d</span> <span class="k">in</span> <span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">c</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getComparator</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
+                        <span class="nx">value</span><span class="p">[</span><span class="nx">d</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;*&#39;</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">value</span><span class="p">[</span><span class="nx">d</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;*&#39;</span><span class="p">]</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>  
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>               
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> 
+                        <span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+        </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+</div>
+<p>Not Between</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span> <span class="o">||</span> <span class="nx">d</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span>
+                        <span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="k">return</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span>
+                        <span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+        <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+</div>
+<p>In Array</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+                    <span class="nx">len</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> 
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">obj</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+                    <span class="nx">obj</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">obj</span><span class="p">[</span><span class="nx">d</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">obj</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+        <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+</div>
+<p>Not In Array</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;!in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+                    <span class="nx">len</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> 
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">return</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">obj</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+                    <span class="nx">obj</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">obj</span><span class="p">[</span><span class="nx">d</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">obj</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">return</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -946,7 +1398,7 @@ TODO: type checking on input params</span>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">op</span><span class="p">,</span> <span class="nx">sh</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">filter</span><span class="p">,</span> <span class="nx">sh</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">__options</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
@@ -981,9 +1433,9 @@ TODO: type checking on input params</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">operators</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">op</span> <span class="k">in</span> <span class="nx">options</span><span class="p">.</span><span class="nx">operators</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">registerOperator</span><span class="p">(</span><span class="nx">op</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">operators</span><span class="p">[</span><span class="nx">op</span><span class="p">]);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">filters</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">filter</span> <span class="k">in</span> <span class="nx">options</span><span class="p">.</span><span class="nx">filters</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">addFilter</span><span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="nx">filter</span><span class="p">]);</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -1024,7 +1476,7 @@ TODO: type checking on input params</span>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Views must be created at the end because they are cloning
 all the previous settings (the method would also pollute
@@ -1175,7 +1627,7 @@ configuration</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>TODO: To test
    function nddb_insert(o, update) {
@@ -1347,7 +1799,7 @@ preserve their prototype.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>In case the class was inherited</p>
         </td>
@@ -1424,7 +1876,7 @@ are cloned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>'shared' is not in <code>options</code>, we just have
 to remember not to add it later.</p>
@@ -1465,8 +1917,9 @@ to remember not to add it later.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">out</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
@@ -1522,7 +1975,7 @@ to remember not to add it later.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
 </div>
 <p>decycle, if possible</p>
         </td>
@@ -1615,18 +2068,21 @@ comparator function will be used.</p>
   </div>
   <div class="body"><p>Retrieves the comparator function for dimension d.</p>
 
-<p>If no comparator function is found, returns a generic
-comparator function. The generic comparator function
-supports nested attributes search, but if a property
+<p>If no comparator function is found, returns a general comparator 
+function. Supports nested attributes search, but if a property
 containing dots with the same name is found, this will
 returned first.</p>
+
+<p>The dimension can be the wildcard '*' or an array of dimesions.
+In the latter case a custom comparator function is built on the fly.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">d</span>
       <span class="dox_type">string</span>
-      <span>The name of the dimension</span>
+      <span class="dox_type">array</span>
+      <span>The name/s of the dimension/s</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -1643,38 +2099,132 @@ returned first.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getComparator</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">__C</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">__C</span><span class="p">[</span><span class="nx">d</span><span class="p">];</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">v1</span><span class="p">,</span> <span class="nx">v2</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o1</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o1</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o2</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-
-
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o1</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span>
-                <span class="nx">v1</span> <span class="o">=</span> <span class="nx">o1</span><span class="p">[</span><span class="nx">d</span><span class="p">];</span>
+        <span class="kd">var</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">,</span> <span class="nx">comparators</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
+</div>
+<p>Given field or '*'.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">__C</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">comparator</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__C</span><span class="p">[</span><span class="nx">d</span><span class="p">];</span>
             <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">v1</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">o1</span><span class="p">);</span>
-            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">comparator</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">generalComparator</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">v1</span><span class="p">,</span> <span class="nx">v2</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o1</span> <span class="o">&amp;&amp;</span>
+                        <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o1</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o2</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+                    
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o1</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="nx">v1</span> <span class="o">=</span> <span class="nx">o1</span><span class="p">[</span><span class="nx">d</span><span class="p">];</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">v1</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">o1</span><span class="p">);</span>
+                    <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o2</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span>
-                <span class="nx">v2</span> <span class="o">=</span> <span class="nx">o2</span><span class="p">[</span><span class="nx">d</span><span class="p">];</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">v2</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">o2</span><span class="p">);</span>
-            <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o2</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="nx">v2</span> <span class="o">=</span> <span class="nx">o2</span><span class="p">[</span><span class="nx">d</span><span class="p">];</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">v2</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">o2</span><span class="p">);</span>
+                    <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">v1</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">v2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">v1</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">v2</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">v1</span> <span class="o">&gt;</span> <span class="nx">v2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">v2</span> <span class="o">&gt;</span> <span class="nx">v1</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-            <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="p">};</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">v1</span> <span class="o">&amp;&amp;</span>
+                        <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">v2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">v1</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">v2</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">v1</span> <span class="o">&gt;</span> <span class="nx">v2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">v2</span> <span class="o">&gt;</span> <span class="nx">v1</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+                    
+                    
+                    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
+</div>
+<p>Pre-defined array o fields to check.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">else</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+</div>
+<p>Creates the array of comparators functions.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">comparators</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="nx">len</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
+</div>
+<p>Every comparator has its own d in scope.
+TODO: here there should be no wildcard '*' (check earlier)</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="nx">comparators</span><span class="p">[</span><span class="nx">d</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getComparator</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="p">}</span>
+            
+            <span class="nx">comparator</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">trigger1</span><span class="p">,</span> <span class="nx">trigger2</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">obj</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">comparators</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">comparators</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o1</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="k">continue</span><span class="p">;</span>
+                        <span class="nx">obj</span> <span class="o">=</span> <span class="p">{};</span>
+                        <span class="nx">obj</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o2</span><span class="p">;</span>
+                        <span class="nx">res</span> <span class="o">=</span> <span class="nx">comparators</span><span class="p">[</span><span class="nx">i</span><span class="p">](</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">obj</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="nx">trigger1</span><span class="p">)</span> <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="nx">trigger2</span> <span class="o">&amp;&amp;</span> <span class="nx">res</span> <span class="o">===</span> <span class="nx">trigger2</span><span class="p">)</span> <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+</div>
+<p>We are not interested in sorting.
+Figuring out the right return value</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">trigger1</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">trigger2</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">trigger1</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">trigger2</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="p">}</span>
+                
+                <span class="k">return</span> <span class="nx">trigger2</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span> 
+                
+            <span class="p">}</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
+</div>
+<p>console.log(comparator);</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="nx">comparator</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1873,7 +2423,7 @@ callback returns <em>undefined</em> the entry will be ignored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
 <p>Create a copy of the current settings, without the views
 functions, else we create an infinite loop in the constructor.</p>
@@ -2111,7 +2661,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
 </div>
 <p>Reset current indexes</p>
         </td>
@@ -2158,7 +2708,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
 </div>
 <p>_hashIt and viewIt do not need idx, it is no harm anyway</p>
         </td>
@@ -2250,7 +2800,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
 </div>
 <p>this.__V[idx] = func, this[idx] = new this.constructor();</p>
         </td>
@@ -2260,7 +2810,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
 </div>
 <p>Create a copy of the current settings,
 without the views functions, otherwise
@@ -2323,7 +2873,7 @@ constructor.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
+  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
 </div>
 <p>Create a copy of the current settings,
 without the hashing functions, otherwise
@@ -2496,7 +3046,14 @@ we crate an infinite loop at first insert.</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">queryError</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">op</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">miss</span><span class="p">,</span> <span class="nx">err</span><span class="p">;</span>
+        <span class="nx">miss</span> <span class="o">=</span> <span class="s1">&#39;(?)&#39;</span><span class="p">;</span>
+        <span class="nx">err</span> <span class="o">=</span> <span class="s1">&#39;Malformed query: &#39;</span> <span class="o">+</span> <span class="nx">d</span> <span class="o">||</span> <span class="nx">miss</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">op</span> <span class="o">||</span> <span class="nx">miss</span> <span class="o">+</span>
+            <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">value</span> <span class="o">||</span> <span class="nx">miss</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2545,24 +3102,19 @@ we crate an infinite loop at first insert.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_analyzeQuery</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">op</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">;</span>
         <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-
-        <span class="kd">function</span> <span class="nx">raiseError</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">op</span><span class="p">,</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">miss</span> <span class="o">=</span> <span class="s1">&#39;(?)&#39;</span><span class="p">;</span>
-            <span class="kd">var</span> <span class="nx">err</span> <span class="o">=</span> <span class="s1">&#39;Malformed query: &#39;</span> <span class="o">+</span> <span class="nx">d</span> <span class="o">||</span> <span class="nx">miss</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">op</span> <span class="o">||</span> <span class="nx">miss</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">value</span> <span class="o">||</span> <span class="nx">miss</span><span class="p">;</span>
-            <span class="nx">that</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">queryError</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">op</span><span class="p">,</span><span class="nx">value</span><span class="p">);</span>
         <span class="p">}</span>
-
-
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span><span class="p">)</span> <span class="nx">raiseError</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">op</span><span class="p">,</span><span class="nx">value</span><span class="p">);</span></pre></div>
+        </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
+  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
 </div>
 <p>Verify input</p>
         </td>
@@ -2570,10 +3122,23 @@ we crate an infinite loop at first insert.</p>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;=&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">op</span> <span class="o">=</span> <span class="s1">&#39;==&#39;</span><span class="p">;</span>
-            <span class="p">}</span>
+            <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
+</div>
 
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">op</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">operators</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Query error. Invalid operator detected: &#39;</span> <span class="o">+</span> <span class="nx">op</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+<div class="highlight"><pre><code>       <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">op</span> <span class="n">in</span> <span class="n">this</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">operators</span><span class="p">))</span> <span class="p">{</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">op</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Query error. Invalid operator detected: &#39;</span> <span class="o">+</span> <span class="nx">op</span><span class="p">,</span>
+                         <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span></pre></div>
         </td>
@@ -2581,15 +3146,16 @@ we crate an infinite loop at first insert.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
 </div>
 <p>Range-queries need an array as third parameter instance of Array</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">op</span><span class="p">,[</span><span class="s1">&#39;&gt;&lt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;!in&#39;</span><span class="p">]))</span> <span class="p">{</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">value</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Range-queries need an array as third parameter&#39;</span><span class="p">,</span> <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
-                    <span class="nx">raiseError</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">op</span><span class="p">,</span><span class="nx">value</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Range-queries need an array as third parameter&#39;</span><span class="p">,</span> 
+                             <span class="s1">&#39;WARN&#39;</span><span class="p">);</span>
+                    <span class="nx">queryError</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span><span class="nx">op</span><span class="p">,</span><span class="nx">value</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;&lt;&gt;&#39;</span> <span class="o">||</span> <span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;&gt;&lt;&#39;</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
@@ -2597,12 +3163,23 @@ we crate an infinite loop at first insert.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
+</div>
+<p>It will be nested by the comparator function.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">d</span><span class="p">)){</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
 </div>
 <p>TODO: when to nest and when keep the '.' in the name?</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                    <span class="nx">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">setNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-                    <span class="nx">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">setNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+        <td class="code highlight"><div class="highlight"><pre>                        <span class="nx">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">setNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+                        <span class="nx">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">setNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
 
@@ -2612,37 +3189,48 @@ we crate an infinite loop at first insert.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
+  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
 </div>
 <p>Comparison queries need a third parameter</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">value</span><span class="p">)</span> <span class="nx">raiseError</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">op</span><span class="p">,</span><span class="nx">value</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">queryError</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">op</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+                <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
+  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
 </div>
 <p>TODO: when to nest and when keep the '.' in the name?
 Comparison queries need to have the same
 data structure in the compared object</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                <span class="nx">value</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">setNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">value</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">d</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">len</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">J</span><span class="p">.</span><span class="nx">setNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span><span class="nx">value</span><span class="p">);</span>
+                    <span class="p">}</span>
+                  
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">setNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">value</span><span class="p">);</span>
+                <span class="p">}</span>
             <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
+  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
 </div>
 <p>other (e.g. user-defined) operators do not have constraints,
 e.g. no need to transform the value</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="p">}</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">raiseError</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">op</span><span class="p">,</span><span class="nx">value</span><span class="p">);</span>
+            <span class="nx">queryError</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">op</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">op</span> <span class="o">=</span> <span class="s1">&#39;E&#39;</span><span class="p">;</span> <span class="c1">// exists</span>
@@ -2706,7 +3294,7 @@ e.g. no need to transform the value</p>
 <p>Input parameters:</p>
 
 <ul>
-<li>d: the string representation of the dimension used to filter. Mandatory.</li>
+<li>d: string representation of the dimension used to filter. Mandatory.</li>
 <li>op: operator for selection. Allowed: >, &lt;, >=, &lt;=, = (same as ==),
 ==, ===, !=, !==, in (in array), !in, >&lt; (not in interval),
 &lt;> (in interval)</li>
@@ -2830,7 +3418,7 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
+  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
 </div>
 <p>TODO: Support for nested query
      if (!arguments.length) {
@@ -2838,15 +3426,17 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
      }
      else {</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">condition</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_analyzeQuery</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">op</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">condition</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">addCondition</span><span class="p">(</span><span class="s1">&#39;AND&#39;</span><span class="p">,</span> <span class="nx">condition</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getComparator</span><span class="p">(</span><span class="nx">d</span><span class="p">));</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">q</span><span class="p">,</span> <span class="nx">cb</span><span class="p">;</span>
+        <span class="nx">q</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_analyzeQuery</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">op</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">q</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="nx">q</span><span class="p">.</span><span class="nx">op</span><span class="p">](</span><span class="nx">q</span><span class="p">.</span><span class="nx">d</span><span class="p">,</span> <span class="nx">q</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getComparator</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">d</span><span class="p">));</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">addCondition</span><span class="p">(</span><span class="s1">&#39;AND&#39;</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
+  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
 </div>
 
 <div class="highlight"><pre><code> <span class="p">}</span>
@@ -2917,7 +3507,7 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
+  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
 </div>
 <p>TODO: Support for nested query
      if (!arguments.length) {
@@ -2925,21 +3515,20 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
      }
      else {</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">condition</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_analyzeQuery</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">op</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">condition</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">addCondition</span><span class="p">(</span><span class="s1">&#39;OR&#39;</span><span class="p">,</span> <span class="nx">condition</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getComparator</span><span class="p">(</span><span class="nx">d</span><span class="p">));</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">q</span><span class="p">,</span> <span class="nx">cb</span><span class="p">;</span>
+        <span class="nx">q</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_analyzeQuery</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">op</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">q</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="nx">q</span><span class="p">.</span><span class="nx">op</span><span class="p">](</span><span class="nx">q</span><span class="p">.</span><span class="nx">d</span><span class="p">,</span> <span class="nx">q</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getComparator</span><span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">d</span><span class="p">));</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">addCondition</span><span class="p">(</span><span class="s1">&#39;OR&#39;</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
+  <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
 </div>
-
-<div class="highlight"><pre><code> <span class="p">}</span>
-</code></pre></div>
-
-
+<p>this.query.addCondition('OR', condition, this.getComparator(d));
+     }</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -3051,7 +3640,7 @@ selection multiple times</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">NDDB</span>
-      <span>A new NDDB instance with the previously selected items in the db</span>
+      <span>A new NDDB instance with selected items in the db</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -3256,7 +3845,7 @@ further methods can be chained.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
+  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
 </div>
 <p>GLOBAL compare</p>
         </td>
@@ -3268,7 +3857,7 @@ further methods can be chained.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
+  <a class="pilcrow" href="#section-116" id="section-116">&#182;</a>
 </div>
 <p>FUNCTION</p>
         </td>
@@ -3280,7 +3869,7 @@ further methods can be chained.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
+  <a class="pilcrow" href="#section-117" id="section-117">&#182;</a>
 </div>
 <p>ARRAY of dimensions</p>
         </td>
@@ -3300,7 +3889,7 @@ further methods can be chained.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
+  <a class="pilcrow" href="#section-118" id="section-118">&#182;</a>
 </div>
 <p>SINGLE dimension</p>
         </td>
@@ -3727,7 +4316,7 @@ and resets the current query selection</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
+  <a class="pilcrow" href="#section-131" id="section-131">&#182;</a>
 </div>
 <!--
 Construct a better comparator function
@@ -3778,13 +4367,15 @@ in all the entries containing key1.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">pos</span>
       <span class="dox_type">string</span>
-      <span>Optional. The property under which the join is performed. Defaults 'joined'</span>
+      <span>Optional. The property under which the join is 
+  performed. Defaults 'joined'</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">select</span>
       <span class="dox_type">string</span>
       <span class="dox_type">array</span>
-      <span>Optional. The properties to copy in the join. Defaults undefined</span>
+      <span>Optional. The properties to copy in 
+  the join. Defaults undefined</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -3877,6 +4468,8 @@ specify the name of the properties to copy as an input parameter.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_join</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key1</span><span class="p">,</span> <span class="nx">key2</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">,</span> <span class="nx">pos</span><span class="p">,</span> <span class="nx">select</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">idxs</span><span class="p">,</span> <span class="nx">foreign_key</span><span class="p">,</span> <span class="nx">key</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">o2</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">key1</span> <span class="o">||</span> <span class="o">!</span><span class="nx">key2</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">breed</span><span class="p">([]);</span>
 
         <span class="nx">comparator</span> <span class="o">=</span> <span class="nx">comparator</span> <span class="o">||</span> <span class="nx">J</span><span class="p">.</span><span class="nx">equals</span><span class="p">;</span>
@@ -3884,13 +4477,13 @@ specify the name of the properties to copy as an input parameter.</p>
         <span class="k">if</span> <span class="p">(</span><span class="nx">select</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">select</span> <span class="o">=</span> <span class="p">(</span><span class="nx">select</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="o">?</span> <span class="nx">select</span> <span class="o">:</span> <span class="p">[</span><span class="nx">select</span><span class="p">];</span>
         <span class="p">}</span>
-        <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">idxs</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">foreign_key</span><span class="p">,</span> <span class="nx">key</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">out</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">idxs</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="nx">foreign_key</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">key1</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">foreign_key</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">j</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
 
                     <span class="nx">key</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">key2</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">j</span><span class="p">]);</span>
 
@@ -3901,13 +4494,15 @@ specify the name of the properties to copy as an input parameter.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
+  <a class="pilcrow" href="#section-134" id="section-134">&#182;</a>
 </div>
 <p>Inject the matched obj into the
 reference one</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                            <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-                            <span class="kd">var</span> <span class="nx">o2</span> <span class="o">=</span> <span class="p">(</span><span class="nx">select</span><span class="p">)</span> <span class="o">?</span> <span class="nx">J</span><span class="p">.</span><span class="nx">subobj</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">select</span><span class="p">)</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
+        <td class="code highlight"><div class="highlight"><pre>                            <span class="nx">o</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                            <span class="nx">o2</span> <span class="o">=</span> <span class="p">(</span><span class="nx">select</span><span class="p">)</span> <span class="o">?</span> 
+                                <span class="nx">J</span><span class="p">.</span><span class="nx">subobj</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">select</span><span class="p">)</span>
+                                <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
                             <span class="nx">o</span><span class="p">[</span><span class="nx">pos</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o2</span><span class="p">;</span>
                             <span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
                         <span class="p">}</span>
@@ -4314,7 +4909,8 @@ them in one array</p>
       <span class="dox_tag_name">key</span>
       <span class="dox_type">string</span>
       <span class="dox_type">array</span>
-      <span>Optional. If set, returns key/values only from the specified property</span>
+      <span>Optional. If set, returns key/values only 
+  from the specified property</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">keyed.</span>
@@ -4455,7 +5051,8 @@ returned values.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">key</span>
       <span class="dox_type">string</span>
-      <span>Optional. If set, returns only the value from the specified property</span>
+      <span>Optional. If set, returns only the value 
+  from the specified property</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -4555,7 +5152,7 @@ dimension will be skipped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-119" id="section-119">&#182;</a>
+  <a class="pilcrow" href="#section-144" id="section-144">&#182;</a>
 </div>
 <p>Creates a new group and add entries to it</p>
         </td>
@@ -4571,7 +5168,7 @@ dimension will be skipped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-120" id="section-120">&#182;</a>
+  <a class="pilcrow" href="#section-145" id="section-145">&#182;</a>
 </div>
 <p>Reset nddb_pointer in subgroups</p>
         </td>
@@ -4672,7 +5269,8 @@ in the database containing the specified key.</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
       <span class="dox_type">boolean</span>
-      <span>sum The sum of the values for the dimension, or FALSE if it does not exist</span>
+      <span>sum The sum of the values for the dimension,
+  or FALSE if it does not exist</span>
     </div>
   </div>
 </div>
@@ -4719,7 +5317,8 @@ from the computation of the mean.</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
       <span class="dox_type">boolean</span>
-      <span>The mean of the values for the dimension, or FALSE if it does not exist</span>
+      <span>The mean of the values for the dimension,
+  or FALSE if it does not exist</span>
     </div>
   </div>
 </div>
@@ -4768,7 +5367,8 @@ from the computation of the standard deviation.</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
       <span class="dox_type">boolean</span>
-      <span>The mean of the values for the dimension, or FALSE if it does not exist</span>
+      <span>The mean of the values for the dimension,
+  or FALSE if it does not exist</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -4827,7 +5427,8 @@ in the database containing the specified key.</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
       <span class="dox_type">boolean</span>
-      <span>The smallest value for the dimension, or FALSE if it does not exist</span>
+      <span>The smallest value for the dimension,
+  or FALSE if it does not exist</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -4878,7 +5479,8 @@ in the database containing the specified key.</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">number</span>
       <span class="dox_type">boolean</span>
-      <span>The biggest value for the dimension, or FALSE if it does not exist</span>
+      <span>The biggest value for the dimension, 
+  or FALSE if it does not exist</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -5329,7 +5931,8 @@ if the database is empty.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">key</span>
       <span class="dox_type">string</span>
-      <span>Optional. If set, moves to the pointer to the first entry along this dimension</span>
+      <span>Optional. If set, moves to the pointer
+  to the first entry along this dimension</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -5377,7 +5980,8 @@ if the database is empty.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">key</span>
       <span class="dox_type">string</span>
-      <span>Optional. If set, moves to the pointer to the last entry along this dimension</span>
+      <span>Optional. If set, moves to the pointer
+  to the last entry along this dimension</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -5448,7 +6052,8 @@ but changes on update of the elements of the database.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">idx</span>
       <span class="dox_type">mixed</span>
-      <span>Optional. The reference to the object. Defaults, <code>nddb_pointer</code></span>
+      <span>Optional. The reference to the object. 
+  Defaults, <code>nddb_pointer</code></span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -5592,25 +6197,27 @@ The</code>store<code>method is supploed by shelf.js.
 If no</code>store` object is found, an error is issued and the database
 is not saved.</p>
 
-<p>Cyclic objects are decycled, and do not cause errors. Upon loading, the cycles
-are restored.</p>
+<p>Cyclic objects are decycled, and do not cause errors. 
+Upon loading, the cycles are restored.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">file</span>
       <span class="dox_type">string</span>
-      <span>The file system path, or the identifier for the browser database</span>
+      <span>The  identifier for the browser database</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">callback</span>
+      <span class="dox_tag_name">cb</span>
       <span class="dox_type">function</span>
-      <span>Optional. A callback to execute after the database was saved</span>
+      <span>Optional. A callback to execute after 
+   the database is saved</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">boolean</span>
       <span class="dox_type">compress</span>
-      <span>Optional. If TRUE, output will be compressed. Defaults, FALSE</span>
+      <span>Optional. If TRUE, output will be compressed.
+   Defaults, FALSE</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -5635,7 +6242,7 @@ are restored.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">save</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">compress</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">save</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">compress</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_getConstrName</span><span class="p">()</span> <span class="o">+</span>
                                 <span class="s1">&#39;load: you must specify a valid file name.&#39;</span><span class="p">);</span>
@@ -5646,7 +6253,7 @@ are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
+  <a class="pilcrow" href="#section-172" id="section-172">&#182;</a>
 </div>
 <p>Try to save in the browser, e.g. with Shelf.js</p>
         </td>
@@ -5656,7 +6263,7 @@ are restored.</p>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="nx">store</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">compress</span><span class="p">));</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="nx">callback</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">cb</span><span class="p">();</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -5755,7 +6362,7 @@ is not loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-149" id="section-149">&#182;</a>
+  <a class="pilcrow" href="#section-174" id="section-174">&#182;</a>
 </div>
 <p>retrocycle if possible</p>
         </td>
@@ -5803,10 +6410,17 @@ is not loaded.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">QueryBuilder</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">operators</span> <span class="o">=</span> <span class="p">{};</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">registerDefaultOperators</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">reset</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">QueryBuilder</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-177" id="section-177">&#182;</a>
+</div>
+<p>Creates the query array and internal pointer.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">reset</span><span class="p">();</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -5831,279 +6445,19 @@ is not loaded.</p>
       <span>The type of the operation (e.g. 'OR', or 'AND')</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">condition.</span>
-      <span class="dox_type">object</span>
-      <span>An object containing the parameters of the
-  <em>select</em> query</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">comparator.</span>
+      <span class="dox_tag_name">filter.</span>
       <span class="dox_type">function</span>
-      <span>The comparator function associated with
-  the dimension inside the condition object.</span>
+      <span>The filter callback</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">QueryBuilder</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addCondition</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">condition</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">condition</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span><span class="p">;</span>
-        <span class="nx">condition</span><span class="p">.</span><span class="nx">comparator</span> <span class="o">=</span> <span class="nx">comparator</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">pointer</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">condition</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">QueryBuilder</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addCondition</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">pointer</span><span class="p">].</span><span class="nx">push</span><span class="p">({</span>
+            <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span><span class="p">,</span>
+            <span class="nx">cb</span><span class="o">:</span> <span class="nx">filter</span>
+        <span class="p">});</span>
     <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="querybuilder.registeroperator">
-  <h3>
-    <a href="#querybuilder.registeroperator" class="pilcrow">&#182;</a>
-    QueryBuilder.registerOperator
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Registers a <em>select</em> function under an alphanumeric id</p>
-
-<p>When calling <code>NDDB.select('d','OP','value')</code> the second parameter (<em>OP</em>)
-will be matched with the callback function specified here.</p>
-
-<p>Callback function must accept three input parameters:</p>
-
-<ul>
-<li>d: dimension of comparison</li>
-<li>value: second-term of comparison</li>
-<li>comparator: the comparator function as defined by <code>NDDB.c</code></li>
-</ul>
-
-<p>and return a function that execute the desired operation.</p>
-
-<p>Registering a new operator under an already existing id will
-overwrite the old operator.</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">op</span>
-      <span class="dox_type">string</span>
-      <span>An alphanumeric id</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">cb</span>
-      <span class="dox_type">function</span>
-      <span>The callback function</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">QueryBuilder.registerDefaultOperators
-  </span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">QueryBuilder</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">registerOperator</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">op</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="p">[</span><span class="nx">op</span><span class="p">]</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
-<div class="pilwrap" id="querybuilder.registerdefaultoperators">
-  <h3>
-    <a href="#querybuilder.registerdefaultoperators" class="pilcrow">&#182;</a>
-    QueryBuilder.registerDefaultOperators
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Register default operators for NDDB</p>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">QueryBuilder</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">registerDefaultOperators</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
-</div>
-<p>Exists</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="p">[</span><span class="s1">&#39;E&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span>
-                    <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
-                <span class="p">}</span>
-                <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span><span class="nx">elem</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
-</div>
-<p>(strict) Equals</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="p">[</span><span class="s1">&#39;==&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
-            <span class="p">};</span>
-        <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-157" id="section-157">&#182;</a>
-</div>
-<p>Greater than</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="p">[</span><span class="s1">&#39;&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">compared</span> <span class="o">=</span> <span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">compared</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">||</span> <span class="nx">compared</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
-            <span class="p">};</span>
-        <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-158" id="section-158">&#182;</a>
-</div>
-<p>Smaller than</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="p">[</span><span class="s1">&#39;&lt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
-            <span class="p">};</span>
-        <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-159" id="section-159">&#182;</a>
-</div>
-<p>Smaller or equal than</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="p">[</span><span class="s1">&#39;&lt;=&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">compared</span> <span class="o">=</span> <span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">compared</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="nx">compared</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
-            <span class="p">};</span>
-        <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-160" id="section-160">&#182;</a>
-</div>
-<p>Between</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="p">[</span><span class="s1">&#39;&gt;&lt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">};</span>
-        <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-161" id="section-161">&#182;</a>
-</div>
-<p>Not Between</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="p">[</span><span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">};</span>
-        <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-162" id="section-162">&#182;</a>
-</div>
-<p>In Array</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="p">[</span><span class="s1">&#39;in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">obj</span><span class="p">;</span>
-                <span class="nx">obj</span> <span class="o">=</span> <span class="p">{};</span>
-                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">value</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">obj</span><span class="p">[</span><span class="nx">d</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">};</span>
-        <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-163" id="section-163">&#182;</a>
-</div>
-<p>Not In Array</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="p">[</span><span class="s1">&#39;!in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">obj</span><span class="p">;</span>
-                <span class="nx">obj</span> <span class="o">=</span> <span class="p">{};</span>
-                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">value</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">obj</span><span class="p">[</span><span class="nx">d</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">};</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-164" id="section-164">&#182;</a>
-</div>
-
-<div class="highlight"><pre><code>   <span class="sr">//</span> <span class="n">In</span> <span class="n">Array</span>
-   <span class="n">this</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="s">&#39;in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">comparator</span><span class="p">)</span> <span class="p">{</span>
-       <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="p">{</span>
-           <span class="k">if</span> <span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">in_array</span><span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">getNestedValue</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">elem</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span> <span class="p">{</span>
-               <span class="k">return</span> <span class="n">elem</span><span class="p">;</span>
-           <span class="p">}</span>
-       <span class="p">};</span>
-   <span class="p">};</span>
-
-   <span class="sr">//</span> <span class="n">Not</span> <span class="n">In</span> <span class="n">Array</span>
-   <span class="n">this</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="s">&#39;!in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">comparator</span><span class="p">)</span> <span class="p">{</span>
-       <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="p">{</span>
-           <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">J</span><span class="o">.</span><span class="n">in_array</span><span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">getNestedValue</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">elem</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span> <span class="p">{</span>
-               <span class="k">return</span> <span class="n">elem</span><span class="p">;</span>
-           <span class="p">}</span>
-       <span class="p">};</span>
-   <span class="p">};</span>
-</code></pre></div>
-
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -6146,6 +6500,12 @@ overwrite the old operator.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">query</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">pointer</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">pointer</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="p">};</span>
+    
+  
+    
+    <span class="kd">function</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">cb</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -6185,35 +6545,27 @@ always decides the overall logic value. E.g. :</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">QueryBuilder</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">line</span><span class="p">,</span> <span class="nx">lineLen</span><span class="p">,</span> <span class="nx">f1</span><span class="p">,</span> <span class="nx">f2</span><span class="p">,</span> <span class="nx">f3</span><span class="p">,</span> <span class="nx">type1</span><span class="p">,</span> <span class="nx">type2</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">query</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">,</span> <span class="nx">pointer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">pointer</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">operators</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="p">;</span>
-
-        <span class="kd">function</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">operators</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">d</span><span class="p">,</span>
-            <span class="nx">op</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">op</span><span class="p">,</span>
-            <span class="nx">value</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">value</span><span class="p">,</span>
-            <span class="nx">comparator</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">comparator</span><span class="p">;</span>
-            <span class="k">return</span> <span class="nx">operators</span><span class="p">[</span><span class="nx">op</span><span class="p">](</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">);</span>
-        <span class="p">};</span></pre></div>
+        <span class="kd">var</span> <span class="nx">operators</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">operators</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-168" id="section-168">&#182;</a>
+  <a class="pilcrow" href="#section-182" id="section-182">&#182;</a>
 </div>
-<p>Ready to support nested queries, not yet implemented</p>
+<p>Ready to support nested queries, not yet implemented.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">pointer</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">line</span> <span class="o">=</span> <span class="nx">query</span><span class="p">[</span><span class="nx">pointer</span><span class="p">]</span>
             <span class="nx">lineLen</span> <span class="o">=</span> <span class="nx">line</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">lineLen</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">operators</span><span class="p">);</span>
+                <span class="k">return</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
             <span class="p">}</span>
 
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">lineLen</span> <span class="o">===</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">f1</span> <span class="o">=</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">operators</span><span class="p">);</span>
-                <span class="nx">f2</span> <span class="o">=</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">operators</span><span class="p">);</span>
+                <span class="nx">f1</span> <span class="o">=</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+                <span class="nx">f2</span> <span class="o">=</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
                 <span class="nx">type1</span> <span class="o">=</span> <span class="nx">line</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">type</span><span class="p">;</span>
 
                 <span class="k">switch</span> <span class="p">(</span><span class="nx">type1</span><span class="p">)</span> <span class="p">{</span>
@@ -6224,20 +6576,22 @@ always decides the overall logic value. E.g. :</p>
                     <span class="p">}</span>
                 <span class="k">case</span> <span class="s1">&#39;AND&#39;</span><span class="o">:</span>
                     <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">f1</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">f2</span><span class="p">(</span><span class="nx">elem</span><span class="p">))</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">f1</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="o">&amp;&amp;</span> 
+                            <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">f2</span><span class="p">(</span><span class="nx">elem</span><span class="p">))</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
                     <span class="p">}</span>
 
                 <span class="k">case</span> <span class="s1">&#39;NOT&#39;</span><span class="o">:</span>
                     <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">f1</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">f2</span><span class="p">(</span><span class="nx">elem</span><span class="p">))</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">f1</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+                            <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">f2</span><span class="p">(</span><span class="nx">elem</span><span class="p">))</span> <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
 
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">lineLen</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">f1</span> <span class="o">=</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">operators</span><span class="p">);</span>
-                <span class="nx">f2</span> <span class="o">=</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">operators</span><span class="p">);</span>
-                <span class="nx">f3</span> <span class="o">=</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="nx">operators</span><span class="p">);</span>
+                <span class="nx">f1</span> <span class="o">=</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+                <span class="nx">f2</span> <span class="o">=</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+                <span class="nx">f3</span> <span class="o">=</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
                 <span class="nx">type1</span> <span class="o">=</span> <span class="nx">line</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">type</span><span class="p">;</span>
                 <span class="nx">type2</span> <span class="o">=</span> <span class="nx">line</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nx">type</span><span class="p">;</span>
                 <span class="nx">type1</span> <span class="o">=</span> <span class="nx">type1</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">type2</span><span class="p">;</span>
@@ -6278,9 +6632,7 @@ always decides the overall logic value. E.g. :</p>
                     <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">resOK</span><span class="p">;</span>
                     <span class="kd">var</span> <span class="nx">prevType</span> <span class="o">=</span> <span class="s1">&#39;OR&#39;</span><span class="p">,</span> <span class="nx">prevResOK</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">lineLen</span><span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
-
-
-                        <span class="nx">f</span> <span class="o">=</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">operators</span><span class="p">);</span>
+                        <span class="nx">f</span> <span class="o">=</span> <span class="nx">findCallback</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
                         <span class="nx">type</span> <span class="o">=</span> <span class="nx">line</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">type</span><span class="p">,</span>
                         <span class="nx">resOK</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">f</span><span class="p">(</span><span class="nx">elem</span><span class="p">);</span>
 
@@ -6290,7 +6642,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-169" id="section-169">&#182;</a>
+  <a class="pilcrow" href="#section-183" id="section-183">&#182;</a>
 </div>
 <p>Current condition is TRUE OR</p>
         </td>
@@ -6301,7 +6653,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-170" id="section-170">&#182;</a>
+  <a class="pilcrow" href="#section-184" id="section-184">&#182;</a>
 </div>
 <p>Current condition is FALSE AND</p>
         </td>
@@ -6314,7 +6666,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-171" id="section-171">&#182;</a>
+  <a class="pilcrow" href="#section-185" id="section-185">&#182;</a>
 </div>
 <p>Previous check was an AND or a FALSE OR</p>
         </td>
@@ -6328,7 +6680,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-172" id="section-172">&#182;</a>
+  <a class="pilcrow" href="#section-186" id="section-186">&#182;</a>
 </div>
 <p>A previous OR is TRUE also if follows a TRUE AND</p>
         </td>
@@ -6515,7 +6867,7 @@ always decides the overall logic value. E.g. :</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
       <span class="dox_type">boolean</span>
-      <span>The requested entry, or FALSE if the index is invalid</span>
+      <span>The indexed entry, or FALSE if index is invalid</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
