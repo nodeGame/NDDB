@@ -101,6 +101,10 @@
         // QueryBuilder obj.
         this.query = new QueryBuilder();
 
+        // ### filters
+        // Available db filters
+        this.addDefaultFilters();
+
         // ### __C
         // List of comparator functions.
         this.__C = {};
@@ -158,45 +162,34 @@
             return -1;
         };
 
+        // TODO see where placing
+        var that;
+        that = this;
         // TODO: maybe give users the option to overwrite it.
         // Adding the compareInAllFields function
-//       this.comparator('*', function(o1, o2, trigger1, trigger2) {
-//           var d, c, res;
-//           
-//           for (d in o1) {
-//               c = that.getComparator(d);
-//               o2[d] = o2['*'];
-//               res = c(o1, o2);
-//               if (res === trigger1) return res;
-//               if ('undefined' !== trigger2 && res === trigger2) return res;
-//               // No need to delete o2[d] afer comparison.
-//           }
-//
-//           // We are not interested in sorting.
-//           // Figuring out the right return value
-//           if (trigger1 === 0) {
-//               return trigger2 === 1 ? -1 : 1;
-//           }
-//           if (trigger1 === 1) {
-//               return trigger2 === 0 ? -1 : 0;
-//           }
-//           
-//           return trigger2 === 0 ? 1 : 0; 
-//       });
+       this.comparator('*', function(o1, o2, trigger1, trigger2) {
+           var d, c, res;
+           for (d in o1) {
+               c = that.getComparator(d);
+               o2[d] = o2['*'];
+               res = c(o1, o2);
+               if (res === trigger1) return res;
+               if ('undefined' !== trigger2 && res === trigger2) return res;
+               // No need to delete o2[d] afer comparison.
+           }
 
-        this.comparator('*', function(o1, value, op, success, fail) {
-            var d, c, res;
-            var operator;
-            
-            for (d in o1) {
-                c = that.getComparator(d);
-                op = that.query.operators[op](d, value, c);
-                if (!op(o1, d)) return success;
-            }
-            return fail;
-        });
+           // We are not interested in sorting.
+           // Figuring out the right return value
+           if (trigger1 === 0) {
+               return trigger2 === 1 ? -1 : 1;
+           }
+           if (trigger1 === 1) {
+               return trigger2 === 0 ? -1 : 0;
+           }
+           
+           return trigger2 === 0 ? 1 : 0; 
 
-        
+       });      
 
         // Mixing in user options and defaults.
         this.init(options);
@@ -206,6 +199,201 @@
             this.importDB(db);
         }
     };
+
+
+      /**
+     * ### NDDB.addFilter
+     *
+     * Registers a _select_ function under an alphanumeric id
+     *
+     * When calling `NDDB.select('d','OP','value')` the second parameter (_OP_)
+     * will be matched with the callback function specified here.
+     *
+     * Callback function must accept three input parameters:
+     *
+     *  - d: dimension of comparison
+     *  - value: second-term of comparison
+     *  - comparator: the comparator function as defined by `NDDB.c`
+     *
+     * and return a function that execute the desired operation.
+     *
+     * Registering a new operator under an already existing id will
+     * overwrite the old operator.
+     *
+     * @param {string} op An alphanumeric id
+     * @param {function} cb The callback function
+     *
+     * @see QueryBuilder.registerDefaultOperators
+     */
+    NDDB.prototype.addFilter = function(op, cb) {
+        this.filters[op] = cb;
+    };
+
+    /**
+     * ### QueryBuilder.registerDefaultOperators
+     *
+     * Register default operators for NDDB
+     *
+     */
+    NDDB.prototype.addDefaultFilters = function() {
+        if (!this.filters) this.filters = {};
+        var that;
+        that = this;
+        
+        // Exists
+        this.filters['E'] = function(d, value, comparator) {
+            return function(elem) {
+                if ('undefined' !== typeof elem[d]) {
+                    return elem;
+                }
+                else if ('undefined' !== typeof J.getNestedValue(d,elem)) {
+                    return elem;
+                }
+            }
+        };
+
+        // (strict) Equals
+        this.filters['=='] = function(d, value, comparator) {
+            return function(elem) {
+                if (comparator(elem, value, 0, 1) === 0) return elem;
+            };
+        };
+
+        
+        // Smaller than
+        this.filters['>'] = function(d, value, comparator) {
+            return function(elem) {
+                if (comparator(elem, value, 1, 0) === 1) return elem;
+            };
+        };
+
+        // Greater than
+        this.filters['>='] = function(d, value, comparator) {
+            return function(elem) {
+                var compared = comparator(elem, value, 0, -1);
+                if (compared === 1 || compared === 0) return elem;
+            };
+        };
+
+        // Smaller than
+        this.filters['<'] = function(d, value, comparator) {
+            return function(elem) {
+                if (comparator(elem, value, -1, 0) === -1) return elem;
+            };
+        };
+
+        //  Smaller or equal than
+        this.filters['<='] = function(d, value, comparator) {
+            return function(elem) {
+                var compared = comparator(elem, value, 0, -1);
+                if (compared === -1 || compared === 0) return elem;
+            };
+        };
+
+        // Between
+        this.filters['><'] = function(d, value, comparator) {
+            if (d === '*') {
+                return function(elem) {
+                    var d, c;
+                    for (d in elem) {
+                        c = that.getComparator(d);
+                        value[d] = value[0]['*']
+                        if (c(elem, value, 1, 0) > 0) {
+                            value[d] = value[1]['*']
+                            if (c(elem, value, -1, 0) < 0) {
+                                return elem;
+                            }
+                        }
+                    }
+                };
+            }
+            else {  
+                return function(elem) {               
+                    if (comparator(elem, value[0], 1, 0) > 0 && 
+                        comparator(elem, value[1], -1, 0) < 0) {
+                        return elem;
+                    }
+                };
+            }
+        };
+        
+        // Between to use with * dimension
+//        this.filters['>*<'] = function(d, value, comparator) {
+//            return function(elem) {
+//                var d, c, res;
+//                
+//                for (d in ) {
+//                    c = that.getComparator(d);                
+//                    if (!cb(o1, d)) return true;
+//                }
+//                
+//                var tester = function(elem, propertyComparator) {
+//                    if (propertyComparator(elem, value[0]) > 0 &&
+//                        comparator(elem, value[1]) < 0) {
+//                        return elem;
+//                    }
+//                };
+//                if (comparator(elem, tester)) return elem;
+//            };
+//        };
+        
+        // Not Between
+        this.filters['<>'] = function(d, value, comparator) {
+            return function(elem) {
+                if (comparator(elem, value[0], -1, 0) < 0 ||
+                    comparator(elem, value[1], 1, 0) > 0) {
+                    return elem;
+                }
+            };
+        };
+
+        // In Array
+        this.filters['in'] = function(d, value, comparator) {
+            return function(elem) {
+                var i, obj, len;
+                obj = {}, len = value.length;
+                for (i = 0; i < len; i++) {
+                    obj[d] = value[i];
+                    if (comparator(elem, obj, 0, 1) === 0) {
+                        return elem;
+                    }
+                }
+            };
+        };
+
+        // Not In Array
+        this.filters['!in'] = function(d, value, comparator) {
+            return function(elem) {
+                var i, obj, len;
+                obj = {}, len = value.length;
+                for (i = 0; i < len; i++) {
+                    obj[d] = value[i];
+                    if (comparator(elem, obj, 0, 1) !== 0) {
+                        return elem;
+                    }
+                }
+            }
+        };
+
+        //        // In Array
+        //        operators['in'] = function(d, value, comparator) {
+        //            return function(elem) {
+        //                if (J.in_array(J.getNestedValue(d,elem), value)) {
+        //                    return elem;
+        //                }
+        //            };
+        //        };
+        //
+        //        // Not In Array
+        //        operators['!in'] = function(d, value, comparator) {
+        //            return function(elem) {
+        //                if (!J.in_array(J.getNestedValue(d,elem), value)) {
+        //                    return elem;
+        //                }
+        //            };
+        //        };
+    };
+
 
     // ## METHODS
 
@@ -219,7 +407,7 @@
      * TODO: type checking on input params
      */
     NDDB.prototype.init = function(options) {
-        var op, sh, i;
+        var filter, sh, i;
         options = options || {};
 
         this.__options = options;
@@ -254,9 +442,9 @@
             }
         }
 
-        if ('object' === typeof options.operators) {
-            for (op in options.operators) {
-                this.query.registerOperator(op, options.operators[op]);
+        if ('object' === typeof options.filters) {
+            for (filter in options.filters) {
+                this.addFilter(filter, options.filters[filter]);
             }
         }
 
@@ -1142,7 +1330,8 @@
                 op = '==';
             }
 
-            if (!(op in this.query.operators)) {
+//            if (!(op in this.query.operators)) {
+            if (!(op in this.filters)) {
                 this.log('Query error. Invalid operator detected: ' + op,
                          'WARN');
                 return false;
@@ -1267,7 +1456,8 @@
         //      else {
         var condition = this._analyzeQuery(d, op, value);
         if (!condition) return false;
-        this.query.addCondition('AND', condition, this.getComparator(d));
+        var cb = this.filters[condition.op](condition.d, condition.value, this.getComparator(condition.d));
+        this.query.addCondition('AND', cb);
         //      }
         return this;
     };
@@ -1295,7 +1485,9 @@
         //      else {
         var condition = this._analyzeQuery(d, op, value);
         if (!condition) return false;
-        this.query.addCondition('OR', condition, this.getComparator(d));
+        var cb = this.filters[condition.op](condition.d, condition.value, this.getComparator(condition.d));
+        this.query.addCondition('OR', cb);
+        //this.query.addCondition('OR', condition, this.getComparator(d));
         //      }
         return this;
     };
@@ -2743,8 +2935,7 @@
      * Manages the _select_ queries of NDDB
      */
     function QueryBuilder() {
-        this.operators = {};
-        this.registerDefaultOperators();
+        // Creates the query array and internal pointer.
         this.reset();
     }
 
@@ -2757,185 +2948,15 @@
      * @param {function} comparator. The comparator function associated with
      *   the dimension inside the condition object
      */
-    QueryBuilder.prototype.addCondition = function(type, condition, comparator) {
-        condition.type = type;
-        condition.comparator = comparator;
-        this.query[this.pointer].push(condition);
+    QueryBuilder.prototype.addCondition = function(type, cb) {
+        //condition.type = type;
+        //condition.comparator = comparator;
+        this.query[this.pointer].push({
+            type: type,
+            cb: cb
+        });
     };
 
-    /**
-     * ### QueryBuilder.registerOperator
-     *
-     * Registers a _select_ function under an alphanumeric id
-     *
-     * When calling `NDDB.select('d','OP','value')` the second parameter (_OP_)
-     * will be matched with the callback function specified here.
-     *
-     * Callback function must accept three input parameters:
-     *
-     *  - d: dimension of comparison
-     *  - value: second-term of comparison
-     *  - comparator: the comparator function as defined by `NDDB.c`
-     *
-     * and return a function that execute the desired operation.
-     *
-     * Registering a new operator under an already existing id will
-     * overwrite the old operator.
-     *
-     * @param {string} op An alphanumeric id
-     * @param {function} cb The callback function
-     *
-     * @see QueryBuilder.registerDefaultOperators
-     */
-    QueryBuilder.prototype.registerOperator = function(op, cb) {
-        this.operators[op] = cb;
-    };
-
-    /**
-     * ### QueryBuilder.registerDefaultOperators
-     *
-     * Register default operators for NDDB
-     *
-     */
-    QueryBuilder.prototype.registerDefaultOperators = function() {
-        var that = this;
-        
-        // Exists
-        this.operators['E'] = function(d, value, comparator) {
-            return function(elem) {
-                if ('undefined' !== typeof elem[d]) {
-                    return elem;
-                }
-                else if ('undefined' !== typeof J.getNestedValue(d,elem)) {
-                    return elem;
-                }
-            }
-        };
-
-        // (strict) Equals
-        this.operators['=='] = function(d, value, comparator) {
-            return function(elem) {
-                if (comparator(elem, value, '==', 0, 1) === 0) return elem;
-            };
-        };
-
-        
-        // Smaller than
-        this.operators['>'] = function(d, value, comparator) {
-            return function(elem) {
-                if (comparator(elem, value, '>', 1, 0) === 1) return elem;
-            };
-        };
-
-        // Greater than
-        this.operators['>='] = function(d, value, comparator) {
-            return function(elem) {
-                var compared = comparator(elem, value, '>=', 0, -1);
-                if (compared === 1 || compared === 0) return elem;
-            };
-        };
-
-        // Smaller than
-        this.operators['<'] = function(d, value, comparator) {
-            return function(elem) {
-                if (comparator(elem, value, '<', -1, 0) === -1) return elem;
-            };
-        };
-
-        //  Smaller or equal than
-        this.operators['<='] = function(d, value, comparator) {
-            return function(elem) {
-                var compared = comparator(elem, value, '<=', 0, -1);
-                if (compared === -1 || compared === 0) return elem;
-            };
-        };
-
-        // Between
-        this.operators['><'] = function(d, value, comparator) {
-            return function(elem) {               
-                if (comparator(elem, value[0], '><', 1, 0) > 0 && 
-                    comparator(elem, value[1], '><', -1, 0) < 0) {
-                    return elem;
-                }
-            };
-        };
-        
-        // Between to use with * dimension
-//        this.operators['>*<'] = function(d, value, comparator) {
-//            return function(elem) {
-//                var d, c, res;
-//                
-//                for (d in ) {
-//                    c = that.getComparator(d);                
-//                    if (!cb(o1, d)) return true;
-//                }
-//                
-//                var tester = function(elem, propertyComparator) {
-//                    if (propertyComparator(elem, value[0]) > 0 &&
-//                        comparator(elem, value[1]) < 0) {
-//                        return elem;
-//                    }
-//                };
-//                if (comparator(elem, tester)) return elem;
-//            };
-//        };
-        
-        // Not Between
-        this.operators['<>'] = function(d, value, comparator) {
-            return function(elem) {
-                if (comparator(elem, value[0], '<>', -1, 0) < 0 ||
-                    comparator(elem, value[1], '<>', 1, 0) > 0) {
-                    return elem;
-                }
-            };
-        };
-
-        // In Array
-        this.operators['in'] = function(d, value, comparator) {
-            return function(elem) {
-                var i, obj, len;
-                obj = {}, len = value.length;
-                for (i = 0; i < len; i++) {
-                    obj[d] = value[i];
-                    if (comparator(elem, obj, 'in', 0, 1) === 0) {
-                        return elem;
-                    }
-                }
-            };
-        };
-
-        // Not In Array
-        this.operators['!in'] = function(d, value, comparator) {
-            return function(elem) {
-                var i, obj, len;
-                obj = {}, len = value.length;
-                for (i = 0; i < len; i++) {
-                    obj[d] = value[i];
-                    if (comparator(elem, obj, '!in', 0, 1) !== 0) {
-                        return elem;
-                    }
-                }
-            }
-        };
-
-        //        // In Array
-        //        operators['in'] = function(d, value, comparator) {
-        //            return function(elem) {
-        //                if (J.in_array(J.getNestedValue(d,elem), value)) {
-        //                    return elem;
-        //                }
-        //            };
-        //        };
-        //
-        //        // Not In Array
-        //        operators['!in'] = function(d, value, comparator) {
-        //            return function(elem) {
-        //                if (!J.in_array(J.getNestedValue(d,elem), value)) {
-        //                    return elem;
-        //                }
-        //            };
-        //        };
-    };
 
     /**
      * ### QueryBuilder.addBreak
@@ -2958,9 +2979,12 @@
         this.pointer = 0;
         this.query[this.pointer] = [];
     };
-
+    
+  
     
     function findCallback(obj, operators) {
+        return obj.cb;
+        // to remove
         var d = obj.d,
         op = obj.op,
         value = obj.value,
@@ -2990,7 +3014,7 @@
         var query = this.query, pointer = this.pointer;
         var operators = this.operators;
 
-        // Ready to support nested queries, not yet implemented
+        // Ready to support nested queries, not yet implemented.
         if (pointer === 0) {
             line = query[pointer]
             lineLen = line.length;
@@ -3068,8 +3092,7 @@
                     var i, f, type, resOK;
                     var prevType = 'OR', prevResOK = true;
                     for (i = lineLen-1 ; i > -1 ; i--) {
-
-
+                        debugger;
                         f = findCallback(line[i], operators);
                         type = line[i].type,
                         resOK = 'undefined' !== typeof f(elem);
