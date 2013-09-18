@@ -242,12 +242,35 @@
         
         // Exists
         this.filters['E'] = function(d, value, comparator) {
-            return function(elem) {
-                if ('undefined' !== typeof elem[d]) {
-                    return elem;
+            if ('object' === typeof d) {
+                return function(elem) {
+                    var d, c;
+                    for (d in elem) {
+                        c = that.getComparator(d);
+                        value[d] = value[0]['*']
+                        if (c(elem, value, 1) > 0) {
+                            value[d] = value[1]['*']
+                            if (c(elem, value, -1) < 0) {
+                                return elem;
+                            }
+                        }
+                    }
+                    if ('undefined' !== typeof elem[d]) {
+                        return elem;
+                    }
+                    else if ('undefined' !== typeof J.getNestedValue(d,elem)) {
+                        return elem;
+                    }
                 }
-                else if ('undefined' !== typeof J.getNestedValue(d,elem)) {
-                    return elem;
+            }
+            else {
+                return function(elem) {
+                    if ('undefined' !== typeof elem[d]) {
+                        return elem;
+                    }
+                    else if ('undefined' !== typeof J.getNestedValue(d,elem)) {
+                        return elem;
+                    }
                 }
             }
         };
@@ -255,52 +278,99 @@
         // (strict) Equals
         this.filters['=='] = function(d, value, comparator) {
             return function(elem) {
-                if (comparator(elem, value, 0, 1) === 0) return elem;
+                
+                if (comparator(elem, value, 0) === 0) return elem;
             };
         };
 
         
         // Smaller than
         this.filters['>'] = function(d, value, comparator) {
-            return function(elem) {
-                if (comparator(elem, value, 1, 0) === 1) return elem;
-            };
+            if ('object' === typeof d || d === '*') {
+                return function(elem) {                
+                    if (comparator(elem, value, 1) === 1) return elem;
+                };
+            }
+            else {
+                return function(elem) { 
+                    if ('undefined' === typeof elem[d]) return;
+                    if (comparator(elem, value, 1) === 1) return elem;
+                };
+            }
         };
 
         // Greater than
         this.filters['>='] = function(d, value, comparator) {
-            return function(elem) {
-                var compared = comparator(elem, value, 0, -1);
-                if (compared === 1 || compared === 0) return elem;
-            };
+            if ('object' === typeof d || d === '*') {
+                return function(elem) {
+                    var compared = comparator(elem, value, 0, 1);
+                    if (compared === 1 || compared === 0) return elem;
+                };  
+            }
+            else {
+                return function(elem) {
+                    if ('undefined' === typeof elem[d]) return;
+                    var compared = comparator(elem, value, 0, 1);
+                    if (compared === 1 || compared === 0) return elem;
+                };
+            }
         };
 
         // Smaller than
         this.filters['<'] = function(d, value, comparator) {
-            return function(elem) {
-                if (comparator(elem, value, -1, 0) === -1) return elem;
-            };
+            if ('object' === typeof d || d === '*') {
+                return function(elem) {                
+                    if (comparator(elem, value, -1) === -1) return elem;
+                };
+            }
+            else {
+                return function(elem) { 
+                    if ('undefined' === typeof elem[d]) return;
+                    if (comparator(elem, value, -1) === -1) return elem;
+                };
+            }
         };
 
         //  Smaller or equal than
         this.filters['<='] = function(d, value, comparator) {
-            return function(elem) {
-                var compared = comparator(elem, value, 0, -1);
-                if (compared === -1 || compared === 0) return elem;
-            };
+            if ('object' === typeof d || d === '*') {
+                return function(elem) {
+                    var compared = comparator(elem, value, 0, -1);
+                    if (compared === -1 || compared === 0) return elem;
+                };  
+            }
+            else {
+                return function(elem) {
+                    if ('undefined' === typeof elem[d]) return;
+                    var compared = comparator(elem, value, 0, -1);
+                    if (compared === -1 || compared === 0) return elem;
+                };
+            }
         };
 
         // Between
         this.filters['><'] = function(d, value, comparator) {
-            if (d === '*') {
+            if ('object' === typeof d) {
+                return function(elem) {
+                    var i, len;
+                    len = d.length;
+                    for (i = 0; i < len ; i++) {
+                        if (comparator(elem, value[0], 1) > 0 &&
+                            comparator(elem, value[1], -1) < 0) {
+                            return elem;
+                        }
+                    }
+                };
+            }
+            else if (d === '*') {
                 return function(elem) {
                     var d, c;
                     for (d in elem) {
                         c = that.getComparator(d);
                         value[d] = value[0]['*']
-                        if (c(elem, value, 1, 0) > 0) {
+                        if (c(elem, value, 1) > 0) {
                             value[d] = value[1]['*']
-                            if (c(elem, value, -1, 0) < 0) {
+                            if (c(elem, value, -1) < 0) {
                                 return elem;
                             }
                         }
@@ -309,89 +379,90 @@
             }
             else {  
                 return function(elem) {               
-                    if (comparator(elem, value[0], 1, 0) > 0 && 
-                        comparator(elem, value[1], -1, 0) < 0) {
+                    if (comparator(elem, value[0], 1) > 0 && 
+                        comparator(elem, value[1], -1) < 0) {
                         return elem;
                     }
                 };
             }
         };
         
-        // Between to use with * dimension
-//        this.filters['>*<'] = function(d, value, comparator) {
-//            return function(elem) {
-//                var d, c, res;
-//                
-//                for (d in ) {
-//                    c = that.getComparator(d);                
-//                    if (!cb(o1, d)) return true;
-//                }
-//                
-//                var tester = function(elem, propertyComparator) {
-//                    if (propertyComparator(elem, value[0]) > 0 &&
-//                        comparator(elem, value[1]) < 0) {
-//                        return elem;
-//                    }
-//                };
-//                if (comparator(elem, tester)) return elem;
-//            };
-//        };
-        
         // Not Between
         this.filters['<>'] = function(d, value, comparator) {
-            return function(elem) {
-                if (comparator(elem, value[0], -1, 0) < 0 ||
-                    comparator(elem, value[1], 1, 0) > 0) {
-                    return elem;
-                }
-            };
+            if ('object' === typeof d || d === '*') {
+                return function(elem) {
+                    if (comparator(elem, value[0], -1) < 0 ||
+                        comparator(elem, value[1], 1) > 0) {
+                        return elem;
+                    }
+                };
+            }
+            else {
+                return function(elem) {
+                    if ('undefined' === typeof elem[d]) return;
+                    if (comparator(elem, value[0], -1) < 0 ||
+                        comparator(elem, value[1], 1) > 0) {
+                        return elem;
+                    }
+                };
+            }
         };
 
         // In Array
         this.filters['in'] = function(d, value, comparator) {
-            return function(elem) {
-                var i, obj, len;
-                obj = {}, len = value.length;
-                for (i = 0; i < len; i++) {
-                    obj[d] = value[i];
-                    if (comparator(elem, obj, 0, 1) === 0) {
-                        return elem;
+            if ('object' === typeof d) {
+                return function(elem) {
+                    var i, len;
+                    len = value.length;
+                    for (i = 0; i < len; i++) { 
+                        if (comparator(elem, value[i], 0) === 0) {
+                            return elem;
+                        }
                     }
-                }
-            };
+                };
+            }
+            else {
+                return function(elem) {
+                    var i, obj, len;
+                    obj = {}, len = value.length;
+                    for (i = 0; i < len; i++) {
+                        obj[d] = value[i];
+                        if (comparator(elem, obj, 0) === 0) {
+                            return elem;
+                        }
+                    }
+                };
+            }
         };
 
         // Not In Array
         this.filters['!in'] = function(d, value, comparator) {
-            return function(elem) {
-                var i, obj, len;
-                obj = {}, len = value.length;
-                for (i = 0; i < len; i++) {
-                    obj[d] = value[i];
-                    if (comparator(elem, obj, 0, 1) !== 0) {
-                        return elem;
+            if ('object' === typeof d) {
+                return function(elem) {
+                    var i, len;
+                    len = value.length;
+                    for (i = 0; i < len; i++) { 
+                        if (comparator(elem, value[i], 0) === 0) {
+                            return;
+                        }
                     }
+                    return elem;
+                };
+            }
+            else {
+                return function(elem) {
+                    var i, obj, len;
+                    obj = {}, len = value.length;
+                    for (i = 0; i < len; i++) {
+                        obj[d] = value[i];
+                        if (comparator(elem, obj, 0) === 0) {
+                            return
+                        }
+                    }
+                    return elem;
                 }
             }
         };
-
-        //        // In Array
-        //        operators['in'] = function(d, value, comparator) {
-        //            return function(elem) {
-        //                if (J.in_array(J.getNestedValue(d,elem), value)) {
-        //                    return elem;
-        //                }
-        //            };
-        //        };
-        //
-        //        // Not In Array
-        //        operators['!in'] = function(d, value, comparator) {
-        //            return function(elem) {
-        //                if (!J.in_array(J.getNestedValue(d,elem), value)) {
-        //                    return elem;
-        //                }
-        //            };
-        //        };
     };
 
 
@@ -849,18 +920,37 @@
         // Pre-defined array o fields to check.
         else {
             // Creates the array of comparators functions.
-            comparators = [];
-            len = comparators.length;
+            comparators = {};
+            len = d.length;
             for (i = 0; i < len; i++) {
-                comparators.push(this.getComparator(d[i]));
+                // Every comparator has its own d in scope.
+                // TODO: here there should be no wildcard '*' (check earlier)
+                comparators[d[i]] = this.getComparator(d[i]);
             }
             
-            comparator = function(o1, o2) {
-                var i;
-                for (i = 0; i < len; i++) {
-                    if (comparators[i](o1, o2) === 0) return 0;
+            comparator = function(o1, o2, trigger1, trigger2) {
+                var i, res, obj;
+                for (i in comparators) {
+                    if (comparators.hasOwnProperty(i)) {
+                        if ('undefined' === typeof o1[i]) continue;
+                        obj = {};
+                        obj[i] = o2;
+                        res = comparators[i](o1, obj);
+                        if (res === trigger1) return res;
+                        if ('undefined' !== trigger2 && res === trigger2) return res;
+                    }
                 }
-                return -1;
+                // We are not interested in sorting.
+                // Figuring out the right return value
+                if (trigger1 === 0) {
+                    return trigger2 === 1 ? -1 : 1;
+                }
+                if (trigger1 === 1) {
+                    return trigger2 === 0 ? -1 : 0;
+                }
+                
+                return trigger2 === 0 ? 1 : 0; 
+                
             }
         }
 
@@ -1316,13 +1406,13 @@
      *   if an error was detected
      */
     NDDB.prototype._analyzeQuery = function(d, op, value) {
-        var that;
+        var that, i, len, newValue;
         that = this;
         
         if ('undefined' === typeof d) {
             return queryError.call(this, d, op,value);
         }
-
+        
         // Verify input
         if ('undefined' !== typeof op) {
 
@@ -1347,9 +1437,12 @@
                 }
                 if (op === '<>' || op === '><') {
 
-                    // TODO: when to nest and when keep the '.' in the name?
-                    value[0] = J.setNestedValue(d, value[0]);
-                    value[1] = J.setNestedValue(d, value[1]);
+                    // It will be nested by the comparator function.
+                    if (!J.isArray(d)){
+                        // TODO: when to nest and when keep the '.' in the name?
+                        value[0] = J.setNestedValue(d, value[0]);
+                        value[1] = J.setNestedValue(d, value[1]);
+                    }
                 }
             }
 
@@ -1361,7 +1454,16 @@
                 // TODO: when to nest and when keep the '.' in the name?
                 // Comparison queries need to have the same
                 // data structure in the compared object
-                value = J.setNestedValue(d,value);
+                if (J.isArray(d)) {
+                    len = d.length;
+                    for (i = 0; i < len; i++) {
+                        J.setNestedValue(d[i],value);
+                    }
+                  
+                }
+                else {
+                    value = J.setNestedValue(d,value);
+                }
             }
 
             // other (e.g. user-defined) operators do not have constraints,
@@ -1454,9 +1556,10 @@
         //              addBreakInQuery();
         //      }
         //      else {
-        var condition = this._analyzeQuery(d, op, value);
-        if (!condition) return false;
-        var cb = this.filters[condition.op](condition.d, condition.value, this.getComparator(condition.d));
+        var q, cb;
+        q = this._analyzeQuery(d, op, value);
+        if (!q) return false;
+        cb = this.filters[q.op](q.d, q.value, this.getComparator(q.d));
         this.query.addCondition('AND', cb);
         //      }
         return this;
@@ -1483,9 +1586,10 @@
         //              addBreakInQuery();
         //      }
         //      else {
-        var condition = this._analyzeQuery(d, op, value);
-        if (!condition) return false;
-        var cb = this.filters[condition.op](condition.d, condition.value, this.getComparator(condition.d));
+        var q, cb;
+        q = this._analyzeQuery(d, op, value);
+        if (!q) return false;
+        cb = this.filters[q.op](q.d, q.value, this.getComparator(q.d));
         this.query.addCondition('OR', cb);
         //this.query.addCondition('OR', condition, this.getComparator(d));
         //      }
@@ -2945,15 +3049,12 @@
      * Adds a new _select_ condition
      *
      * @param {string} type. The type of the operation (e.g. 'OR', or 'AND')
-     * @param {function} comparator. The comparator function associated with
-     *   the dimension inside the condition object
+     * @param {function} filter. The filter callback
      */
-    QueryBuilder.prototype.addCondition = function(type, cb) {
-        //condition.type = type;
-        //condition.comparator = comparator;
+    QueryBuilder.prototype.addCondition = function(type, filter) {
         this.query[this.pointer].push({
             type: type,
-            cb: cb
+            cb: filter
         });
     };
 
@@ -2982,14 +3083,8 @@
     
   
     
-    function findCallback(obj, operators) {
+    function findCallback(obj) {
         return obj.cb;
-        // to remove
-        var d = obj.d,
-        op = obj.op,
-        value = obj.value,
-        comparator = obj.comparator;
-        return operators[op](d, value, comparator);
     };
 
     /**
@@ -3020,12 +3115,12 @@
             lineLen = line.length;
 
             if (lineLen === 1) {
-                return findCallback(line[0], operators);
+                return findCallback(line[0]);
             }
 
             else if (lineLen === 2) {
-                f1 = findCallback(line[0], operators);
-                f2 = findCallback(line[1], operators);
+                f1 = findCallback(line[0]);
+                f2 = findCallback(line[1]);
                 type1 = line[1].type;
 
                 switch (type1) {
@@ -3049,9 +3144,9 @@
             }
 
             else if (lineLen === 3) {
-                f1 = findCallback(line[0], operators);
-                f2 = findCallback(line[1], operators);
-                f3 = findCallback(line[2], operators);
+                f1 = findCallback(line[0]);
+                f2 = findCallback(line[1]);
+                f3 = findCallback(line[2]);
                 type1 = line[1].type;
                 type2 = line[2].type;
                 type1 = type1 + '_' + type2;
@@ -3092,8 +3187,7 @@
                     var i, f, type, resOK;
                     var prevType = 'OR', prevResOK = true;
                     for (i = lineLen-1 ; i > -1 ; i--) {
-                        debugger;
-                        f = findCallback(line[i], operators);
+                        f = findCallback(line[i]);
                         type = line[i].type,
                         resOK = 'undefined' !== typeof f(elem);
 
