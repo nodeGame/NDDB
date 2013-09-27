@@ -3338,8 +3338,8 @@
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
         o = this.nddb.db[dbidx];
+        this.nddb.emit('update', o, update);
         J.mixin(o, update);
-        this.nddb.emit('update', o);
         this.nddb._autoUpdate();
         return o;
     };
