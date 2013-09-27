@@ -953,9 +953,6 @@
 
             }
         }
-
-        //  console.log(comparator);
-
         return comparator;
     };
 
@@ -1368,17 +1365,17 @@
      *
      * Fires all the listeners associated with an event
      *
-     * @param event {string} The event name
-     * @param {object} o Optional. A parameter to be passed to the listener
+     * Accepts any number of parameters, the first one is the event type, and
+     * the rest will be passed to the event listeners.
      */
-    NDDB.prototype.emit = function(event, o) {
-        var i;
-        if (!event || !this.hooks[event] || !this.hooks[event].length) {
+    NDDB.prototype.emit = function() {
+        var i, event;
+        event = Array.prototype.splice.call(arguments, 0, 1);
+        if (event || !this.hooks[event] || !this.hooks[event].length) {
             return;
         }
-
         for (i = 0; i < this.hooks[event].length; i++) {
-            this.hooks[event][i].call(this, o);
+            this.hooks[event][i].apply(this, arguments);
         }
     };
 
@@ -1858,8 +1855,8 @@
         if (!this.db.length || !update) return this;
 
         for (var i = 0; i < this.db.length; i++) {
+            this.emit('update', this.db[i], update);
             J.mixin(this.db[i], update);
-            this.emit('update', this.db[i]);
         }
 
         this._autoUpdate();

@@ -10,6 +10,7 @@ var items = [
 	painter: "Jesus",
 	title: "Tea in the desert",
 	year: 0,
+        comment: "Pretty cool!"
     },
     {
         painter: "Dali",
@@ -37,13 +38,13 @@ var items = [
         title: "Olympia",
         year: 1863
     },
-    
+
 ];
 
 var copy = null, copy2 = null;
 
 describe('NDDB Events', function() {
-    
+
     describe('#on(\'insert\') ',function() {
     	before(function() {
             copy = [];
@@ -55,7 +56,7 @@ describe('NDDB Events', function() {
             });
             db.importDB(items);
         });
-        
+
         it('should copy all the inserted elements', function() {
             db.db.should.eql(copy);
         });
@@ -70,39 +71,42 @@ describe('NDDB Events', function() {
         });
 
     });
-    
+
     describe('#on(\'update\') ',function() {
     	before(function() {
             copy2 = [];
             db = new NDDB();
-            
-            db.on('update', function(o){
+
+            db.on('update', function(o, update){
         	copy2.push(o);
             });
-            db.on('update', function(o){
+            db.on('update', function(o, update){
         	db.tag(o.year, o);
-            });        	
+            });
+            db.on('update', function(o, update){
+        	o.oldComment = o.comment;
+            });
+
             db.importDB(items);
             db.selexec('painter', '=', 'Jesus').update({comment: "Was he a painter !?"});
 
         });
-        
         it('copy should have length 1', function() {
             copy2.length.should.be.eql(1);
         });
-
         it('should add a tag for each updated element', function() {
             J.size(db.tags).should.eql(1);
-            db.tags['0'].should.eql({ 
+            db.tags['0'].should.eql({
             	painter: 'Jesus',
             	title: 'Tea in the desert',
             	year: 0,
-            	comment: 'Was he a painter !?' 
+            	comment: 'Was he a painter !?',
+                oldComment: 'Pretty cool!',
             });
         });
 
     });
-    
+
     describe('#on(\'remove\') ',function() {
     	before(function() {
             copy = [];
@@ -113,13 +117,13 @@ describe('NDDB Events', function() {
             db.importDB(items);
             db.removeAllEntries();
         });
-        
+
         it('should copy all the inserted elements', function() {
             items.should.eql(copy);
         });
 
     });
-    
+
 
 
 
