@@ -625,8 +625,8 @@
         if (type === 'undefined') return;
         if (type === 'string') return;
         if (type === 'number') return;
-        this.db.push(o);
         this.emit('insert', o);
+        this.db.push(o);
         if (update) {
             this._indexIt(o, (this.db.length-1));
             this._hashIt(o);
