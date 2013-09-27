@@ -646,12 +646,12 @@
     //                                typeof o + ' received.');
     //        }
     //        this.db.push(o);
+    //        this.emit('insert', o);
     //        if (update) {
     //            this._indexIt(o, (this.db.length-1));
     //            this._hashIt(o);
     //            this._viewIt(o);
     //        }
-    //        this.emit('insert', o);
     //    }
 
     /**
@@ -1371,7 +1371,7 @@
     NDDB.prototype.emit = function() {
         var i, event;
         event = Array.prototype.splice.call(arguments, 0, 1);
-        if (event || !this.hooks[event] || !this.hooks[event].length) {
+        if (!event || !this.hooks[event] || !this.hooks[event].length) {
             return;
         }
         for (i = 0; i < this.hooks[event].length; i++) {
