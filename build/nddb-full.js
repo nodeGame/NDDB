@@ -3722,10 +3722,10 @@ JSUS.extend(PARSE);
            if (trigger1 === 1) {
                return trigger2 === 0 ? -1 : 0;
            }
-           
-           return trigger2 === 0 ? 1 : 0; 
 
-       });      
+           return trigger2 === 0 ? 1 : 0;
+
+       });
 
         // Mixing in user options and defaults.
         this.init(options);
@@ -3775,7 +3775,7 @@ JSUS.extend(PARSE);
         if (!this.filters) this.filters = {};
         var that;
         that = this;
-        
+
         // Exists
         this.filters['E'] = function(d, value, comparator) {
             if ('object' === typeof d) {
@@ -3814,21 +3814,21 @@ JSUS.extend(PARSE);
         // (strict) Equals
         this.filters['=='] = function(d, value, comparator) {
             return function(elem) {
-                
+
                 if (comparator(elem, value, 0) === 0) return elem;
             };
         };
 
-        
+
         // Smaller than
         this.filters['>'] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
-                return function(elem) {                
+                return function(elem) {
                     if (comparator(elem, value, 1) === 1) return elem;
                 };
             }
             else {
-                return function(elem) { 
+                return function(elem) {
                     if ('undefined' === typeof elem[d]) return;
                     if (comparator(elem, value, 1) === 1) return elem;
                 };
@@ -3841,7 +3841,7 @@ JSUS.extend(PARSE);
                 return function(elem) {
                     var compared = comparator(elem, value, 0, 1);
                     if (compared === 1 || compared === 0) return elem;
-                };  
+                };
             }
             else {
                 return function(elem) {
@@ -3855,12 +3855,12 @@ JSUS.extend(PARSE);
         // Smaller than
         this.filters['<'] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
-                return function(elem) {                
+                return function(elem) {
                     if (comparator(elem, value, -1) === -1) return elem;
                 };
             }
             else {
-                return function(elem) { 
+                return function(elem) {
                     if ('undefined' === typeof elem[d]) return;
                     if (comparator(elem, value, -1) === -1) return elem;
                 };
@@ -3873,7 +3873,7 @@ JSUS.extend(PARSE);
                 return function(elem) {
                     var compared = comparator(elem, value, 0, -1);
                     if (compared === -1 || compared === 0) return elem;
-                };  
+                };
             }
             else {
                 return function(elem) {
@@ -3913,16 +3913,16 @@ JSUS.extend(PARSE);
                     }
                 };
             }
-            else {  
-                return function(elem) {               
-                    if (comparator(elem, value[0], 1) > 0 && 
+            else {
+                return function(elem) {
+                    if (comparator(elem, value[0], 1) > 0 &&
                         comparator(elem, value[1], -1) < 0) {
                         return elem;
                     }
                 };
             }
         };
-        
+
         // Not Between
         this.filters['<>'] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
@@ -3950,7 +3950,7 @@ JSUS.extend(PARSE);
                 return function(elem) {
                     var i, len;
                     len = value.length;
-                    for (i = 0; i < len; i++) { 
+                    for (i = 0; i < len; i++) {
                         if (comparator(elem, value[i], 0) === 0) {
                             return elem;
                         }
@@ -3977,7 +3977,7 @@ JSUS.extend(PARSE);
                 return function(elem) {
                     var i, len;
                     len = value.length;
-                    for (i = 0; i < len; i++) { 
+                    for (i = 0; i < len; i++) {
                         if (comparator(elem, value[i], 0) === 0) {
                             return;
                         }
@@ -4161,13 +4161,13 @@ JSUS.extend(PARSE);
         if (type === 'undefined') return;
         if (type === 'string') return;
         if (type === 'number') return;
+        this.emit('insert', o);
         this.db.push(o);
         if (update) {
             this._indexIt(o, (this.db.length-1));
             this._hashIt(o);
             this._viewIt(o);
         }
-        this.emit('insert', o);
     }
 
     // TODO: To test
@@ -4182,12 +4182,12 @@ JSUS.extend(PARSE);
     //                                typeof o + ' received.');
     //        }
     //        this.db.push(o);
+    //        this.emit('insert', o);
     //        if (update) {
     //            this._indexIt(o, (this.db.length-1));
     //            this._hashIt(o);
     //            this._viewIt(o);
     //        }
-    //        this.emit('insert', o);
     //    }
 
     /**
@@ -4311,7 +4311,7 @@ JSUS.extend(PARSE);
                 delete options[i];
             }
         }
-        
+
         if (keepShared) options.shared = this.__shared;
         return options;
     };
@@ -4398,7 +4398,7 @@ JSUS.extend(PARSE);
      *
      * Retrieves the comparator function for dimension d.
      *
-     * If no comparator function is found, returns a general comparator 
+     * If no comparator function is found, returns a general comparator
      * function. Supports nested attributes search, but if a property
      * containing dots with the same name is found, this will
      * returned first.
@@ -4426,7 +4426,7 @@ JSUS.extend(PARSE);
                         'undefined' === typeof o2) return 0;
                     if ('undefined' === typeof o1) return 1;
                     if ('undefined' === typeof o2) return -1;
-                    
+
                     if ('undefined' !== typeof o1[d]) {
                         v1 = o1[d];
                     }
@@ -4447,8 +4447,8 @@ JSUS.extend(PARSE);
                     if ('undefined' === typeof v2) return -1;
                     if (v1 > v2) return 1;
                     if (v2 > v1) return -1;
-                    
-                    
+
+
                     return 0;
                 };
             }
@@ -4463,7 +4463,7 @@ JSUS.extend(PARSE);
                 // TODO: here there should be no wildcard '*' (check earlier)
                 comparators[d[i]] = this.getComparator(d[i]);
             }
-            
+
             comparator = function(o1, o2, trigger1, trigger2) {
                 var i, res, obj;
                 for (i in comparators) {
@@ -4484,14 +4484,11 @@ JSUS.extend(PARSE);
                 if (trigger1 === 1) {
                     return trigger2 === 0 ? -1 : 0;
                 }
-                
-                return trigger2 === 0 ? 1 : 0; 
-                
+
+                return trigger2 === 0 ? 1 : 0;
+
             }
         }
-
-        //  console.log(comparator);
-
         return comparator;
     };
 
@@ -4706,8 +4703,6 @@ JSUS.extend(PARSE);
         var cb, idx;
         if (!h && !i && !v) return;
 
-        // Reset current indexes
-        this.resetIndexes({h: h, v: v, i: i});
 
         if (h && !i && !v) {
             cb = this._hashIt;
@@ -4742,7 +4737,9 @@ JSUS.extend(PARSE);
                 this._hashIt(o);
                 this._viewIt(o);
             };
-        }
+ 
+        // Reset current indexes.
+        this.resetIndexes({h: h, v: v, i: i});
 
         for (idx = 0 ; idx < this.db.length ; idx++) {
             // _hashIt and viewIt do not need idx, it is no harm anyway
@@ -4904,17 +4901,17 @@ JSUS.extend(PARSE);
      *
      * Fires all the listeners associated with an event
      *
-     * @param event {string} The event name
-     * @param {object} o Optional. A parameter to be passed to the listener
+     * Accepts any number of parameters, the first one is the event type, and
+     * the rest will be passed to the event listeners.
      */
-    NDDB.prototype.emit = function(event, o) {
-        var i;
+    NDDB.prototype.emit = function() {
+        var i, event;
+        event = Array.prototype.splice.call(arguments, 0, 1);
         if (!event || !this.hooks[event] || !this.hooks[event].length) {
             return;
         }
-
         for (i = 0; i < this.hooks[event].length; i++) {
-            this.hooks[event][i].call(this, o);
+            this.hooks[event][i].apply(this, arguments);
         }
     };
 
@@ -4944,11 +4941,11 @@ JSUS.extend(PARSE);
     NDDB.prototype._analyzeQuery = function(d, op, value) {
         var that, i, len, newValue;
         that = this;
-        
+
         if ('undefined' === typeof d) {
             return queryError.call(this, d, op,value);
         }
-        
+
         // Verify input
         if ('undefined' !== typeof op) {
 
@@ -4967,7 +4964,7 @@ JSUS.extend(PARSE);
             if (J.in_array(op,['><', '<>', 'in', '!in'])) {
 
                 if (!(value instanceof Array)) {
-                    this.log('Range-queries need an array as third parameter', 
+                    this.log('Range-queries need an array as third parameter',
                              'WARN');
                     queryError.call(this, d,op,value);
                 }
@@ -4995,7 +4992,7 @@ JSUS.extend(PARSE);
                     for (i = 0; i < len; i++) {
                         J.setNestedValue(d[i],value);
                     }
-                  
+
                 }
                 else {
                     value = J.setNestedValue(d,value);
@@ -5394,8 +5391,8 @@ JSUS.extend(PARSE);
         if (!this.db.length || !update) return this;
 
         for (var i = 0; i < this.db.length; i++) {
+            this.emit('update', this.db[i], update);
             J.mixin(this.db[i], update);
-            this.emit('update', this.db[i]);
         }
 
         this._autoUpdate();
@@ -5505,9 +5502,9 @@ JSUS.extend(PARSE);
      *
      * @param {string} key1 First property to compare
      * @param {string} key2 Second property to compare
-     * @param {string} pos Optional. The property under which the join is 
+     * @param {string} pos Optional. The property under which the join is
      *   performed. Defaults 'joined'
-     * @param {string|array} select Optional. The properties to copy in 
+     * @param {string|array} select Optional. The properties to copy in
      *   the join. Defaults undefined
      * @return {NDDB} A new database containing the concatenated entries
      *
@@ -5571,7 +5568,7 @@ JSUS.extend(PARSE);
                             // Inject the matched obj into the
                             // reference one
                             o = J.clone(this.db[i]);
-                            o2 = (select) ? 
+                            o2 = (select) ?
                                 J.subobj(this.db[j], select)
                                 : this.db[j];
                             o[pos] = o2;
@@ -5820,7 +5817,7 @@ JSUS.extend(PARSE);
      * No further chaining is permitted after fetching.
      *
      * @api private
-     * @param {string|array} key Optional. If set, returns key/values only 
+     * @param {string|array} key Optional. If set, returns key/values only
      *   from the specified property
      * @param {boolean} keyed. Optional. If set, also the keys are returned
      * @return {array} out The fetched values
@@ -5908,7 +5905,7 @@ JSUS.extend(PARSE);
      *
      * No further chaining is permitted after fetching.
      *
-     * @param {string} key Optional. If set, returns only the value 
+     * @param {string} key Optional. If set, returns only the value
      *   from the specified property
      * @return {array} out The fetched values
      *
@@ -6127,7 +6124,7 @@ JSUS.extend(PARSE);
      * Entries with non numeric values are ignored.
      *
      * @param {string} key The dimension of which to find the max
-     * @return {number|boolean} The biggest value for the dimension, 
+     * @return {number|boolean} The biggest value for the dimension,
      *   or FALSE if it does not exist
      *
      * @see NDDB.min
@@ -6392,7 +6389,7 @@ JSUS.extend(PARSE);
      * but changes on update of the elements of the database.
      *
      * @param {string|number} tag An alphanumeric id
-     * @param {mixed} idx Optional. The reference to the object. 
+     * @param {mixed} idx Optional. The reference to the object.
      *   Defaults, `nddb_pointer`
      * @return {object} ref A reference to the tagged object
      *
@@ -6470,11 +6467,11 @@ JSUS.extend(PARSE);
      * If no `store` object is found, an error is issued and the database
      * is not saved.
      *
-     * Cyclic objects are decycled, and do not cause errors. 
+     * Cyclic objects are decycled, and do not cause errors.
      * Upon loading, the cycles are restored.
      *
      * @param {string} file The  identifier for the browser database
-     * @param {function} cb Optional. A callback to execute after 
+     * @param {function} cb Optional. A callback to execute after
      *    the database is saved
      * @param {compress} boolean Optional. If TRUE, output will be compressed.
      *    Defaults, FALSE
@@ -6616,9 +6613,9 @@ JSUS.extend(PARSE);
         this.pointer = 0;
         this.query[this.pointer] = [];
     };
-    
-  
-    
+
+
+
     function findCallback(obj) {
         return obj.cb;
     };
@@ -6667,7 +6664,7 @@ JSUS.extend(PARSE);
                     }
                 case 'AND':
                     return function(elem) {
-                        if ('undefined' !== typeof f1(elem) && 
+                        if ('undefined' !== typeof f1(elem) &&
                             'undefined' !== typeof f2(elem)) return elem;
                     }
 
@@ -6873,13 +6870,21 @@ JSUS.extend(PARSE);
      * @see NDDBIndex.remove
      */
     NDDBIndex.prototype.update = function(idx, update) {
-        var o, dbidx;
+        var o, dbidx, nddb;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
-        o = this.nddb.db[dbidx];
+        nddb = this.nddb;
+        o = nddb.db[dbidx];
+        nddb.emit('update', o, update);
         J.mixin(o, update);
-        this.nddb.emit('update', o);
-        this.nddb._autoUpdate();
+        // We do indexes separately from the other components of _autoUpdate
+        // to avoid looping through all the other elements that are unchanged.
+        if (nddb.__update.indexes) {
+            nddb._indexIt(o, dbidx);
+            nddb._hashIt(o);
+            nddb._viewIt(o);
+        }
+        nddb._autoUpdate({indexes: false});
         return o;
     };
 
