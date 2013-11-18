@@ -1167,8 +1167,6 @@
         var cb, idx;
         if (!h && !i && !v) return;
 
-        // Reset current indexes
-        this.resetIndexes({h: h, v: v, i: i});
 
         if (h && !i && !v) {
             cb = this._hashIt;
@@ -1203,7 +1201,9 @@
                 this._hashIt(o);
                 this._viewIt(o);
             };
-        }
+ 
+        // Reset current indexes.
+        this.resetIndexes({h: h, v: v, i: i});
 
         for (idx = 0 ; idx < this.db.length ; idx++) {
             // _hashIt and viewIt do not need idx, it is no harm anyway
@@ -3340,6 +3340,14 @@
         o = this.nddb.db[dbidx];
         this.nddb.emit('update', o, update);
         J.mixin(o, update);
+        // We do indexes separately from the other components of _autoUpdate
+        // to avoid looping through all the other elements that are unchanged.
+        if (this.__update.indexes) {
+            this._indexIt(o, dbidx);
+            this._hashIt(o);
+            this._viewIt(o);
+        }
+        this._autoUpdate({indexes: false});
         this.nddb._autoUpdate();
         return o;
     };
