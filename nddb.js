@@ -638,10 +638,9 @@
     }
 
     /**
-     * ## NDDB._getCons
+     * ## NDDB._getConstrName
      *
      * Returns 'NDDB' or the name of the inheriting class.
-     *
      */
     NDDB.prototype._getConstrName = function() {
         return this.constructor && this.constructor.name ?
