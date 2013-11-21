@@ -94,7 +94,7 @@
         <a href="#nddb.addfilter">NDDB.addFilter</a>
       </div>
       <div class="heading h3">
-        <a href="#querybuilder.registerdefaultoperators">QueryBuilder.registerDefaultOperators</a>
+        <a href="#nddb.registerdefaultfilters">NDDB.registerDefaultFilters</a>
       </div>
       <div class="heading h2">
         <a href="#methods">METHODS</a>
@@ -1043,15 +1043,15 @@ overwrite the old operator.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="querybuilder.registerdefaultoperators">
+<div class="pilwrap" id="nddb.registerdefaultfilters">
   <h3>
-    <a href="#querybuilder.registerdefaultoperators" class="pilcrow">&#182;</a>
-    QueryBuilder.registerDefaultOperators
+    <a href="#nddb.registerdefaultfilters" class="pilcrow">&#182;</a>
+    NDDB.registerDefaultFilters
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Register default operators for NDDB</p>
+  <div class="body"><p>Register default filters for NDDB</p>
   </div>
 </div>
         </td>
@@ -1351,7 +1351,88 @@ overwrite the old operator.</p>
                     <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
+        <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+</div>
+<p>Supports <code>_</code> and <code>%</code> wildcards </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="kd">function</span> <span class="nx">generalLike</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">,</span> <span class="nx">sensitive</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">regex</span><span class="p">;</span>
+
+            <span class="nb">RegExp</span><span class="p">.</span><span class="nx">escape</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/([.*+?^=!:${}()|[\]\/\\])/g</span><span class="p">,</span> <span class="s1">&#39;\\$1&#39;</span><span class="p">);</span>
+            <span class="p">};</span>
+            
+            <span class="nx">regex</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+            <span class="nx">regex</span> <span class="o">=</span> <span class="nx">regex</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/%/g</span><span class="p">,</span> <span class="s1">&#39;.*&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/_/g</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+            <span class="nx">regex</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s1">&#39;^&#39;</span> <span class="o">+</span> <span class="nx">regex</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span><span class="p">,</span> <span class="nx">sensitive</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+                    <span class="nx">len</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">regex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">[</span><span class="nx">i</span><span class="p">]]))</span> <span class="p">{</span>
+                                <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">};</span>
+            <span class="p">}</span> 
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">d</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">d</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">d</span> <span class="k">in</span> <span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span> 
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">regex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">]))</span> <span class="p">{</span>
+                                <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span> 
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">regex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">]))</span> <span class="p">{</span>
+                            <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+</div>
+<p>Like operator (Case Sensitive). </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;LIKE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">likeOperator</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">generalLike</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">);</span>
         <span class="p">};</span>
+    </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+</div>
+<p>Like operator (Case Insensitive). </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;iLIKE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">likeOperatorI</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">generalLike</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">);</span>
+        <span class="p">};</span>            
+
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1472,7 +1553,7 @@ TODO: type checking on input params</span>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>Views must be created at the end because they are cloning
 all the previous settings (the method would also pollute
@@ -1623,7 +1704,7 @@ configuration</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 <p>TODO: To test
    function nddb_insert(o, update) {
@@ -1795,7 +1876,7 @@ preserve their prototype.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
 </div>
 <p>In case the class was inherited</p>
         </td>
@@ -1868,7 +1949,7 @@ are cloned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
 </div>
 <p>Must be removed before cloning.</p>
         </td>
@@ -1881,7 +1962,7 @@ are cloned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>Must be removed before cloning.</p>
         </td>
@@ -1894,7 +1975,7 @@ are cloned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>Cloning.</p>
         </td>
@@ -1905,7 +1986,7 @@ are cloned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
 <p>Removing unwanted options.</p>
         </td>
@@ -1917,7 +1998,7 @@ are cloned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>'shared' is not in <code>options</code>, we just have
 to remember not to add it later.</p>
@@ -2026,7 +2107,7 @@ to remember not to add it later.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
 <p>decycle, if possible</p>
         </td>
@@ -2156,7 +2237,7 @@ In the latter case a custom comparator function is built on the fly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
 </div>
 <p>Given field or '*'.</p>
         </td>
@@ -2203,7 +2284,7 @@ In the latter case a custom comparator function is built on the fly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
 </div>
 <p>Pre-defined array o fields to check.</p>
         </td>
@@ -2213,7 +2294,7 @@ In the latter case a custom comparator function is built on the fly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
+  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
 </div>
 <p>Creates the array of comparators functions.</p>
         </td>
@@ -2225,7 +2306,7 @@ In the latter case a custom comparator function is built on the fly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
 <p>Every comparator has its own d in scope.
 TODO: here there should be no wildcard '*' (check earlier)</p>
@@ -2250,7 +2331,7 @@ TODO: here there should be no wildcard '*' (check earlier)</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
 <p>We are not interested in sorting.
 Figuring out the right return value</p>
@@ -2465,7 +2546,7 @@ callback returns <em>undefined</em> the entry will be ignored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
+  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
 </div>
 <p>Create a copy of the current settings, without the views
 functions, else we create an infinite loop in the constructor.</p>
@@ -2739,7 +2820,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
+  <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
 </div>
 <p>Reset current indexes.</p>
         </td>
@@ -2751,7 +2832,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
+  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
 </div>
 <p>_hashIt and viewIt do not need idx, it is no harm anyway</p>
         </td>
@@ -2843,7 +2924,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
+  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
 </div>
 <p>this.__V[idx] = func, this[idx] = new this.constructor();</p>
         </td>
@@ -2853,7 +2934,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
+  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
 </div>
 <p>Create a copy of the current settings,
 without the views functions, otherwise
@@ -2916,7 +2997,7 @@ constructor.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
+  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
 </div>
 <p>Create a copy of the current settings,
 without the hashing functions, otherwise
@@ -3147,7 +3228,7 @@ the rest will be passed to the event listeners.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
+  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
 </div>
 <p>Verify input</p>
         </td>
@@ -3161,7 +3242,7 @@ the rest will be passed to the event listeners.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
+  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
 </div>
 
 <div class="highlight"><pre><code>       <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">op</span> <span class="n">in</span> <span class="n">this</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">operators</span><span class="p">))</span> <span class="p">{</span>
@@ -3179,7 +3260,7 @@ the rest will be passed to the event listeners.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
+  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
 </div>
 <p>Range-queries need an array as third parameter instance of Array</p>
         </td>
@@ -3196,7 +3277,7 @@ the rest will be passed to the event listeners.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
+  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
 </div>
 <p>It will be nested by the comparator function.</p>
         </td>
@@ -3206,7 +3287,7 @@ the rest will be passed to the event listeners.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
+  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
 </div>
 <p>TODO: when to nest and when keep the '.' in the name?</p>
         </td>
@@ -3222,7 +3303,7 @@ the rest will be passed to the event listeners.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
+  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
 </div>
 <p>Comparison queries need a third parameter</p>
         </td>
@@ -3234,7 +3315,7 @@ the rest will be passed to the event listeners.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
+  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
 </div>
 <p>TODO: when to nest and when keep the '.' in the name?
 Comparison queries need to have the same
@@ -3256,7 +3337,7 @@ data structure in the compared object</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
+  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
 </div>
 <p>other (e.g. user-defined) operators do not have constraints,
 e.g. no need to transform the value</p>
@@ -3451,7 +3532,7 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
+  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
 </div>
 <p>TODO: Support for nested query
      if (!arguments.length) {
@@ -3469,7 +3550,7 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
+  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
 </div>
 
 <div class="highlight"><pre><code> <span class="p">}</span>
@@ -3540,7 +3621,7 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
+  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
 </div>
 <p>TODO: Support for nested query
      if (!arguments.length) {
@@ -3558,7 +3639,7 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
+  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
 </div>
 <p>this.query.addCondition('OR', condition, this.getComparator(d));
      }</p>
@@ -3878,7 +3959,7 @@ further methods can be chained.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-118" id="section-118">&#182;</a>
+  <a class="pilcrow" href="#section-121" id="section-121">&#182;</a>
 </div>
 <p>GLOBAL compare</p>
         </td>
@@ -3890,7 +3971,7 @@ further methods can be chained.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-119" id="section-119">&#182;</a>
+  <a class="pilcrow" href="#section-122" id="section-122">&#182;</a>
 </div>
 <p>FUNCTION</p>
         </td>
@@ -3902,7 +3983,7 @@ further methods can be chained.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-120" id="section-120">&#182;</a>
+  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
 </div>
 <p>ARRAY of dimensions</p>
         </td>
@@ -3922,7 +4003,7 @@ further methods can be chained.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-121" id="section-121">&#182;</a>
+  <a class="pilcrow" href="#section-124" id="section-124">&#182;</a>
 </div>
 <p>SINGLE dimension</p>
         </td>
@@ -3946,23 +4027,33 @@ further methods can be chained.</p>
 </div>
 
   </div>
-  <div class="body"><p>Randomly shuffles all the entries of the database</p>
-
-<p>Changes the order of elements in the current database</p>
+  <div class="body"><p>Returns a copy of the current database with randomly shuffled items</p>
   </div>
   <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">update</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. If TRUE, items in the current database
+  are also shuffled. Defaults, FALSE.</span>
+    </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">NDDB</span>
-      <span>A a reference to the current instance with shuffled entries</span>
+      <span>A new instance of NDDB with the shuffled entries</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">shuffle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">db</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">);</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">shuffle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">shuffled</span><span class="p">;</span>
+        <span class="nx">shuffled</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">shuffle</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">db</span> <span class="o">=</span> <span class="nx">shuffled</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">rebuildIndexes</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">breed</span><span class="p">(</span><span class="nx">shuffled</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -4349,7 +4440,7 @@ and resets the current query selection</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-134" id="section-134">&#182;</a>
+  <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
 </div>
 <!--
 Construct a better comparator function
@@ -4527,7 +4618,7 @@ specify the name of the properties to copy as an input parameter.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
+  <a class="pilcrow" href="#section-140" id="section-140">&#182;</a>
 </div>
 <p>Inject the matched obj into the
 reference one</p>
@@ -5185,7 +5276,7 @@ dimension will be skipped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
+  <a class="pilcrow" href="#section-150" id="section-150">&#182;</a>
 </div>
 <p>Creates a new group and add entries to it</p>
         </td>
@@ -5201,7 +5292,7 @@ dimension will be skipped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
+  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
 </div>
 <p>Reset nddb_pointer in subgroups</p>
         </td>
@@ -6286,7 +6377,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-175" id="section-175">&#182;</a>
+  <a class="pilcrow" href="#section-178" id="section-178">&#182;</a>
 </div>
 <p>Try to save in the browser, e.g. with Shelf.js</p>
         </td>
@@ -6395,7 +6486,7 @@ is not loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-177" id="section-177">&#182;</a>
+  <a class="pilcrow" href="#section-180" id="section-180">&#182;</a>
 </div>
 <p>retrocycle if possible</p>
         </td>
@@ -6449,7 +6540,7 @@ is not loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-180" id="section-180">&#182;</a>
+  <a class="pilcrow" href="#section-183" id="section-183">&#182;</a>
 </div>
 <p>Creates the query array and internal pointer.</p>
         </td>
@@ -6584,7 +6675,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-185" id="section-185">&#182;</a>
+  <a class="pilcrow" href="#section-188" id="section-188">&#182;</a>
 </div>
 <p>Ready to support nested queries, not yet implemented.</p>
         </td>
@@ -6675,7 +6766,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-186" id="section-186">&#182;</a>
+  <a class="pilcrow" href="#section-189" id="section-189">&#182;</a>
 </div>
 <p>Current condition is TRUE OR</p>
         </td>
@@ -6686,7 +6777,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-187" id="section-187">&#182;</a>
+  <a class="pilcrow" href="#section-190" id="section-190">&#182;</a>
 </div>
 <p>Current condition is FALSE AND</p>
         </td>
@@ -6699,7 +6790,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-188" id="section-188">&#182;</a>
+  <a class="pilcrow" href="#section-191" id="section-191">&#182;</a>
 </div>
 <p>Previous check was an AND or a FALSE OR</p>
         </td>
@@ -6713,7 +6804,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-189" id="section-189">&#182;</a>
+  <a class="pilcrow" href="#section-192" id="section-192">&#182;</a>
 </div>
 <p>A previous OR is TRUE also if follows a TRUE AND</p>
         </td>
@@ -7052,7 +7143,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-199" id="section-199">&#182;</a>
+  <a class="pilcrow" href="#section-202" id="section-202">&#182;</a>
 </div>
 <p>We do indexes separately from the other components of _autoUpdate
 to avoid looping through all the other elements that are unchanged.</p>

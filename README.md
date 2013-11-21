@@ -96,6 +96,19 @@ Select all paintings from Dali
 ```javascript
     db.select('painter', '=', 'Dali'); // 2 items
 ```
+
+Case sensitive `LIKE` operator:
+
+```javascript
+    db.select('painter', 'LIKE', 'M_net'); // 3 items
+```
+
+Select on multiple properties (`*`) with case insensitive `LIKE`:
+
+```javascript
+    db.select('*', 'iLIKE', '%e%'); // All items
+    db.select(['painter', 'portrait'], 'iLIKE', '%e%') // 5 items
+```
     
 Select all portraits
 
@@ -370,8 +383,12 @@ node make.nddb.js doc
 
 ## ChangeLog
 
-### 0.9.4
-  - `#shuffle() -> by default returns a new object, and does not alter the order of the elements in the database. A parameter can control it.
+### 0.9.5
+  - Operators -> Filters. `#addFilter()` can add a new filter.
+  - `LIKE`, and `iLIKE` filters added.
+  - The symbol `*` can be used to select on any property of the object.
+  - `#select()` accepts an array containing the name of the properties that will be used for the selection.
+  - `#shuffle()` by default returns a new object, and does not alter the order of the elements in the database. A parameter can control it.
   - More efficient updating of elements in the index
   - Options `log` and `logCtx` are not cloned, by copied by reference. This avoid trying copying potential cyclical structures.
 

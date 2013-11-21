@@ -230,10 +230,9 @@
     };
 
     /**
-     * ### QueryBuilder.registerDefaultOperators
+     * ### NDDB.registerDefaultFilters
      *
-     * Register default operators for NDDB
-     *
+     * Register default filters for NDDB
      */
     NDDB.prototype.addDefaultFilters = function() {
         if (!this.filters) this.filters = {};
@@ -463,6 +462,65 @@
                 }
             }
         };
+
+        // Supports `_` and `%` wildcards 
+        function generalLike(d, value, comparator, sensitive) {
+            var regex;
+
+            RegExp.escape = function(str) {
+                return str.replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
+            };
+            
+            regex = RegExp.escape(value);
+            regex = regex.replace(/%/g, '.*').replace(/_/g, '.');
+            regex = new RegExp('^' + regex + '$', sensitive);
+
+            if ('object' === typeof d) {
+                return function(elem) {
+                    var i, len;
+                    len = d.length;
+                    for (i = 0; i < len; i++) {
+                        if ('undefined' !== typeof elem[d[i]]) {
+                            if (regex.test(elem[d[i]])) {
+                                return elem;
+                            }
+                        }
+                    }
+                };
+            } 
+            else if (d === '*') {
+                return function(elem) {
+                    var d;
+                    for (d in elem) {
+                        if ('undefined' !== typeof elem[d]) { 
+                            if (regex.test(elem[d])) {
+                                return elem;
+                            }
+                        }
+                    }
+                };
+            }
+            else {
+                return function(elem) {
+                    if ('undefined' !== typeof elem[d]) { 
+                        if (regex.test(elem[d])) {
+                            return elem;
+                        }
+                    }
+                };
+            }
+        }
+
+        // Like operator (Case Sensitive). 
+        this.filters['LIKE'] = function likeOperator(d, value, comparator) {
+            return generalLike(d, value, comparator);
+        };
+    
+        // Like operator (Case Insensitive). 
+        this.filters['iLIKE'] = function likeOperatorI(d, value, comparator) {
+            return generalLike(d, value, comparator, 'i');
+        };            
+
     };
 
 
