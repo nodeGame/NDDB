@@ -370,6 +370,11 @@ node make.nddb.js doc
 
 ## ChangeLog
 
+### 0.9.4
+  - `#shuffle() -> by default returns a new object, and does not alter the order of the elements in the database. A parameter can control it.
+  - More efficient updating of elements in the index
+  - Options `log` and `logCtx` are not cloned, by copied by reference. This avoid trying copying potential cyclical structures.
+
 ### 0.9.2
   - `#remove()` -> `#removeAllEntries()`
   - `#NDDBIndex.pop() -> #NDDBIndex.remove()` pop is deprecated now
