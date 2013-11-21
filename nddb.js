@@ -1778,15 +1778,21 @@
     /**
      * ### NDDB.shuffle
      *
-     * Randomly shuffles all the entries of the database
+     * Returns a copy of the current database with randomly shuffled items
      *
-     * Changes the order of elements in the current database
+     * @param {boolean} update Optional. If TRUE, items in the current database
+     *   are also shuffled. Defaults, FALSE.
      *
-     * @return {NDDB} A a reference to the current instance with shuffled entries
+     * @return {NDDB} A new instance of NDDB with the shuffled entries
      */
-    NDDB.prototype.shuffle = function() {
-        this.db = J.shuffle(this.db);
-        return this;
+    NDDB.prototype.shuffle = function(update) {
+        var shuffled;
+        shuffled = J.shuffle(this.db);
+        if (update) {
+            this.db = shuffled;
+            this.rebuildIndexes();
+        }
+        return this.breed(shuffled);
     };
 
     // ## Custom callbacks
