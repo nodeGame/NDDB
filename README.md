@@ -173,7 +173,7 @@ Reverse the order of the items
 Define a custom comparator function for the name of the painter, which gives highest priorities to the canvases of Picasso;
 
 ```javascript
-    db.c('painter', function (o1, o2) {
+    db.compare('painter', function (o1, o2) {
         if (o1.painter === 'Picasso') return -1;
         if (o2.painter === 'Picasso') return 1;
     }
@@ -313,17 +313,22 @@ Define a custom indexing function that gives fast, direct access to the items of
       I:  {},             // Collection of indexing functions
       V:  {},             // Collection of view functions
       log: logFunc,       // Default stdout
+      logCtx: logCtx      // The context of execution for the log function
       nddb_pointer: 4,    // Set the pointer to element of index 4
       globalCompare: function(o1, o2) {
         // comparing code
       },
-      operators: {       // Extends NDDB with new operators for select queries
+      filters: {          // Extends NDDB with new operators for select queries
         '%': function(d, value, comparator){
               return function(elem) {
                 if ((elem[d] % value) === 0) {
                   return elem;
                 }
               }
+      },
+      share: {           // Contains objects that are copied by reference to
+                         // in every new instance of NDDB.
+        sharedObj: sharedObj
       }
     }
     
