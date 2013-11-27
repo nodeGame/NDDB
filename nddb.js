@@ -900,9 +900,9 @@
 
         out = '[';
         this.each(function(e) {
-            // decycle, if possible
+            // Decycle, if possible
             e = NDDB.decycle(e);
-            out += J.stringify(e) + ', ';
+            out += J.stringify(e, spaces) + ', ';
         });
         out = out.replace(/, $/,']');
 
