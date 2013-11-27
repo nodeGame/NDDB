@@ -584,6 +584,8 @@
                 }
             }
         }
+        // Delete the shared object, it must not be copied by _cloneSettings_.
+        delete this.__options.shared;
 
         if (options.log) {
             this.initLog(options.log, options.logCtx);
