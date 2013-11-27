@@ -388,6 +388,10 @@ node make.nddb.js doc
 
 ## ChangeLog
 
+### 0.9.6
+  - Bug-fix: `#stringify()` failed to indent output.
+  - Shared options are removed from `this.__options` and kept just in `this.__shared`.
+
 ### 0.9.5
   - Operators -> Filters. `#addFilter()` can add a new filter.
   - `LIKE`, and `iLIKE` filters added.

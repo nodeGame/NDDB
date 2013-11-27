@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>fs.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = '../', thisFile = 'lib/fs.js', defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#fs.js">fs.js</a>
+      </div>
+      <div class="heading h2">
+        <a href="#use-the-node.js-fs-api.">use the Node.JS fs api.</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nddb.storageavailable">NDDB.storageAvailable</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nddb.save">NDDB.save</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nddb.load">NDDB.load</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nddb.loadcsv">NDDB.loadCSV</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="fs.js">
+  <h1>
+    <a href="#fs.js" class="pilcrow">&#182;</a>
+    fs.js
+  </h1>
+</div>
+
+
+<p>Copyright(c) 2013 Stefano Balietti
+NDDB file systems routines</p>
+  </div>
+  <div class="body"><p>Overrids save and load methods available in browser, with methods that</p>
+
+
+<div class="pilwrap" id="use-the-node.js-fs-api.">
+  <h2>
+    <a href="#use-the-node.js-fs-api." class="pilcrow">&#182;</a>
+    use the Node.JS fs api.
+  </h2>
+</div>
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../external/cycle.js&#39;</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">),</span>
+<span class="nx">csv</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;ya-csv&#39;</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;JSUS&#39;</span><span class="p">).</span><span class="nx">JSUS</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nddb.storageavailable">
+  <h3>
+    <a href="#nddb.storageavailable" class="pilcrow">&#182;</a>
+    NDDB.storageAvailable
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Dummy function that returns always true.</p>
+
+<p>Overrides default storageAvailable method for the browser.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>true</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">storageAvailable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nddb.save">
+  <h3>
+    <a href="#nddb.save" class="pilcrow">&#182;</a>
+    NDDB.save
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Saves the database to a persistent medium in JSON format</p>
+
+<p>Saves to the file system using the standard <code>fs.writeFile</code> method.</p>
+
+<p>Cyclic objects are decycled, and do not cause errors. 
+Upon loading, the cycles are restored.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">file</span>
+      <span class="dox_type">string</span>
+      <span>The file system path, or the identifier 
+  for the browser database</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">callback</span>
+      <span class="dox_type">function</span>
+      <span>Optional. A callback to execute after
+  the database is saved</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">boolean</span>
+      <span class="dox_type">compress</span>
+      <span>Optional. If TRUE, output will be compressed.
+  Defaults, FALSE</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if operation is successful</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.load</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.stringify</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <a href=" ">https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+</a>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">save</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">compress</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_getConstrName</span><span class="p">()</span> <span class="o">+</span>
+                            <span class="s1">&#39;.save: you must specify a valid file name.&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">compress</span> <span class="o">=</span> <span class="nx">compress</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>Save in Node.js</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFileSync</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">compress</span><span class="p">),</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="nx">callback</span><span class="p">();</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nddb.load">
+  <h3>
+    <a href="#nddb.load" class="pilcrow">&#182;</a>
+    NDDB.load
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Loads a JSON object into the database from a persistent medium</p>
+
+<p>Loads from the file system using <code>fs.readFileSync</code> or <code>fs.readFile</code> methods.</p>
+
+<p>Cyclic objects previously decycled will be retrocycled.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">file</span>
+      <span class="dox_type">string</span>
+      <span>The file system path, or the identifier 
+  for the browser database</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">cb</span>
+      <span class="dox_type">function</span>
+      <span>Optional. A callback to execute after 
+  the database is loaded</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if operation is successful</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.loadCSV</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.save</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.stringify</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">JSUS.parse</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <a href=" ">https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+</a>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">loadCb</span><span class="p">,</span> <span class="nx">loadedString</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_getConstrName</span><span class="p">()</span> <span class="o">+</span> 
+                            <span class="s1">&#39;.load: you must specify a valid file name.&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">loadCb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">items</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="nx">items</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">items</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>retrocycle if possible</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">NDDB</span><span class="p">.</span><span class="nx">retrocycle</span><span class="p">(</span><span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">items</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">loadedString</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">);</span>
+    <span class="nx">loadCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">loadedString</span><span class="p">);</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="nddb.loadcsv">
+  <h3>
+    <a href="#nddb.loadcsv" class="pilcrow">&#182;</a>
+    NDDB.loadCSV
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Loads the content of a csv file into the database</p>
+
+<p>Uses <code>ya-csv</code> to load the csv file</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">file</span>
+      <span class="dox_type">string</span>
+      <span>The path to the file to load,</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">cb</span>
+      <span class="dox_type">function</span>
+      <span>Optional. A callback to execute after 
+  the database is loaded</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. A configuration object to pass to
+ <code>ya-csv.createCsvFileReader</code></span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if operation is successful</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.load</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <a href=" ">https://github.com/koles/ya-csv
+</a>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">loadCSV</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">reader</span><span class="p">,</span> <span class="nx">that</span><span class="p">;</span>
+    <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>Mix options</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">columnsFromHeader</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">columnsFromHeader</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">reader</span> <span class="o">=</span> <span class="nx">csv</span><span class="p">.</span><span class="nx">createCsvFileReader</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">columnNames</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">reader</span><span class="p">.</span><span class="nx">setColumnNames</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">columnNames</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">reader</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="nx">reader</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">cb</span><span class="p">();</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

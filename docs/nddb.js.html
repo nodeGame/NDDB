@@ -2105,12 +2105,13 @@ to remember not to add it later.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">compressed</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="s1">&#39;[]&#39;</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">spaces</span><span class="p">,</span> <span class="nx">out</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">())</span> <span class="k">return</span> <span class="s1">&#39;[]&#39;</span><span class="p">;</span>
         <span class="nx">compressed</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">compressed</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="nx">compressed</span><span class="p">;</span>
 
-        <span class="kd">var</span> <span class="nx">spaces</span> <span class="o">=</span> <span class="nx">compressed</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="mi">4</span><span class="p">;</span>
+        <span class="nx">spaces</span> <span class="o">=</span> <span class="nx">compressed</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="mi">4</span><span class="p">;</span>
 
-        <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span><span class="p">;</span>
+        <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
@@ -2119,10 +2120,10 @@ to remember not to add it later.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
 </div>
-<p>decycle, if possible</p>
+<p>Decycle, if possible</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="nx">e</span> <span class="o">=</span> <span class="nx">NDDB</span><span class="p">.</span><span class="nx">decycle</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
-            <span class="nx">out</span> <span class="o">+=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="p">;</span>
+            <span class="nx">out</span> <span class="o">+=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">spaces</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="p">;</span>
         <span class="p">});</span>
         <span class="nx">out</span> <span class="o">=</span> <span class="nx">out</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/, $/</span><span class="p">,</span><span class="s1">&#39;]&#39;</span><span class="p">);</span>
 
