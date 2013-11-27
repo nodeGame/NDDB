@@ -892,12 +892,13 @@
      * @see JSUS.stringify
      */
     NDDB.prototype.stringify = function(compressed) {
-        if (!this.length) return '[]';
+        var spaces, out;
+        if (!this.size()) return '[]';
         compressed = ('undefined' === typeof compressed) ? true : compressed;
 
-        var spaces = compressed ? 0 : 4;
+        spaces = compressed ? 0 : 4;
 
-        var out = '[';
+        out = '[';
         this.each(function(e) {
             // decycle, if possible
             e = NDDB.decycle(e);
