@@ -56,6 +56,14 @@ describe('NDDB Selecting', function() {
               .execute()
               .db.length.should.equal(1);
         });
+
+        it('should select all portraits with painter != from Manet', function(){
+            db.select('painter', '!=', 'Manet')
+              .execute()
+              .db.length.should.equal(5);
+
+
+        })
         
         it('should select all painting of the beginning of the XX centuries', function(){
            db.select('year', '><', [1900, 1910])

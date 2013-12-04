@@ -56,7 +56,6 @@
      *
      * @param {object} options Optional. Configuration options
      * @param {db} db Optional. An initial set of items to import
-     *
      */
     function NDDB(options, db) {
         var that;
@@ -213,7 +212,7 @@
      *
      *  - d: dimension of comparison
      *  - value: second-term of comparison
-     *  - comparator: the comparator function as defined by `NDDB.c`
+     *  - comparator: the comparator function as defined by `NDDB.comparator`
      *
      * and return a function that execute the desired operation.
      *
@@ -239,7 +238,7 @@
         var that;
         that = this;
 
-        // Exists
+        // Exists.
         this.filters['E'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
@@ -274,16 +273,22 @@
             }
         };
 
-        // (strict) Equals
+        // (strict) Equals.
         this.filters['=='] = function(d, value, comparator) {
             return function(elem) {
-
                 if (comparator(elem, value, 0) === 0) return elem;
             };
         };
 
+        // (strict) Not Equals.
+        this.filters['!='] = function(d, value, comparator) {
+            return function(elem) {
+                debugger
+                if (comparator(elem, value, 0) !== 0) return elem;
+            };
+        };
 
-        // Smaller than
+        // Smaller than.
         this.filters['>'] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -298,7 +303,7 @@
             }
         };
 
-        // Greater than
+        // Greater than.
         this.filters['>='] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -315,7 +320,7 @@
             }
         };
 
-        // Smaller than
+        // Smaller than.
         this.filters['<'] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -330,7 +335,7 @@
             }
         };
 
-        //  Smaller or equal than
+        //  Smaller or equal than.
         this.filters['<='] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -347,7 +352,7 @@
             }
         };
 
-        // Between
+        // Between.
         this.filters['><'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
@@ -386,7 +391,7 @@
             }
         };
 
-        // Not Between
+        // Not Between.
         this.filters['<>'] = function(d, value, comparator) {
             if ('object' === typeof d || d === '*') {
                 return function(elem) {
@@ -407,7 +412,7 @@
             }
         };
 
-        // In Array
+        // In Array.
         this.filters['in'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
@@ -434,7 +439,7 @@
             }
         };
 
-        // Not In Array
+        // Not In Array.
         this.filters['!in'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
@@ -463,7 +468,7 @@
             }
         };
 
-        // Supports `_` and `%` wildcards 
+        // Supports `_` and `%` wildcards.
         function generalLike(d, value, comparator, sensitive) {
             var regex;
 
@@ -1465,13 +1470,13 @@
 
     // ## Sort and Select
 
-    function queryError(d, op, value) {
+    function queryError(text, d, op, value) {
         var miss, err;
         miss = '(?)';
-        err = 'Malformed query: ' + d || miss + ' ' + op || miss +
-            ' ' + value || miss;
-        this.log(err, 'WARN');
-        return false;
+        err = this._getConstrName() + '._analyzeQuery: ' + text + 
+            '. Malformed query: ' + d || miss + ' ' + op || miss + 
+            ' ' + value || miss + '.';
+        throw new Error(err);
     }
 
     /**
@@ -1487,34 +1492,32 @@
      *   if an error was detected
      */
     NDDB.prototype._analyzeQuery = function(d, op, value) {
-        var that, i, len, newValue;
-        that = this;
+        var i, len, newValue, errText;
 
         if ('undefined' === typeof d) {
-            return queryError.call(this, d, op,value);
+            queryError.call(this, 'undefined dimension', d, op, value);
         }
 
-        // Verify input
+        // Verify input.
         if ('undefined' !== typeof op) {
 
             if (op === '=') {
                 op = '==';
             }
-
-//            if (!(op in this.query.operators)) {
-            if (!(op in this.filters)) {
-                this.log('Query error. Invalid operator detected: ' + op,
-                         'WARN');
-                return false;
+            else if (op === '!==') {
+                op = '!=';
             }
 
-            // Range-queries need an array as third parameter instance of Array
+            if (!(op in this.filters)) {
+                queryError.call(this, 'unknown operator ' + op, d, op, value);
+            }
+
+            // Range-queries need an array as third parameter instance of Array.
             if (J.in_array(op,['><', '<>', 'in', '!in'])) {
 
                 if (!(value instanceof Array)) {
-                    this.log('Range-queries need an array as third parameter',
-                             'WARN');
-                    queryError.call(this, d,op,value);
+                    errText = 'range-queries need an array as third parameter';                        
+                    queryError.call(this, errText, d, op, value);
                 }
                 if (op === '<>' || op === '><') {
 
@@ -1527,10 +1530,11 @@
                 }
             }
 
-            else if (J.in_array(op, ['>', '==', '>=', '<', '<='])){
-                // Comparison queries need a third parameter
+            else if (J.in_array(op, ['!=', '>', '==', '>=', '<', '<='])){
+                // Comparison queries need a third parameter.
                 if ('undefined' === typeof value) {
-                    queryError.call(this, d, op, value);
+                    errText = 'value cannot be undefined in comparison queries';
+                    queryError.call(this, errText, d, op, value);
                 }
                 // TODO: when to nest and when keep the '.' in the name?
                 // Comparison queries need to have the same
@@ -1552,14 +1556,15 @@
 
         }
         else if ('undefined' !== typeof value) {
-            queryError.call(this, d, op, value);
+            errText = 'undefined filter and defined value';
+            queryError.call(this, errText, d, op, value);
         }
         else {
             op = 'E'; // exists
             value = '';
         }
 
-        return {d:d,op:op,value:value};
+        return { d:d, op:op, value:value };
     };
 
     /**
@@ -1572,8 +1577,8 @@
      * @return {NDDB} A copy of the current selection without duplicated entries
      *
      * @see NDDB.select()
-     *  @see NDDB.fetch()
-     *  @see NDDB.fetchValues()
+     * @see NDDB.fetch()
+     * @see NDDB.fetchValues()
      */
     NDDB.prototype.distinct = function() {
         return this.breed(J.distinct(this.db));
@@ -1609,7 +1614,6 @@
      * @see NDDB.or
      * @see NDDB.execute()
      * @see NDDB.fetch()
-     *
      */
     NDDB.prototype.select = function(d, op, value) {
         this.query.reset();
@@ -1639,7 +1643,6 @@
         //      else {
         var q, cb;
         q = this._analyzeQuery(d, op, value);
-        if (!q) return false;
         cb = this.filters[q.op](q.d, q.value, this.getComparator(q.d));
         this.query.addCondition('AND', cb);
         //      }
@@ -1669,7 +1672,6 @@
         //      else {
         var q, cb;
         q = this._analyzeQuery(d, op, value);
-        if (!q) return false;
         cb = this.filters[q.op](q.d, q.value, this.getComparator(q.d));
         this.query.addCondition('OR', cb);
         //this.query.addCondition('OR', condition, this.getComparator(d));
