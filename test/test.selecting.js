@@ -61,8 +61,6 @@ describe('NDDB Selecting', function() {
             db.select('painter', '!=', 'Manet')
               .execute()
               .db.length.should.equal(5);
-
-
         })
         
         it('should select all painting of the beginning of the XX centuries', function(){
