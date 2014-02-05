@@ -1,0 +1,143 @@
+# NDDB change log
+
+## 0.9.8
+  - `length` property removed completely because it feature detection failed in old browser
+  - Cosmetics changes
+
+## 0.9.7
+  - Bug-fix: filter `!=` works correctly.
+  - Any malformed query will throw an error.
+
+## 0.9.6
+  - Bug-fix: `#stringify()` failed to indent output.
+  - Shared options are removed from `this.__options` and kept just in `this.__shared`.
+
+## 0.9.5
+  - Operators -> Filters. `#addFilter()` can add a new filter.
+  - `LIKE`, and `iLIKE` filters added.
+  - The symbol `*` can be used to select on any property of the object.
+  - `#select()` accepts an array containing the name of the properties that will be used for the selection.
+  - `#shuffle()` by default returns a new object, and does not alter the order of the elements in the database. A parameter can control it.
+  - More efficient updating of elements in the index
+  - Options `log` and `logCtx` are not cloned, by copied by reference. This avoid trying copying potential cyclical structures.
+
+## 0.9.2
+  - `#remove()` -> `#removeAllEntries()`
+  - `#NDDBIndex.pop() -> #NDDBIndex.remove()` pop is deprecated now
+
+## 0.9.1
+  - On request, views, and hashes are now hybrid. They are NDDB object, but they tries to load all current settings, avoiding to creating infinite loops
+  - `#cloneSettings()` accepts a leaveOut parameter
+  - Empty hash objects are created by the constructor, if an hash function is specified
+
+## 0.9.0
+  - Fixed bug with views and hashs created within constructor of inheriting class
+  - `#hash()` and `#view()` always creates objects of type NDDB (previously using the constructor of the inheriting class, if any)
+  - Fixed bug in loading from browser storage
+  - Better error messages
+  - Code for Node.js and browser clearly separated
+  - NDDB methods throw errors instead of returning false if input parameters are
+    incorrect
+
+## 0.8.10
+  - Support for shared objects across all breeded instances of NDDB
+  - NDDB.log -> this.log
+  - `#initLog()` to execute the log function in the proper context
+  - Fixed indexes and views not appearing on empty DBs
+
+## 0.8.6
+  - Support for property names containing dots
+
+## 0.8.5
+  - `#loadCSV`: load the content of a csv file into the database
+  - Minor fixes
+
+## 0.8.4
+
+  - NDDBIndexes: `#getAllKeys()` and `#getAllKeyElements`
+  - Integration with updated version of Shelf.js
+  - Minor fixes
+
+## 0.8.0
+
+  - New faster and more powerful indexing engine
+  - Indexes are now objects with own methods: `#get()`, `#update()`, `#pop()`, `#size()`
+  - Support for multiple _views_ on the database
+  - `#comparator()` becomes `#getComparator()`, and `#compare()` becomes `#comparator()`
+  - Deprecated `c`,`h`,`i`; use human readable `comparator`, `hash`, `index` from now on!
+  - `#current()` replaces the old `#get()`
+  - `#get()` always returns the element at the specified ordinal position in the database
+  - Callback functions of hash and index functions must always be specified
+  - Hash functions creates NDDB instances of constructor
+  
+
+## 0.7.2
+
+  - `#selexec()` shorthand  for `select().execute()`
+  - Fixed bug on emit('update')
+  - `#tag()` returns the tagged element
+  - `#clear()` removes all volatile data, not just the entries in the database
+  - Minor doc improvements
+
+## 0.7.0
+
+  - More efficient selector engine. 
+  - Select queries can be chained with and, and or methods
+  - Select queries are executed with an execute method
+  - Objects are not maskeraded at insertation (no hidden .nddbid property injected)
+  - Remove method does not remove the elements in parent database
+  - Constructor changed, no parent parameter
+
+## 0.6.0
+
+  - fetch accepts no arguments
+  - fetchValues returns an object containing all the values in the grouped by property
+  - fetchSubObj
+  - fetchArray and fetchKeyArray operate only on the first level, and objects in properties are not further flattened
+  - fetchArray, fetchKeyArray, and fetchValues accept either a string or an array of strings as key-selector parameter
+
+## 0.5.8
+
+  - Serialization of functions, null and undefined values
+  - Removed eval from select queries
+  - Travis-ci continous integration
+  - Minor bug fixing
+
+## 0.5.0
+
+  - Support for events: 'remove', 'insert'
+  - NDDB.index(): provides fast access to objects
+  - NDDB.tag(): accepts also objects
+
+## 0.4.0
+
+  - IE compatibility
+  - Bug fixing
+
+## 0.3.6
+
+  - Bug fixing
+  - NDDB.save beautifies the output by default
+  - Post install scripts build the libraries
+
+## 0.3.0 
+
+  - NDDB.skim() and NDDB.keep()
+  - Full test coverage
+  - Make file in bin directory
+  - Custom builds
+  - Bug fixing
+
+## 0.2.5
+
+  - NDDB.distinct() + test
+  - Support for cyclic objects when saving the database to file
+  - NDDB.stddev()
+  - Bug fixing
+  - More tests
+
+## 0.2
+
+  - Introduced indexing. Indexes are created with NDDB.h() or the alias NDDB.hash()
+  - NDDB.set() was already deprecated and it has been removed. NDDB.c() or the alias NDDB.compare() should be used instead.
+  - NDDB.init() can sets the configuration of the database

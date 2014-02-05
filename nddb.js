@@ -1,6 +1,6 @@
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
@@ -9,8 +9,6 @@
  * ---
  */
 (function(exports, J, store) {
-
-    NDDB.compatibility = J.compatibility();
 
     // Expose constructors
     exports.NDDB = NDDB;
@@ -85,16 +83,6 @@
         // ### nddb_pointer
         // Pointer for iterating along all the elements.
         this.nddb_pointer = 0;
-
-        // ### length
-        // The number of items in the database.
-        if (NDDB.compatibility.getter) {
-            this.__defineGetter__('length',
-                                  function() { return this.db.length; });
-        }
-        else {
-            this.length = null;
-        }
 
         // ### query
         // QueryBuilder obj.
@@ -283,7 +271,6 @@
         // (strict) Not Equals.
         this.filters['!='] = function(d, value, comparator) {
             return function(elem) {
-                debugger
                 if (comparator(elem, value, 0) !== 0) return elem;
             };
         };
@@ -2827,8 +2814,7 @@
     /**
      * ### NDDB.current
      *
-     * Returns the entry in the database, at which
-     * the iterator is currently pointing
+     * Returns the entry at which the iterator is currently pointing
      *
      * The pointer is *not* updated.
      *
@@ -3402,7 +3388,7 @@
         if ('undefined' === typeof dbidx) return false;
         o = this.nddb.db[dbidx];
         if ('undefined' === typeof o) return;
-        this.nddb.db.splice(dbidx,1);
+        this.nddb.db.splice(dbidx, 1);
         delete this.resolve[idx];
         this.nddb.emit('remove', o);
         this.nddb._autoUpdate();
