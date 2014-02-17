@@ -5,6 +5,12 @@
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
  *
+ * TODO: When using index.update() and the update is suppose to remove the element
+ * from view and hashes, for example becausea property is deleted. index.update()
+ * fails doing so. Should be fixed. At the moment the only solution seems to
+ * reintroduce a global index for all items and to use that to quickly lookup items
+ * in views and hashes.
+ *
  * See README.md for help.
  * ---
  */
