@@ -1,4 +1,3 @@
-
 var util = require('util'),
 should = require('should'),
 NDDB = require('./../nddb').NDDB;
@@ -60,7 +59,7 @@ describe('NDDB Misc Operation', function() {
             db.forEach(addDone);
         });
         it('every entry should have a new key',function() {
-            db.select('done','=','10').length.should.be.eql(db.length);
+            db.selexec('done','=','10').size().should.be.eql(db.size());
         });
     });
 
@@ -131,7 +130,7 @@ describe('NDDB Misc Operation', function() {
             db1.log("a!").should.be.eql(db2.log("a2!"));
         });
         
-       
+        
     });
 
     describe('indices and views on empty DB', function() {
@@ -142,10 +141,10 @@ describe('NDDB Misc Operation', function() {
                     myIdx: function(o) { return o.count > 100 ? o.id : undefined; }
                 },
                 V: {
-                     myView: function(o) { return o.count > 100 ? o.id : undefined; }
+                    myView: function(o) { return o.count > 100 ? o.id : undefined; }
                 }
-               });
             });
+        });
         it('should create an empty index', function() {
             ('undefined' !== typeof db.myIdx).should.be.true;
         });
@@ -154,7 +153,7 @@ describe('NDDB Misc Operation', function() {
         });
 
         
-       
+        
     });
 
 });

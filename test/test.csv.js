@@ -6,7 +6,7 @@ var util = require('util'),
 fs = require('fs'),
 path = require('path'),
 should = require('should'),
-NDDB = require('./../nddb').NDDB;
+NDDB = require('./../index').NDDB;
 
 var db = new NDDB();
 

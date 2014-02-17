@@ -104,7 +104,7 @@ describe('NDDB Indexing Operations:', function() {
     	
         it('should not create the special indexes', function() {
             db.painter.should.not.exist;
-            db.length.should.eql(not_indexable.length);
+            db.size().should.eql(not_indexable.length);
         });
     });
     
@@ -120,8 +120,6 @@ describe('NDDB Indexing Operations:', function() {
         });
         
     });
-    
-    
     
     describe('Elements updated in the db should be updated in the indexes', function() {
     	before(function(){
@@ -145,7 +143,7 @@ describe('NDDB Indexing Operations:', function() {
     	    db.painter.size().should.be.eql(indexable.length);
         });
     	it('should not change the view', function() {
-    	    db.pview.length.should.be.eql(indexable.length);
+    	    db.pview.size().should.be.eql(indexable.length);
         });
     	it('should not change the hash', function() {
     	    JSUS.size(db.phash).should.be.eql(indexable.length);
@@ -165,11 +163,10 @@ describe('NDDB Indexing Operations:', function() {
     	    elem[0].id.should.be.eql(6)
         });
 
-        
         it('updated property \'painter\' should update the get index', function() {
     	    db.painter.get(6).painter.should.be.eql('M.A.N.E.T.');
         });
-
+        
     });
 
 
@@ -187,10 +184,10 @@ describe('NDDB Indexing Operations:', function() {
     	    db.painter.get(6).should.be.false;
         });
     	it('should remove element from the main db too', function() {
-    	    db.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(0);
+    	    db.select('painter', '=', 'M.A.N.E.T.').execute().size().should.be.eql(0);
         });
     	it('should remove element from the view too', function() {
-    	    db.pview.select('painter', '=', 'M.A.N.E.T.').execute().length.should.be.eql(0);
+    	    db.pview.select('painter', '=', 'M.A.N.E.T.').execute().size().should.be.eql(0);
         });
     });
     
@@ -219,7 +216,20 @@ describe('NDDB Indexing Operations:', function() {
     	    tmp.should.be.eql(o);
         });   	
     });
-    
+
+//     describe('#NDDBIndex.update()', function() {
+//     	before(function(){
+//     	    db.painter.update(5, {
+//     		painter: undefined
+//     	    });
+//     	});
+// 
+//         it('updated painter with idx 5 should not be found in index', function() {
+//     	    var p = db.painter.get(5);
+//             ('undefined' === typeof p).should.be.true;
+//         });
+//         
+//     });
     
 });
 

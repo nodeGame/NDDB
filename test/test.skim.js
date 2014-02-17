@@ -65,7 +65,7 @@ describe('NDDB skim', function() {
         });
 
         it("should return " + items.length + " items",function() {
-            skim.length.should.be.eql(items.length);
+            skim.size().should.be.eql(items.length);
 
         });
         it("should create a database where no item has the 'year' property", function() {
@@ -84,7 +84,7 @@ describe('NDDB skim', function() {
         });
 
         it("should return " + items.length + " items",function() {
-            skim.length.should.be.eql(items.length);
+            skim.size().should.be.eql(items.length);
 
         });
         it("should create a database where no item has the 'portrait' property", function() {
@@ -103,7 +103,7 @@ describe('NDDB skim', function() {
         });
 
         it("should return 0 items",function() {
-            skim.length.should.be.eql(0);
+            skim.size().should.be.eql(0);
 
         });        
     });
@@ -121,7 +121,7 @@ describe('NDDB keep', function() {
         });
 
         it("should return " + items.length + " items",function() {
-            keep.length.should.be.eql(items.length);
+            keep.size().should.be.eql(items.length);
         });
         it("should create a database where all items have only the 'year' property", function() {
             keep.each(function(e) {
@@ -140,7 +140,7 @@ describe('NDDB keep', function() {
         });
 
         it("should return 1 item",function() {
-            keep.length.should.be.eql(1);
+            keep.size().should.be.eql(1);
 
         });
         
@@ -161,7 +161,7 @@ describe('NDDB keep', function() {
         });
 
         it("should return " + items.length + " items",function() {
-            keep.length.should.be.eql(items.length);
+            keep.size().should.be.eql(items.length);
         });
         
         it("should create a database where all items have only the 'portrait', and 'year' properties", function() {
@@ -185,7 +185,7 @@ describe('NDDB keep', function() {
         });
 
         it("should return " + items.length + " items",function() {
-            keep.length.should.be.eql(0);
+            keep.size().should.be.eql(0);
 
         });
     });

@@ -105,22 +105,22 @@ describe('NDDB Remove Operations:', function() {
         });
         
         it('the selection should be empty', function() {
-            testcase.length.should.be.eql(0);
+            testcase.size().should.be.eql(0);
         });
         
         it('Ferrari should still be in the original database', function() {
-            db.select('car', '=', 'Ferrari').execute().length.should.be.eql(1);
+            db.select('car', '=', 'Ferrari').execute().size().should.be.eql(1);
         });
         
         it('original length should not change', function() {
-            db.length.should.eql(nitems);
+            db.size().should.eql(nitems);
         });
         
     });
     
     describe('Removing elements that are indexed', function() {
         before(function(){
-            tmp = db.length;
+            tmp = db.size();
             testcase = db.select('painter', '=', 'Monet').execute();
             testcase.removeAllEntries();
             db.rebuildIndexes();    
@@ -129,7 +129,7 @@ describe('NDDB Remove Operations:', function() {
         });
         
         it('should not decrease the length of the database', function() {
-            db.length.should.be.eql(tmp);
+            db.size().should.be.eql(tmp);
         });
         
         it('should leave the length of the index unchanged', function() {
@@ -147,7 +147,7 @@ describe('NDDB Remove Operations:', function() {
         });
 
         it('should clear all items',function() {
-            db.db.length.should.eql(0);
+            db.size().should.eql(0);
         });
         
         it('should clear all tags',function() {

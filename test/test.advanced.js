@@ -1,107 +1,107 @@
 var util = require('util'),
-    should = require('should'),
-    NDDB = require('./../nddb').NDDB,
-    J = require('JSUS').JSUS;
+should = require('should'),
+NDDB = require('./../nddb').NDDB,
+J = require('JSUS').JSUS;
 
 var items = [
-			 {
-				 painter: "Jesus",
-				 title: "Tea in the desert",
-				 year: 0
-			 },
-             {
-                 painter: "Monet",
-                 title: "Monet",
-                 year: 1901,
-             },
-              {
-                 painter: "Dali",
-                 title: "Monet",
-                 year: 1902,
-             },
-             {
-                 painter: "Monet",
-                 title: "Dali",
-                 year: 1903,
-             },
-             {
-                 painter: "Dali",
-                 title:  ["Portrait of Paul Eluard", "Das Rätsel der Begierde", "Das finstere Spiel oder Unheilvolles Spiel"],
-                 year: 1929,
-                 portrait: true
-             },
-             {
-                 painter: "Dali",
-                 title: "Barcelonese Mannequin",
-                 year: 1927,
-             },
-             {
-                 painter: "Monet",
-                 title: "Water Lilies",
-                 year: 1906
-             },
-             {
-                 painter: "Monet",
-                 title: "Wheatstacks (End of Summer)",
-                 year: 1891
-             },
-             {
-                 painter: "Manet",
-                 title: "Olympia",
-                 year: 1863
-             }
-             
+    {
+	painter: "Jesus",
+	title: "Tea in the desert",
+	year: 0
+    },
+    {
+        painter: "Monet",
+        title: "Monet",
+        year: 1901,
+    },
+    {
+        painter: "Dali",
+        title: "Monet",
+        year: 1902,
+    },
+    {
+        painter: "Monet",
+        title: "Dali",
+        year: 1903,
+    },
+    {
+        painter: "Dali",
+        title:  ["Portrait of Paul Eluard", "Das Rätsel der Begierde", "Das finstere Spiel oder Unheilvolles Spiel"],
+        year: 1929,
+        portrait: true
+    },
+    {
+        painter: "Dali",
+        title: "Barcelonese Mannequin",
+        year: 1927,
+    },
+    {
+        painter: "Monet",
+        title: "Water Lilies",
+        year: 1906
+    },
+    {
+        painter: "Monet",
+        title: "Wheatstacks (End of Summer)",
+        year: 1891
+    },
+    {
+        painter: "Manet",
+        title: "Olympia",
+        year: 1863
+    }
+    
 ];
 
 
 var items_for_concat = [
-            
-             {
-                 painter: "Dali",
-                 title: "Portrait of Paul Eluard",
-                 year: 1929,
-                 count: 0
-             },
-             {
-                 painter: "Dali",
-                 title: "Barcelonese Mannequin",
-                 year: 1927,
-                 count: 0
-             },
-             {
-                 painter: "Monet",
-                 title: "Water Lilies",
-                 year: 1906,
-                 count: 0
-             },
+    
+    {
+        painter: "Dali",
+        title: "Portrait of Paul Eluard",
+        year: 1929,
+        count: 0
+    },
+    {
+        painter: "Dali",
+        title: "Barcelonese Mannequin",
+        year: 1927,
+        count: 0
+    },
+    {
+        painter: "Monet",
+        title: "Water Lilies",
+        year: 1906,
+        count: 0
+    },
 
 
 ];
 
 var items_for_groupby = [
-             {
-                 painter: "Dali",
-                 title: "Portrait of Paul Eluard",
-                 year: 1929,
-                 fake: true,
-             },
-             {
-                 painter: "Dali",
-                 title: "Barcelonese Mannequin",
-                 year: 1927,
-                 fake: true,
-             },
-             {
-                 painter: "Monet",
-                 title: "Water Lilies",
-                 year: 1906,
-                 fake: false,
-             },
-             {
-                 painter: "Monet",
-                 title: "Wheatstacks (End of Summer)",
-                 year: 1891,
-             },            
+    {
+        painter: "Dali",
+        title: "Portrait of Paul Eluard",
+        year: 1929,
+        fake: true,
+    },
+    {
+        painter: "Dali",
+        title: "Barcelonese Mannequin",
+        year: 1927,
+        fake: true,
+    },
+    {
+        painter: "Monet",
+        title: "Water Lilies",
+        year: 1906,
+        fake: false,
+    },
+    {
+        painter: "Monet",
+        title: "Wheatstacks (End of Summer)",
+        year: 1891,
+    },            
 
 ];
 
@@ -115,7 +115,7 @@ var group_db = null;
 var group_db_2 = null;
 
 describe('NDDB Advanced Operation', function() {
-	//split*, join, concat
+    //split*, join, concat
 
     before(function() {
 
@@ -143,12 +143,12 @@ describe('NDDB Advanced Operation', function() {
                 year: 1929,
                 fake: true,
             },
-            {
-                painter: "Dali",
-                title: "Barcelonese Mannequin",
-                year: 1927,
-                fake: true,
-            }]);
+                                              {
+                                                  painter: "Dali",
+                                                  title: "Barcelonese Mannequin",
+                                                  year: 1927,
+                                                  fake: true,
+                                              }]);
         });
         it('fetch of group should equal to items',function() {
             group_db_2[1].first().should.eql( {
@@ -168,10 +168,10 @@ describe('NDDB Advanced Operation', function() {
         });
         describe('splitting titles',function() {
             it('db should have two more entries',function() {
-                split_db.length.should.eql(db.length+2);
+                split_db.size().should.eql(db.size()+2);
             });
             it('should have two more Dalis',function() {
-                split_db.painter.Dali.length.should.eql(5);
+                split_db.painter.Dali.size().should.eql(5);
             });
             it('should have only one picture per new split entry',function() {
                 Object.keys(split_db.get(4)['title']).length.should.eql(1);
@@ -183,12 +183,12 @@ describe('NDDB Advanced Operation', function() {
         });
         describe('splitting painters',function() {
             it('should have the same count of items in the db',function() {
-                split_db_2.length.should.be.eql(db.length);
+                split_db_2.size().should.be.eql(db.size());
             });
         });
-                
+        
     });
-     
+    
     describe('#join()',function() {
     	
     	describe('parameter set (painter, painter)',function() {
@@ -197,7 +197,7 @@ describe('NDDB Advanced Operation', function() {
                 join_db = db.join('painter','painter');
             });
             it('should have 9 entries if using not splited db',function() {
-                join_db.length.should.be.eql(9);
+                join_db.size().should.be.eql(9);
             });
 
             it('the painter of the joined one should equal with the joining one',function() {
@@ -217,12 +217,12 @@ describe('NDDB Advanced Operation', function() {
                     var title = e.joined.title;
                     
                     var original = db.select('painter', '=', painter)
-			                    	.and('year', '=', year)
-			                    	.and('title', '=', title)
-			                    	.execute()
-			                    	.first();
-                
-                	e.joined.should.be.eql(original);
+			.and('year', '=', year)
+			.and('title', '=', title)
+			.execute()
+			.first();
+                    
+                    e.joined.should.be.eql(original);
                 });
                 
             });
@@ -231,18 +231,18 @@ describe('NDDB Advanced Operation', function() {
             // x!/(2!*(x-2)!) for each painter
             it('should have 16 entries if using splited db',function() {
                 var join_db_2 = split_db.join('painter','painter');
-                join_db_2.length.should.be.eql(16);
+                join_db_2.size().should.be.eql(16);
             });
 
         });
-    
+        
     	describe('parameter set (painter, painter, xxx)',function() {
             before(function() {
                 join_db = null;
                 join_db = db.join('painter','painter', 'xxx');
             });
             it('should have 9 entries if using not splited db',function() {
-                join_db.length.should.be.eql(9);
+                join_db.size().should.be.eql(9);
             });
 
             it('the painter of the joined one should equal with the joining one',function() {
@@ -262,17 +262,17 @@ describe('NDDB Advanced Operation', function() {
                     var title = e.xxx.title;
                     
                     var original = db.select('painter', '=', painter)
-			                    	.and('year', '=', year)
-			                    	.and('title', '=', title)
-			                    	.execute()
-			                    	.first();
-                
-                	e.xxx.should.be.eql(original);
+			.and('year', '=', year)
+			.and('title', '=', title)
+			.execute()
+			.first();
+                    
+                    e.xxx.should.be.eql(original);
                 });
                 
             });
         });
-    
+        
     	
         describe('parameter set (painter,painter,joined,[painter,title,year, portrait])',function() {
             before(function() {
@@ -280,7 +280,7 @@ describe('NDDB Advanced Operation', function() {
                 join_db = db.join('painter','painter','joined',['painter','title','year','portrait']);
             });
             it('should have 9 entries if using not splited db',function() {
-                join_db.length.should.be.eql(9);
+                join_db.size().should.be.eql(9);
             });
 
             it('the painter of the joined one should equal with the joining one',function() {
@@ -300,12 +300,12 @@ describe('NDDB Advanced Operation', function() {
                     var title = e.joined.title;
                     
                     var original = db.select('painter', '=', painter)
-				                	 .and('year', '=', year)
-				                	 .and('title', '=', title)
-				                	 .execute()
-				                	 .first();
-                
-                	e.joined.should.be.eql(original);
+			.and('year', '=', year)
+			.and('title', '=', title)
+			.execute()
+			.first();
+                    
+                    e.joined.should.be.eql(original);
                 });
                 
             });
@@ -314,7 +314,7 @@ describe('NDDB Advanced Operation', function() {
             // x!/(2!*(x-2)!) for each painter
             it('should have 16 entries if using splited db',function() {
                 var join_db_2 = split_db.join('painter','painter','sibling',['painter','title','year', 'portrait']);
-                join_db_2.length.should.be.eql(16);
+                join_db_2.size().should.be.eql(16);
             });
 
         });
@@ -326,8 +326,8 @@ describe('NDDB Advanced Operation', function() {
                 join_db = db.join('painter','title',undefined,['title','year']);
                 join_db.rebuildIndexes();
             });
-            it('should have 2 entries if using not splited db',function() {
-                join_db.db.length.should.be.eql(2);
+            it('should have 2 entries if using not split db',function() {
+                join_db.size().should.be.eql(2);
             });
             it('should have a new key in each item named joined',function() {
                 join_db.select('joined').execute().db.length.should.eql(2);
@@ -340,7 +340,7 @@ describe('NDDB Advanced Operation', function() {
             // x!/(2!*(x-2)!) for each painter
             it('should have 2 entries if using splited db',function() {
                 var join_db_2 = split_db.join('painter','title',undefined,['title','year']);
-                join_db_2.length.should.be.eql(2);
+                join_db_2.size().should.be.eql(2);
             });
             
         });
@@ -351,7 +351,7 @@ describe('NDDB Advanced Operation', function() {
                 join_db.rebuildIndexes();
             });
             it('should have 9 entries if using not splited db',function() {
-                join_db.db.length.should.be.eql(9);
+                join_db.size().should.be.eql(9);
             });
             it('should have a new key in each item named joined',function() {
                 join_db.select('joined').execute().db.length.should.eql(9);
@@ -366,7 +366,7 @@ describe('NDDB Advanced Operation', function() {
             // x!/(2!*(x-2)!) for each painter
             it('should have 16 entries if using splited db',function() {
                 var join_db_2 = split_db.join('painter','painter',undefined,'year');
-                join_db_2.length.should.be.eql(16);
+                join_db_2.size().should.be.eql(16);
             });
             
         });
@@ -397,20 +397,22 @@ describe('NDDB Advanced Operation', function() {
 
             it('should have every picture twice',function() {
                 var stat_ar = new Array();
-                for(var key in concat_db.db) {
-                    if((typeof stat_ar[concat_db.db[key]['friend']['title']]) == 'undefined') {
+                for (var key in concat_db.db) {
+                    if ((typeof stat_ar[concat_db.db[key]['friend']['title']]) == 'undefined') {
                         stat_ar[concat_db.db[key]['friend']['title']] = 1;
-                    }else{
+                    }
+                    else {
                         stat_ar[concat_db.db[key]['friend']['title']]++;
                     }
-                    if((typeof stat_ar[concat_db.db[key]['title']]) == 'undefined') {
+                    if ((typeof stat_ar[concat_db.db[key]['title']]) == 'undefined') {
                         
                         stat_ar[concat_db.db[key]['title']] = 1;
-                    }else{
+                    }
+                    else {
                         stat_ar[concat_db.db[key]['title']]++;
                     }
                 }    
-                for(var key in stat_ar) {
+                for (var key in stat_ar) {
                     stat_ar[key].should.be.eql(2);
                 }     
             });
@@ -436,6 +438,6 @@ describe('NDDB Advanced Operation', function() {
 
 
     });
-	
+    
 });
 

@@ -106,7 +106,7 @@ describe('NDDB Views Operations:', function() {
         });
 
         it('should populate the car view', function() {
-            db.cars.length.should.eql(not_art_items.length);
+            db.cars.size().should.eql(not_art_items.length);
         });
     });
 
@@ -117,12 +117,12 @@ describe('NDDB Views Operations:', function() {
         });
 
         it('should populate the art view', function() {
-            db.art.length.should.eql(art_items.length);
+            db.art.size().should.eql(art_items.length);
 
         });
 
         it('should increase the length of the database', function() {
-            db.length.should.be.eql(nitems);
+            db.size().should.be.eql(nitems);
         });
     });
 
