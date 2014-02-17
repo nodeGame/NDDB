@@ -1308,7 +1308,6 @@
             if (this.__I.hasOwnProperty(key)) {
                 func = this.__I[key];
                 index = func(o);
-                
                 // If the same object has been  previously
                 // added with another index delete the old one.
                 if (index !== oldIdx) {
