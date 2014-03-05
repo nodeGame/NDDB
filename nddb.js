@@ -409,6 +409,7 @@
         this.filters['in'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
+                    debugger
                     var i, len;
                     len = value.length;
                     for (i = 0; i < len; i++) {
@@ -1771,11 +1772,13 @@
      * @see NDDB.last
      */
     NDDB.prototype.limit = function(limit) {
-        limit = limit || 0;
+        var db;
+        if ('number' !== typeof limit) {
+            throw new TypeError(this._getConstrName() +
+                                '.limit: limit must be number.');
+        }
         if (limit === 0) return this.breed();
-        var db = (limit > 0) ? this.db.slice(0, limit) :
-            this.db.slice(limit);
-
+        db = (limit > 0) ? this.db.slice(0, limit) : this.db.slice(limit);
         return this.breed(db);
     };
 
@@ -2127,12 +2130,10 @@
 
                     if ('undefined' !== typeof key) {
                         if (comparator(foreign_key, key)) {
-                            // Inject the matched obj into the
-                            // reference one
+                            // Inject the matched obj into the reference one.
                             o = J.clone(this.db[i]);
-                            o2 = (select) ?
-                                J.subobj(this.db[j], select)
-                                : this.db[j];
+                            o2 = select ? 
+                                J.subobj(this.db[j], select) : this.db[j];
                             o[pos] = o2;
                             out.push(o);
                         }
