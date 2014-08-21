@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../doc-style.css" />
   <script src="../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../', thisFile = 'lib/fs.js', defaultSidebar = true;
+    var relativeDir = "../", thisFile = "lib/fs.js", defaultSidebar = true;
   </script>
   <script src="../doc-script.js"></script>
 </head>
@@ -22,7 +22,7 @@
         <a href="#fs.js">fs.js</a>
       </div>
       <div class="heading h2">
-        <a href="#use-the-node.js-fs-api.">use the Node.JS fs api.</a>
+        <a href="#use%20the%20node.js%20fs%20api.">use the Node.JS fs api.</a>
       </div>
       <div class="heading h3">
         <a href="#nddb.storageavailable">NDDB.storageAvailable</a>
@@ -47,7 +47,7 @@
   <div class="summary">
 <div class="pilwrap" id="fs.js">
   <h1>
-    <a href="#fs.js" class="pilcrow">&#182;</a>
+    <a href="#fs.js" name="fs.js" class="pilcrow">&#182;</a>
     fs.js
   </h1>
 </div>
@@ -59,9 +59,9 @@ NDDB file systems routines</p>
   <div class="body"><p>Overrids save and load methods available in browser, with methods that</p>
 
 
-<div class="pilwrap" id="use-the-node.js-fs-api.">
+<div class="pilwrap" id="use%20the%20node.js%20fs%20api.">
   <h2>
-    <a href="#use-the-node.js-fs-api." class="pilcrow">&#182;</a>
+    <a href="#use%20the%20node.js%20fs%20api." name="use%20the%20node.js%20fs%20api." class="pilcrow">&#182;</a>
     use the Node.JS fs api.
   </h2>
 </div>
@@ -76,7 +76,10 @@ NDDB file systems routines</p>
 
 <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;JSUS&#39;</span><span class="p">).</span><span class="nx">JSUS</span><span class="p">;</span>
 
-<span class="kd">var</span> <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">;</span></pre></div>
+<span class="kd">var</span> <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -84,7 +87,7 @@ NDDB file systems routines</p>
   <div class="summary">
 <div class="pilwrap" id="nddb.storageavailable">
   <h3>
-    <a href="#nddb.storageavailable" class="pilcrow">&#182;</a>
+    <a href="#nddb.storageavailable" name="nddb.storageavailable" class="pilcrow">&#182;</a>
     NDDB.storageAvailable
   </h3>
 </div>
@@ -104,9 +107,13 @@ NDDB file systems routines</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">storageAvailable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">storageAvailable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-<span class="p">}</span></pre></div>
+<span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -114,7 +121,7 @@ NDDB file systems routines</p>
   <div class="summary">
 <div class="pilwrap" id="nddb.save">
   <h3>
-    <a href="#nddb.save" class="pilcrow">&#182;</a>
+    <a href="#nddb.save" name="nddb.save" class="pilcrow">&#182;</a>
     NDDB.save
   </h3>
 </div>
@@ -163,18 +170,22 @@ Upon loading, the cycles are restored.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <a href=" ">https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+      <a href="https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+">https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
 </a>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">save</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">compress</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">save</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">compress</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_getConstrName</span><span class="p">()</span> <span class="o">+</span>
                             <span class="s1">&#39;.save: you must specify a valid file name.&#39;</span><span class="p">);</span>
     <span class="p">}</span>
-    <span class="nx">compress</span> <span class="o">=</span> <span class="nx">compress</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+    <span class="nx">compress</span> <span class="o">=</span> <span class="nx">compress</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -184,11 +195,15 @@ Upon loading, the cycles are restored.</p>
 </div>
 <p>Save in Node.js</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFileSync</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">compress</span><span class="p">),</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFileSync</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">compress</span><span class="p">),</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="nx">callback</span><span class="p">();</span>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
 
-<span class="p">};</span></pre></div>
+<span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -196,7 +211,7 @@ Upon loading, the cycles are restored.</p>
   <div class="summary">
 <div class="pilwrap" id="nddb.load">
   <h3>
-    <a href="#nddb.load" class="pilcrow">&#182;</a>
+    <a href="#nddb.load" name="nddb.load" class="pilcrow">&#182;</a>
     NDDB.load
   </h3>
 </div>
@@ -246,13 +261,15 @@ Upon loading, the cycles are restored.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <a href=" ">https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+      <a href="https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
+">https://github.com/douglascrockford/JSON-js/blob/master/cycle.js
 </a>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">loadCb</span><span class="p">,</span> <span class="nx">loadedString</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_getConstrName</span><span class="p">()</span> <span class="o">+</span> 
@@ -262,7 +279,9 @@ Upon loading, the cycles are restored.</p>
     <span class="nx">loadCb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">items</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="nx">items</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">items</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">items</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -272,7 +291,8 @@ Upon loading, the cycles are restored.</p>
 </div>
 <p>retrocycle if possible</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">NDDB</span><span class="p">.</span><span class="nx">retrocycle</span><span class="p">(</span><span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">NDDB</span><span class="p">.</span><span class="nx">retrocycle</span><span class="p">(</span><span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">items</span><span class="p">);</span>
     <span class="p">}</span>
@@ -280,7 +300,11 @@ Upon loading, the cycles are restored.</p>
     <span class="nx">loadedString</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">);</span>
     <span class="nx">loadCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">loadedString</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-<span class="p">};</span></pre></div>
+<span class="p">};</span>
+
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -288,7 +312,7 @@ Upon loading, the cycles are restored.</p>
   <div class="summary">
 <div class="pilwrap" id="nddb.loadcsv">
   <h3>
-    <a href="#nddb.loadcsv" class="pilcrow">&#182;</a>
+    <a href="#nddb.loadcsv" name="nddb.loadcsv" class="pilcrow">&#182;</a>
     NDDB.loadCSV
   </h3>
 </div>
@@ -329,15 +353,20 @@ Upon loading, the cycles are restored.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <a href=" ">https://github.com/koles/ya-csv
+      <a href="https://github.com/koles/ya-csv
+">https://github.com/koles/ya-csv
 </a>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">loadCSV</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">loadCSV</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">reader</span><span class="p">,</span> <span class="nx">that</span><span class="p">;</span>
-    <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div>
+    <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -347,7 +376,8 @@ Upon loading, the cycles are restored.</p>
 </div>
 <p>Mix options</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">columnsFromHeader</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">options</span><span class="p">.</span><span class="nx">columnsFromHeader</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>

@@ -75,7 +75,7 @@ program
         var dockerDir, command, child;
         console.log('Building documentation for NDDB v.' + version);
         try {
-            dockerDir = J.resolveModuleDir('docker');
+            dockerDir = J.resolveModuleDir('docker', rootDir);
         }
         catch(e) {
             console.log('module Docker not found. Cannot build doc. ' +
