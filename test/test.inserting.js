@@ -5,8 +5,8 @@ NDDB = require('./../nddb').NDDB;
 var db = new NDDB();
 
 var update =  {           // On every insert and remove:
-    indexes:  true,   // updates the indexes, if any  
-    sort:     true,   // sorts the items of the database 
+    indexes:  true,   // updates the indexes, if any
+    sort:     true,   // sorts the items of the database
     pointer:  true,   // moves the iterator pointer to the last inserted element
 };
 
@@ -57,35 +57,35 @@ var items = [
         title: "Olympia",
         year: 1863
     }
-    
+
 ];
 
 describe('NDDB Single Inserting', function(){
     beforeEach(function(){
 	db.clear(true);
     });
-    
-    
+
+
     it('number', function(){
     	db.insert(1);
     	db.size().should.be.eql(0);
-    });  
+    });
 
     it('string', function(){
     	db.insert('foo');
     	db.size().should.be.eql(0);
     });
-    
+
     it('NaN', function(){
     	db.insert(NaN);
     	db.size().should.be.eql(0);
     });
-    
+
     it('Infinity', function(){
     	db.insert(Infinity);
     	db.size().should.be.eql(0);
     });
-    
+
 });
 
 describe('NDDB Inserting a Collection', function(){
@@ -94,11 +94,11 @@ describe('NDDB Inserting a Collection', function(){
 	db.init({update: update});
 	db.importDB(items);
     });
-    
-    
+
+
     it('should update the database length', function(){
     	db.size().should.be.eql(items.length);
-    });  
+    });
 
     it('should not affect the indexing options', function(){
     	db.__update.should.be.eql(update);

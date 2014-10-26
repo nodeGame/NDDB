@@ -36,7 +36,7 @@ var items = [
         title: "Olympia",
         year: 1863
     },
-    
+
 ];
 
 
@@ -48,7 +48,7 @@ describe('Extending NDDB', function() {
     });
 
     describe('#addFilter()',function() {
-    	
+
         it('should return all entries whose year is multiple of 2',function() {
             db.addFilter('%', function(d, value, comparator){
             	return function(elem) {
@@ -57,7 +57,7 @@ describe('Extending NDDB', function() {
             	    }
             	}
             });
-            
+
             db.select('year', '%', 2)
                 .execute()
                 .db.length.should.be.equal(2);

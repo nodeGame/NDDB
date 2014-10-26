@@ -82,9 +82,9 @@ program
                         'Do \'npm install docker\' to fix it.');
             return false;
         }
-        command = dockerDir + 'docker -i ' + rootDir + 
+        command = dockerDir + 'docker -i ' + rootDir +
             ' nddb.js lib/ -s true -o ' + rootDir + 'docs/';
-        
+
         child = exec(command, function (error, stdout, stderr) {
             util.print(stdout);
             util.print(stderr);

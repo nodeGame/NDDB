@@ -31,7 +31,7 @@ function ADB() {
     });
     this.view('vi', function(i) {
         return i.id;
-    }); 
+    });
 }
 
 ADB.prototype.remove = function(id) {
@@ -40,12 +40,12 @@ ADB.prototype.remove = function(id) {
 
 var adb, adb2;
 
-describe('ADB inherited class with view, index, and hash', function() {	
+describe('ADB inherited class with view, index, and hash', function() {
     before(function() {
         adb = new ADB();
     });
     describe("#constructor()",function() {
-    	
+
         it("created obj should have empty index", function() {
             ('undefined' !== typeof adb.id).should.be.true;
         });
@@ -61,16 +61,16 @@ describe('ADB inherited class with view, index, and hash', function() {
         });
         it("created obj should have view with empty hash", function() {
             ('undefined' !== typeof adb.vi.ha).should.be.true;
-        });        
-        
+        });
+
     });
 
     describe("#insert()",function() {
-    	
+
         it("should return add 1 item to adb", function() {
             adb.insert({id: 1});
             adb.size().should.be.eql(1);
-        });    
+        });
         it("hash should have non-empty index", function() {
             ('undefined' !== typeof adb.ha[1].id).should.be.true;
             adb.ha[1].id.size().should.be.eql(1);
@@ -97,7 +97,7 @@ describe('ADB inherited class with view, index, and hash', function() {
         it("adb2 should be instance of ADB", function() {
             adb.constructor.name.should.equal('ADB');
             ('function' === typeof adb.remove).should.be.true;
-        });    
+        });
     });
 
     describe("removing from index",function() {
@@ -107,7 +107,7 @@ describe('ADB inherited class with view, index, and hash', function() {
         it("should reduce db size to 0", function() {
             adb.size().should.be.eql(0);
         });
-        
+
         it("should reduce view size to 0", function() {
             adb.vi.size().should.be.eql(0);
         });

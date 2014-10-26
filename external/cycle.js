@@ -11,7 +11,7 @@
 
 	** Important!!
     MODIFIED TO ALLOW FUNCTIONS, undefined and null to pass through
-    
+
 */
 
 /*jslint evil: true, regexp: true */
@@ -96,9 +96,9 @@ if (typeof JSON.decycle !== 'function') {
                 	if ('function' === typeof value) {
                 		return value;
                 	}
-                	
+
                 	// If it is an object, replicate the object.
-                	
+
                     nu = {};
                     for (name in value) {
                         if (Object.prototype.hasOwnProperty.call(value, name)) {

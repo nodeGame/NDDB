@@ -38,7 +38,7 @@ var hashable = [
         painter: "Manet",
         title: "Olympia",
         year: 1863
-    },           
+    },
 ];
 
 var not_hashable = [
@@ -73,7 +73,7 @@ var hashPainter = function(o) {
 var array_fetch_values = [];
 for (i=0; i < all_items.length; i++) {
     J.augment(array_fetch_values, all_items[i], J.keys(all_items[i]));
-} 
+}
 
 // Array for .fetchArray()
 var array_of_all_items = new Array();
@@ -117,7 +117,7 @@ for(var entry in Object.keys(all_items)) {
 
 describe('NDDB Fetching', function() {
     //fetch, fetchArray, fetchKeyArray
-    
+
     before(function() {
         db.importDB(hashable);
         db.importDB(not_hashable);
@@ -147,19 +147,19 @@ describe('NDDB Fetching', function() {
                 db.fetchValues('title').should.eql({title: should_be_like_this});
             });
         });
-        
+
         describe('passing two keys: [\'painter\',\'year\'] as argument',function() {
             it('should be like this ',function() {
                 var should_be_like_this = {
                     painter: ['Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet'],
                     year: [0, 1929, 1927, 1906, 1891, 1863]
                 };
-                
+
                 db.fetchValues(['painter','year']).should.eql(should_be_like_this);
             });
         });
     });
-    
+
     describe('#fetchArray()',function() {
 	describe('the complete database',function() {
 	    it('should be like the Array of all the items',function() {
@@ -177,8 +177,8 @@ describe('NDDB Fetching', function() {
 		var should_be_like_this = [ ['Jesus', 0], ['Dali', 1929], ['Dali', 1927], ['Monet', 1906], ['Monet', 1891], ['Manet', 1863] ];
 		db.fetchArray(['painter','year']).should.eql(should_be_like_this);
 	    });
-	}); 
-	
+	});
+
     });
 
     describe('#fetchKeyArray()',function() {
@@ -198,10 +198,10 @@ describe('NDDB Fetching', function() {
 		var should_be_like_this = [];
 		db.fetchKeyArray('1h2eh7').should.eql(should_be_like_this);
 	    });
-	});    
+	});
 	describe('passing two keys: [\'painter\',\'year\'] as argument',function() {
 	    it('should be like this ',function() {
-		var should_be_like_this = [ [ 'painter', 'Jesus', 'year', 0 ], [ 'painter', 'Dali', 'year', 1929 ], [ 'painter', 'Dali', 'year', 1927 ], 
+		var should_be_like_this = [ [ 'painter', 'Jesus', 'year', 0 ], [ 'painter', 'Dali', 'year', 1929 ], [ 'painter', 'Dali', 'year', 1927 ],
 		                            [ 'painter', 'Monet', 'year', 1906 ], [ 'painter', 'Monet', 'year', 1891 ], [ 'painter', 'Manet', 'year', 1863 ]
 		                          ];
 		db.fetchKeyArray(['painter','year']).should.eql(should_be_like_this);

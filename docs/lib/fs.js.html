@@ -131,7 +131,7 @@ NDDB file systems routines</p>
 
 <p>Saves to the file system using the standard <code>fs.writeFile</code> method.</p>
 
-<p>Cyclic objects are decycled, and do not cause errors. 
+<p>Cyclic objects are decycled, and do not cause errors.
 Upon loading, the cycles are restored.</p>
   </div>
   <div class="details">
@@ -139,7 +139,7 @@ Upon loading, the cycles are restored.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">file</span>
       <span class="dox_type">string</span>
-      <span>The file system path, or the identifier 
+      <span>The file system path, or the identifier
   for the browser database</span>
     </div>
     <div class="dox_tag_detail">
@@ -228,13 +228,13 @@ Upon loading, the cycles are restored.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">file</span>
       <span class="dox_type">string</span>
-      <span>The file system path, or the identifier 
+      <span>The file system path, or the identifier
   for the browser database</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">cb</span>
       <span class="dox_type">function</span>
-      <span>Optional. A callback to execute after 
+      <span>Optional. A callback to execute after
   the database is loaded</span>
     </div>
     <div class="dox_tag_title">Returns</div>
@@ -272,7 +272,7 @@ Upon loading, the cycles are restored.</p>
 <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">loadCb</span><span class="p">,</span> <span class="nx">loadedString</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_getConstrName</span><span class="p">()</span> <span class="o">+</span> 
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_getConstrName</span><span class="p">()</span> <span class="o">+</span>
                             <span class="s1">&#39;.load: you must specify a valid file name.&#39;</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -332,7 +332,7 @@ Upon loading, the cycles are restored.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">cb</span>
       <span class="dox_type">function</span>
-      <span>Optional. A callback to execute after 
+      <span>Optional. A callback to execute after
   the database is loaded</span>
     </div>
     <div class="dox_tag_detail">

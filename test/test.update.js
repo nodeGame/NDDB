@@ -36,7 +36,7 @@ var items = [
                  title: "Olympia",
                  year: 1863
              },
-             
+
 ];
 
 
@@ -48,14 +48,14 @@ describe('Updating NDDB', function() {
     });
 
     describe('#update()',function() {
-    	
+
 
         it('should add an \'old\' tag on old paintings',function() {
-            
+
             db.select('year', '<', 1900)
               .execute()
               .update({old: true});
-            
+
             db.select('old').execute().db.length.should.be.eql(3);
         });
     });

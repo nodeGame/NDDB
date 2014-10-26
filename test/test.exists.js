@@ -19,10 +19,10 @@ describe('NDDB exists', function(){
 	before(function(){
 		db.insert(o);
 	});
-	
+
     it('should find an object', function(){
     	db.exists(o).should.be.true;
-    });  
+    });
 
     it('should NOT find an object', function(){
     	db.exists({a:1}).should.be.false;

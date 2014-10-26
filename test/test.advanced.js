@@ -50,12 +50,12 @@ var items = [
         title: "Olympia",
         year: 1863
     }
-    
+
 ];
 
 
 var items_for_concat = [
-    
+
     {
         painter: "Dali",
         title: "Portrait of Paul Eluard",
@@ -101,7 +101,7 @@ var items_for_groupby = [
         painter: "Monet",
         title: "Wheatstacks (End of Summer)",
         year: 1891,
-    },            
+    },
 
 ];
 
@@ -131,7 +131,7 @@ describe('NDDB Advanced Operation', function() {
         before(function() {
             group_db = new NDDB();
             group_db.importDB(items_for_groupby);
-            group_db_2 = group_db.groupBy('fake');            
+            group_db_2 = group_db.groupBy('fake');
         });
         it('result should be two items',function() {
             group_db_2.length.should.eql(2);
@@ -157,7 +157,7 @@ describe('NDDB Advanced Operation', function() {
                 year: 1906,
                 fake: false,
             });
-        });        
+        });
     });
 
     describe('#split()',function() {
@@ -186,11 +186,11 @@ describe('NDDB Advanced Operation', function() {
                 split_db_2.size().should.be.eql(db.size());
             });
         });
-        
+
     });
-    
+
     describe('#join()',function() {
-    	
+
     	describe('parameter set (painter, painter)',function() {
             before(function() {
                 join_db = null;
@@ -209,24 +209,24 @@ describe('NDDB Advanced Operation', function() {
                 }
                 trues.should.eql(9);
             });
-            
+
             it('joined properties should be a copy of the original item',function() {
                 join_db.each(function(e) {
                     var painter = e.joined.painter;
                     var year = e.joined.year;
                     var title = e.joined.title;
-                    
+
                     var original = db.select('painter', '=', painter)
 			.and('year', '=', year)
 			.and('title', '=', title)
 			.execute()
 			.first();
-                    
+
                     e.joined.should.be.eql(original);
                 });
-                
+
             });
-            
+
             // Value 7 is the addition of the following calculation
             // x!/(2!*(x-2)!) for each painter
             it('should have 16 entries if using splited db',function() {
@@ -235,7 +235,7 @@ describe('NDDB Advanced Operation', function() {
             });
 
         });
-        
+
     	describe('parameter set (painter, painter, xxx)',function() {
             before(function() {
                 join_db = null;
@@ -254,26 +254,26 @@ describe('NDDB Advanced Operation', function() {
                 }
                 trues.should.eql(9);
             });
-            
+
             it('joined properties should be a copy of the original item',function() {
                 join_db.each(function(e) {
                     var painter = e.xxx.painter;
                     var year = e.xxx.year;
                     var title = e.xxx.title;
-                    
+
                     var original = db.select('painter', '=', painter)
 			.and('year', '=', year)
 			.and('title', '=', title)
 			.execute()
 			.first();
-                    
+
                     e.xxx.should.be.eql(original);
                 });
-                
+
             });
         });
-        
-    	
+
+
         describe('parameter set (painter,painter,joined,[painter,title,year, portrait])',function() {
             before(function() {
                 join_db = null;
@@ -292,24 +292,24 @@ describe('NDDB Advanced Operation', function() {
                 }
                 trues.should.eql(9);
             });
-            
+
             it('joined properties should be a copy of the original item',function() {
                 join_db.each(function(e) {
                     var painter = e.joined.painter;
                     var year = e.joined.year;
                     var title = e.joined.title;
-                    
+
                     var original = db.select('painter', '=', painter)
 			.and('year', '=', year)
 			.and('title', '=', title)
 			.execute()
 			.first();
-                    
+
                     e.joined.should.be.eql(original);
                 });
-                
+
             });
-            
+
             // Value 7 is the addition of the following calculation
             // x!/(2!*(x-2)!) for each painter
             it('should have 16 entries if using splited db',function() {
@@ -318,8 +318,8 @@ describe('NDDB Advanced Operation', function() {
             });
 
         });
-        
-        
+
+
         describe('parameter set (painter,title,undefined,[title,year])',function() {
             before(function() {
                 join_db = null;
@@ -342,7 +342,7 @@ describe('NDDB Advanced Operation', function() {
                 var join_db_2 = split_db.join('painter','title',undefined,['title','year']);
                 join_db_2.size().should.be.eql(2);
             });
-            
+
         });
         describe('parameter set (painter,painter,undefined,year)',function() {
             before(function() {
@@ -368,7 +368,7 @@ describe('NDDB Advanced Operation', function() {
                 var join_db_2 = split_db.join('painter','painter',undefined,'year');
                 join_db_2.size().should.be.eql(16);
             });
-            
+
         });
         describe("invalid parameter set ('painter',undefined,undefined,'year')",function() {
             before(function() {
@@ -380,7 +380,7 @@ describe('NDDB Advanced Operation', function() {
                 join_db.db.length.should.be.eql(0);
             });
         });
-        
+
     });
 
 
@@ -405,16 +405,16 @@ describe('NDDB Advanced Operation', function() {
                         stat_ar[concat_db.db[key]['friend']['title']]++;
                     }
                     if ((typeof stat_ar[concat_db.db[key]['title']]) == 'undefined') {
-                        
+
                         stat_ar[concat_db.db[key]['title']] = 1;
                     }
                     else {
                         stat_ar[concat_db.db[key]['title']]++;
                     }
-                }    
+                }
                 for (var key in stat_ar) {
                     stat_ar[key].should.be.eql(2);
-                }     
+                }
             });
         });
         describe('second parameter set',function() {
@@ -434,10 +434,10 @@ describe('NDDB Advanced Operation', function() {
                 total_sum.should.be.eql(11524);
             });
         });
-        
+
 
 
     });
-    
+
 });
 

@@ -37,7 +37,7 @@ var items = [
         title: "Olympia",
         year: 1863
     },
-    
+
 ];
 
 var items_less = [
@@ -54,7 +54,7 @@ var items_less = [
 ];
 
 
-describe('NDDB skim', function() {	
+describe('NDDB skim', function() {
 
     describe("#skim('year')",function() {
     	var skim;
@@ -74,7 +74,7 @@ describe('NDDB skim', function() {
             })
                 });
     });
-    
+
     describe("#skim('portrait')",function() {
     	var skim;
         before(function() {
@@ -93,7 +93,7 @@ describe('NDDB skim', function() {
             })
                 });
     });
-    
+
     describe("#skim(['portrait', 'year', 'painter', 'title']) #all properties",function() {
     	var skim;
         before(function() {
@@ -105,12 +105,12 @@ describe('NDDB skim', function() {
         it("should return 0 items",function() {
             skim.size().should.be.eql(0);
 
-        });        
+        });
     });
 });
 
 
-describe('NDDB keep', function() {	
+describe('NDDB keep', function() {
 
     describe("#keep('year')",function() {
     	var keep;
@@ -130,7 +130,7 @@ describe('NDDB keep', function() {
             })
                 });
     });
-    
+
     describe("#keep('portrait')",function() {
     	var keep;
         before(function() {
@@ -143,7 +143,7 @@ describe('NDDB keep', function() {
             keep.size().should.be.eql(1);
 
         });
-        
+
         it("should create a database where all items have only the 'portrait' property", function() {
             keep.each(function(e) {
             	JSUS.size(e).should.be.eql(1);
@@ -151,7 +151,7 @@ describe('NDDB keep', function() {
             })
                 });
     });
-    
+
     describe("#keep(['portrait','year'])",function() {
     	var keep;
         before(function() {
@@ -163,7 +163,7 @@ describe('NDDB keep', function() {
         it("should return " + items.length + " items",function() {
             keep.size().should.be.eql(items.length);
         });
-        
+
         it("should create a database where all items have only the 'portrait', and 'year' properties", function() {
             keep.each(function(e) {
             	JSUS.size(e).should.not.be.above(2);
@@ -175,7 +175,7 @@ describe('NDDB keep', function() {
             })
                 });
     });
-    
+
     describe("#keep('xxx') [unexisting property]",function() {
     	var keep;
         before(function() {

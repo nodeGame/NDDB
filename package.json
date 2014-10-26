@@ -9,7 +9,7 @@
   ],
   "dependencies": {
     "es5-shim": "1.2.10",
-    "shelf.js": ">= 0.3.2",	
+    "shelf.js": ">= 0.3.2",
     "commander": "1.0.0",
     "smoosh": "0.4.0",
     "JSUS": ">= 0.7.3",

@@ -36,7 +36,7 @@ var items = [
         title: "Olympia",
         year: 1863
     },
-    
+
 ];
 
 var items_less = [
@@ -55,7 +55,7 @@ var items_less = [
 
 describe('NDDB Diff', function() {
     //diff, intersect
-    
+
     before(function() {
     	db = new NDDB();
         db.importDB(items);
@@ -92,7 +92,7 @@ describe('NDDB Diff', function() {
             different_db.importDB(items_less);
             difference = db.intersect(different_db);
         });
- 
+
         it("db.size() should be 1",function() {
             difference.size().should.be.eql(1);
         });

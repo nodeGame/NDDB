@@ -36,7 +36,7 @@ var items = [
         title: "Olympia",
         year: 1863
     },
-    
+
 ];
 
 
@@ -54,7 +54,7 @@ describe('NDDB Tagging', function() {
                 db.tag('someone');
                 db.resolveTag('someone').should.eql(items[5]);
             });
-            
+
             it('should return the entry number 4',function() {
                 db.previous();
                 db.tag('a other one');
@@ -80,7 +80,7 @@ describe('NDDB Tagging', function() {
                 Object.keys(db.tags).length.should.eql(3);
             });
         });
-        
+
         describe('tagging and other operations',function() {
             it('tag should not change with sorting',function() {
             	var tagged = db.tag('someone');
@@ -101,9 +101,9 @@ describe('NDDB Tagging', function() {
                 db.resolveTag('someone').should.be.eql(tagged);
             });
         });
-        
+
     });
-    
+
 
 
 

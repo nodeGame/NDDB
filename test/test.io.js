@@ -42,7 +42,7 @@ var hashable = [
         painter: "Manet",
         title: "Olympia",
         year: 1863
-    },           
+    },
 ];
 
 var not_hashable = [
@@ -65,9 +65,9 @@ var not_hashable = [
 
 
 var weirdos = [
-    undefined, 
-    null, 
-    {}, 
+    undefined,
+    null,
+    {},
     function(){console.log('foo')},
     {
     	a: undefined,
@@ -77,7 +77,7 @@ var weirdos = [
     }];
 
 var weirdos_import = [
-    {}, 
+    {},
     function(){console.log('foo')},
     {
        	a: undefined,
@@ -87,7 +87,7 @@ var weirdos_import = [
     }];
 
 var weirdos_load = [
-    {}, 
+    {},
     {},
     {
       	b: null,
@@ -100,7 +100,7 @@ var weirdos_load = [
 var base_cycle = {
     a: 1,
     b: 2,
-    c: {a: 1, 
+    c: {a: 1,
 	b: {foo: 1},
        },
 };
@@ -140,9 +140,9 @@ var deleteIfExist = function(cb) {
 
 
 var testSaveLoad = function(items, compareToImport, compareToLoad) {
-    
+
     describe('#save()', function(){
-	
+
 	before(function() {
 	    deleteIfExist(function(){
 		db2.clear(true);
@@ -151,13 +151,13 @@ var testSaveLoad = function(items, compareToImport, compareToLoad) {
                	db.save(filename);
 	    });
 	});
-	
+
 	it('should create a dump file', function() {
 	    JSUS.existsSync(filename).should.be.true;
 	});
-	
+
 	it('original database should be unchanged', function() {
-	    
+
 	    if (compareToImport) {
 		JSUS.equals(db.db, compareToImport).should.be.true;
 	    }
@@ -165,9 +165,9 @@ var testSaveLoad = function(items, compareToImport, compareToLoad) {
 		db.db.should.be.eql(items);
 	    }
 	});
-	
+
     });
-    
+
     describe('#load()', function(){
 	before(function() {
 	    db2.load(filename);
@@ -175,7 +175,7 @@ var testSaveLoad = function(items, compareToImport, compareToLoad) {
 	after(function() {
 	    deleteIfExist();
 	});
-	
+
 	it('the loaded database should be a copy of the saved one', function() {
 	    if (compareToLoad) {
 		JSUS.equals(db2.db, compareToLoad).should.be.true;
@@ -183,9 +183,9 @@ var testSaveLoad = function(items, compareToImport, compareToLoad) {
 	    else {
 		JSUS.equals(db.db, db2.db).should.be.true;
 	    }
-	    
+
 	});
-	
+
     });
 };
 
@@ -193,54 +193,54 @@ var testSaveLoad = function(items, compareToImport, compareToLoad) {
 //for (var i=0; i<1000; i++){
 
 describe('NDDB io operations.', function(){
-    
+
     describe('Cycle / Decycle.', function(){
-	
+
 	describe('Not Hashable items', function(){
 	    testSaveLoad(not_hashable);
 	});
-	
+
 	describe('Hashable items.', function(){
 	    testSaveLoad(hashable);
 	});
-	
+
 	describe('Weirdos items.', function(){
             //(function(){
-                testSaveLoad(weirdos, weirdos_import);   
+                testSaveLoad(weirdos, weirdos_import);
             //}).should.throw(/^NDDB.*/);
-	    
+
 	});
-	
+
 	describe('Cycles items', function(){
 	    testSaveLoad(cycles);
 	});
 
     });
-    
+
     describe('Without Cycle / Decycle.', function(){
 	before(function(){
 	    delete JSON.decycle;
 	    delete JSON.retrocycle;
 	});
-	
+
 	describe('Not Hashable items', function(){
 	    testSaveLoad(not_hashable);
 	});
-	
+
 	describe('Hashable items.', function(){
 	    testSaveLoad(hashable);
 	});
-	
+
 	describe('Weirdos items.', function(){
 	    testSaveLoad(weirdos, weirdos_import);
 	});
-	
+
 	describe('Cycles items', function(){
 	    testSaveLoad(cycles);
 	});
 
     });
-    
+
 });
 
 // END STRESS

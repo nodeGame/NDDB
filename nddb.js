@@ -469,7 +469,7 @@
             RegExp.escape = function(str) {
                 return str.replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
             };
-            
+
             regex = RegExp.escape(value);
             regex = regex.replace(/%/g, '.*').replace(/_/g, '.');
             regex = new RegExp('^' + regex + '$', sensitive);
@@ -486,12 +486,12 @@
                         }
                     }
                 };
-            } 
+            }
             else if (d === '*') {
                 return function(elem) {
                     var d;
                     for (d in elem) {
-                        if ('undefined' !== typeof elem[d]) { 
+                        if ('undefined' !== typeof elem[d]) {
                             if (regex.test(elem[d])) {
                                 return elem;
                             }
@@ -501,7 +501,7 @@
             }
             else {
                 return function(elem) {
-                    if ('undefined' !== typeof elem[d]) { 
+                    if ('undefined' !== typeof elem[d]) {
                         if (regex.test(elem[d])) {
                             return elem;
                         }
@@ -510,15 +510,15 @@
             }
         }
 
-        // Like operator (Case Sensitive). 
+        // Like operator (Case Sensitive).
         this.filters['LIKE'] = function likeOperator(d, value, comparator) {
             return generalLike(d, value, comparator);
         };
-    
-        // Like operator (Case Insensitive). 
+
+        // Like operator (Case Insensitive).
         this.filters['iLIKE'] = function likeOperatorI(d, value, comparator) {
             return generalLike(d, value, comparator, 'i');
-        };            
+        };
 
     };
 
@@ -834,7 +834,7 @@
 
         // Cloning.
         options = J.clone(options);
-        
+
         // Removing unwanted options.
         for (i in leaveOut) {
             if (leaveOut.hasOwnProperty(i)) {
@@ -1284,7 +1284,7 @@
                 this._viewIt(o);
             };
         }
- 
+
         // Reset current indexes.
         this.resetIndexes({h: h, v: v, i: i});
 
@@ -1324,7 +1324,7 @@
                         }
                     }
                 }
-                if ('undefined' !== typeof index) { 
+                if ('undefined' !== typeof index) {
                     if (!this[key]) this[key] = new NDDBIndex(key, this);
                     this[key]._add(index, dbidx);
                 }
@@ -1480,8 +1480,8 @@
     function queryError(text, d, op, value) {
         var miss, err;
         miss = '(?)';
-        err = this._getConstrName() + '._analyzeQuery: ' + text + 
-            '. Malformed query: ' + d || miss + ' ' + op || miss + 
+        err = this._getConstrName() + '._analyzeQuery: ' + text +
+            '. Malformed query: ' + d || miss + ' ' + op || miss +
             ' ' + value || miss + '.';
         throw new Error(err);
     }
@@ -1523,7 +1523,7 @@
             if (J.in_array(op,['><', '<>', 'in', '!in'])) {
 
                 if (!(value instanceof Array)) {
-                    errText = 'range-queries need an array as third parameter';                        
+                    errText = 'range-queries need an array as third parameter';
                     queryError.call(this, errText, d, op, value);
                 }
                 if (op === '<>' || op === '><') {
@@ -2132,7 +2132,7 @@
                         if (comparator(foreign_key, key)) {
                             // Inject the matched obj into the reference one.
                             o = J.clone(this.db[i]);
-                            o2 = select ? 
+                            o2 = select ?
                                 J.subobj(this.db[j], select) : this.db[j];
                             o[pos] = o2;
                             out.push(o);

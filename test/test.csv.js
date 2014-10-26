@@ -15,7 +15,7 @@ var filename = __dirname + '/data.csv';
 describe('#loadCSV()', function(){
 
     it('should load a csv file with default options', function() {
-      
+
         db.loadCSV(filename, function() {
             db.size().should.eql(4);
             db.last().should.be.eql({
@@ -24,11 +24,11 @@ describe('#loadCSV()', function(){
                 C: "12",
                 D: "Z4"
             });
-                                     
+
         });
-	
+
     });
-    
+
 });
 
 

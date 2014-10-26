@@ -5,7 +5,7 @@ JSUS = require('JSUS').JSUS;
 
 var cycle = {};
 
-var options = {    
+var options = {
     shared: {
         a: 1,
         b: 2,
@@ -55,7 +55,7 @@ var items = [
         title: "Olympia",
         year: 1863
     },
-    
+
 ];
 
 db = new NDDB(options);
@@ -73,7 +73,7 @@ describe('NDDB cloneSettings', function() {
         db.__shared.should.be.type('object');
     });
 
-    it('should copy shared properties by reference with breed method', 
+    it('should copy shared properties by reference with breed method',
        function(){
 
         var db2 = db.breed();

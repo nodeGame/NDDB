@@ -39,7 +39,7 @@ var items = [
         title: "Olympia",
         year: 1863
     },
-    
+
 ];
 
 
@@ -48,7 +48,7 @@ describe('NDDB Selecting', function() {
         it('should select all paintings from Dali', function(){
             db.select('painter', '=', 'Dali')
               .execute()
-              .db.length.should.equal(2); 
+              .db.length.should.equal(2);
         });
 
         it('should select all portraits', function(){
@@ -62,101 +62,101 @@ describe('NDDB Selecting', function() {
               .execute()
               .db.length.should.equal(5);
         })
-        
+
         it('should select all painting of the beginning of the XX centuries', function(){
            db.select('year', '><', [1900, 1910])
              .execute()
-             .db.length.should.equal(1); 
+             .db.length.should.equal(1);
         });
-        
+
         it('should select all painting *not* between 1900 and 1999', function(){
            db.select('year', '<>', [1900, 1999])
                 .execute()
-                .db.length.should.equal(3); 
+                .db.length.should.equal(3);
         });
-        
+
         it('should select all paintings made by Dali and Monet', function(){
             db.select('painter', 'in', ['Dali','Monet'])
                 .execute()
-                .db.length.should.equal(4); 
+                .db.length.should.equal(4);
         });
 
         it('should select all paintings *not* made by Dali and Monet', function(){
             db.select('painter', '!in', ['Dali','Monet'])
                 .execute()
-                .db.length.should.equal(2); 
+                .db.length.should.equal(2);
         });
-      
+
         it('passing from parameter to >< should work like >', function(){
            db.select('year', '><', [1900])
-             .execute().db.length.should.equal(3); 
+             .execute().db.length.should.equal(3);
         });
         it('passing from parameter to the >< should not accept numbers', function(){
            db.select('painter', '><', ['Monet'])
              .execute()
-             .db.length.should.equal(0); 
-        });  
+             .db.length.should.equal(0);
+        });
 
         it('selecting one of the posibles titles', function(){
            db.select('title', '=', 'Das finstere Spiel oder Unheilvolles Spiel')
            	 .execute()
-           	 .db.length.should.equal(0); 
+           	 .db.length.should.equal(0);
         });
 
         it('selecting one an not-existing field should not return results', function(){
            db.select('year2', '>', 1)
            	.execute()
-           	.db.length.should.equal(0); 
+           	.db.length.should.equal(0);
         });
     });
-    
-  
+
+
     describe('#select up to three conditions',function() {
-        
+
         it('should select all paintings from Dali that are from before 1928', function(){
            db.select('painter', '=', 'Dali')
              .and('year', '<', 1928)
              .execute()
-             .db.length.should.equal(1); 
+             .db.length.should.equal(1);
         });
-        
+
         it('should select all painting not made by Dali and Jesus', function(){
             debugger;
             var res = db.select('painter', '!in', ['Dali'])
             	.and('painter', '!in', ['Jesus'])
             	.execute();
-            res.db.length.should.equal(3); 
+            res.db.length.should.equal(3);
         });
-     
+
         it('selecting a translation of a title', function(){
            db.select('title.de', '==', 'Wasser Lilies')
              .execute()
-             .db.length.should.equal(1); 
+             .db.length.should.equal(1);
            db.select('title.de', '==', ['Wasser Lilies'])
            	 .and('painter','=','Manet')
            	 .execute()
            	 .db.length.should.be.eql(0);
         });
-        
+
         it('should select all paintings from Dali OR Monet', function(){
             db.select('painter', '=', 'Dali')
               .or('painter', '=', 'Monet')
               .execute()
-              .db.length.should.equal(4); 
+              .db.length.should.equal(4);
          });
-        
+
         it('should select all paintings from Dali OR Monet that are from before 1928', function(){
             db.select('painter', '=', 'Dali')
               .or('painter', '=', 'Monet')
               .and('year', '<', 1928)
               .execute()
-              .db.length.should.equal(3); 
+              .db.length.should.equal(3);
          });
-     
-    });  
+
+    });
 
     describe('#select more than 3 conditions',function() {
-        
+
         it('should select all paintings from Dali OR Monet that are from before 1928 OR are portrait', function(){
             db.select('painter', '=', 'Dali')
               .or('painter', '=', 'Monet')
@@ -165,7 +165,7 @@ describe('NDDB Selecting', function() {
               .execute()
               .db.length.should.equal(4);
          });
-        
+
         it('should select all paintings from Dali OR Monet OR Jesus that are from before 1928 OR are portrait', function(){
             db.select('painter', '=', 'Dali')
               .or('painter', '=', 'Jesus')
@@ -175,7 +175,7 @@ describe('NDDB Selecting', function() {
               .execute()
               .db.length.should.equal(5);
          });
-        
+
         it('should select all paintings from Dali AND Jesus (at the same time) OR Monet that are from before 1928 OR are portrait', function(){
             db.select('painter', '=', 'Dali')
               .and('painter', '=', 'Jesus')
@@ -185,7 +185,7 @@ describe('NDDB Selecting', function() {
               .execute()
               .db.length.should.equal(3); // 2 Monet that are before 1928 and 1 portrait
          });
-        
+
         it('should select all paintings from Dali AND Monet (at the same time) that are from before 1928 OR are portrait', function(){
             db.select('painter', '=', 'Dali')
               .and('painter', '=', 'Monet')
@@ -194,7 +194,7 @@ describe('NDDB Selecting', function() {
               .execute()
               .db.length.should.equal(1);
          });
-        
+
         it('should select all paintings from Dali OR Monet OR that are a portrait OR that are before 1928', function(){
             db.select('painter', '=', 'Dali')
               .or('painter', '=', 'Monet')
@@ -203,7 +203,7 @@ describe('NDDB Selecting', function() {
               .execute()
               .db.length.should.equal(6);
          });
-        
+
         it('should select all paintings from Dali OR Monet OR that are before 1928 OR that are a portrait ', function(){
             db.select('painter', '=', 'Dali')
               .or('painter', '=', 'Monet')
@@ -212,10 +212,10 @@ describe('NDDB Selecting', function() {
               .execute()
               .db.length.should.equal(6);
          });
-     
-    });  
-  
-    
+
+    });
+
+
     describe('#filter',function() {
         describe('',function() {
             before(function() {
@@ -241,13 +241,13 @@ describe('NDDB Selecting', function() {
         });
     });
 
-	
+
 
 
 
     before(function(){
     	db.clear(true);
-       	db = new NDDB(); 
+       	db = new NDDB();
        	db.importDB(items);
     });
 });

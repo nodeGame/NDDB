@@ -69,7 +69,7 @@
   - `#get()` always returns the element at the specified ordinal position in the database
   - Callback functions of hash and index functions must always be specified
   - Hash functions creates NDDB instances of constructor
-  
+
 
 ## 0.7.2
 
@@ -81,7 +81,7 @@
 
 ## 0.7.0
 
-  - More efficient selector engine. 
+  - More efficient selector engine.
   - Select queries can be chained with and, and or methods
   - Select queries are executed with an execute method
   - Objects are not maskeraded at insertation (no hidden .nddbid property injected)
@@ -120,7 +120,7 @@
   - NDDB.save beautifies the output by default
   - Post install scripts build the libraries
 
-## 0.3.0 
+## 0.3.0
 
   - NDDB.skim() and NDDB.keep()
   - Full test coverage

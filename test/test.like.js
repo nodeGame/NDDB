@@ -39,18 +39,18 @@ var items = [
         title: "Olympia",
         year: 1863
     },
-    
+
 ];
 
 db.importDB(items);
 
 describe('NDDB Like operator', function() {
-    
+
 
     describe('sensitive',function() {
         it('should select all paintings from Manet and Monet and Dali\'s Barcelonese Mannequien', function(){
             db.select('*', 'LIKE', '%M%')
-                .execute().db.length.should.equal(4); 
+                .execute().db.length.should.equal(4);
         });
         it('should select all paintings from Manet and Monet', function(){
             db.select('*', 'LIKE', 'M%')
@@ -68,17 +68,17 @@ describe('NDDB Like operator', function() {
             db.select('painter', 'LIKE', 'M_net')
                 .execute().db.length.should.equal(3);
         });
-       
+
     });
 
     describe('insensitive',function() {
         it('should select all paintings', function(){
             db.select('*', 'iLIKE', '%e%')
-                .execute().db.length.should.equal(6); 
+                .execute().db.length.should.equal(6);
         });
         it('should select all paintings, but Dali\'s Barcelonese Mannequien', function(){
             db.select(['painter', 'portrait'], 'iLIKE', '%e%')
-                .execute().db.length.should.equal(5); 
+                .execute().db.length.should.equal(5);
         });
     });
 });

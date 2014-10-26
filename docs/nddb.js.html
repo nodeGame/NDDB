@@ -1529,7 +1529,7 @@ overwrite the old operator.</p>
             <span class="nb">RegExp</span><span class="p">.</span><span class="nx">escape</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/([.*+?^=!:${}()|[\]\/\\])/g</span><span class="p">,</span> <span class="s1">&#39;\\$1&#39;</span><span class="p">);</span>
             <span class="p">};</span>
-            
+
             <span class="nx">regex</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
             <span class="nx">regex</span> <span class="o">=</span> <span class="nx">regex</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/%/g</span><span class="p">,</span> <span class="s1">&#39;.*&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/_/g</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
             <span class="nx">regex</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s1">&#39;^&#39;</span> <span class="o">+</span> <span class="nx">regex</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span><span class="p">,</span> <span class="nx">sensitive</span><span class="p">);</span>
@@ -1546,12 +1546,12 @@ overwrite the old operator.</p>
                         <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">};</span>
-            <span class="p">}</span> 
+            <span class="p">}</span>
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">d</span> <span class="o">===</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
                     <span class="kd">var</span> <span class="nx">d</span><span class="p">;</span>
                     <span class="k">for</span> <span class="p">(</span><span class="nx">d</span> <span class="k">in</span> <span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span> 
+                        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">regex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">]))</span> <span class="p">{</span>
                                 <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
                             <span class="p">}</span>
@@ -1561,7 +1561,7 @@ overwrite the old operator.</p>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span> 
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">])</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">regex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">elem</span><span class="p">[</span><span class="nx">d</span><span class="p">]))</span> <span class="p">{</span>
                             <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
                         <span class="p">}</span>
@@ -1585,7 +1585,7 @@ overwrite the old operator.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;LIKE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">likeOperator</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">generalLike</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">);</span>
         <span class="p">};</span>
-    
+
 
 </pre></div>
         </td>
@@ -1600,7 +1600,7 @@ overwrite the old operator.</p>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">filters</span><span class="p">[</span><span class="s1">&#39;iLIKE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">likeOperatorI</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">generalLike</span><span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">comparator</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">);</span>
-        <span class="p">};</span>            
+        <span class="p">};</span>
 
     <span class="p">};</span>
 
@@ -2226,7 +2226,7 @@ are cloned.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
-        
+
 
 </pre></div>
         </td>
@@ -3145,7 +3145,7 @@ the entry does not belong to any view of the index.</p>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_viewIt</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
             <span class="p">};</span>
         <span class="p">}</span>
- 
+
 
 </pre></div>
         </td>
@@ -3247,7 +3247,7 @@ added with another index delete the old one.</p>
                         <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span> 
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDBIndex</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
                     <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">_add</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">dbidx</span><span class="p">);</span>
                 <span class="p">}</span>
@@ -3570,8 +3570,8 @@ the rest will be passed to the event listeners.</p>
     <span class="kd">function</span> <span class="nx">queryError</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">op</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">miss</span><span class="p">,</span> <span class="nx">err</span><span class="p">;</span>
         <span class="nx">miss</span> <span class="o">=</span> <span class="s1">&#39;(?)&#39;</span><span class="p">;</span>
-        <span class="nx">err</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getConstrName</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;._analyzeQuery: &#39;</span> <span class="o">+</span> <span class="nx">text</span> <span class="o">+</span> 
-            <span class="s1">&#39;. Malformed query: &#39;</span> <span class="o">+</span> <span class="nx">d</span> <span class="o">||</span> <span class="nx">miss</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">op</span> <span class="o">||</span> <span class="nx">miss</span> <span class="o">+</span> 
+        <span class="nx">err</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getConstrName</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;._analyzeQuery: &#39;</span> <span class="o">+</span> <span class="nx">text</span> <span class="o">+</span>
+            <span class="s1">&#39;. Malformed query: &#39;</span> <span class="o">+</span> <span class="nx">d</span> <span class="o">||</span> <span class="nx">miss</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">op</span> <span class="o">||</span> <span class="nx">miss</span> <span class="o">+</span>
             <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">value</span> <span class="o">||</span> <span class="nx">miss</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">;</span>
         <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
     <span class="p">}</span>
@@ -3673,7 +3673,7 @@ the rest will be passed to the event listeners.</p>
             <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">op</span><span class="p">,[</span><span class="s1">&#39;&gt;&lt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;!in&#39;</span><span class="p">]))</span> <span class="p">{</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">value</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">errText</span> <span class="o">=</span> <span class="s1">&#39;range-queries need an array as third parameter&#39;</span><span class="p">;</span>                        
+                    <span class="nx">errText</span> <span class="o">=</span> <span class="s1">&#39;range-queries need an array as third parameter&#39;</span><span class="p">;</span>
                     <span class="nx">queryError</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">errText</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">op</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;&lt;&gt;&#39;</span> <span class="o">||</span> <span class="nx">op</span> <span class="o">===</span> <span class="s1">&#39;&gt;&lt;&#39;</span><span class="p">)</span> <span class="p">{</span>
@@ -5181,7 +5181,7 @@ specify the name of the properties to copy as an input parameter.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
                             <span class="nx">o</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-                            <span class="nx">o2</span> <span class="o">=</span> <span class="nx">select</span> <span class="o">?</span> 
+                            <span class="nx">o2</span> <span class="o">=</span> <span class="nx">select</span> <span class="o">?</span>
                                 <span class="nx">J</span><span class="p">.</span><span class="nx">subobj</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">select</span><span class="p">)</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
                             <span class="nx">o</span><span class="p">[</span><span class="nx">pos</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o2</span><span class="p">;</span>
                             <span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>

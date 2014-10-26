@@ -36,7 +36,7 @@ var items = [
         title: "Olympia",
         year: 1863
     }
-    
+
 ];
 
 
@@ -129,8 +129,8 @@ describe('NDDB Misc Operation', function() {
         it('log function should always be shared',function() {
             db1.log("a!").should.be.eql(db2.log("a2!"));
         });
-        
-        
+
+
     });
 
     describe('indices and views on empty DB', function() {
@@ -152,8 +152,8 @@ describe('NDDB Misc Operation', function() {
             ('undefined' !== typeof db.myView).should.be.true;
         });
 
-        
-        
+
+
     });
 
 });
