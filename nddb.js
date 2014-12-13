@@ -70,6 +70,10 @@
 
         // ## Public properties.
 
+        // ### nddbid
+        // A global index of all objects.
+        this.nddbid = new NDDBIndex('nddbid', this);
+
         // ### db
         // The default database.
         this.db = [];
@@ -651,12 +655,14 @@
     /**
      * ### NDDB._autoUpdate
      *
-     * Performs a series of automatic checkings
-     * and updates the db according to current
-     * configuration
+     * Performs a series of automatic checkings and updates the db
      *
-     * @api private
+     * Checkings are performed according to current configuration, or to
+     * local options.
+     *
      * @param {object} options Optional. Configuration object
+     *
+     *  @api private
      */
     NDDB.prototype._autoUpdate = function(options) {
         var update = options ? J.merge(this.__update, options) : this.__update;
@@ -673,41 +679,63 @@
         }
     };
 
+    // ORIGINAL.
+//     function nddb_insert(o, update) {
+//         if (o === null) return;
+//         var type = typeof(o);
+//         if (type === 'undefined') return;
+//         if (type === 'string') return;
+//         if (type === 'number') return;
+//         this.emit('insert', o);
+//         this.db.push(o);
+//         if (update) {
+//             this._indexIt(o, (this.db.length-1));
+//             this._hashIt(o);
+//             this._viewIt(o);
+//         }
+//     }
 
+    // NEW.
     function nddb_insert(o, update) {
-        if (o === null) return;
-        var type = typeof(o);
-        if (type === 'undefined') return;
-        if (type === 'string') return;
-        if (type === 'number') return;
-        this.emit('insert', o);
+        var nddbid;
+        if (o === null) {
+            return false;
+            throw new TypeError(this._getConstrName() +
+                                '.insert: null received.');
+        }
+        if (('object' !== typeof o) && ('function' !== typeof o)) {
+            return false;
+            throw new TypeError(this._getConstrName() +
+                                '.insert: expects object or function, ' +
+                                typeof o + ' received.');
+        }
+
+        // Check / create a global index.
+        if ('undefined' === typeof o._nddbid) {
+            // Create internal idx.
+            nddbid = J.uniqueKey(this.nddbid.resolve);
+            if (!nddbid) {
+                throw new Error(this._getConstrName() +
+                                '.insert failed to add object to index:', o);
+            }
+            if (Object.defineProperty) {
+                Object.defineProperty(o, '_nddbid', { value: nddbid });
+            }
+            else {
+                o._nddbid = nddbid;
+            }
+        }
+        // Add to index directly (bypass api).
+        this.nddbid.resolve[o._nddbid] = o;
+        //
         this.db.push(o);
+        this.emit('insert', o);
         if (update) {
             this._indexIt(o, (this.db.length-1));
             this._hashIt(o);
             this._viewIt(o);
         }
     }
-
-    // TODO: To test
-    //    function nddb_insert(o, update) {
-    //        if (o === null) {
-    //            throw new TypeError(this._getConstrName() +
-    //                     '.insert: null received.');
-    //        }
-    //        if (('object' !== typeof o) && ('function' !== typeof o)) {
-    //            throw new TypeError(this._getConstrName() +
-    //                                '.insert: expects object or function, ' +
-    //                                typeof o + ' received.');
-    //        }
-    //        this.db.push(o);
-    //        this.emit('insert', o);
-    //        if (update) {
-    //            this._indexIt(o, (this.db.length-1));
-    //            this._hashIt(o);
-    //            this._viewIt(o);
-    //        }
-    //    }
 
     /**
      * ### NDDB.importDB
@@ -1345,7 +1373,14 @@
             if (this.__V.hasOwnProperty(key)) {
                 func = this.__V[key];
                 index = func(o);
-                if ('undefined' === typeof index) continue;
+                if ('undefined' === typeof index) {
+                    // Element must be deleted, if already in hash.
+                    if (!this[key]) continue;
+                    if (this[key].nddbid[o._nddbid]) {
+                        this[key].nddbid.remove(o._nddbid);
+                    }
+                    continue;
+                }
                 //this.__V[idx] = func, this[idx] = new this.constructor();
                 if (!this[key]) {
                     // Create a copy of the current settings,
@@ -1377,7 +1412,14 @@
                 h = this.__H[key];
                 hash = h(o);
 
-                if ('undefined' === typeof hash) continue;
+                if ('undefined' === typeof hash) {
+                    // Element must be deleted, if already in hash.
+                    if (!this[key] || !this[key][hash]) continue;
+                    if (this[key][hash].nddbid[o._nddbid]) {
+                        this[key][hash].nddbid.remove(o._nddbid);
+                    }
+                    continue;
+                }
                 if (!this[key]) this[key] = {};
 
                 if (!this[key][hash]) {
@@ -1951,9 +1993,15 @@
      * @see JSUS.mixin
      */
     NDDB.prototype.update = function(update) {
-        if (!this.db.length || !update) return this;
-
-        for (var i = 0; i < this.db.length; i++) {
+        var i, len;
+        if ('object' !== typeof update) {
+            throw new TypeError(this._getConstrName() +
+                                '.update: update must be object.');
+        }
+        if (!this.db.length) return this;
+        
+        len = this.db.length;
+        for (i = 0; i < len; i++) {
             this.emit('update', this.db[i], update);
             J.mixin(this.db[i], update);
         }
@@ -1974,6 +2022,7 @@
     NDDB.prototype.removeAllEntries = function() {
         if (!this.db.length) return this;
         this.emit('remove', this.db);
+        this.nddbid.resolve = {};
         this.db = [];
         this._autoUpdate();
         return this;
@@ -1994,13 +2043,14 @@
      * @return {boolean} TRUE, if the database was cleared
      */
     NDDB.prototype.clear = function(confirm) {
+        var i;
         if (confirm) {
             this.db = [];
+            this.nddbid.resolve = {};
             this.tags = {};
             this.query.reset();
             this.nddb_pointer = 0;
 
-            var i;
             for (i in this.__H) {
                 if (this[i]) delete this[i]
             }
