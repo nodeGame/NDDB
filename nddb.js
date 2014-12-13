@@ -6,7 +6,7 @@
  * NDDB is a powerful and versatile object database for node.js and the browser.
  *
  * TODO: When using index.update() and the update is suppose to remove the element
- * from view and hashes, for example becausea property is deleted. index.update()
+ * from view and hashes, for example because a property is deleted. index.update()
  * fails doing so. Should be fixed. At the moment the only solution seems to
  * reintroduce a global index for all items and to use that to quickly lookup items
  * in views and hashes.
@@ -409,7 +409,6 @@
         this.filters['in'] = function(d, value, comparator) {
             if ('object' === typeof d) {
                 return function(elem) {
-                    debugger
                     var i, len;
                     len = value.length;
                     for (i = 0; i < len; i++) {
@@ -521,7 +520,6 @@
         };            
 
     };
-
 
     // ## METHODS
 
@@ -1357,7 +1355,7 @@
                     settings = this.cloneSettings({V: ''});
                     this[key] = new NDDB(settings);
                 }
-                this[key].insert(o);1
+                this[key].insert(o);
             }
         }
     };
