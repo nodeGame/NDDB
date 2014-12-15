@@ -75,7 +75,7 @@
         // ### nddbid
         // A global index of all hashed objects.
         // It takes the structure 'hashKey' _ 'nddbid' = 'hash'
-        this.hashid = {};
+        this.hashtray = new NDDBHashtray();
 
         // ###tags
         // The tags list.
@@ -1414,10 +1414,10 @@
                 hash = h(o);
 
                 if ('undefined' === typeof hash) {
-                    oldHash = this.hashid[key + '_' + o._nddbid];
+                    oldHash = this.hashtray.get(key, o._nddbid);
                     if (oldHash) {
                         this[key][oldHash].nddbid.remove(o._nddbid);
-                        delete this.hashid[key + '_' + o._nddbid];
+                        this.hashtray.remove(key, o._nddbid);
                     }
                     continue;
                 }
@@ -1431,7 +1431,7 @@
                     this[key][hash] = new NDDB(settings);
                 }
                 this[key][hash].insert(o);
-                this.hashid[key + '_' + o._nddbid] = hash;
+                this.hashtray.set(key, o._nddbid, hash);
             }
         }
     };
@@ -3481,16 +3481,21 @@
      * @param {string} The name of the index
      * @param {array} The reference to the original database
      */
-    function NDDBHashtray(name, nddb) {
-        this.
-        this.__nddb = nddb;
-        this.__resolve = {};
+    function NDDBHashtray() {
+        this.resolve = {};
     }
 
-    NDDBHashtray.prototype.createHashDb = function(hashName, item) {
-        
+    NDDBHashtray.prototype.set = function(key, nddbid, hash) {
+        this.resolve[key + '_' + nddbid] = hash;
     };
 
+    NDDBHashtray.prototype.get = function(key, nddbid) {
+        return this.resolve[key + '_' + nddbid];
+    };
+
+    NDDBHashtray.prototype.remove = function(key, nddbid) {
+        delete this.resolve[key + '_' + nddbid];
+    };
 
     /**
      * # NDDBIndex
