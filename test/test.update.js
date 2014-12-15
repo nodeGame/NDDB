@@ -36,7 +36,7 @@ var items = [
         title: "Olympia",
         year: 1863
     },
-    
+
 ];
 
 
@@ -48,70 +48,72 @@ describe('Updating NDDB', function() {
     });
 
     describe('#update()',function() {
-        
+
         it('should add an \'old\' tag on old paintings', function() {
-            
+
             db.select('year', '<', 1900)
                 .execute()
                 .update({old: true});
-            
+
             db.select('old').execute().db.length.should.be.eql(3);
         });
     });
 
     describe('#update() interaction with existing views',function() {
         before(function() {
-            
+
             var paintersView = function(o) {
                 if (!o) return undefined;
                 return o.painter;
             }
-            
-            db.view('art', paintersView);            
+
+            db.init({update:{ indexes: true, } });
+            db.view('art', paintersView);
+
+            // For the first time, we need to create indexes.
+            // Later calls need to update them on the fly.
             db.rebuildIndexes();
         });
 
         it('should remove the element from the correct view', function() {
             var oldSize, newSize;
-            oldSize = db.art.size();    
-            
+            oldSize = db.art.size();
+
             db.select('title', '=', 'Olympia')
-                .execute()
                 .update({ painter: undefined });
-            
-            db.rebuildIndexes();
-            
+
             newSize = db.art.size();
-            
+
             newSize.should.be.eql(oldSize -1);
         });
     });
 
     describe('#update() interaction with existing hashes',function() {
         before(function() {
-            
+
             var hashPainter = function(o) {
                 if (!o) return undefined;
                 return o.painter;
             }
+
+            db.init({update:{ indexes: true, } });
+            db.hash('painter', hashPainter);
             
-            db.hash('painter', hashPainter);          
+            // For the first time, we need to create indexes.
+            // Later calls need to update them on the fly.
             db.rebuildIndexes();
         });
 
         it('should remove the element from the correct hash', function() {
             var oldSize, newSize;
-            oldSize = db.painter['Monet'].size();   
+            oldSize = db.painter['Monet'].size();
             
             db.select('title', '=', 'Water Lilies')
-                .execute()
                 .update({ painter: undefined });
-            
-            db.rebuildIndexes();
-            
+
             newSize = db.painter['Monet'].size();
-            
-            newSize.should.be.eql(oldSize -1);
+
+            newSize.should.be.eql(oldSize - 1);
         });
     });
 });
