@@ -722,11 +722,11 @@
         if ('function' !== typeof cb) {
             this.throwErr('TypeError', 'initLog', 'cb must be function');
         }
+        ctx = ctx || this;
         if ('function' !== typeof ctx && 'object' !== typeof ctx) {
             this.throwErr('TypeError', 'initLog', 'ctx must be object or ' +
                           'function');
         }
-        ctx = ctx || this;
         this.log = function(){
             return cb.apply(ctx, arguments);
         };
@@ -3006,8 +3006,8 @@
      * @see JSUS.skim
      */
     NDDB.prototype.skim = function(skim) {
-        if ('string' !== typeof skim) {
-            this.throwErr('TypeError', 'skim', 'skim must be string');
+        if ('string' !== typeof skim && !J.isArray(skim)) {
+            this.throwErr('TypeError', 'skim', 'skim must be string or array');
         }
         return this.breed(this.map(function(e){
             var skimmed = J.skim(e, skim);
@@ -3036,7 +3036,9 @@
      * @see JSUS.keep
      */
     NDDB.prototype.keep = function(keep) {
-        if (!keep) return this.breed([]);
+        if ('string' !== typeof keep && !J.isArray(keep)) {
+            this.throwErr('TypeError', 'keep', 'keep must be string or array');
+        }
         return this.breed(this.map(function(e){
             var subobj = J.subobj(e, keep);
             if (!J.isEmpty(subobj)) {
@@ -3066,7 +3068,7 @@
      */
     NDDB.prototype.diff = function(nddb) {
         if (!J.isArray(nddb)) {
-            if ('object' === typeof nddb || !J.isArray(nddb.db)) {
+            if ('object' !== typeof nddb || !J.isArray(nddb.db)) {
                 this.throwErr('TypeError', 'diff',
                               'nddb must be array or NDDB');
             }
@@ -3096,7 +3098,7 @@
      */
     NDDB.prototype.intersect = function(nddb) {
         if (!J.isArray(nddb)) {
-            if ('object' === typeof nddb || !J.isArray(nddb.db)) {
+            if ('object' !== typeof nddb || !J.isArray(nddb.db)) {
                 this.throwErr('TypeError', 'intersect',
                               'nddb must be array or NDDB');
             }
@@ -3253,8 +3255,8 @@
      */
     NDDB.prototype.tag = function(tag, idx) {
         var ref, typeofIdx;
-        if ('string' !== typeof tag) {
-            this.throwErr('TypeError', 'tag', 'tag must be string');
+        if ('string' !== typeof tag && 'number' !== typeof tag) {
+            this.throwErr('TypeError', 'tag', 'tag must be string or number');
         }
 
         ref = null, typeofIdx = typeof idx;
@@ -3341,7 +3343,7 @@
         compress = compress || false;
         // Try to save in the browser, e.g. with Shelf.js.
         if (!this.storageAvailable()) {
-            this.throwErr('Error', 'save', 'no persistent storage available');  
+            this.throwErr('Error', 'save', 'no persistent storage available');
         }
         store(file, this.stringify(compress));
         if (cb) cb();
@@ -3359,7 +3361,7 @@
      *
      * Cyclic objects previously decycled will be retrocycled.
      *
-     * @param {string} file The file system path, or the identifier 
+     * @param {string} file The file system path, or the identifier
      *   for the browser database
      * @param {function} cb Optional. A callback to execute after
      *   the database was saved
@@ -3796,10 +3798,14 @@
         }
         return out;
     };
-                        
+
     // ## Closure
 })(
-    'undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: window
-            , 'undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS || require('JSUS').JSUS
-    , ('object' === typeof module && 'function' === typeof require) ? module.parent.exports.store || require('shelf.js/build/shelf-fs.js').store : this.store
+    ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
+        module.exports: window ,
+    ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
+        JSUS : module.parent.exports.JSUS || require('JSUS').JSUS ,
+    ('object' === typeof module && 'function' === typeof require) ?
+        module.parent.exports.store ||
+        require('shelf.js/build/shelf-fs.js').store : this.store
 );
