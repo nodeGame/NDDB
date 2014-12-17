@@ -791,12 +791,12 @@
     function nddb_insert(o, update) {
         var nddbid;
         if (o === null) {
-            return false;
+            // return false;
             throw new TypeError(this._getConstrName() +
                                 '.insert: null received.');
         }
         if (('object' !== typeof o) && ('function' !== typeof o)) {
-            return false;
+            // return false;
             throw new TypeError(this._getConstrName() +
                                 '.insert: expects object or function, ' +
                                 typeof o + ' received.');
@@ -904,7 +904,7 @@
                           'or undefined');
         }
         // In case the class was inherited.
-        return new this.constructor(this.cloneSettings(), db || this.db);
+        return new this.constructor(this.cloneSettings(), db || this.fetch());
     };
 
     /**
@@ -3804,7 +3804,7 @@
     ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
         module.exports: window ,
     ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
-        JSUS : module.parent.exports.JSUS || require('JSUS').JSUS ,
+        module.parent.exports.JSUS || require('JSUS').JSUS : JSUS,
     ('object' === typeof module && 'function' === typeof require) ?
         module.parent.exports.store ||
         require('shelf.js/build/shelf-fs.js').store : this.store
