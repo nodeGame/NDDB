@@ -96,6 +96,38 @@ Retrieve the database size:
     var db_size = db.size(); // 6
  ```
 
+### Select Items
+
+Select statements must begin with `select`, and can be concatened by
+any number of subsequent `and` and `or` statements. The comparison in
+select statements is performed using three input parameters: 
+
+  - 'property'
+  - 'operator'
+  - any additional number of arguments required by operator
+
+Available operators include standard logical operators:
+
+   - '=', '==', '!=', ''>', >=', '<', '<=',
+
+or advanced comparison operators:
+
+   - 'E': field exists (can be omitted, it is the default one)
+   - '><': between values
+   - '<>': not between values
+   - 'in': element is found in array
+   - '!in': element is noi found in array
+   - 'LIKE': string SQL LIKE (case sensitive)
+   - 'iLIKE': string SQL LIKE (case insensitive)
+
+It is possible to access and compare nested properties simply
+separeting them with `.`.
+
+After a selection is finished, items can be returned using one of the
+`fetch` statements.
+
+#### Select Examples
+
 Select all paintings from Dali:
 
 ```javascript
@@ -126,7 +158,6 @@ Fetch all paintings from Dali that are before 1928:
 ```javascript
     db.select('painter', '=', 'Dali')
       .and('year', '<', 1928);
-      .execute()
       .fetch(); // 1 item
 ```
 
