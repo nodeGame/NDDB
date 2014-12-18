@@ -171,15 +171,15 @@
         //
         // @see NDDB.comparator
         this.comparator('*', function(o1, o2, trigger1, trigger2) {
-           var d, c, res;
-           for (d in o1) {
+            var d, c, res;
+            for (d in o1) {
                c = that.getComparator(d);
                o2[d] = o2['*'];
                res = c(o1, o2);
                if (res === trigger1) return res;
                if ('undefined' !== trigger2 && res === trigger2) return res;
                // No need to delete o2[d] afer comparison.
-           }
+            }
 
            // We are not interested in sorting.
            // Figuring out the right return value.
@@ -1114,9 +1114,13 @@
                     if ('undefined' === typeof v2) return -1;
                     if (v1 > v2) return 1;
                     if (v2 > v1) return -1;
+                    
+                    // In case v1 and v2 are of different types
+                    // they might not be equal here.
+                    if (v2 === v1) return 0;
 
-
-                    return 0;
+                    // Return 1 if everything else fails.
+                    return 1;
                 };
             }
         }
