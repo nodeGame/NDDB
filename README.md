@@ -254,9 +254,9 @@ consistent set of entries:
 
     db.rebuildIndexes();
 
-    db.length;          // 9
-    db.art.length;      // NDDB with 6 art entries
-    db.cars.length;     // NDDB with 3 car entries
+    db.size();          // 9
+    db.art.size();      // NDDB with 6 art entries
+    db.cars.size();     // NDDB with 3 car entries
 
 ```
 
@@ -273,7 +273,7 @@ painters in the database:
 
     db.rebuildIndexes();
 
-    db.length;          // 6, unchanged;
+    db.size();          // 6, unchanged;
     db.painter.Picasso; // NDDB with 1 element in db
     db.painter.Monet    // NDDB with 2 elements in db
     db.painter.Manet    // NDDB with 1 elements in db
@@ -316,8 +316,8 @@ the items of the database;
     // Counts items in selection.
     db.select('comment').count(); // 1
 
-    var picasso = db.pid.pop(0);
-    db.length; //(-1)
+    var picasso = db.pid.remove(0);
+    db.size(); // (0)
 
     // Get all available keys in the index
     db.painter.getAllKeys(); // ['0','1', ... ]
