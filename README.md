@@ -6,12 +6,12 @@ NDDB is a powerful and versatile object database for node.js and the browser.
 
 ---
 
-NDDB (N-Dimensional DataBase) supports indexes, views, hashes,joins,
+NDDB (N-Dimensional DataBase) supports indexes, views, hashes, joins,
 group-by, basic statistics, custom operations, saving and loading from
-file system and browser localStorage and much more.
+file system and browser localStorage, and much more.
 
 Developer-friendly thanks to an easy api, detailed documentation, and
-**full** unit-test coverage.
+**100%** test coverage.
 
 ## List of features
 
