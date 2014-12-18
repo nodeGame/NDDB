@@ -60,47 +60,72 @@ var items = [
     
 ];
 
-describe('NDDB Single Inserting', function(){
-    beforeEach(function(){
+describe('NDDB Single Inserting', function() {
+    beforeEach(function() {
 	db.clear(true);
     });
     
-    
-    it('number', function(){
-    	db.insert(1);
+    it('number', function() {
+        var err;
+        try {
+    	    db.insert(1);
+        }
+        catch(e) {
+            err = 1;
+        }
     	db.size().should.be.eql(0);
+        err.should.be.eql(1);
     });  
 
-    it('string', function(){
-    	db.insert('foo');
+    it('string', function() {
+        var err;
+        try {
+    	    db.insert('foo');
+        }
+        catch(e) {
+            err = 1;
+        }
+    	err.should.be.eql(1);
     	db.size().should.be.eql(0);
     });
     
-    it('NaN', function(){
-    	db.insert(NaN);
+    it('NaN', function() {
+    	var err;
+        try {
+            db.insert(NaN);}
+        catch(e) {
+            err = 1;
+        }
+    	err.should.be.eql(1);
     	db.size().should.be.eql(0);
     });
     
-    it('Infinity', function(){
-    	db.insert(Infinity);
+    it('Infinity', function() {
+    	var err;
+        try {
+            db.insert(Infinity);}
+        catch(e) {
+            err = 1;
+        }
+    	err.should.be.eql(1);
     	db.size().should.be.eql(0);
     });
     
 });
 
-describe('NDDB Inserting a Collection', function(){
-    before(function(){
+describe('NDDB Inserting a Collection', function() {
+    before(function() {
 	db.clear(true);
 	db.init({update: update});
 	db.importDB(items);
     });
     
     
-    it('should update the database length', function(){
+    it('should update the database length', function() {
     	db.size().should.be.eql(items.length);
     });  
 
-    it('should not affect the indexing options', function(){
+    it('should not affect the indexing options', function() {
     	db.__update.should.be.eql(update);
     });
 });

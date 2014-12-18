@@ -562,7 +562,7 @@
      * @param {string} text Optional. The error text. Default, 'generic error'
      */
     NDDB.prototype.throwErr = function(type, method, text) {
-        var errMsg;
+        var errMsg, miss;
         text = text || 'generic error';
         errMsg = this._getConstrName();
         if (method) errMsg = errMsg + '.' + method;
@@ -771,35 +771,32 @@
         }
     };
 
-    // ORIGINAL.
-//     function nddb_insert(o, update) {
-//         if (o === null) return;
-//         var type = typeof(o);
-//         if (type === 'undefined') return;
-//         if (type === 'string') return;
-//         if (type === 'number') return;
-//         this.emit('insert', o);
-//         this.db.push(o);
-//         if (update) {
-//             this._indexIt(o, (this.db.length-1));
-//             this._hashIt(o);
-//             this._viewIt(o);
-//         }
-//     }
 
-    // NEW.
+    /**
+     * ## .nddb_insert
+     *
+     * Insert an item into db and performs update operations
+     *
+     * A new property `.nddbid` is created in the object, and it will be
+     * used to add the element into the global index: `NDDB.nddbid`.
+     *
+     * Emits the 'insert' event, and updates indexes, hashes and views
+     * accordingly.
+     *
+     * @param {object|function} o The item to add to database
+     * @param {boolean} update Optional. If TRUE, updates indexes, hashes,
+     *    and views. Default, FALSE
+     *
+     * @see NDDB.nddbid
+     * @see NDDB.emit
+     *
+     * @api private
+     */
     function nddb_insert(o, update) {
         var nddbid;
-        if (o === null) {
-            // return false;
-            throw new TypeError(this._getConstrName() +
-                                '.insert: null received.');
-        }
         if (('object' !== typeof o) && ('function' !== typeof o)) {
-            // return false;
-            throw new TypeError(this._getConstrName() +
-                                '.insert: expects object or function, ' +
-                                typeof o + ' received.');
+            this.throwErr('TypeError', 'insert', 'object or function expected ' +
+                          typeof o + ' received.');
         }
 
         // Check / create a global index.
@@ -807,8 +804,7 @@
             // Create internal idx.
             nddbid = J.uniqueKey(this.nddbid.resolve);
             if (!nddbid) {
-                throw new Error(this._getConstrName() +
-                                '.insert failed to add object to index:', o);
+                this.throwErr('Error', 'insert', 'failed to create index: ' + o);
             }
             if (Object.defineProperty) {
                 Object.defineProperty(o, '_nddbid', { value: nddbid });
@@ -819,7 +815,7 @@
         }
         // Add to index directly (bypass api).
         this.nddbid.resolve[o._nddbid] = this.db.length;
-        //
+        // End create index.
         this.db.push(o);
         this.emit('insert', o);
         if (update) {
@@ -2424,8 +2420,8 @@
         var db;
         if (this.db.length && this.query.query.length) {
             if (doNotReset && 'boolean' !== typeof doNotReset) {
-                throw new TypeError(this._getConstrName() + '.fetch: ' +
-                                    'doNotReset must be undefined or boolean.');
+                this.throwErr('TypeError', 'fetch',
+                              'doNotReset must be undefined or boolean.');
             }
             db = this.db.filter(this.query.get.call(this.query));
             if (!doNotReset) this.query.reset();
@@ -2802,8 +2798,8 @@
         len = db.length;
         if ('undefined' === typeof key) return len;
         if ('string' !== typeof key) {
-            throw new TypeError(this._getConstrName() + '.count: ' +
-                                'key must string or undefined.');
+            this.throwErr('TypeError', 'count',
+                          'key must be string or undefined');
         }
         count = 0;
         for (i = 0; i < len; i++) {
@@ -2829,10 +2825,8 @@
     NDDB.prototype.sum = function(key) {
         var sum, i, len, tmp, db;
         if ('string' !== typeof key) {
-            throw new TypeError(this._getConstrName() + '.sum: ' +
-                                'key must string.');
+            this.throwErr('TypeError', 'sum', 'key must be string');
         }
-
         db = this.fetch(), len = db.length, sum = NaN;
         for (i = 0; i < len; i++) {
             tmp = J.getNestedValue(key, db[i]);
@@ -2861,8 +2855,7 @@
         var sum, count, tmp, db;
         var i, len;
         if ('string' !== typeof key) {
-            throw new TypeError(this._getConstrName() + '.mean: ' +
-                                'key must string.');
+            this.throwErr('TypeError', 'mean', 'key must be string');
         }
         db = this.fetch();
         len = db.length;
@@ -2897,14 +2890,11 @@
         var count, tmp, db, i, len;
         var sum, sumSquared;
         if ('string' !== typeof key) {
-            throw new TypeError(this._getConstrName() + '.stddev: ' +
-                                'key must string.');
+            this.throwErr('TypeError', 'stddev', 'key must be string');
         }
-
         db = this.fetch();
         len = db.length;
         if (!len || len === 1) return NaN;
-
         i = -1;
         sum = 0, sumSquared = 0, count = 0;
         for ( ; ++i < len ; ) {
@@ -2937,8 +2927,7 @@
     NDDB.prototype.min = function(key) {
         var min, tmp, db, i, len;
         if ('string' !== typeof key) {
-            throw new TypeError(this._getConstrName() + '.min: ' +
-                                'key must string.');
+            this.throwErr('TypeError', 'min', 'key must be string');
         }
         db = this.fetch();
         len = db.length;
@@ -2970,8 +2959,7 @@
     NDDB.prototype.max = function(key) {
         var max, i, len, tmp, db;
         if ('string' !== typeof key) {
-            throw new TypeError(this._getConstrName() + '.max: ' +
-                                'key must string.');
+            this.throwErr('TypeError', 'max', 'key must be string');
         }
         db = this.fetch();
         len = db.length;
