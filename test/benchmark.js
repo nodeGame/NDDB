@@ -65,10 +65,10 @@ db.importDB(items);
 
 var start = Date.now();
 
-db.select('painter', '=', 'Manet');
+db.select('painter', '=', 'Manet').fetch();
 
 var stop =  Date.now();
 
 
-console.log('Time for select query with ' + db.length + ' items = ' + (stop - start) + 'ms');
+console.log('Time for select query with ' + db.size() + ' items = ' + (stop - start) + 'ms');
 

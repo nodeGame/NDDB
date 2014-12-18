@@ -71,8 +71,7 @@ var hashPainter = function(o) {
 var array_fetch_values = [];
 for (i=0; i < all_items.length; i++) {
     J.augment(array_fetch_values, all_items[i], J.keys(all_items[i]));
-} 
-console.log(array_fetch_values)
+}
 
 // Array for .fetchArray()
 var array_of_all_items = new Array();
@@ -133,11 +132,6 @@ describe('NDDB Fetching', function() {
     describe('#fetchValues()', function() {
         describe('the complete database',function() {
             it('should be like the original items array',function() {
-                console.log(db.fetchValues());
-                console.log('aaaaaaaaaa');
-                console.log(array_fetch_values)
-                console.log('aaaaaaaaaa');
-
                 db.fetchValues().should.eql(array_fetch_values);
             });
         });
