@@ -121,7 +121,7 @@ or advanced comparison operators:
    - `iLIKE`: string SQL LIKE (case insensitive)
 
 It is possible to access and compare nested properties simply
-separeting them with `.`.
+separating them with `.`.
 
 After a selection is finished, items can be returned using one of the
 `fetch` statements.
