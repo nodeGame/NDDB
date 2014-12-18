@@ -178,8 +178,6 @@ Fetch separately all the painters and all the dates of the paintings:
 //   year: [ 0, 1929, 1927, 1906, 1891, 1863 ] }
 ```
 
-## Advanced commands
-
 ### Sorting
 
 Define a global comparator function that sorts all the entries chronologically:
@@ -328,7 +326,6 @@ the items of the database;
     db.painter.getAllKeyElements();
 
 ```
-
 
 ## Example of a configuration object
 
