@@ -15,7 +15,7 @@ Developer-friendly thanks to an easy api, detailed documentation, and
 
 ## List of features
 
-- Selecting: `select`, `and`, `or`, `selexec`
+- Selecting: `select`, `and`, `or`
 - Sorting: `sort`, `reverse`, `last`, `first`, `limit`, `distinct`,
   `shuffle`
 - Indexing: `view`, `index`, `hash`, `comparator`
@@ -37,14 +37,14 @@ The complete NDDB api documentation is available
 
 ## Usage
 
-Create an instance of NDDB
+Create an instance of NDDB:
 
 ```javascript
     var NDDB = require('NDDB').NDDB;
     var db = new NDDB();
 ```
 
-Insert an item into the database
+Insert an item into the database:
 
 ```javascript
     db.insert({
@@ -54,7 +54,7 @@ Insert an item into the database
     });
 ```
 
-Import a collection of items
+Import a collection of items:
 
 ```javascript
 
@@ -90,13 +90,13 @@ Import a collection of items
     db.importDB(items);
 ```
 
-Retrieve the database size
+Retrieve the database size:
 
 ```javascript
-    var db_size = db.length; // 6
+    var db_size = db.size(); // 6
  ```
 
-Select all paintings from Dali
+Select all paintings from Dali:
 
 ```javascript
     db.select('painter', '=', 'Dali'); // 2 items
@@ -115,13 +115,13 @@ Select on multiple properties (`*`) with case insensitive `LIKE`:
     db.select(['painter', 'portrait'], 'iLIKE', '%e%') // 5 items
 ```
 
-Select all portraits
+Select all portraits:
 
 ```javascript
     db.select('portrait'); // 1 item
 ```
 
-Fetch all paintings from Dali that are before 1928
+Fetch all paintings from Dali that are before 1928:
 
 ```javascript
     db.select('painter', '=', 'Dali')
@@ -130,20 +130,17 @@ Fetch all paintings from Dali that are before 1928
       .fetch(); // 1 item
 ```
 
-Fetch all paintings of the beginning of XX's century
+Fetch all paintings of the beginning of XX's century:
 
 ```javascript
     db.select('year', '><', [1900, 1910])
-      .execute()
       .fetch(); // 2 items
 ```
 
-Fetch separately all the painters and all the dates of execution of
-the paintings:
+Fetch separately all the painters and all the dates of the paintings:
 
 ```javascript
     db.select('year', '><', [1900, 1910])
-      .execute()
       .fetchValues(['painter', 'title']);
 
 // { painter: [ 'Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet' ],
@@ -287,8 +284,8 @@ the items of the database;
       comment: "Good job Pablo!"
     });
 
-    // Changes are reflected in the main database
-    db.selexec('comment').count(); // 1
+    // Counts items in selection.
+    db.select('comment').count(); // 1
 
     var picasso = db.pid.pop(0);
     db.length; //(-1)
