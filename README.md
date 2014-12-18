@@ -108,17 +108,17 @@ select statements is performed using three input parameters:
 
 Available operators include standard logical operators:
 
-   - '=', '==', '!=', ''>', >=', '<', '<=',
+   - `=`, `==`, `!=`, ``>`, >=`, `<`, `<=`,
 
 or advanced comparison operators:
 
-   - 'E': field exists (can be omitted, it is the default one)
-   - '><': between values
-   - '<>': not between values
-   - 'in': element is found in array
-   - '!in': element is noi found in array
-   - 'LIKE': string SQL LIKE (case sensitive)
-   - 'iLIKE': string SQL LIKE (case insensitive)
+   - `E`: field exists (can be omitted, it is the default one)
+   - `><`: between values (expects array)
+   - `<>`: not between values (expects array)
+   - `in`: element is found in array (expects array)
+   - `!in`: element is noi found in array (expects array)
+   - `LIKE`: string SQL LIKE (case sensitive)
+   - `iLIKE`: string SQL LIKE (case insensitive)
 
 It is possible to access and compare nested properties simply
 separeting them with `.`.
