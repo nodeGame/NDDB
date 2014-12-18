@@ -103,7 +103,6 @@ describe('NDDB Selecting with DOT', function() {
         });
 
         it('should select all painting not made by D.ali and Jesus', function(){
-            debugger;
             var res = db.select('p.ainter', '!in', ['D.ali'])
             	.and('p.ainter', '!in', ['J.esus'])
             	.execute();

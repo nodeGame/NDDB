@@ -11,6 +11,8 @@ NDDB = require('./../index').NDDB;
 var db = new NDDB();
 var db2 = new NDDB();
 
+// TODO: make a test were a file containing weirdos items is loaded.
+
 var hashable = [
     {
 	painter: "Jesus",
@@ -68,22 +70,22 @@ var weirdos = [
     undefined,
     null,
     {},
-    function(){console.log('foo')},
+    function() {console.log('foo')},
     {
     	a: undefined,
     	b: null,
     	c: {},
-    	d: function(){console.log('foo')},
+    	d: function() {console.log('foo')},
     }];
 
 var weirdos_import = [
     {},
-    function(){console.log('foo')},
+    function() {console.log('foo')},
     {
        	a: undefined,
        	b: null,
        	c: {},
-       	d: function(){console.log('foo')},
+       	d: function() {console.log('foo')},
     }];
 
 var weirdos_load = [
@@ -138,17 +140,16 @@ var deleteIfExist = function(cb) {
     }
 };
 
-
 var testSaveLoad = function(items, compareToImport, compareToLoad) {
 
-    describe('#save()', function(){
+    describe('#save()', function() {
 
 	before(function() {
-	    deleteIfExist(function(){
+	    deleteIfExist(function() {
 		db2.clear(true);
-		db = new NDDB();
+		db = new NDDB();                
                 db.importDB(items);
-               	db.save(filename);
+               	db.save(filename);             
 	    });
 	});
 
@@ -157,7 +158,6 @@ var testSaveLoad = function(items, compareToImport, compareToLoad) {
 	});
 
 	it('original database should be unchanged', function() {
-
 	    if (compareToImport) {
 		JSUS.equals(db.db, compareToImport).should.be.true;
 	    }
@@ -168,9 +168,9 @@ var testSaveLoad = function(items, compareToImport, compareToLoad) {
 
     });
 
-    describe('#load()', function(){
-	before(function() {
-	    db2.load(filename);
+    describe('#load()', function() {
+	before(function() {            
+	    db2.load(filename);         
 	});
 	after(function() {
 	    deleteIfExist();
@@ -190,56 +190,53 @@ var testSaveLoad = function(items, compareToImport, compareToLoad) {
 };
 
 // STRESS TEST
-//for (var i=0; i<1000; i++){
+//for (var i=0; i<1000; i++) {
 
-describe('NDDB io operations.', function(){
+describe('NDDB io operations.', function() {
 
-    describe('Cycle / Decycle.', function(){
+    describe('Cycle / Decycle.', function() {
 
-	describe('Not Hashable items', function(){
-	    testSaveLoad(not_hashable);
-	});
+ 	describe('Not Hashable items', function() {
+ 	    testSaveLoad(not_hashable);
+ 	});
+ 
+ 	describe('Hashable items.', function() {
+ 	    testSaveLoad(hashable);
+ 	});
 
-	describe('Hashable items.', function(){
-	    testSaveLoad(hashable);
-	});
+ 	describe('Cycles items', function() {
+ 	    testSaveLoad(cycles);
+ 	});
 
-	describe('Weirdos items.', function(){
-            //(function(){
-                testSaveLoad(weirdos, weirdos_import);
-            //}).should.throw(/^NDDB.*/);
-
-	});
-
-	describe('Cycles items', function(){
-	    testSaveLoad(cycles);
-	});
+// 	describe('Weirdos items.', function() {
+//             testSaveLoadShould(weirdos, weirdos_import);            
+// 	});
 
     });
 
-    describe('Without Cycle / Decycle.', function(){
-	before(function(){
-	    delete JSON.decycle;
-	    delete JSON.retrocycle;
-	});
+     describe('Without Cycle / Decycle.', function() {
+ 	before(function() {
+ 	    delete JSON.decycle;
+ 	    delete JSON.retrocycle;
+ 	});
+ 
+ 	describe('Not Hashable items', function() {
+ 	    testSaveLoad(not_hashable);
+ 	});
+ 
+ 	describe('Hashable items.', function() {
+ 	    testSaveLoad(hashable);
+ 	});
+  
+ 	describe('Cycles items', function() {
+ 	    testSaveLoad(cycles);
+ 	});
 
-	describe('Not Hashable items', function(){
-	    testSaveLoad(not_hashable);
-	});
-
-	describe('Hashable items.', function(){
-	    testSaveLoad(hashable);
-	});
-
-	describe('Weirdos items.', function(){
-	    testSaveLoad(weirdos, weirdos_import);
-	});
-
-	describe('Cycles items', function(){
-	    testSaveLoad(cycles);
-	});
-
-    });
+//  	describe('Weirdos items.', function() {
+//  	    testSaveLoad(weirdos, weirdos_import);
+//  	});
+ 
+     });
 
 });
 

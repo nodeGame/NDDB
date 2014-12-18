@@ -121,7 +121,6 @@ describe('NDDB Selecting', function() {
         });
 
         it('should select all painting not made by Dali and Jesus', function(){
-            debugger;
             var res = db.select('painter', '!in', ['Dali'])
             	.and('painter', '!in', ['Jesus'])
             	.execute();

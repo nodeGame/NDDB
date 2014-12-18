@@ -219,7 +219,7 @@ describe('NDDB Advanced Operation', function() {
                     var original = db.select('painter', '=', painter)
 			.and('year', '=', year)
 			.and('title', '=', title)
-			.execute()
+			//.execute()
 			.first();
 
                     e.joined.should.be.eql(original);
@@ -264,7 +264,7 @@ describe('NDDB Advanced Operation', function() {
                     var original = db.select('painter', '=', painter)
 			.and('year', '=', year)
 			.and('title', '=', title)
-			.execute()
+			//.execute()
 			.first();
 
                     e.xxx.should.be.eql(original);
@@ -302,7 +302,7 @@ describe('NDDB Advanced Operation', function() {
                     var original = db.select('painter', '=', painter)
 			.and('year', '=', year)
 			.and('title', '=', title)
-			.execute()
+			//.execute()
 			.first();
 
                     e.joined.should.be.eql(original);

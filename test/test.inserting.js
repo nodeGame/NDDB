@@ -5,8 +5,8 @@ NDDB = require('./../nddb').NDDB;
 var db = new NDDB();
 
 var update =  {           // On every insert and remove:
-    indexes:  true,   // updates the indexes, if any
-    sort:     true,   // sorts the items of the database
+    indexes:  true,   // updates the indexes, if any  
+    sort:     true,   // sorts the items of the database 
     pointer:  true,   // moves the iterator pointer to the last inserted element
 };
 
@@ -57,50 +57,75 @@ var items = [
         title: "Olympia",
         year: 1863
     }
-
+    
 ];
 
-describe('NDDB Single Inserting', function(){
-    beforeEach(function(){
+describe('NDDB Single Inserting', function() {
+    beforeEach(function() {
 	db.clear(true);
     });
+    
+    it('number', function() {
+        var err;
+        try {
+    	    db.insert(1);
+        }
+        catch(e) {
+            err = 1;
+        }
+    	db.size().should.be.eql(0);
+        err.should.be.eql(1);
+    });  
 
-
-    it('number', function(){
-    	db.insert(1);
+    it('string', function() {
+        var err;
+        try {
+    	    db.insert('foo');
+        }
+        catch(e) {
+            err = 1;
+        }
+    	err.should.be.eql(1);
     	db.size().should.be.eql(0);
     });
-
-    it('string', function(){
-    	db.insert('foo');
+    
+    it('NaN', function() {
+    	var err;
+        try {
+            db.insert(NaN);}
+        catch(e) {
+            err = 1;
+        }
+    	err.should.be.eql(1);
     	db.size().should.be.eql(0);
     });
-
-    it('NaN', function(){
-    	db.insert(NaN);
+    
+    it('Infinity', function() {
+    	var err;
+        try {
+            db.insert(Infinity);}
+        catch(e) {
+            err = 1;
+        }
+    	err.should.be.eql(1);
     	db.size().should.be.eql(0);
     });
-
-    it('Infinity', function(){
-    	db.insert(Infinity);
-    	db.size().should.be.eql(0);
-    });
-
+    
 });
 
-describe('NDDB Inserting a Collection', function(){
-    before(function(){
+describe('NDDB Inserting a Collection', function() {
+    before(function() {
 	db.clear(true);
 	db.init({update: update});
 	db.importDB(items);
     });
-
-
-    it('should update the database length', function(){
+    
+    
+    it('should update the database length', function() {
     	db.size().should.be.eql(items.length);
-    });
+    });  
 
-    it('should not affect the indexing options', function(){
+    it('should not affect the indexing options', function() {
     	db.__update.should.be.eql(update);
     });
 });

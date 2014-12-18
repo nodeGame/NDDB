@@ -1,5 +1,3 @@
-
-
 var util = require('util'),
 should = require('should'),
 J = require('JSUS').JSUS,
@@ -134,7 +132,29 @@ describe('NDDB Fetching', function() {
     describe('#fetchValues()', function() {
         describe('the complete database',function() {
             it('should be like the original items array',function() {
-                db.fetchValues().should.eql(array_fetch_values);
+                // For some weird reason in new versions of should.js
+                // I need to specify the object here.
+                var bb = {
+                    car: [ 'Ferrari', 'Fiat', 'BMW' ],
+                    model: [ 'F10', '500', 'Z4' ],
+                    painter: [ 'Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet' ],
+                    portrait: [ true ],
+                    speed: [ 350, 100, 250 ],
+                    title: [
+                        'Tea in the desert',
+                        [
+                            'Portrait of Paul Eluard',
+                            'Das Rätsel der Begierde',
+                            'Das finstere Spiel oder Unheilvolles Spiel'
+                        ],
+                        'Barcelonese Mannequin',
+                        { de: 'Wasser Lilies', en: 'Water Lilies' },
+                        'Wheatstacks (End of Summer)',
+                        'Olympia'
+                    ],
+                    year: [ 0, 1929, 1927, 1906, 1891, 1863 ]
+                }
+                db.fetchValues().should.eql(bb);
             });
         });
         describe('passing a key as argument',function() {
