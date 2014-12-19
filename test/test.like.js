@@ -68,10 +68,19 @@ describe('NDDB Like operator', function() {
             db.select('painter', 'LIKE', 'M_net')
                 .execute().db.length.should.equal(3);
         });
+
+        it('selecting LIKE M_NET should return nothing (case sensitive)', function() {
+            db.select('painter', 'LIKE', 'M_NET')
+           	.fetch().length.should.equal(0); 
+        });
        
     });
 
-    describe('insensitive',function() {
+    describe('insensitive', function() {
+        it('selecting LIKE M_NET should return all Manet and Monet', function() {
+            db.select('painter', 'iLIKE', 'M_NET')
+           	.fetch().length.should.equal(3); 
+        });
         it('should select all paintings', function(){
             db.select('*', 'iLIKE', '%e%')
                 .execute().db.length.should.equal(6); 

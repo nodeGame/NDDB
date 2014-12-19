@@ -1874,6 +1874,9 @@
      *
      * Returns a new NDDB instance containing only the items currently selected
      *
+     * This method is deprecated and might not longer be supported in future
+     * versions of NDDB. Use NDDB.breed instead.
+     *
      * Does not reset the query object, and it is possible to reuse the current
      * selection multiple times.
      *
@@ -1887,6 +1890,8 @@
      * @see NDDB.selexec
      * @see NDDB.and
      * @see NDDB.or
+     *
+     * @deprecated
      */
     NDDB.prototype.execute = function() {
         return this.filter(this.query.get.call(this.query));
