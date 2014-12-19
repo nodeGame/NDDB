@@ -37,10 +37,22 @@ The complete NDDB api documentation is available
 
 ## Usage
 
-Create an instance of NDDB:
+Load the library in Node.js:
 
 ```javascript
     var NDDB = require('NDDB').NDDB;
+```
+
+or in the browser add a script tag in the page:
+
+```html
+   <!-- Must load a version of NDDB that includes JSUS (see 'build/' dir) -->
+   <script src="/path/to/nddb.js></script>
+```
+
+Create an instance of NDDB:
+
+```javascript   
     var db = new NDDB();
 ```
 
@@ -407,10 +419,18 @@ NDDB relies on [mocha](http://visionmedia.github.com/mocha/) and
 Create your customized build of NDDB using the make file in the `bin`
 directory:
 
+
+In order to run in the browser NDDB needs to have
+[JSUS](http://jsus.org) loaded. You can include it separately, or
+create a new build that includes it already. See the build help for options.
+
 ```javascript
 node make.nddb.js build // Standard build,
 node make.nddb.js build -a -o nddb-full // Full build
 ```
+
+The build file file will be created inside the `build/` directory.
+
 
 ### Help
 

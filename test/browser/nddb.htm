@@ -1,0 +1,15 @@
+<!doctype html>
+<!-- Must be NDDB with JSUS -->
+<script type="javascript" src="./nddb.js"></script>
+<script type="javascript">
+window.onload = function() {
+  try {
+    var db = new NDDB();
+    var item = { a: 1, b: 2, c: 3 };
+    db.insert(item);
+  }
+  catch(e) {
+   alert(e);
+  }
+}
+</script>
