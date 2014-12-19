@@ -414,8 +414,9 @@ directory:
 
 
 In order to run in the browser NDDB needs to have
-[JSUS](http://jsus.org) loaded. You can include it separately, or
-create a new build that includes it already. See the build help for options.
+[JSUS](http://github.com/nodeGame/JSUS) loaded. You can include it
+separately, or create a new build that includes it already. See the
+build help for options.
 
 ```javascript
 node make.nddb.js build // Standard build,
