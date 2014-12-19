@@ -61,6 +61,8 @@ var items = [
 db = new NDDB(options);
 db.importDB(items);
 
+db.addFilter('aa', function() {});
+
 describe('NDDB cloneSettings', function() {
 
     it('should copy shared properties by reference', function(){
@@ -87,4 +89,8 @@ describe('NDDB cloneSettings', function() {
         o2.log.should.be.type('function');
     });
 
+    it('should copy user-defined filters', function(){
+        var o2 = db.cloneSettings();
+        o2.filters.aa.should.be.type('function');
+    });
 });

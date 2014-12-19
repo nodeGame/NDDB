@@ -110,6 +110,12 @@
         // Available db filters
         this.addDefaultFilters();
 
+        // ### __userDefinedFilters
+        // Filters that are defined with addFilter
+        // The field is needed by cloneSettings
+        // @see NDDB.addFilter
+        this.__userDefinedFilters = {};
+
         // ### __C
         // List of comparator functions
         this.__C = {};
@@ -218,8 +224,11 @@
      *
      * and return a function that execute the desired operation.
      *
-     * Registering a new operator under an already existing id will
-     * overwrite the old operator.
+     * Registering a new filter with the same name of an already existing
+     * one, will overwrite the old filter without warnings.
+     *
+     * A reference to newly added filters are registered under
+     * `__userDefinedFilter`, so that they can be copied by `cloneSettings`.
      *
      * @param {string} op An alphanumeric id
      * @param {function} cb The callback function
@@ -228,6 +237,7 @@
      */
     NDDB.prototype.addFilter = function(op, cb) {
         this.filters[op] = cb;
+        this.__userDefinedFilters[op] = this.filters[op]; 
     };
 
     /**
@@ -943,6 +953,7 @@
         options.update = this.__update;
         options.hooks = this.hooks;
         options.globalCompare = this.globalCompare;
+        options.filters = this.__userDefinedFilters;
 
         // Must be removed before cloning.
         if (options.log) {
