@@ -1,5 +1,13 @@
 # NDDB change log
 
+## 1.0.0
+  - Depracated `#execute()` method, `#fetch()` does it automatically (simpler API, and faster)
+  - Added `.lastSelection` property
+  - Fixed bug on updating views and hashes on deleted or modified items
+  - Fixed bug on selecting items with properties of different types.
+  - Improved documentation.
+  - Minor fixes.
+
 ## 0.9.8
   - `length` property removed completely because it feature detection failed in old browser
   - Cosmetics changes

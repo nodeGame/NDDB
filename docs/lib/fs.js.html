@@ -19,7 +19,7 @@
     <div id="tree"></div>
     <div id="headings">
       <div class="heading h1">
-        <a href="#fs.js">fs.js</a>
+        <a href="#nddb--fs.js">NDDB: fs.js</a>
       </div>
       <div class="heading h2">
         <a href="#use-the-node.js-fs-api.">use the Node.JS fs api.</a>
@@ -45,18 +45,20 @@
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="fs.js">
+<div class="pilwrap" id="nddb--fs.js">
   <h1>
-    <a href="#fs.js" class="pilcrow">&#182;</a>
-    fs.js
+    <a href="#nddb--fs.js" class="pilcrow">&#182;</a>
+    NDDB: fs.js
   </h1>
 </div>
 
 
 <p>Copyright(c) 2014 Stefano Balietti
-NDDB file systems routines</p>
+MIT Licensed.</p>
   </div>
-  <div class="body"><p>Overrids save and load methods available in browser, with methods that</p>
+  <div class="body"><p>NDDB file systems routines</p>
+
+<p>Overrids save and load methods available in browser, with methods that</p>
 
 
 <div class="pilwrap" id="use-the-node.js-fs-api.">
@@ -90,7 +92,7 @@ NDDB file systems routines</p>
 </div>
 
   </div>
-  <div class="body"><p>Dummy function that returns always true.</p>
+  <div class="body"><p>Dummy function that returns always true</p>
 
 <p>Overrides default storageAvailable method for the browser.</p>
   </div>
@@ -106,7 +108,7 @@ NDDB file systems routines</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">storageAvailable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-<span class="p">}</span></pre></div>
+<span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -124,7 +126,7 @@ NDDB file systems routines</p>
 
 <p>Saves to the file system using the standard <code>fs.writeFile</code> method.</p>
 
-<p>Cyclic objects are decycled, and do not cause errors. 
+<p>Cyclic objects are decycled, and do not cause errors.
 Upon loading, the cycles are restored.</p>
   </div>
   <div class="details">
@@ -132,11 +134,11 @@ Upon loading, the cycles are restored.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">file</span>
       <span class="dox_type">string</span>
-      <span>The file system path, or the identifier 
+      <span>The file system path, or the identifier
   for the browser database</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">callback</span>
+      <span class="dox_tag_name">cb</span>
       <span class="dox_type">function</span>
       <span>Optional. A callback to execute after
   the database is saved</span>
@@ -146,12 +148,6 @@ Upon loading, the cycles are restored.</p>
       <span class="dox_type">compress</span>
       <span>Optional. If TRUE, output will be compressed.
   Defaults, FALSE</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">boolean</span>
-      <span>TRUE, if operation is successful</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -169,10 +165,12 @@ Upon loading, the cycles are restored.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">save</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">compress</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">save</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">compress</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_getConstrName</span><span class="p">()</span> <span class="o">+</span>
-                            <span class="s1">&#39;.save: you must specify a valid file name.&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;save&#39;</span><span class="p">,</span> <span class="s1">&#39;file must be string&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;save&#39;</span><span class="p">,</span> <span class="s1">&#39;cb must be function or undefined&#39;</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="nx">compress</span> <span class="o">=</span> <span class="nx">compress</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span></pre></div>
         </td>
@@ -182,12 +180,10 @@ Upon loading, the cycles are restored.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
 </div>
-<p>Save in Node.js</p>
+<p>Save in Node.js.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFileSync</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">compress</span><span class="p">),</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="nx">callback</span><span class="p">();</span>
-    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-
+    <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">cb</span><span class="p">();</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -213,20 +209,14 @@ Upon loading, the cycles are restored.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">file</span>
       <span class="dox_type">string</span>
-      <span>The file system path, or the identifier 
+      <span>The file system path, or the identifier
   for the browser database</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">cb</span>
       <span class="dox_type">function</span>
-      <span>Optional. A callback to execute after 
+      <span>Optional. A callback to execute after
   the database is loaded</span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">boolean</span>
-      <span>TRUE, if operation is successful</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -255,8 +245,10 @@ Upon loading, the cycles are restored.</p>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">loadCb</span><span class="p">,</span> <span class="nx">loadedString</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_getConstrName</span><span class="p">()</span> <span class="o">+</span> 
-                            <span class="s1">&#39;.load: you must specify a valid file name.&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;file must be string&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;cb must be function or undefined&#39;</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="nx">loadCb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
@@ -270,7 +262,7 @@ Upon loading, the cycles are restored.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
-<p>retrocycle if possible</p>
+<p>Retrocycle if possible.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">NDDB</span><span class="p">.</span><span class="nx">retrocycle</span><span class="p">(</span><span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
         <span class="p">}</span>
@@ -279,7 +271,6 @@ Upon loading, the cycles are restored.</p>
 
     <span class="nx">loadedString</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">);</span>
     <span class="nx">loadCb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">loadedString</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -296,7 +287,7 @@ Upon loading, the cycles are restored.</p>
   </div>
   <div class="body"><p>Loads the content of a csv file into the database</p>
 
-<p>Uses <code>ya-csv</code> to load the csv file</p>
+<p>Uses <code>ya-csv</code> to load the csv file.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -308,7 +299,7 @@ Upon loading, the cycles are restored.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">cb</span>
       <span class="dox_type">function</span>
-      <span>Optional. A callback to execute after 
+      <span>Optional. A callback to execute after
   the database is loaded</span>
     </div>
     <div class="dox_tag_detail">
@@ -316,12 +307,6 @@ Upon loading, the cycles are restored.</p>
       <span class="dox_type">object</span>
       <span>Optional. A configuration object to pass to
  <code>ya-csv.createCsvFileReader</code></span>
-    </div>
-    <div class="dox_tag_title">Returns</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">boolean</span>
-      <span>TRUE, if operation is successful</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -337,6 +322,14 @@ Upon loading, the cycles are restored.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">loadCSV</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">reader</span><span class="p">,</span> <span class="nx">that</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;loadCSV&#39;</span><span class="p">,</span> <span class="s1">&#39;file must be string&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;loadCSV&#39;</span><span class="p">,</span> <span class="s1">&#39;cb must be function or &#39;</span> <span class="o">+</span>
+                      <span class="s1">&#39;undefined&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
     <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -345,7 +338,7 @@ Upon loading, the cycles are restored.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
 </div>
-<p>Mix options</p>
+<p>Mix options.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
@@ -366,8 +359,6 @@ Upon loading, the cycles are restored.</p>
     <span class="nx">reader</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">cb</span><span class="p">();</span>
     <span class="p">});</span>
-
-    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
         </td>
