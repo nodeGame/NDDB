@@ -1,6 +1,6 @@
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
@@ -12,6 +12,21 @@
 
     // Expose constructors
     exports.NDDB = NDDB;
+
+    if (!J) throw new Error('NDDB: missing dependency: JSUS.');
+
+    /**
+     * ## df
+     *
+     * Flag indicating support for method Object.defineProperty
+     *
+     * If support is missing, the index `_nddbid` will be as a normal
+     * property, and, therefore, it will be enumerable.
+     *
+     * @see nddb_insert
+     * JSUS.compatibility
+     */
+    df = J.compatibility().defineProperty;
 
     /**
      * ### NDDB.decycle
@@ -61,8 +76,6 @@
         var that;
         that = this;
         options = options || {};
-
-        if (!J) this.throwErr('Error', 'constructor', 'JSUS not found');
 
         // ## Public properties.
 
@@ -237,7 +250,7 @@
      */
     NDDB.prototype.addFilter = function(op, cb) {
         this.filters[op] = cb;
-        this.__userDefinedFilters[op] = this.filters[op]; 
+        this.__userDefinedFilters[op] = this.filters[op];
     };
 
     /**
@@ -816,7 +829,7 @@
             if (!nddbid) {
                 this.throwErr('Error', 'insert', 'failed to create index: ' + o);
             }
-            if (Object.defineProperty) {
+            if (df) {
                 Object.defineProperty(o, '_nddbid', { value: nddbid });
             }
             else {
@@ -1125,7 +1138,7 @@
                     if ('undefined' === typeof v2) return -1;
                     if (v1 > v2) return 1;
                     if (v2 > v1) return -1;
-                    
+
                     // In case v1 and v2 are of different types
                     // they might not be equal here.
                     if (v2 === v1) return 0;
@@ -3810,7 +3823,7 @@
     // ## Closure
 })(
     ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
-        module.exports: window ,
+        module.exports : window ,
     ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
         module.parent.exports.JSUS || require('JSUS').JSUS : JSUS,
     ('object' === typeof module && 'function' === typeof require) ?
