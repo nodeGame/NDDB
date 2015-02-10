@@ -3374,8 +3374,8 @@
      *
      * Loads a JSON object into the database from a persistent medium
      *
-     * Looks for a global store` method to load from the browser database.
-     * The `store` method is supploed by shelf.js.
+     * Looks for a global `store` method to load from the browser database.
+     * The `store` method is supplied by shelf.js.
      * If no `store` object is found, an error is issued and the database
      * is not loaded.
      *
