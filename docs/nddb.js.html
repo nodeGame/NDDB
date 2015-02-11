@@ -486,7 +486,9 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">J</span><span class="p">,</span> <span class="nx">store</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">J</span><span class="p">,</span> <span class="nx">store</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -527,7 +529,7 @@ JSUS.compatibility
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">df</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">compatibility</span><span class="p">().</span><span class="nx">defineProperty</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">df</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">compatibility</span><span class="p">().</span><span class="nx">defineProperty</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -5741,13 +5743,13 @@ dimension will be skipped</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">array</span>
-      <span>outs The array of groups</span>
+      <span>outs The array of NDDB (or constructor) groups</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">groupBy</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">groups</span><span class="p">,</span> <span class="nx">outs</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">out</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">groups</span><span class="p">,</span> <span class="nx">outs</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">db</span><span class="p">;</span>
         <span class="nx">db</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">key</span><span class="p">)</span> <span class="k">return</span> <span class="nx">db</span><span class="p">;</span>
 
@@ -5768,7 +5770,7 @@ dimension will be skipped</p>
                 <span class="nx">groups</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
                 <span class="nx">out</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">elem</span><span class="p">),</span> <span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+                        <span class="k">return</span> <span class="nx">elem</span><span class="p">;</span>
                     <span class="p">}</span>
                 <span class="p">});</span></pre></div>
         </td>
@@ -6920,9 +6922,9 @@ Upon loading, the cycles are restored.</p>
   </div>
   <div class="body"><p>Loads a JSON object into the database from a persistent medium</p>
 
-<p>Looks for a global store<code>method to load from the browser database.
-The</code>store<code>method is supploed by shelf.js.
-If no</code>store` object is found, an error is issued and the database
+<p>Looks for a global <code>store</code> method to load from the browser database.
+The <code>store</code> method is supplied by shelf.js.
+If no <code>store</code> object is found, an error is issued and the database
 is not loaded.</p>
 
 <p>Cyclic objects previously decycled will be retrocycled.</p>

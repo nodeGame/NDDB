@@ -10,6 +10,8 @@
  */
 (function(exports, J, store) {
 
+    "use strict";
+
     // Expose constructors
     exports.NDDB = NDDB;
 
@@ -26,7 +28,7 @@
      * @see nddb_insert
      * JSUS.compatibility
      */
-    df = J.compatibility().defineProperty;
+    var df = J.compatibility().defineProperty;
 
     /**
      * ### NDDB.decycle
@@ -2782,10 +2784,10 @@
      *
      * @param {string} key If the dimension for grouping
      *
-     * @return {array} outs The array of groups
+     * @return {array} outs The array of NDDB (or constructor) groups
      */
     NDDB.prototype.groupBy = function(key) {
-        var groups, outs, i, el, out;
+        var groups, outs, i, el, out, db;
         db = this.fetch();
         if (!key) return db;
 
@@ -2798,7 +2800,7 @@
                 groups.push(el);
                 out = this.filter(function(elem) {
                     if (J.equals(J.getNestedValue(key, elem), el)) {
-                        return this;
+                        return elem;
                     }
                 });
                 // Reset nddb_pointer in subgroups.
