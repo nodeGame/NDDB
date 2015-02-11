@@ -1,5 +1,10 @@
 # NDDB change log
 
+## 1.1.0
+  - Added "use stricts"
+  - Fixed leaks of variables db, and df
+  - Node 0.12 compatible
+
 ## 1.0.1
   - Better check for availability of Object.defineProperty method (IE8, IE9).
   - JSUS needs to be available when NDDB is loaded, and not only at constructor time.
