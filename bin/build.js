@@ -10,6 +10,7 @@ module.exports.build = build;
 
 var smoosh = require('smoosh'),
 path = require('path'),
+fs = require('fs'),
 J = require('JSUS').JSUS;
 
 var pkg = require('../package.json'),
