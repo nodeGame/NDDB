@@ -820,8 +820,8 @@
     function nddb_insert(o, update) {
         var nddbid;
         if (('object' !== typeof o) && ('function' !== typeof o)) {
-            this.throwErr('TypeError', 'insert', 'object or function expected ' +
-                          typeof o + ' received.');
+            this.throwErr('TypeError', 'insert', 'object or function ' +
+                          'expected, ' + typeof o + ' received.');
         }
 
         // Check / create a global index.
@@ -829,7 +829,8 @@
             // Create internal idx.
             nddbid = J.uniqueKey(this.nddbid.resolve);
             if (!nddbid) {
-                this.throwErr('Error', 'insert', 'failed to create index: ' + o);
+                this.throwErr('Error', 'insert',
+                              'failed to create index: ' + o);
             }
             if (df) {
                 Object.defineProperty(o, '_nddbid', { value: nddbid });
@@ -1937,7 +1938,8 @@
     NDDB.prototype.exists = function(o) {
         var i, len, db;
         if ('object' !== typeof o && 'function' !== typeof o) {
-            this.throwErr('TypeError', 'exists', 'o must be object or function');
+            this.throwErr('TypeError', 'exists',
+                          'o must be object or function');
         }
         db = this.fetch();
         len = db.length;
@@ -2031,7 +2033,7 @@
             func = function(a,b) {
                 var i, result;
                 for (i = 0; i < d.length; i++) {
-                    result = that.getComparator(d[i]).call(that,a,b);
+                    result = that.getComparator(d[i]).call(that, a, b);
                     if (result !== 0) return result;
                 }
                 return result;
@@ -2135,7 +2137,8 @@
         var func, i, db, len, out, o;
         func = arguments[0];
         if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'map', 'first argument must be function');
+            this.throwErr('TypeError', 'map',
+                          'first argument must be function');
         }
         db = this.fetch();
         len = db.length;
