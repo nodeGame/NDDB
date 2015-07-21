@@ -7,9 +7,9 @@ var db = new NDDB();
 
 var items = [
     {
-	painter: "Jesus",
-	title: "Tea in the desert",
-	year: 0,
+        painter: "Jesus",
+        title: "Tea in the desert",
+        year: 0,
         comment: "Pretty cool!"
     },
     {
@@ -41,18 +41,20 @@ var items = [
 
 ];
 
+var p1 = 10, p2 = 100, p3 = 1000;
+
 var copy = null, copy2 = null;
 
 describe('NDDB Events', function() {
 
     describe('#on(\'insert\') ',function() {
-    	before(function() {
+        before(function() {
             copy = [];
             db.on('insert', function(o){
-        	copy.push(o);
+                copy.push(o);
             });
             db.on('insert', function(o){
-        	db.tag(o.year, o);
+                db.tag(o.year, o);
             });
             db.importDB(items);
         });
@@ -73,22 +75,23 @@ describe('NDDB Events', function() {
     });
 
     describe('#on(\'update\') ',function() {
-    	before(function() {
+        before(function() {
             copy2 = [];
             db = new NDDB();
 
             db.on('update', function(o, update){
-        	copy2.push(o);
+                copy2.push(o);
             });
             db.on('update', function(o, update){
-        	db.tag(o.year, o);
+                db.tag(o.year, o);
             });
             db.on('update', function(o, update){
-        	o.oldComment = o.comment;
+                o.oldComment = o.comment;
             });
 
             db.importDB(items);
-            db.selexec('painter', '=', 'Jesus').update({comment: "Was he a painter !?"});
+            db.selexec('painter', '=', 'Jesus')
+                .update({comment: "Was he a painter !?"});
 
         });
         it('copy should have length 1', function() {
@@ -97,10 +100,10 @@ describe('NDDB Events', function() {
         it('should add a tag for each updated element', function() {
             J.size(db.tags).should.eql(1);
             db.tags['0'].should.eql({
-            	painter: 'Jesus',
-            	title: 'Tea in the desert',
-            	year: 0,
-            	comment: 'Was he a painter !?',
+                painter: 'Jesus',
+                title: 'Tea in the desert',
+                year: 0,
+                comment: 'Was he a painter !?',
                 oldComment: 'Pretty cool!',
             });
         });
@@ -108,11 +111,11 @@ describe('NDDB Events', function() {
     });
 
     describe('#on(\'remove\') ',function() {
-    	before(function() {
+        before(function() {
             copy = [];
             db.clear(true);
             db.on('remove', function(o){
-        	copy = o;
+                copy = o;
             });
             db.importDB(items);
             db.removeAllEntries();
@@ -124,10 +127,64 @@ describe('NDDB Events', function() {
 
     });
 
+    describe('#emit(\'insert\') + 1 param',function() {
+        before(function() {
+            copy = [];
+            db.off('insert');
+            db.on('insert', function(o, p1){
+                o.p1 = p1;
+                copy.push(o);
+            });
+            var i, len;
+            i = -1, len = items.length;
+            for ( ; ++i < len ; ) {
+                db.emit('insert', items[i], p1);
+            }
+        });
 
+        it('should preduce a copy of equal length', function() {
+            items.length.should.eql(copy.length);
+        });
 
+        it('should add a new property p1 to every element', function() {
+            var i, len;
+            i = -1, len = copy.length;
+            for ( ; ++i < len ; ) {
+                copy[i].p1.should.be.eql(p1);
+            }
+        });
+
+    });
+
+    describe('#emit(\'insert\') + 2 param', function() {
+        before(function() {
+            copy = [];
+            db.off('insert');
+            db.on('insert', function(o, p1, p2) {
+                o.pp1 = p1;
+                o.pp2 = p2
+                copy.push(o);
+            });
+            var i, len;
+            i = -1, len = items.length;
+            for ( ; ++i < len ; ) {
+                db.emit('insert', items[i], p1, p2);
+            }
+        });
+
+        it('should preduce a copy of equal length', function() {
+            items.length.should.eql(copy.length);
+        });
+
+        it('should add new properties p1, p2 to every element', function() {
+            var i, len;
+            i = -1, len = copy.length;
+            for ( ; ++i < len ; ) {
+                copy[i].pp1.should.be.eql(p1);
+                copy[i].pp2.should.be.eql(p2);
+            }
+        });
+
+    });
 
 });
-
-
-

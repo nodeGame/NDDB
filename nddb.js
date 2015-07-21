@@ -1661,20 +1661,22 @@
 
         case 1:
             h = this.hooks[event][0];
-            if (!argLen === 1) h.call(this);
+            if (argLen === 1) h.call(this);
             else if (argLen === 2) h.call(this, arguments[1]);
-            else if (argLen === 3) h.call(this, arguments[1], arguments[2]);
+            else if (argLen === 3) {
+                h.call(this, arguments[1], arguments[2]);
+            }
             else {
                 args = new Array(argLen-1);
-                for (i = 1; i < argLen; i++) {
-                    args[i] = arguments[i];
+                for (i = 0; i < argLen; i++) {
+                    args[i] = arguments[i+1];
                 }
                 h.apply(this, args);
             }
             break;
         case 2:
             h = this.hooks[event][0], h2 = this.hooks[event][1];
-            if (!argLen === 1) {
+            if (argLen === 1) {
                 h.call(this);
                 h2.call(this);
             }
@@ -1688,15 +1690,16 @@
             }
             else {
                 args = new Array(argLen-1);
-                for (i = 1; i < argLen; i++) {
-                    args[i] = arguments[i];
+                for (i = 0; i < argLen; i++) {
+                    args[i] = arguments[i+1];
                 }
                 h.apply(this, args);
                 h2.apply(this, args);
             }
             break;
         default:
-             if (!argLen === 1) {
+
+             if (argLen === 1) {
                  for (i = 0; i < len; i++) {
                      this.hooks[event][i].call(this);
                  }
@@ -1713,8 +1716,8 @@
             }
             else {
                 args = new Array(argLen-1);
-                for (i = 1; i < argLen; i++) {
-                    args[i] = arguments[i];
+                for (i = 0; i < argLen; i++) {
+                    args[i] = arguments[i+1];
                 }
                 for (i = 0; i < len; i++) {
                     this.hooks[event][i].apply(this, args);
