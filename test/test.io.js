@@ -15,9 +15,9 @@ var db2 = new NDDB();
 
 var hashable = [
     {
-	painter: "Jesus",
-	title: "Tea in the desert",
-	year: 0,
+        painter: "Jesus",
+        title: "Tea in the desert",
+        year: 0,
     },
     {
         painter: "Dali",
@@ -72,28 +72,28 @@ var weirdos = [
     {},
     function() {console.log('foo')},
     {
-    	a: undefined,
-    	b: null,
-    	c: {},
-    	d: function() {console.log('foo')},
+        a: undefined,
+        b: null,
+        c: {},
+        d: function() {console.log('foo')},
     }];
 
 var weirdos_import = [
     {},
     function() {console.log('foo')},
     {
-       	a: undefined,
-       	b: null,
-       	c: {},
-       	d: function() {console.log('foo')},
+        a: undefined,
+        b: null,
+        c: {},
+        d: function() {console.log('foo')},
     }];
 
 var weirdos_load = [
     {},
     {},
     {
-      	b: null,
-      	c: {},
+        b: null,
+        c: {},
     }];
 
 
@@ -103,7 +103,7 @@ var base_cycle = {
     a: 1,
     b: 2,
     c: {a: 1,
-	b: {foo: 1},
+        b: {foo: 1},
        },
 };
 
@@ -132,59 +132,59 @@ var filename = './db.out';
 
 var deleteIfExist = function(cb) {
     if (JSUS.existsSync(filename)) {
-	fs.unlinkSync(filename);
-	if (cb) cb();
+        fs.unlinkSync(filename);
+        if (cb) cb();
     }
     else {
-	if (cb) cb();
+        if (cb) cb();
     }
 };
 
 var testSaveLoad = function(items, compareToImport, compareToLoad) {
 
-    describe('#save()', function() {
+    describe('#saveSync()', function() {
 
-	before(function() {
-	    deleteIfExist(function() {
-		db2.clear(true);
-		db = new NDDB();                
+        before(function() {
+            deleteIfExist(function() {
+                db2.clear(true);
+                db = new NDDB();
                 db.importDB(items);
-               	db.save(filename);             
-	    });
-	});
+                db.saveSync(filename);
+            });
+        });
 
-	it('should create a dump file', function() {
-	    JSUS.existsSync(filename).should.be.true;
-	});
+        it('should create a dump file', function() {
+            JSUS.existsSync(filename).should.be.true;
+        });
 
-	it('original database should be unchanged', function() {
-	    if (compareToImport) {
-		JSUS.equals(db.db, compareToImport).should.be.true;
-	    }
-	    else {
-		db.db.should.be.eql(items);
-	    }
-	});
+        it('original database should be unchanged', function() {
+            if (compareToImport) {
+                JSUS.equals(db.db, compareToImport).should.be.true;
+            }
+            else {
+                db.db.should.be.eql(items);
+            }
+        });
 
     });
 
     describe('#load()', function() {
-	before(function() {            
-	    db2.load(filename);         
-	});
-	after(function() {
-	    deleteIfExist();
-	});
+        before(function() {
+            db2.loadSync(filename);
+        });
+        after(function() {
+            deleteIfExist();
+        });
 
-	it('the loaded database should be a copy of the saved one', function() {
-	    if (compareToLoad) {
-		JSUS.equals(db2.db, compareToLoad).should.be.true;
-	    }
-	    else {
-		JSUS.equals(db.db, db2.db).should.be.true;
-	    }
+        it('the loaded database should be a copy of the saved one', function() {
+            if (compareToLoad) {
+                JSUS.equals(db2.db, compareToLoad).should.be.true;
+            }
+            else {
+                JSUS.equals(db.db, db2.db).should.be.true;
+            }
 
-	});
+        });
 
     });
 };
@@ -196,46 +196,46 @@ describe('NDDB io operations.', function() {
 
     describe('Cycle / Decycle.', function() {
 
- 	describe('Not Hashable items', function() {
- 	    testSaveLoad(not_hashable);
- 	});
- 
- 	describe('Hashable items.', function() {
- 	    testSaveLoad(hashable);
- 	});
+        describe('Not Hashable items', function() {
+            testSaveLoad(not_hashable);
+        });
 
- 	describe('Cycles items', function() {
- 	    testSaveLoad(cycles);
- 	});
+        describe('Hashable items.', function() {
+            testSaveLoad(hashable);
+        });
 
-// 	describe('Weirdos items.', function() {
-//             testSaveLoadShould(weirdos, weirdos_import);            
-// 	});
+        describe('Cycles items', function() {
+            testSaveLoad(cycles);
+        });
+
+//      describe('Weirdos items.', function() {
+//             testSaveLoadShould(weirdos, weirdos_import);
+//      });
 
     });
 
      describe('Without Cycle / Decycle.', function() {
- 	before(function() {
- 	    delete JSON.decycle;
- 	    delete JSON.retrocycle;
- 	});
- 
- 	describe('Not Hashable items', function() {
- 	    testSaveLoad(not_hashable);
- 	});
- 
- 	describe('Hashable items.', function() {
- 	    testSaveLoad(hashable);
- 	});
-  
- 	describe('Cycles items', function() {
- 	    testSaveLoad(cycles);
- 	});
+        before(function() {
+            delete JSON.decycle;
+            delete JSON.retrocycle;
+        });
 
-//  	describe('Weirdos items.', function() {
-//  	    testSaveLoad(weirdos, weirdos_import);
-//  	});
- 
+        describe('Not Hashable items', function() {
+            testSaveLoad(not_hashable);
+        });
+
+        describe('Hashable items.', function() {
+            testSaveLoad(hashable);
+        });
+
+        describe('Cycles items', function() {
+            testSaveLoad(cycles);
+        });
+
+//      describe('Weirdos items.', function() {
+//          testSaveLoad(weirdos, weirdos_import);
+//      });
+
      });
 
 });

@@ -31,13 +31,13 @@
         <a href="#nddb.save">NDDB.save</a>
       </div>
       <div class="heading h3">
-        <a href="#nddb.saveasync">NDDB.saveAsync</a>
+        <a href="#nddb.save">NDDB.save</a>
+      </div>
+      <div class="heading h3">
+        <a href="#nddb.loadsync">NDDB.loadSync</a>
       </div>
       <div class="heading h3">
         <a href="#nddb.load">NDDB.load</a>
-      </div>
-      <div class="heading h3">
-        <a href="#nddb.loadasync">NDDB.loadAsync</a>
       </div>
       <div class="heading h3">
         <a href="#nddb.loadcsv">NDDB.loadCSV</a>
@@ -177,7 +177,7 @@ Upon loading, the cycles are restored.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">save</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">compress</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveSync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">compress</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;save&#39;</span><span class="p">,</span> <span class="s1">&#39;file must be string&#39;</span><span class="p">);</span>
     <span class="p">}</span>
@@ -202,10 +202,10 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nddb.saveasync">
+<div class="pilwrap" id="nddb.save">
   <h3>
-    <a href="#nddb.saveasync" class="pilcrow">&#182;</a>
-    NDDB.saveAsync
+    <a href="#nddb.save" class="pilcrow">&#182;</a>
+    NDDB.save
   </h3>
 </div>
 
@@ -214,7 +214,7 @@ Upon loading, the cycles are restored.</p>
 
 <p>Saves to the file system using the standard <code>fs.writeFileAsync</code> method.</p>
 
-<p>Refer to NDDB.save for documentation</p>
+<p>Refer to NDDB.saveSync for documentation</p>
   </div>
 </div>
         </td>
@@ -243,10 +243,10 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nddb.load">
+<div class="pilwrap" id="nddb.loadsync">
   <h3>
-    <a href="#nddb.load" class="pilcrow">&#182;</a>
-    NDDB.load
+    <a href="#nddb.loadsync" class="pilcrow">&#182;</a>
+    NDDB.loadSync
   </h3>
 </div>
 
@@ -295,7 +295,7 @@ Upon loading, the cycles are restored.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">loadSync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">loadedString</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;file must be string&#39;</span><span class="p">);</span>
@@ -311,10 +311,10 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nddb.loadasync">
+<div class="pilwrap" id="nddb.load">
   <h3>
-    <a href="#nddb.loadasync" class="pilcrow">&#182;</a>
-    NDDB.loadAsync
+    <a href="#nddb.load" class="pilcrow">&#182;</a>
+    NDDB.load
   </h3>
 </div>
 
@@ -323,11 +323,11 @@ Upon loading, the cycles are restored.</p>
 
 <p>Loads from the file system using <code>fs.readFile</code> methods.</p>
 
-<p>Refer to NDDB.load for documentation.</p>
+<p>Refer to NDDB.loadSync for documentation.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">loadAsync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">loadedString</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;file must be string&#39;</span><span class="p">);</span>
