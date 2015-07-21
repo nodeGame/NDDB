@@ -2332,7 +2332,6 @@
      *
      * A new NDDB object breeded, so that further methods can be chained.
      *
-     * @api private
      * @param {string} key1 First property to compare
      * @param {string} key2 Second property to compare
      * @param {function} comparator Optional. A comparator function.
@@ -2345,6 +2344,8 @@
      * @return {NDDB} A new database containing the joined entries
      *
      * @see NDDB.breed
+     *
+     * @api private
      */
     NDDB.prototype._join = function(key1, key2, comparator, pos, select) {
         var out, idxs, foreign_key, key;
