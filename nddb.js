@@ -753,7 +753,13 @@
                           'function');
         }
         this.log = function() {
-            return cb.apply(ctx, arguments);
+            var args, i, len;
+            len = arguments.length;
+            args = new Array(len);
+            for (i = 0; i < len; i++) {
+                args[i] = arguments[i];
+            }
+            return cb.apply(ctx, args);
         };
     }
 
