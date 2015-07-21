@@ -1637,22 +1637,90 @@
     /**
      * ### NDDB.emit
      *
-     * Fires all the listeners associated with an event
+     * Fires all the listeners associated with an event (optimized)
      *
      * Accepts any number of parameters, the first one is the name
      * of the event, and the remaining will be passed to the event listeners.
      */
     NDDB.prototype.emit = function() {
-        var i, event;
-        event = Array.prototype.splice.call(arguments, 0, 1);
-        if ('string' !== typeof event[0]) {
+        var event;
+        var h, h2;
+        var i, len, argLen, args;
+        event = arguments[0];
+        if ('string' !== typeof event) {
             this.throwErr('TypeError', 'emit', 'first argument must be string');
         }
-        if (!this.hooks[event] || !this.hooks[event].length) {
-            return;
+        if (!this.hooks[event]) {
+            this.throwErr('TypeError', 'emit', 'unknown event: ' + event);
         }
-        for (i = 0; i < this.hooks[event].length; i++) {
-            this.hooks[event][i].apply(this, arguments);
+        len = this.hooks[event].length;
+        if (!len) return;
+        argLen = arguments.length;
+
+        switch(len) {
+
+        case 1:
+            h = this.hooks[event][0];
+            if (!argLen === 1) h.call(this);
+            else if (argLen === 2) h.call(this, arguments[1]);
+            else if (argLen === 3) h.call(this, arguments[1], arguments[2]);
+            else {
+                args = new Array(argLen-1);
+                for (i = 1; i < argLen; i++) {
+                    args[i] = arguments[i];
+                }
+                h.apply(this, args);
+            }
+            break;
+        case 2:
+            h = this.hooks[event][0], h2 = this.hooks[event][1];
+            if (!argLen === 1) {
+                h.call(this);
+                h2.call(this);
+            }
+            else if (argLen === 2) {
+                h.call(this, arguments[1]);
+                h2.call(this, arguments[1]);
+            }
+            else if (argLen === 3) {
+                h.call(this, arguments[1], arguments[2]);
+                h2.call(this, arguments[1], arguments[2]);
+            }
+            else {
+                args = new Array(argLen-1);
+                for (i = 1; i < argLen; i++) {
+                    args[i] = arguments[i];
+                }
+                h.apply(this, args);
+                h2.apply(this, args);
+            }
+            break;
+        default:
+             if (!argLen === 1) {
+                 for (i = 0; i < len; i++) {
+                     this.hooks[event][i].call(this);
+                 }
+            }
+            else if (argLen === 2) {
+                for (i = 0; i < len; i++) {
+                    this.hooks[event][i].call(this, arguments[1]);
+                }
+            }
+            else if (argLen === 3) {
+                for (i = 0; i < len; i++) {
+                    this.hooks[event][i].call(this, arguments[1], arguments[2]);
+                }
+            }
+            else {
+                args = new Array(argLen-1);
+                for (i = 1; i < argLen; i++) {
+                    args[i] = arguments[i];
+                }
+                for (i = 0; i < len; i++) {
+                    this.hooks[event][i].apply(this, args);
+                }
+
+            }
         }
     };
 
