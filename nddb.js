@@ -752,7 +752,7 @@
             this.throwErr('TypeError', 'initLog', 'ctx must be object or ' +
                           'function');
         }
-        this.log = function(){
+        this.log = function() {
             return cb.apply(ctx, arguments);
         };
     }
@@ -2159,7 +2159,7 @@
     };
 
     /**
-     * ### NDDB.each || NDDB.forEach
+     * ### NDDB.each || NDDB.forEach (optimized)
      *
      * Applies a callback function to each element in the db
      *
@@ -2173,7 +2173,7 @@
      * @see NDDB.map
      */
     NDDB.prototype.each = NDDB.prototype.forEach = function() {
-        var func, i, db, len;
+        var func, i, db, len, args, argLen;
         func = arguments[0];
         if ('function' !== typeof func) {
             this.throwErr('TypeError', 'each',
@@ -2181,9 +2181,33 @@
         }
         db = this.fetch();
         len = db.length;
-        for (i = 0 ; i < len ; i++) {
-            arguments[0] = db[i];
-            func.apply(this, arguments);
+        argLen = arguments.length;
+        switch(argLen) {
+        case 1:
+            for (i = 0 ; i < len ; i++) {
+                func.call(this, db[i]);
+            }
+            break;
+        case 2:
+            for (i = 0 ; i < len ; i++) {
+                func.call(this, db[i], arguments[1]);
+            }
+            break;
+        case 3:
+            for (i = 0 ; i < len ; i++) {
+                func.call(this, db[i], arguments[1], arguments[2]);
+            }
+            break;
+        default:
+            args = new Array(argLen+1);
+            args[0] = null;
+            for (i = 1; i < argLen; i++) {
+                args[i] = arguments[i];
+            }
+            for (i = 0 ; i < len ; i++) {
+                args[0] = db[i];
+                func.apply(this, args);
+            }
         }
     };
 
@@ -2203,6 +2227,7 @@
      */
     NDDB.prototype.map = function() {
         var func, i, db, len, out, o;
+        var args, argLen;
         func = arguments[0];
         if ('function' !== typeof func) {
             this.throwErr('TypeError', 'map',
@@ -2210,11 +2235,38 @@
         }
         db = this.fetch();
         len = db.length;
+        argLen = arguments.length;
         out = [];
-        for (i = 0 ; i < db.length ; i++) {
-            arguments[0] = db[i];
-            o = func.apply(this, arguments);
-            if ('undefined' !== typeof o) out.push(o);
+        switch(argLen) {
+        case 1:
+            for (i = 0 ; i < len ; i++) {
+                o = func.call(this, db[i]);
+                if ('undefined' !== typeof o) out.push(o);
+            }
+            break;
+        case 2:
+            for (i = 0 ; i < len ; i++) {
+                o = func.call(this, db[i], arguments[1]);
+                if ('undefined' !== typeof o) out.push(o);
+            }
+            break;
+        case 3:
+            for (i = 0 ; i < len ; i++) {
+                o = func.call(this, db[i], arguments[1], arguments[2]);
+                if ('undefined' !== typeof o) out.push(o);
+            }
+            break;
+        default:
+            args = new Array(argLen+1);
+            args[0] = null;
+            for (i = 1; i < argLen; i++) {
+                args[i] = arguments[i];
+            }
+            for (i = 0 ; i < len ; i++) {
+                args[0] = db[i];
+                o = func.apply(this, args);
+                if ('undefined' !== typeof o) out.push(o);
+            }
         }
         return out;
     };
