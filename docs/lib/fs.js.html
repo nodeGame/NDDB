@@ -28,7 +28,7 @@
         <a href="#nddb.storageavailable">NDDB.storageAvailable</a>
       </div>
       <div class="heading h3">
-        <a href="#nddb.save">NDDB.save</a>
+        <a href="#nddb.savesync">NDDB.saveSync</a>
       </div>
       <div class="heading h3">
         <a href="#nddb.save">NDDB.save</a>
@@ -126,10 +126,10 @@ MIT Licensed.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nddb.save">
+<div class="pilwrap" id="nddb.savesync">
   <h3>
-    <a href="#nddb.save" class="pilcrow">&#182;</a>
-    NDDB.save
+    <a href="#nddb.savesync" class="pilcrow">&#182;</a>
+    NDDB.saveSync
   </h3>
 </div>
 
@@ -218,7 +218,7 @@ Upon loading, the cycles are restored.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveAsync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">compress</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">save</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">compress</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">file</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;saveAsync&#39;</span><span class="p">,</span> <span class="s1">&#39;file must be string&#39;</span><span class="p">);</span>
     <span class="p">}</span>
@@ -234,7 +234,7 @@ Upon loading, the cycles are restored.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
-<p>Save in Node.js.</p>
+<p>Save async.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFile</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">compress</span><span class="p">),</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span>
 <span class="p">};</span></pre></div>
@@ -253,7 +253,7 @@ Upon loading, the cycles are restored.</p>
   </div>
   <div class="body"><p>Loads a JSON object into the database from a persistent medium</p>
 
-<p>Loads from the file system using <code>fs.readFileSync</code> or <code>fs.readFile</code> methods.</p>
+<p>Loads from the file system using <code>fs.readFileSync</code> method.</p>
 
 <p>Cyclic objects previously decycled will be retrocycled.</p>
   </div>
@@ -270,6 +270,10 @@ Upon loading, the cycles are restored.</p>
       <span class="dox_type">function</span>
       <span>Optional. A callback to execute after
   the database is loaded</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.loadAsync</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -338,7 +342,6 @@ Upon loading, the cycles are restored.</p>
     <span class="nx">loadedString</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="nx">loadCb</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">loadedString</span><span class="p">);</span>
     <span class="p">});</span>
-
 <span class="p">};</span></pre></div>
         </td>
       </tr>
