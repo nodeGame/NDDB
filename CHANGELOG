@@ -1,5 +1,8 @@
 # NDDB change log
 
+## 1.2.0
+  - Cleanup and optimizations
+
 ## 1.1.0
   - Added "use stricts"
   - Fixed leaks of variables db, and df

@@ -1021,18 +1021,18 @@ var prepareString = "a"[0] != "a",
 });
 
 /**
- * # Shelf.JS 
- * 
+ * # Shelf.JS
+ *
  * Persistent Client-Side Storage @VERSION
- * 
+ *
  * Copyright 2012 Stefano Balietti
  * GPL licenses.
- * 
+ *
  * ---
- * 
+ *
  */
 (function(exports){
-	
+
 var version = '0.3';
 
 var store = exports.store = function (key, value, options, type) {
@@ -1043,7 +1043,7 @@ var store = exports.store = function (key, value, options, type) {
 		return;
 	}
 	store.log('Accessing ' + type + ' storage');
-	
+
 	return store.types[type](key, value, options);
 };
 
@@ -1058,8 +1058,8 @@ store.types = {};
 var mainStorageType = "volatile";
 
 //if Object.defineProperty works...
-try {	
-	
+try {
+
 	Object.defineProperty(store, 'type', {
 		set: function(type){
 			if ('undefined' === typeof store.types[type]) {
@@ -1087,7 +1087,7 @@ store.addType = function (type, storage) {
 		options.type = type;
 		return store(key, value, options);
 	};
-	
+
 	if (!store.type || store.type === "volatile") {
 		store.type = type;
 	}
@@ -1095,8 +1095,8 @@ store.addType = function (type, storage) {
 
 // TODO: create unit test
 store.onquotaerror = undefined;
-store.error = function() {	
-	console.log("shelf quota exceeded"); 
+store.error = function() {
+	console.log("shelf quota exceeded");
 	if ('function' === typeof store.onquotaerror) {
 		store.onquotaerror(null);
 	}
@@ -1106,7 +1106,7 @@ store.log = function(text) {
 	if (store.verbosity > 0) {
 		console.log('Shelf v.' + version + ': ' + text);
 	}
-	
+
 };
 
 store.isPersistent = function() {
@@ -1116,7 +1116,7 @@ store.isPersistent = function() {
 };
 
 //if Object.defineProperty works...
-try {	
+try {
 	Object.defineProperty(store, 'persistent', {
 		set: function(){},
 		get: store.isPersistent,
@@ -1134,7 +1134,7 @@ store.decycle = function(o) {
 	}
 	return o;
 };
-    
+
 store.retrocycle = function(o) {
 	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
 		o = JSON.retrocycle(o);
@@ -1146,7 +1146,7 @@ store.stringify = function(o) {
 	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
 		throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
 	}
-	
+
 	o = store.decycle(o);
 	return JSON.stringify(o);
 };
@@ -1162,7 +1162,7 @@ store.parse = function(o) {
 			store.log(o);
 		}
 	}
-	
+
 	o = store.retrocycle(o);
 	return o;
 };
@@ -1170,16 +1170,16 @@ store.parse = function(o) {
 // ## In-memory storage
 // ### fallback for all browsers to enable the API even if we can't persist data
 (function() {
-	
+
 	var memory = {},
 		timeout = {};
-	
+
 	function copy(obj) {
 		return store.parse(store.stringify(obj));
 	}
 
 	store.addType("volatile", function(key, value, options) {
-		
+
 		if (!key) {
 			return copy(memory);
 		}
@@ -1213,22 +1213,22 @@ store.parse = function(o) {
 }('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
 /**
  * ## Amplify storage for Shelf.js
- * 
+ *
  * ---
- * 
+ *
  * v. 1.1.0 22.05.2013 a275f32ee7603fbae6607c4e4f37c4d6ada6c3d5
- * 
- * Important! When updating to next Amplify.JS release, remember to change 
- * 
+ *
+ * Important! When updating to next Amplify.JS release, remember to change
+ *
  * JSON.stringify -> store.stringify
- * 
+ *
  * to keep support for ciclyc objects
- * 
+ *
  */
 
 (function(exports) {
 
-var store = exports.store;	
+var store = exports.store;
 
 if (!store) {
 	console.log('amplify.shelf.js: shelf.js core not found. Amplify storage not available.');
@@ -1241,7 +1241,7 @@ if ('undefined' === typeof window) {
 }
 
 //var rprefix = /^__shelf__/;
-var regex = new RegExp("^" + store.name); 
+var regex = new RegExp("^" + store.name);
 function createFromStorageInterface( storageType, storage ) {
 	store.addType( storageType, function( key, value, options ) {
 		var storedValue, parsed, i, remove,
@@ -3751,7 +3751,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
 
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
@@ -3761,8 +3761,25 @@ if ( !store.types.localStorage && window.globalStorage ) {
  */
 (function(exports, J, store) {
 
+    "use strict";
+
     // Expose constructors
     exports.NDDB = NDDB;
+
+    if (!J) throw new Error('NDDB: missing dependency: JSUS.');
+
+    /**
+     * ## df
+     *
+     * Flag indicating support for method Object.defineProperty
+     *
+     * If support is missing, the index `_nddbid` will be as a normal
+     * property, and, therefore, it will be enumerable.
+     *
+     * @see nddb_insert
+     * JSUS.compatibility
+     */
+    var df = J.compatibility().defineProperty;
 
     /**
      * ### NDDB.decycle
@@ -3813,8 +3830,6 @@ if ( !store.types.localStorage && window.globalStorage ) {
         that = this;
         options = options || {};
 
-        if (!J) this.throwErr('Error', 'constructor', 'JSUS not found');
-
         // ## Public properties.
 
         // ### nddbid
@@ -3860,6 +3875,12 @@ if ( !store.types.localStorage && window.globalStorage ) {
         // ### filters
         // Available db filters
         this.addDefaultFilters();
+
+        // ### __userDefinedFilters
+        // Filters that are defined with addFilter
+        // The field is needed by cloneSettings
+        // @see NDDB.addFilter
+        this.__userDefinedFilters = {};
 
         // ### __C
         // List of comparator functions
@@ -3951,7 +3972,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
         if (db) {
             this.importDB(db);
         }
-    };
+    }
 
     /**
      * ### NDDB.addFilter
@@ -3969,8 +3990,11 @@ if ( !store.types.localStorage && window.globalStorage ) {
      *
      * and return a function that execute the desired operation.
      *
-     * Registering a new operator under an already existing id will
-     * overwrite the old operator.
+     * Registering a new filter with the same name of an already existing
+     * one, will overwrite the old filter without warnings.
+     *
+     * A reference to newly added filters are registered under
+     * `__userDefinedFilter`, so that they can be copied by `cloneSettings`.
      *
      * @param {string} op An alphanumeric id
      * @param {function} cb The callback function
@@ -3979,6 +4003,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
      */
     NDDB.prototype.addFilter = function(op, cb) {
         this.filters[op] = cb;
+        this.__userDefinedFilters[op] = this.filters[op];
     };
 
     /**
@@ -4014,9 +4039,9 @@ if ( !store.types.localStorage && window.globalStorage ) {
                     var d, c;
                     for (d in elem) {
                         c = that.getComparator(d);
-                        value[d] = value[0]['*']
+                        value[d] = value[0]['*'];
                         if (c(elem, value, 1) > 0) {
-                            value[d] = value[1]['*']
+                            value[d] = value[1]['*'];
                             if (c(elem, value, -1) < 0) {
                                 return elem;
                             }
@@ -4028,7 +4053,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
                     else if ('undefined' !== typeof J.getNestedValue(d,elem)) {
                         return elem;
                     }
-                }
+                };
             }
             else {
                 return function(elem) {
@@ -4038,7 +4063,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
                     else if ('undefined' !== typeof J.getNestedValue(d,elem)) {
                         return elem;
                     }
-                }
+                };
             }
         };
 
@@ -4139,9 +4164,9 @@ if ( !store.types.localStorage && window.globalStorage ) {
                     var d, c;
                     for (d in elem) {
                         c = that.getComparator(d);
-                        value[d] = value[0]['*']
+                        value[d] = value[0]['*'];
                         if (c(elem, value, 1) > 0) {
-                            value[d] = value[1]['*']
+                            value[d] = value[1]['*'];
                             if (c(elem, value, -1) < 0) {
                                 return elem;
                             }
@@ -4228,11 +4253,11 @@ if ( !store.types.localStorage && window.globalStorage ) {
                     for (i = 0; i < len; i++) {
                         obj[d] = value[i];
                         if (comparator(elem, obj, 0) === 0) {
-                            return
+                            return;
                         }
                     }
                     return elem;
-                }
+                };
             }
         };
 
@@ -4313,13 +4338,13 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @param {string} text Optional. The error text. Default, 'generic error'
      */
     NDDB.prototype.throwErr = function(type, method, text) {
-        var errMsg, miss;
+        var errMsg;
         text = text || 'generic error';
         errMsg = this._getConstrName();
         if (method) errMsg = errMsg + '.' + method;
         errMsg = errMsg + ': ' + text + '.';
         if (type === 'TypeError') throw new TypeError(errMsg);
-        throw new Error(errMg);
+        throw new Error(errMsg);
     };
 
     /**
@@ -4478,10 +4503,16 @@ if ( !store.types.localStorage && window.globalStorage ) {
             this.throwErr('TypeError', 'initLog', 'ctx must be object or ' +
                           'function');
         }
-        this.log = function(){
-            return cb.apply(ctx, arguments);
+        this.log = function() {
+            var args, i, len;
+            len = arguments.length;
+            args = new Array(len);
+            for (i = 0; i < len; i++) {
+                args[i] = arguments[i];
+            }
+            return cb.apply(ctx, args);
         };
-    }
+    };
 
     /**
      * ### NDDB._getConstrName
@@ -4524,7 +4555,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
 
 
     /**
-     * ## .nddb_insert
+     * ## nddb_insert
      *
      * Insert an item into db and performs update operations
      *
@@ -4546,8 +4577,8 @@ if ( !store.types.localStorage && window.globalStorage ) {
     function nddb_insert(o, update) {
         var nddbid;
         if (('object' !== typeof o) && ('function' !== typeof o)) {
-            this.throwErr('TypeError', 'insert', 'object or function expected ' +
-                          typeof o + ' received.');
+            this.throwErr('TypeError', 'insert', 'object or function ' +
+                          'expected, ' + typeof o + ' received.');
         }
 
         // Check / create a global index.
@@ -4555,9 +4586,10 @@ if ( !store.types.localStorage && window.globalStorage ) {
             // Create internal idx.
             nddbid = J.uniqueKey(this.nddbid.resolve);
             if (!nddbid) {
-                this.throwErr('Error', 'insert', 'failed to create index: ' + o);
+                this.throwErr('Error', 'insert',
+                              'failed to create index: ' + o);
             }
-            if (Object.defineProperty) {
+            if (df) {
                 Object.defineProperty(o, '_nddbid', { value: nddbid });
             }
             else {
@@ -4694,6 +4726,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
         options.update = this.__update;
         options.hooks = this.hooks;
         options.globalCompare = this.globalCompare;
+        options.filters = this.__userDefinedFilters;
 
         // Must be removed before cloning.
         if (options.log) {
@@ -4783,7 +4816,6 @@ if ( !store.types.localStorage && window.globalStorage ) {
         return out;
     };
 
-
     /**
      * ### NDDB.comparator
      *
@@ -4830,7 +4862,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @see NDDB.compare
      */
     NDDB.prototype.getComparator = function(d) {
-        var len, comparator, comparators;
+        var i, len, comparator, comparators;
 
         // Given field or '*'.
         if ('string' === typeof d) {
@@ -4865,7 +4897,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
                     if ('undefined' === typeof v2) return -1;
                     if (v1 > v2) return 1;
                     if (v2 > v1) return -1;
-                    
+
                     // In case v1 and v2 are of different types
                     // they might not be equal here.
                     if (v2 === v1) return 0;
@@ -4911,7 +4943,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
 
                 return trigger2 === 0 ? 1 : 0;
 
-            }
+            };
         }
         return comparator;
     };
@@ -5170,7 +5202,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @param {string} oldIdx Optional. The old index name, if any.
      */
     NDDB.prototype._indexIt = function(o, dbidx, oldIdx) {
-        var func, id, index, key;
+        var func, index, key;
         if (!o || J.isEmpty(this.__I)) return;
 
         for (key in this.__I) {
@@ -5204,7 +5236,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @see NDDB.view
      */
     NDDB.prototype._viewIt = function(o) {
-        var func, id, index, key, settings;
+        var func, index, key, settings;
         if (!o || J.isEmpty(this.__V)) return false;
 
         for (key in this.__V) {
@@ -5245,7 +5277,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @see NDDB.hash
      */
     NDDB.prototype._hashIt = function(o) {
-        var h, id, hash, key, settings, oldHash;
+        var h, hash, key, settings, oldHash;
         if (!o || J.isEmpty(this.__H)) return false;
 
         for (key in this.__H) {
@@ -5362,22 +5394,93 @@ if ( !store.types.localStorage && window.globalStorage ) {
     /**
      * ### NDDB.emit
      *
-     * Fires all the listeners associated with an event
+     * Fires all the listeners associated with an event (optimized)
      *
      * Accepts any number of parameters, the first one is the name
      * of the event, and the remaining will be passed to the event listeners.
      */
     NDDB.prototype.emit = function() {
-        var i, event;
-        event = Array.prototype.splice.call(arguments, 0, 1);
-        if ('string' !== typeof event[0]) {
+        var event;
+        var h, h2;
+        var i, len, argLen, args;
+        event = arguments[0];
+        if ('string' !== typeof event) {
             this.throwErr('TypeError', 'emit', 'first argument must be string');
         }
-        if (!this.hooks[event] || !this.hooks[event].length) {
-            return;
+        if (!this.hooks[event]) {
+            this.throwErr('TypeError', 'emit', 'unknown event: ' + event);
         }
-        for (i = 0; i < this.hooks[event].length; i++) {
-            this.hooks[event][i].apply(this, arguments);
+        len = this.hooks[event].length;
+        if (!len) return;
+        argLen = arguments.length;
+
+        switch(len) {
+
+        case 1:
+            h = this.hooks[event][0];
+            if (argLen === 1) h.call(this);
+            else if (argLen === 2) h.call(this, arguments[1]);
+            else if (argLen === 3) {
+                h.call(this, arguments[1], arguments[2]);
+            }
+            else {
+                args = new Array(argLen-1);
+                for (i = 0; i < argLen; i++) {
+                    args[i] = arguments[i+1];
+                }
+                h.apply(this, args);
+            }
+            break;
+        case 2:
+            h = this.hooks[event][0], h2 = this.hooks[event][1];
+            if (argLen === 1) {
+                h.call(this);
+                h2.call(this);
+            }
+            else if (argLen === 2) {
+                h.call(this, arguments[1]);
+                h2.call(this, arguments[1]);
+            }
+            else if (argLen === 3) {
+                h.call(this, arguments[1], arguments[2]);
+                h2.call(this, arguments[1], arguments[2]);
+            }
+            else {
+                args = new Array(argLen-1);
+                for (i = 0; i < argLen; i++) {
+                    args[i] = arguments[i+1];
+                }
+                h.apply(this, args);
+                h2.apply(this, args);
+            }
+            break;
+        default:
+
+             if (argLen === 1) {
+                 for (i = 0; i < len; i++) {
+                     this.hooks[event][i].call(this);
+                 }
+            }
+            else if (argLen === 2) {
+                for (i = 0; i < len; i++) {
+                    this.hooks[event][i].call(this, arguments[1]);
+                }
+            }
+            else if (argLen === 3) {
+                for (i = 0; i < len; i++) {
+                    this.hooks[event][i].call(this, arguments[1], arguments[2]);
+                }
+            }
+            else {
+                args = new Array(argLen-1);
+                for (i = 0; i < argLen; i++) {
+                    args[i] = arguments[i+1];
+                }
+                for (i = 0; i < len; i++) {
+                    this.hooks[event][i].apply(this, args);
+                }
+
+            }
         }
     };
 
@@ -5405,7 +5508,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
      *   if an error was detected
      */
     NDDB.prototype._analyzeQuery = function(d, op, value) {
-        var i, len, newValue, errText;
+        var i, len, errText;
 
         if ('undefined' === typeof d) {
             queryError.call(this, 'undefined dimension', d, op, value);
@@ -5663,7 +5766,8 @@ if ( !store.types.localStorage && window.globalStorage ) {
     NDDB.prototype.exists = function(o) {
         var i, len, db;
         if ('object' !== typeof o && 'function' !== typeof o) {
-            this.throwErr('TypeError', 'exists', 'o must be object or function');
+            this.throwErr('TypeError', 'exists',
+                          'o must be object or function');
         }
         db = this.fetch();
         len = db.length;
@@ -5757,11 +5861,11 @@ if ( !store.types.localStorage && window.globalStorage ) {
             func = function(a,b) {
                 var i, result;
                 for (i = 0; i < d.length; i++) {
-                    result = that.getComparator(d[i]).call(that,a,b);
+                    result = that.getComparator(d[i]).call(that, a, b);
                     if (result !== 0) return result;
                 }
                 return result;
-            }
+            };
         }
         // Single dimension.
         else {
@@ -5815,7 +5919,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
     };
 
     /**
-     * ### NDDB.each || NDDB.forEach
+     * ### NDDB.each || NDDB.forEach (optimized)
      *
      * Applies a callback function to each element in the db
      *
@@ -5829,7 +5933,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @see NDDB.map
      */
     NDDB.prototype.each = NDDB.prototype.forEach = function() {
-        var func, i, db, len;
+        var func, i, db, len, args, argLen;
         func = arguments[0];
         if ('function' !== typeof func) {
             this.throwErr('TypeError', 'each',
@@ -5837,9 +5941,33 @@ if ( !store.types.localStorage && window.globalStorage ) {
         }
         db = this.fetch();
         len = db.length;
-        for (i = 0 ; i < len ; i++) {
-            arguments[0] = db[i];
-            func.apply(this, arguments);
+        argLen = arguments.length;
+        switch(argLen) {
+        case 1:
+            for (i = 0 ; i < len ; i++) {
+                func.call(this, db[i]);
+            }
+            break;
+        case 2:
+            for (i = 0 ; i < len ; i++) {
+                func.call(this, db[i], arguments[1]);
+            }
+            break;
+        case 3:
+            for (i = 0 ; i < len ; i++) {
+                func.call(this, db[i], arguments[1], arguments[2]);
+            }
+            break;
+        default:
+            args = new Array(argLen+1);
+            args[0] = null;
+            for (i = 1; i < argLen; i++) {
+                args[i] = arguments[i];
+            }
+            for (i = 0 ; i < len ; i++) {
+                args[0] = db[i];
+                func.apply(this, args);
+            }
         }
     };
 
@@ -5859,17 +5987,46 @@ if ( !store.types.localStorage && window.globalStorage ) {
      */
     NDDB.prototype.map = function() {
         var func, i, db, len, out, o;
+        var args, argLen;
         func = arguments[0];
         if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'map', 'first argument must be function');
+            this.throwErr('TypeError', 'map',
+                          'first argument must be function');
         }
         db = this.fetch();
         len = db.length;
+        argLen = arguments.length;
         out = [];
-        for (i = 0 ; i < db.length ; i++) {
-            arguments[0] = db[i];
-            o = func.apply(this, arguments);
-            if ('undefined' !== typeof o) out.push(o);
+        switch(argLen) {
+        case 1:
+            for (i = 0 ; i < len ; i++) {
+                o = func.call(this, db[i]);
+                if ('undefined' !== typeof o) out.push(o);
+            }
+            break;
+        case 2:
+            for (i = 0 ; i < len ; i++) {
+                o = func.call(this, db[i], arguments[1]);
+                if ('undefined' !== typeof o) out.push(o);
+            }
+            break;
+        case 3:
+            for (i = 0 ; i < len ; i++) {
+                o = func.call(this, db[i], arguments[1], arguments[2]);
+                if ('undefined' !== typeof o) out.push(o);
+            }
+            break;
+        default:
+            args = new Array(argLen+1);
+            args[0] = null;
+            for (i = 1; i < argLen; i++) {
+                args[i] = arguments[i];
+            }
+            for (i = 0 ; i < len ; i++) {
+                args[0] = db[i];
+                o = func.apply(this, args);
+                if ('undefined' !== typeof o) out.push(o);
+            }
         }
         return out;
     };
@@ -5960,13 +6117,13 @@ if ( !store.types.localStorage && window.globalStorage ) {
             this.hashtray.clear();
 
             for (i in this.__H) {
-                if (this[i]) delete this[i]
+                if (this[i]) delete this[i];
             }
             for (i in this.__C) {
-                if (this[i]) delete this[i]
+                if (this[i]) delete this[i];
             }
             for (i in this.__I) {
-                if (this[i]) delete this[i]
+                if (this[i]) delete this[i];
             }
         }
         else {
@@ -6055,7 +6212,6 @@ if ( !store.types.localStorage && window.globalStorage ) {
      *
      * A new NDDB object breeded, so that further methods can be chained.
      *
-     * @api private
      * @param {string} key1 First property to compare
      * @param {string} key2 Second property to compare
      * @param {function} comparator Optional. A comparator function.
@@ -6068,6 +6224,8 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @return {NDDB} A new database containing the joined entries
      *
      * @see NDDB.breed
+     *
+     * @api private
      */
     NDDB.prototype._join = function(key1, key2, comparator, pos, select) {
         var out, idxs, foreign_key, key;
@@ -6309,11 +6467,11 @@ if ( !store.types.localStorage && window.globalStorage ) {
 
     function getValuesArray(o, key) {
         return J.obj2Array(o, 1);
-    };
+    }
 
     function getKeyValuesArray(o, key) {
         return J.obj2KeyedArray(o, 1);
-    };
+    }
 
 
     function getValuesArray_KeyString(o, key) {
@@ -6321,14 +6479,14 @@ if ( !store.types.localStorage && window.globalStorage ) {
         if ('undefined' !== typeof el) {
             return J.obj2Array(el,1);
         }
-    };
+    }
 
     function getValuesArray_KeyArray(o, key) {
         var el = J.subobj(o, key);
         if (!J.isEmpty(el)) {
             return J.obj2Array(el,1);
         }
-    };
+    }
 
 
     function getKeyValuesArray_KeyString(o, key) {
@@ -6336,14 +6494,14 @@ if ( !store.types.localStorage && window.globalStorage ) {
         if ('undefined' !== typeof el) {
             return key.split('.').concat(J.obj2KeyedArray(el));
         }
-    };
+    }
 
     function getKeyValuesArray_KeyArray(o, key) {
         var el = J.subobj(o, key);
         if (!J.isEmpty(el)) {
             return J.obj2KeyedArray(el);
         }
-    };
+    }
 
     /**
      * ### NDDB._fetchArray
@@ -6417,7 +6575,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
         }
 
         return out;
-    }
+    };
 
     /**
      * ### NDDB.fetchArray
@@ -6510,10 +6668,10 @@ if ( !store.types.localStorage && window.globalStorage ) {
      *
      * @param {string} key If the dimension for grouping
      *
-     * @return {array} outs The array of groups
+     * @return {array} outs The array of NDDB (or constructor) groups
      */
     NDDB.prototype.groupBy = function(key) {
-        var groups, outs, i, el, out;
+        var groups, outs, i, el, out, db;
         db = this.fetch();
         if (!key) return db;
 
@@ -6526,7 +6684,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
                 groups.push(el);
                 out = this.filter(function(elem) {
                     if (J.equals(J.getNestedValue(key, elem), el)) {
-                        return this;
+                        return elem;
                     }
                 });
                 // Reset nddb_pointer in subgroups.
@@ -7059,7 +7217,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
      */
     NDDB.prototype.storageAvailable = function() {
         return ('function' === typeof store);
-    }
+    };
 
     /**
      * ### NDDB.save
@@ -7102,8 +7260,8 @@ if ( !store.types.localStorage && window.globalStorage ) {
      *
      * Loads a JSON object into the database from a persistent medium
      *
-     * Looks for a global store` method to load from the browser database.
-     * The `store` method is supploed by shelf.js.
+     * Looks for a global `store` method to load from the browser database.
+     * The `store` method is supplied by shelf.js.
      * If no `store` object is found, an error is issued and the database
      * is not loaded.
      *
@@ -7207,7 +7365,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
 
     function findCallback(obj) {
         return obj.cb;
-    };
+    }
 
     /**
      * ### QueryBuilder.get
@@ -7227,13 +7385,12 @@ if ( !store.types.localStorage && window.globalStorage ) {
      *   conditions
      */
     QueryBuilder.prototype.get = function() {
-        var line, lineLen, f1, f2, f3, type1, type2, i;
+        var line, lineLen, f1, f2, f3, type1, type2;
         var query = this.query, pointer = this.pointer;
-        var operators = this.operators;
 
         // Ready to support nested queries, not yet implemented.
         if (pointer === 0) {
-            line = query[pointer]
+            line = query[pointer];
             lineLen = line.length;
 
             if (lineLen === 1) {
@@ -7250,18 +7407,18 @@ if ( !store.types.localStorage && window.globalStorage ) {
                     return function(elem) {
                         if ('undefined' !== typeof f1(elem)) return elem;
                         if ('undefined' !== typeof f2(elem)) return elem;
-                    }
+                    };
                 case 'AND':
                     return function(elem) {
                         if ('undefined' !== typeof f1(elem) &&
                             'undefined' !== typeof f2(elem)) return elem;
-                    }
+                    };
 
                 case 'NOT':
                     return function(elem) {
                         if ('undefined' !== typeof f1(elem) &&
                             'undefined' === typeof f2(elem)) return elem;
-                    }
+                    };
                 }
             }
 
@@ -7334,7 +7491,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
 
                     }
                     return elem;
-                }
+                };
 
             }
 
@@ -7550,7 +7707,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
     // ## Closure
 })(
     ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
-        module.exports: window ,
+        module.exports : window ,
     ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
         module.parent.exports.JSUS || require('JSUS').JSUS : JSUS,
     ('object' === typeof module && 'function' === typeof require) ?
