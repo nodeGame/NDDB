@@ -221,7 +221,7 @@
         if (db) {
             this.importDB(db);
         }
-    };
+    }
 
     /**
      * ### NDDB.addFilter
@@ -288,9 +288,9 @@
                     var d, c;
                     for (d in elem) {
                         c = that.getComparator(d);
-                        value[d] = value[0]['*']
+                        value[d] = value[0]['*'];
                         if (c(elem, value, 1) > 0) {
-                            value[d] = value[1]['*']
+                            value[d] = value[1]['*'];
                             if (c(elem, value, -1) < 0) {
                                 return elem;
                             }
@@ -302,7 +302,7 @@
                     else if ('undefined' !== typeof J.getNestedValue(d,elem)) {
                         return elem;
                     }
-                }
+                };
             }
             else {
                 return function(elem) {
@@ -312,7 +312,7 @@
                     else if ('undefined' !== typeof J.getNestedValue(d,elem)) {
                         return elem;
                     }
-                }
+                };
             }
         };
 
@@ -413,9 +413,9 @@
                     var d, c;
                     for (d in elem) {
                         c = that.getComparator(d);
-                        value[d] = value[0]['*']
+                        value[d] = value[0]['*'];
                         if (c(elem, value, 1) > 0) {
-                            value[d] = value[1]['*']
+                            value[d] = value[1]['*'];
                             if (c(elem, value, -1) < 0) {
                                 return elem;
                             }
@@ -502,11 +502,11 @@
                     for (i = 0; i < len; i++) {
                         obj[d] = value[i];
                         if (comparator(elem, obj, 0) === 0) {
-                            return
+                            return;
                         }
                     }
                     return elem;
-                }
+                };
             }
         };
 
@@ -587,13 +587,13 @@
      * @param {string} text Optional. The error text. Default, 'generic error'
      */
     NDDB.prototype.throwErr = function(type, method, text) {
-        var errMsg, miss;
+        var errMsg;
         text = text || 'generic error';
         errMsg = this._getConstrName();
         if (method) errMsg = errMsg + '.' + method;
         errMsg = errMsg + ': ' + text + '.';
         if (type === 'TypeError') throw new TypeError(errMsg);
-        throw new Error(errMg);
+        throw new Error(errMsg);
     };
 
     /**
@@ -761,7 +761,7 @@
             }
             return cb.apply(ctx, args);
         };
-    }
+    };
 
     /**
      * ### NDDB._getConstrName
@@ -804,7 +804,7 @@
 
 
     /**
-     * ## .nddb_insert
+     * ## nddb_insert
      *
      * Insert an item into db and performs update operations
      *
@@ -1111,7 +1111,7 @@
      * @see NDDB.compare
      */
     NDDB.prototype.getComparator = function(d) {
-        var len, comparator, comparators;
+        var i, len, comparator, comparators;
 
         // Given field or '*'.
         if ('string' === typeof d) {
@@ -1192,7 +1192,7 @@
 
                 return trigger2 === 0 ? 1 : 0;
 
-            }
+            };
         }
         return comparator;
     };
@@ -1451,7 +1451,7 @@
      * @param {string} oldIdx Optional. The old index name, if any.
      */
     NDDB.prototype._indexIt = function(o, dbidx, oldIdx) {
-        var func, id, index, key;
+        var func, index, key;
         if (!o || J.isEmpty(this.__I)) return;
 
         for (key in this.__I) {
@@ -1485,7 +1485,7 @@
      * @see NDDB.view
      */
     NDDB.prototype._viewIt = function(o) {
-        var func, id, index, key, settings;
+        var func, index, key, settings;
         if (!o || J.isEmpty(this.__V)) return false;
 
         for (key in this.__V) {
@@ -1526,7 +1526,7 @@
      * @see NDDB.hash
      */
     NDDB.prototype._hashIt = function(o) {
-        var h, id, hash, key, settings, oldHash;
+        var h, hash, key, settings, oldHash;
         if (!o || J.isEmpty(this.__H)) return false;
 
         for (key in this.__H) {
@@ -1757,7 +1757,7 @@
      *   if an error was detected
      */
     NDDB.prototype._analyzeQuery = function(d, op, value) {
-        var i, len, newValue, errText;
+        var i, len, errText;
 
         if ('undefined' === typeof d) {
             queryError.call(this, 'undefined dimension', d, op, value);
@@ -2114,7 +2114,7 @@
                     if (result !== 0) return result;
                 }
                 return result;
-            }
+            };
         }
         // Single dimension.
         else {
@@ -2366,13 +2366,13 @@
             this.hashtray.clear();
 
             for (i in this.__H) {
-                if (this[i]) delete this[i]
+                if (this[i]) delete this[i];
             }
             for (i in this.__C) {
-                if (this[i]) delete this[i]
+                if (this[i]) delete this[i];
             }
             for (i in this.__I) {
-                if (this[i]) delete this[i]
+                if (this[i]) delete this[i];
             }
         }
         else {
@@ -2716,11 +2716,11 @@
 
     function getValuesArray(o, key) {
         return J.obj2Array(o, 1);
-    };
+    }
 
     function getKeyValuesArray(o, key) {
         return J.obj2KeyedArray(o, 1);
-    };
+    }
 
 
     function getValuesArray_KeyString(o, key) {
@@ -2728,14 +2728,14 @@
         if ('undefined' !== typeof el) {
             return J.obj2Array(el,1);
         }
-    };
+    }
 
     function getValuesArray_KeyArray(o, key) {
         var el = J.subobj(o, key);
         if (!J.isEmpty(el)) {
             return J.obj2Array(el,1);
         }
-    };
+    }
 
 
     function getKeyValuesArray_KeyString(o, key) {
@@ -2743,14 +2743,14 @@
         if ('undefined' !== typeof el) {
             return key.split('.').concat(J.obj2KeyedArray(el));
         }
-    };
+    }
 
     function getKeyValuesArray_KeyArray(o, key) {
         var el = J.subobj(o, key);
         if (!J.isEmpty(el)) {
             return J.obj2KeyedArray(el);
         }
-    };
+    }
 
     /**
      * ### NDDB._fetchArray
@@ -2824,7 +2824,7 @@
         }
 
         return out;
-    }
+    };
 
     /**
      * ### NDDB.fetchArray
@@ -3466,7 +3466,7 @@
      */
     NDDB.prototype.storageAvailable = function() {
         return ('function' === typeof store);
-    }
+    };
 
     /**
      * ### NDDB.save
@@ -3614,7 +3614,7 @@
 
     function findCallback(obj) {
         return obj.cb;
-    };
+    }
 
     /**
      * ### QueryBuilder.get
@@ -3634,13 +3634,12 @@
      *   conditions
      */
     QueryBuilder.prototype.get = function() {
-        var line, lineLen, f1, f2, f3, type1, type2, i;
+        var line, lineLen, f1, f2, f3, type1, type2;
         var query = this.query, pointer = this.pointer;
-        var operators = this.operators;
 
         // Ready to support nested queries, not yet implemented.
         if (pointer === 0) {
-            line = query[pointer]
+            line = query[pointer];
             lineLen = line.length;
 
             if (lineLen === 1) {
@@ -3657,18 +3656,18 @@
                     return function(elem) {
                         if ('undefined' !== typeof f1(elem)) return elem;
                         if ('undefined' !== typeof f2(elem)) return elem;
-                    }
+                    };
                 case 'AND':
                     return function(elem) {
                         if ('undefined' !== typeof f1(elem) &&
                             'undefined' !== typeof f2(elem)) return elem;
-                    }
+                    };
 
                 case 'NOT':
                     return function(elem) {
                         if ('undefined' !== typeof f1(elem) &&
                             'undefined' === typeof f2(elem)) return elem;
-                    }
+                    };
                 }
             }
 
@@ -3741,7 +3740,7 @@
 
                     }
                     return elem;
-                }
+                };
 
             }
 
