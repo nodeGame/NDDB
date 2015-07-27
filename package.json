@@ -25,6 +25,6 @@
   },
   "scripts": {
     "test": "make test",
-    "prepublish": "node bin/make.js multibuild"
+    "prepublish": "node bin/make.js -a"
   }
 }
