@@ -1,1471 +1,6 @@
-// vim: ts=4 sts=4 sw=4 expandtab
-// -- kriskowal Kris Kowal Copyright (C) 2009-2011 MIT License
-// -- tlrobinson Tom Robinson Copyright (C) 2009-2010 MIT License (Narwhal Project)
-// -- dantman Daniel Friesen Copyright (C) 2010 XXX TODO License or CLA
-// -- fschaefer Florian Schäfer Copyright (C) 2010 MIT License
-// -- Gozala Irakli Gozalishvili Copyright (C) 2010 MIT License
-// -- kitcambridge Kit Cambridge Copyright (C) 2011 MIT License
-// -- kossnocorp Sasha Koss XXX TODO License or CLA
-// -- bryanforbes Bryan Forbes XXX TODO License or CLA
-// -- killdream Quildreen Motta XXX TODO License or CLA
-// -- michaelficarra Michael Ficarra Copyright (C) 2011 3-clause BSD License
-// -- sharkbrainguy Gerard Paapu Copyright (C) 2011 MIT License
-// -- bbqsrc Brendan Molloy XXX TODO License or CLA
-// -- iwyg XXX TODO License or CLA
-// -- DomenicDenicola Domenic Denicola XXX TODO License or CLA
-// -- xavierm02 Montillet Xavier XXX TODO License or CLA
-// -- Raynos Raynos XXX TODO License or CLA
-// -- samsonjs Sami Samhuri XXX TODO License or CLA
-// -- rwldrn Rick Waldron XXX TODO License or CLA
-// -- lexer Alexey Zakharov XXX TODO License or CLA
-
-/*!
-    Copyright (c) 2009, 280 North Inc. http://280north.com/
-    MIT License. http://github.com/280north/narwhal/blob/master/README.md
-*/
-
-// Module systems magic dance
-(function (definition) {
-    // RequireJS
-    if (typeof define == "function") {
-        define(definition);
-    // CommonJS and <script>
-    } else {
-        definition();
-    }
-})(function () {
-
-/**
- * Brings an environment as close to ECMAScript 5 compliance
- * as is possible with the facilities of erstwhile engines.
- *
- * ES5 Draft
- * http://www.ecma-international.org/publications/files/drafts/tc39-2009-050.pdf
- *
- * NOTE: this is a draft, and as such, the URL is subject to change.  If the
- * link is broken, check in the parent directory for the latest TC39 PDF.
- * http://www.ecma-international.org/publications/files/drafts/
- *
- * Previous ES5 Draft
- * http://www.ecma-international.org/publications/files/drafts/tc39-2009-025.pdf
- * This is a broken link to the previous draft of ES5 on which most of the
- * numbered specification references and quotes herein were taken.  Updating
- * these references and quotes to reflect the new document would be a welcome
- * volunteer project.
- *
- * @module
- */
-
-/*whatsupdoc*/
-
-//
-// Function
-// ========
-//
-
-// ES-5 15.3.4.5
-// http://www.ecma-international.org/publications/files/drafts/tc39-2009-025.pdf
-
-if (!Function.prototype.bind) {
-    Function.prototype.bind = function bind(that) { // .length is 1
-        // 1. Let Target be the this value.
-        var target = this;
-        // 2. If IsCallable(Target) is false, throw a TypeError exception.
-        if (typeof target != "function")
-            throw new TypeError(); // TODO message
-        // 3. Let A be a new (possibly empty) internal list of all of the
-        //   argument values provided after thisArg (arg1, arg2 etc), in order.
-        // XXX slicedArgs will stand in for "A" if used
-        var args = slice.call(arguments, 1); // for normal call
-        // 4. Let F be a new native ECMAScript object.
-        // 9. Set the [[Prototype]] internal property of F to the standard
-        //   built-in Function prototype object as specified in 15.3.3.1.
-        // 10. Set the [[Call]] internal property of F as described in
-        //   15.3.4.5.1.
-        // 11. Set the [[Construct]] internal property of F as described in
-        //   15.3.4.5.2.
-        // 12. Set the [[HasInstance]] internal property of F as described in
-        //   15.3.4.5.3.
-        // 13. The [[Scope]] internal property of F is unused and need not
-        //   exist.
-        var bound = function () {
-
-            if (this instanceof bound) {
-                // 15.3.4.5.2 [[Construct]]
-                // When the [[Construct]] internal method of a function object,
-                // F that was created using the bind function is called with a
-                // list of arguments ExtraArgs the following steps are taken:
-                // 1. Let target be the value of F's [[TargetFunction]]
-                //   internal property.
-                // 2. If target has no [[Construct]] internal method, a
-                //   TypeError exception is thrown.
-                // 3. Let boundArgs be the value of F's [[BoundArgs]] internal
-                //   property.
-                // 4. Let args be a new list containing the same values as the
-                //   list boundArgs in the same order followed by the same
-                //   values as the list ExtraArgs in the same order.
-
-                var F = function(){};
-                F.prototype = target.prototype;
-                var self = new F;
-
-                var result = target.apply(
-                    self,
-                    args.concat(slice.call(arguments))
-                );
-                if (result !== null && Object(result) === result)
-                    return result;
-                return self;
-
-            } else {
-                // 15.3.4.5.1 [[Call]]
-                // When the [[Call]] internal method of a function object, F,
-                // which was created using the bind function is called with a
-                // this value and a list of arguments ExtraArgs the following
-                // steps are taken:
-                // 1. Let boundArgs be the value of F's [[BoundArgs]] internal
-                //   property.
-                // 2. Let boundThis be the value of F's [[BoundThis]] internal
-                //   property.
-                // 3. Let target be the value of F's [[TargetFunction]] internal
-                //   property.
-                // 4. Let args be a new list containing the same values as the list
-                //   boundArgs in the same order followed by the same values as
-                //   the list ExtraArgs in the same order. 5.  Return the
-                //   result of calling the [[Call]] internal method of target
-                //   providing boundThis as the this value and providing args
-                //   as the arguments.
-
-                // equiv: target.call(this, ...boundArgs, ...args)
-                return target.apply(
-                    that,
-                    args.concat(slice.call(arguments))
-                );
-
-            }
-
-        };
-        // XXX bound.length is never writable, so don't even try
-        //
-        // 16. The length own property of F is given attributes as specified in
-        //   15.3.5.1.
-        // TODO
-        // 17. Set the [[Extensible]] internal property of F to true.
-        // TODO
-        // 18. Call the [[DefineOwnProperty]] internal method of F with
-        //   arguments "caller", PropertyDescriptor {[[Value]]: null,
-        //   [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]:
-        //   false}, and false.
-        // TODO
-        // 19. Call the [[DefineOwnProperty]] internal method of F with
-        //   arguments "arguments", PropertyDescriptor {[[Value]]: null,
-        //   [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]:
-        //   false}, and false.
-        // TODO
-        // NOTE Function objects created using Function.prototype.bind do not
-        // have a prototype property.
-        // XXX can't delete it in pure-js.
-        return bound;
-    };
-}
-
-// Shortcut to an often accessed properties, in order to avoid multiple
-// dereference that costs universally.
-// _Please note: Shortcuts are defined after `Function.prototype.bind` as we
-// us it in defining shortcuts.
-var call = Function.prototype.call;
-var prototypeOfArray = Array.prototype;
-var prototypeOfObject = Object.prototype;
-var slice = prototypeOfArray.slice;
-var toString = call.bind(prototypeOfObject.toString);
-var owns = call.bind(prototypeOfObject.hasOwnProperty);
-
-// If JS engine supports accessors creating shortcuts.
-var defineGetter;
-var defineSetter;
-var lookupGetter;
-var lookupSetter;
-var supportsAccessors;
-if ((supportsAccessors = owns(prototypeOfObject, "__defineGetter__"))) {
-    defineGetter = call.bind(prototypeOfObject.__defineGetter__);
-    defineSetter = call.bind(prototypeOfObject.__defineSetter__);
-    lookupGetter = call.bind(prototypeOfObject.__lookupGetter__);
-    lookupSetter = call.bind(prototypeOfObject.__lookupSetter__);
-}
-
-//
-// Array
-// =====
-//
-
-// ES5 15.4.3.2
-if (!Array.isArray) {
-    Array.isArray = function isArray(obj) {
-        return toString(obj) == "[object Array]";
-    };
-}
-
-// The IsCallable() check in the Array functions
-// has been replaced with a strict check on the
-// internal class of the object to trap cases where
-// the provided function was actually a regular
-// expression literal, which in V8 and
-// JavaScriptCore is a typeof "function".  Only in
-// V8 are regular expression literals permitted as
-// reduce parameters, so it is desirable in the
-// general case for the shim to match the more
-// strict and common behavior of rejecting regular
-// expressions.
-
-// ES5 15.4.4.18
-// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/array/foreach
-if (!Array.prototype.forEach) {
-    Array.prototype.forEach = function forEach(fun /*, thisp*/) {
-        var self = toObject(this),
-            thisp = arguments[1],
-            i = 0,
-            length = self.length >>> 0;
-
-        // If no callback function or if callback is not a callable function
-        if (toString(fun) != "[object Function]") {
-            throw new TypeError(); // TODO message
-        }
-
-        while (i < length) {
-            if (i in self) {
-                // Invoke the callback function with call, passing arguments:
-                // context, property value, property key, thisArg object context
-                fun.call(thisp, self[i], i, self);
-            }
-            i++;
-        }
-    };
-}
-
-// ES5 15.4.4.19
-// https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/map
-if (!Array.prototype.map) {
-    Array.prototype.map = function map(fun /*, thisp*/) {
-        var self = toObject(this),
-            length = self.length >>> 0,
-            result = Array(length),
-            thisp = arguments[1];
-
-        // If no callback function or if callback is not a callable function
-        if (toString(fun) != "[object Function]") {
-            throw new TypeError(); // TODO message
-        }
-
-        for (var i = 0; i < length; i++) {
-            if (i in self)
-                result[i] = fun.call(thisp, self[i], i, self);
-        }
-        return result;
-    };
-}
-
-// ES5 15.4.4.20
-if (!Array.prototype.filter) {
-    Array.prototype.filter = function filter(fun /*, thisp */) {
-        var self = toObject(this),
-            length = self.length >>> 0,
-            result = [],
-            thisp = arguments[1];
-
-        // If no callback function or if callback is not a callable function
-        if (toString(fun) != "[object Function]") {
-            throw new TypeError(); // TODO message
-        }
-
-        for (var i = 0; i < length; i++) {
-            if (i in self && fun.call(thisp, self[i], i, self))
-                result.push(self[i]);
-        }
-        return result;
-    };
-}
-
-// ES5 15.4.4.16
-if (!Array.prototype.every) {
-    Array.prototype.every = function every(fun /*, thisp */) {
-        var self = toObject(this),
-            length = self.length >>> 0,
-            thisp = arguments[1];
-
-        // If no callback function or if callback is not a callable function
-        if (toString(fun) != "[object Function]") {
-            throw new TypeError(); // TODO message
-        }
-
-        for (var i = 0; i < length; i++) {
-            if (i in self && !fun.call(thisp, self[i], i, self))
-                return false;
-        }
-        return true;
-    };
-}
-
-// ES5 15.4.4.17
-// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/some
-if (!Array.prototype.some) {
-    Array.prototype.some = function some(fun /*, thisp */) {
-        var self = toObject(this),
-            length = self.length >>> 0,
-            thisp = arguments[1];
-
-        // If no callback function or if callback is not a callable function
-        if (toString(fun) != "[object Function]") {
-            throw new TypeError(); // TODO message
-        }
-
-        for (var i = 0; i < length; i++) {
-            if (i in self && fun.call(thisp, self[i], i, self))
-                return true;
-        }
-        return false;
-    };
-}
-
-// ES5 15.4.4.21
-// https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/reduce
-if (!Array.prototype.reduce) {
-    Array.prototype.reduce = function reduce(fun /*, initial*/) {
-        var self = toObject(this),
-            length = self.length >>> 0;
-
-        // If no callback function or if callback is not a callable function
-        if (toString(fun) != "[object Function]") {
-            throw new TypeError(); // TODO message
-        }
-
-        // no value to return if no initial value and an empty array
-        if (!length && arguments.length == 1)
-            throw new TypeError(); // TODO message
-
-        var i = 0;
-        var result;
-        if (arguments.length >= 2) {
-            result = arguments[1];
-        } else {
-            do {
-                if (i in self) {
-                    result = self[i++];
-                    break;
-                }
-
-                // if array contains no values, no initial value to return
-                if (++i >= length)
-                    throw new TypeError(); // TODO message
-            } while (true);
-        }
-
-        for (; i < length; i++) {
-            if (i in self)
-                result = fun.call(void 0, result, self[i], i, self);
-        }
-
-        return result;
-    };
-}
-
-// ES5 15.4.4.22
-// https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/reduceRight
-if (!Array.prototype.reduceRight) {
-    Array.prototype.reduceRight = function reduceRight(fun /*, initial*/) {
-        var self = toObject(this),
-            length = self.length >>> 0;
-
-        // If no callback function or if callback is not a callable function
-        if (toString(fun) != "[object Function]") {
-            throw new TypeError(); // TODO message
-        }
-
-        // no value to return if no initial value, empty array
-        if (!length && arguments.length == 1)
-            throw new TypeError(); // TODO message
-
-        var result, i = length - 1;
-        if (arguments.length >= 2) {
-            result = arguments[1];
-        } else {
-            do {
-                if (i in self) {
-                    result = self[i--];
-                    break;
-                }
-
-                // if array contains no values, no initial value to return
-                if (--i < 0)
-                    throw new TypeError(); // TODO message
-            } while (true);
-        }
-
-        do {
-            if (i in this)
-                result = fun.call(void 0, result, self[i], i, self);
-        } while (i--);
-
-        return result;
-    };
-}
-
-// ES5 15.4.4.14
-// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/indexOf
-if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function indexOf(sought /*, fromIndex */ ) {
-        var self = toObject(this),
-            length = self.length >>> 0;
-
-        if (!length)
-            return -1;
-
-        var i = 0;
-        if (arguments.length > 1)
-            i = toInteger(arguments[1]);
-
-        // handle negative indices
-        i = i >= 0 ? i : length - Math.abs(i);
-        for (; i < length; i++) {
-            if (i in self && self[i] === sought) {
-                return i;
-            }
-        }
-        return -1;
-    };
-}
-
-// ES5 15.4.4.15
-if (!Array.prototype.lastIndexOf) {
-    Array.prototype.lastIndexOf = function lastIndexOf(sought /*, fromIndex */) {
-        var self = toObject(this),
-            length = self.length >>> 0;
-
-        if (!length)
-            return -1;
-        var i = length - 1;
-        if (arguments.length > 1)
-            i = toInteger(arguments[1]);
-        // handle negative indices
-        i = i >= 0 ? i : length - Math.abs(i);
-        for (; i >= 0; i--) {
-            if (i in self && sought === self[i])
-                return i;
-        }
-        return -1;
-    };
-}
-
-//
-// Object
-// ======
-//
-
-// ES5 15.2.3.2
-if (!Object.getPrototypeOf) {
-    // https://github.com/kriskowal/es5-shim/issues#issue/2
-    // http://ejohn.org/blog/objectgetprototypeof/
-    // recommended by fschaefer on github
-    Object.getPrototypeOf = function getPrototypeOf(object) {
-        return object.__proto__ || (
-            object.constructor ?
-            object.constructor.prototype :
-            prototypeOfObject
-        );
-    };
-}
-
-// ES5 15.2.3.3
-if (!Object.getOwnPropertyDescriptor) {
-    var ERR_NON_OBJECT = "Object.getOwnPropertyDescriptor called on a " +
-                         "non-object: ";
-    Object.getOwnPropertyDescriptor = function getOwnPropertyDescriptor(object, property) {
-        if ((typeof object != "object" && typeof object != "function") || object === null)
-            throw new TypeError(ERR_NON_OBJECT + object);
-        // If object does not owns property return undefined immediately.
-        if (!owns(object, property))
-            return;
-
-        var descriptor, getter, setter;
-
-        // If object has a property then it's for sure both `enumerable` and
-        // `configurable`.
-        descriptor =  { enumerable: true, configurable: true };
-
-        // If JS engine supports accessor properties then property may be a
-        // getter or setter.
-        if (supportsAccessors) {
-            // Unfortunately `__lookupGetter__` will return a getter even
-            // if object has own non getter property along with a same named
-            // inherited getter. To avoid misbehavior we temporary remove
-            // `__proto__` so that `__lookupGetter__` will return getter only
-            // if it's owned by an object.
-            var prototype = object.__proto__;
-            object.__proto__ = prototypeOfObject;
-
-            var getter = lookupGetter(object, property);
-            var setter = lookupSetter(object, property);
-
-            // Once we have getter and setter we can put values back.
-            object.__proto__ = prototype;
-
-            if (getter || setter) {
-                if (getter) descriptor.get = getter;
-                if (setter) descriptor.set = setter;
-
-                // If it was accessor property we're done and return here
-                // in order to avoid adding `value` to the descriptor.
-                return descriptor;
-            }
-        }
-
-        // If we got this far we know that object has an own property that is
-        // not an accessor so we set it as a value and return descriptor.
-        descriptor.value = object[property];
-        return descriptor;
-    };
-}
-
-// ES5 15.2.3.4
-if (!Object.getOwnPropertyNames) {
-    Object.getOwnPropertyNames = function getOwnPropertyNames(object) {
-        return Object.keys(object);
-    };
-}
-
-// ES5 15.2.3.5
-if (!Object.create) {
-    Object.create = function create(prototype, properties) {
-        var object;
-        if (prototype === null) {
-            object = { "__proto__": null };
-        } else {
-            if (typeof prototype != "object")
-                throw new TypeError("typeof prototype["+(typeof prototype)+"] != 'object'");
-            var Type = function () {};
-            Type.prototype = prototype;
-            object = new Type();
-            // IE has no built-in implementation of `Object.getPrototypeOf`
-            // neither `__proto__`, but this manually setting `__proto__` will
-            // guarantee that `Object.getPrototypeOf` will work as expected with
-            // objects created using `Object.create`
-            object.__proto__ = prototype;
-        }
-        if (properties !== void 0)
-            Object.defineProperties(object, properties);
-        return object;
-    };
-}
-
-// ES5 15.2.3.6
-
-// Patch for WebKit and IE8 standard mode
-// Designed by hax <hax.github.com>
-// related issue: https://github.com/kriskowal/es5-shim/issues#issue/5
-// IE8 Reference:
-//     http://msdn.microsoft.com/en-us/library/dd282900.aspx
-//     http://msdn.microsoft.com/en-us/library/dd229916.aspx
-// WebKit Bugs:
-//     https://bugs.webkit.org/show_bug.cgi?id=36423
-
-function doesDefinePropertyWork(object) {
-    try {
-        Object.defineProperty(object, "sentinel", {});
-        return "sentinel" in object;
-    } catch (exception) {
-        // returns falsy
-    }
-}
-
-// check whether defineProperty works if it's given. Otherwise,
-// shim partially.
-if (Object.defineProperty) {
-    var definePropertyWorksOnObject = doesDefinePropertyWork({});
-    var definePropertyWorksOnDom = typeof document == "undefined" ||
-        doesDefinePropertyWork(document.createElement("div"));
-    if (!definePropertyWorksOnObject || !definePropertyWorksOnDom) {
-        var definePropertyFallback = Object.defineProperty;
-    }
-}
-
-if (!Object.defineProperty || definePropertyFallback) {
-    var ERR_NON_OBJECT_DESCRIPTOR = "Property description must be an object: ";
-    var ERR_NON_OBJECT_TARGET = "Object.defineProperty called on non-object: "
-    var ERR_ACCESSORS_NOT_SUPPORTED = "getters & setters can not be defined " +
-                                      "on this javascript engine";
-
-    Object.defineProperty = function defineProperty(object, property, descriptor) {
-        if ((typeof object != "object" && typeof object != "function") || object === null)
-            throw new TypeError(ERR_NON_OBJECT_TARGET + object);
-        if ((typeof descriptor != "object" && typeof descriptor != "function") || descriptor === null)
-            throw new TypeError(ERR_NON_OBJECT_DESCRIPTOR + descriptor);
-
-        // make a valiant attempt to use the real defineProperty
-        // for I8's DOM elements.
-        if (definePropertyFallback) {
-            try {
-                return definePropertyFallback.call(Object, object, property, descriptor);
-            } catch (exception) {
-                // try the shim if the real one doesn't work
-            }
-        }
-
-        // If it's a data property.
-        if (owns(descriptor, "value")) {
-            // fail silently if "writable", "enumerable", or "configurable"
-            // are requested but not supported
-            /*
-            // alternate approach:
-            if ( // can't implement these features; allow false but not true
-                !(owns(descriptor, "writable") ? descriptor.writable : true) ||
-                !(owns(descriptor, "enumerable") ? descriptor.enumerable : true) ||
-                !(owns(descriptor, "configurable") ? descriptor.configurable : true)
-            )
-                throw new RangeError(
-                    "This implementation of Object.defineProperty does not " +
-                    "support configurable, enumerable, or writable."
-                );
-            */
-
-            if (supportsAccessors && (lookupGetter(object, property) ||
-                                      lookupSetter(object, property)))
-            {
-                // As accessors are supported only on engines implementing
-                // `__proto__` we can safely override `__proto__` while defining
-                // a property to make sure that we don't hit an inherited
-                // accessor.
-                var prototype = object.__proto__;
-                object.__proto__ = prototypeOfObject;
-                // Deleting a property anyway since getter / setter may be
-                // defined on object itself.
-                delete object[property];
-                object[property] = descriptor.value;
-                // Setting original `__proto__` back now.
-                object.__proto__ = prototype;
-            } else {
-                object[property] = descriptor.value;
-            }
-        } else {
-            if (!supportsAccessors)
-                throw new TypeError(ERR_ACCESSORS_NOT_SUPPORTED);
-            // If we got that far then getters and setters can be defined !!
-            if (owns(descriptor, "get"))
-                defineGetter(object, property, descriptor.get);
-            if (owns(descriptor, "set"))
-                defineSetter(object, property, descriptor.set);
-        }
-
-        return object;
-    };
-}
-
-// ES5 15.2.3.7
-if (!Object.defineProperties) {
-    Object.defineProperties = function defineProperties(object, properties) {
-        for (var property in properties) {
-            if (owns(properties, property))
-                Object.defineProperty(object, property, properties[property]);
-        }
-        return object;
-    };
-}
-
-// ES5 15.2.3.8
-if (!Object.seal) {
-    Object.seal = function seal(object) {
-        // this is misleading and breaks feature-detection, but
-        // allows "securable" code to "gracefully" degrade to working
-        // but insecure code.
-        return object;
-    };
-}
-
-// ES5 15.2.3.9
-if (!Object.freeze) {
-    Object.freeze = function freeze(object) {
-        // this is misleading and breaks feature-detection, but
-        // allows "securable" code to "gracefully" degrade to working
-        // but insecure code.
-        return object;
-    };
-}
-
-// detect a Rhino bug and patch it
-try {
-    Object.freeze(function () {});
-} catch (exception) {
-    Object.freeze = (function freeze(freezeObject) {
-        return function freeze(object) {
-            if (typeof object == "function") {
-                return object;
-            } else {
-                return freezeObject(object);
-            }
-        };
-    })(Object.freeze);
-}
-
-// ES5 15.2.3.10
-if (!Object.preventExtensions) {
-    Object.preventExtensions = function preventExtensions(object) {
-        // this is misleading and breaks feature-detection, but
-        // allows "securable" code to "gracefully" degrade to working
-        // but insecure code.
-        return object;
-    };
-}
-
-// ES5 15.2.3.11
-if (!Object.isSealed) {
-    Object.isSealed = function isSealed(object) {
-        return false;
-    };
-}
-
-// ES5 15.2.3.12
-if (!Object.isFrozen) {
-    Object.isFrozen = function isFrozen(object) {
-        return false;
-    };
-}
-
-// ES5 15.2.3.13
-if (!Object.isExtensible) {
-    Object.isExtensible = function isExtensible(object) {
-        // 1. If Type(O) is not Object throw a TypeError exception.
-        if (Object(object) === object) {
-            throw new TypeError(); // TODO message
-        }
-        // 2. Return the Boolean value of the [[Extensible]] internal property of O.
-        var name = '';
-        while (owns(object, name)) {
-            name += '?';
-        }
-        object[name] = true;
-        var returnValue = owns(object, name);
-        delete object[name];
-        return returnValue;
-    };
-}
-
-// ES5 15.2.3.14
-// http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation
-if (!Object.keys) {
-
-    var hasDontEnumBug = true,
-        dontEnums = [
-            "toString",
-            "toLocaleString",
-            "valueOf",
-            "hasOwnProperty",
-            "isPrototypeOf",
-            "propertyIsEnumerable",
-            "constructor"
-        ],
-        dontEnumsLength = dontEnums.length;
-
-    for (var key in {"toString": null})
-        hasDontEnumBug = false;
-
-    Object.keys = function keys(object) {
-
-        if ((typeof object != "object" && typeof object != "function") || object === null)
-            throw new TypeError("Object.keys called on a non-object");
-
-        var keys = [];
-        for (var name in object) {
-            if (owns(object, name)) {
-                keys.push(name);
-            }
-        }
-
-        if (hasDontEnumBug) {
-            for (var i = 0, ii = dontEnumsLength; i < ii; i++) {
-                var dontEnum = dontEnums[i];
-                if (owns(object, dontEnum)) {
-                    keys.push(dontEnum);
-                }
-            }
-        }
-
-        return keys;
-    };
-
-}
-
-//
-// Date
-// ====
-//
-
-// ES5 15.9.5.43
-// Format a Date object as a string according to a simplified subset of the ISO 8601
-// standard as defined in 15.9.1.15.
-if (!Date.prototype.toISOString) {
-    Date.prototype.toISOString = function toISOString() {
-        var result, length, value;
-        if (!isFinite(this))
-            throw new RangeError;
-
-        // the date time string format is specified in 15.9.1.15.
-        result = [this.getUTCFullYear(), this.getUTCMonth() + 1, this.getUTCDate(),
-            this.getUTCHours(), this.getUTCMinutes(), this.getUTCSeconds()];
-
-        length = result.length;
-        while (length--) {
-            value = result[length];
-            // pad months, days, hours, minutes, and seconds to have two digits.
-            if (value < 10)
-                result[length] = "0" + value;
-        }
-        // pad milliseconds to have three digits.
-        return result.slice(0, 3).join("-") + "T" + result.slice(3).join(":") + "." +
-            ("000" + this.getUTCMilliseconds()).slice(-3) + "Z";
-    }
-}
-
-// ES5 15.9.4.4
-if (!Date.now) {
-    Date.now = function now() {
-        return new Date().getTime();
-    };
-}
-
-// ES5 15.9.5.44
-if (!Date.prototype.toJSON) {
-    Date.prototype.toJSON = function toJSON(key) {
-        // This function provides a String representation of a Date object for
-        // use by JSON.stringify (15.12.3). When the toJSON method is called
-        // with argument key, the following steps are taken:
-
-        // 1.  Let O be the result of calling ToObject, giving it the this
-        // value as its argument.
-        // 2. Let tv be ToPrimitive(O, hint Number).
-        // 3. If tv is a Number and is not finite, return null.
-        // XXX
-        // 4. Let toISO be the result of calling the [[Get]] internal method of
-        // O with argument "toISOString".
-        // 5. If IsCallable(toISO) is false, throw a TypeError exception.
-        if (typeof this.toISOString != "function")
-            throw new TypeError(); // TODO message
-        // 6. Return the result of calling the [[Call]] internal method of
-        // toISO with O as the this value and an empty argument list.
-        return this.toISOString();
-
-        // NOTE 1 The argument is ignored.
-
-        // NOTE 2 The toJSON function is intentionally generic; it does not
-        // require that its this value be a Date object. Therefore, it can be
-        // transferred to other kinds of objects for use as a method. However,
-        // it does require that any such object have a toISOString method. An
-        // object is free to use the argument key to filter its
-        // stringification.
-    };
-}
-
-// 15.9.4.2 Date.parse (string)
-// 15.9.1.15 Date Time String Format
-// Date.parse
-// based on work shared by Daniel Friesen (dantman)
-// http://gist.github.com/303249
-if (isNaN(Date.parse("2011-06-15T21:40:05+06:00"))) {
-    // XXX global assignment won't work in embeddings that use
-    // an alternate object for the context.
-    Date = (function(NativeDate) {
-
-        // Date.length === 7
-        var Date = function Date(Y, M, D, h, m, s, ms) {
-            var length = arguments.length;
-            if (this instanceof NativeDate) {
-                var date = length == 1 && String(Y) === Y ? // isString(Y)
-                    // We explicitly pass it through parse:
-                    new NativeDate(Date.parse(Y)) :
-                    // We have to manually make calls depending on argument
-                    // length here
-                    length >= 7 ? new NativeDate(Y, M, D, h, m, s, ms) :
-                    length >= 6 ? new NativeDate(Y, M, D, h, m, s) :
-                    length >= 5 ? new NativeDate(Y, M, D, h, m) :
-                    length >= 4 ? new NativeDate(Y, M, D, h) :
-                    length >= 3 ? new NativeDate(Y, M, D) :
-                    length >= 2 ? new NativeDate(Y, M) :
-                    length >= 1 ? new NativeDate(Y) :
-                                  new NativeDate();
-                // Prevent mixups with unfixed Date object
-                date.constructor = Date;
-                return date;
-            }
-            return NativeDate.apply(this, arguments);
-        };
-
-        // 15.9.1.15 Date Time String Format. This pattern does not implement
-        // extended years (15.9.1.15.1), as `Date.UTC` cannot parse them.
-        var isoDateExpression = new RegExp("^" +
-            "(\\d{4})" + // four-digit year capture
-            "(?:-(\\d{2})" + // optional month capture
-            "(?:-(\\d{2})" + // optional day capture
-            "(?:" + // capture hours:minutes:seconds.milliseconds
-                "T(\\d{2})" + // hours capture
-                ":(\\d{2})" + // minutes capture
-                "(?:" + // optional :seconds.milliseconds
-                    ":(\\d{2})" + // seconds capture
-                    "(?:\\.(\\d{3}))?" + // milliseconds capture
-                ")?" +
-            "(?:" + // capture UTC offset component
-                "Z|" + // UTC capture
-                "(?:" + // offset specifier +/-hours:minutes
-                    "([-+])" + // sign capture
-                    "(\\d{2})" + // hours offset capture
-                    ":(\\d{2})" + // minutes offset capture
-                ")" +
-            ")?)?)?)?" +
-        "$");
-
-        // Copy any custom methods a 3rd party library may have added
-        for (var key in NativeDate)
-            Date[key] = NativeDate[key];
-
-        // Copy "native" methods explicitly; they may be non-enumerable
-        Date.now = NativeDate.now;
-        Date.UTC = NativeDate.UTC;
-        Date.prototype = NativeDate.prototype;
-        Date.prototype.constructor = Date;
-
-        // Upgrade Date.parse to handle simplified ISO 8601 strings
-        Date.parse = function parse(string) {
-            var match = isoDateExpression.exec(string);
-            if (match) {
-                match.shift(); // kill match[0], the full match
-                // parse months, days, hours, minutes, seconds, and milliseconds
-                for (var i = 1; i < 7; i++) {
-                    // provide default values if necessary
-                    match[i] = +(match[i] || (i < 3 ? 1 : 0));
-                    // match[1] is the month. Months are 0-11 in JavaScript
-                    // `Date` objects, but 1-12 in ISO notation, so we
-                    // decrement.
-                    if (i == 1)
-                        match[i]--;
-                }
-
-                // parse the UTC offset component
-                var minuteOffset = +match.pop(), hourOffset = +match.pop(), sign = match.pop();
-
-                // compute the explicit time zone offset if specified
-                var offset = 0;
-                if (sign) {
-                    // detect invalid offsets and return early
-                    if (hourOffset > 23 || minuteOffset > 59)
-                        return NaN;
-
-                    // express the provided time zone offset in minutes. The offset is
-                    // negative for time zones west of UTC; positive otherwise.
-                    offset = (hourOffset * 60 + minuteOffset) * 6e4 * (sign == "+" ? -1 : 1);
-                }
-
-                // compute a new UTC date value, accounting for the optional offset
-                return NativeDate.UTC.apply(this, match) + offset;
-            }
-            return NativeDate.parse.apply(this, arguments);
-        };
-
-        return Date;
-    })(Date);
-}
-
-//
-// String
-// ======
-//
-
-// ES5 15.5.4.20
-var ws = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003" +
-    "\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028" +
-    "\u2029\uFEFF";
-if (!String.prototype.trim || ws.trim()) {
-    // http://blog.stevenlevithan.com/archives/faster-trim-javascript
-    // http://perfectionkills.com/whitespace-deviations/
-    ws = "[" + ws + "]";
-    var trimBeginRegexp = new RegExp("^" + ws + ws + "*"),
-        trimEndRegexp = new RegExp(ws + ws + "*$");
-    String.prototype.trim = function trim() {
-        return String(this).replace(trimBeginRegexp, "").replace(trimEndRegexp, "");
-    };
-}
-
-//
-// Util
-// ======
-//
-
-// http://jsperf.com/to-integer
-var toInteger = function (n) {
-    n = +n;
-    if (n !== n) // isNaN
-        n = -1;
-    else if (n !== 0 && n !== (1/0) && n !== -(1/0))
-        n = (n > 0 || -1) * Math.floor(Math.abs(n));
-    return n;
-};
-
-var prepareString = "a"[0] != "a",
-    // ES5 9.9
-    toObject = function (o) {
-        if (o == null) { // this matches both null and undefined
-            throw new TypeError(); // TODO message
-        }
-        // If the implementation doesn't support by-index access of
-        // string characters (ex. IE < 7), split the string
-        if (prepareString && typeof o == "string" && o) {
-            return o.split("");
-        }
-        return Object(o);
-    };
-});
-
-/**
- * # Shelf.JS
- *
- * Persistent Client-Side Storage @VERSION
- *
- * Copyright 2012 Stefano Balietti
- * GPL licenses.
- *
- * ---
- *
- */
-(function(exports){
-
-var version = '0.3';
-
-var store = exports.store = function (key, value, options, type) {
-	options = options || {};
-	type = (options.type && options.type in store.types) ? options.type : store.type;
-	if (!type || !store.types[type]) {
-		store.log("Cannot save/load value. Invalid storage type selected: " + type, 'ERR');
-		return;
-	}
-	store.log('Accessing ' + type + ' storage');
-
-	return store.types[type](key, value, options);
-};
-
-// Adding functions and properties to store
-///////////////////////////////////////////
-store.name = "__shelf__";
-
-store.verbosity = 0;
-store.types = {};
-
-
-var mainStorageType = "volatile";
-
-//if Object.defineProperty works...
-try {
-
-	Object.defineProperty(store, 'type', {
-		set: function(type){
-			if ('undefined' === typeof store.types[type]) {
-				store.log('Cannot set store.type to an invalid type: ' + type);
-				return false;
-			}
-			mainStorageType = type;
-			return type;
-		},
-		get: function(){
-			return mainStorageType;
-		},
-		configurable: false,
-		enumerable: true
-	});
-}
-catch(e) {
-	store.type = mainStorageType; // default: memory
-}
-
-store.addType = function (type, storage) {
-	store.types[type] = storage;
-	store[type] = function (key, value, options) {
-		options = options || {};
-		options.type = type;
-		return store(key, value, options);
-	};
-
-	if (!store.type || store.type === "volatile") {
-		store.type = type;
-	}
-};
-
-// TODO: create unit test
-store.onquotaerror = undefined;
-store.error = function() {
-	console.log("shelf quota exceeded");
-	if ('function' === typeof store.onquotaerror) {
-		store.onquotaerror(null);
-	}
-};
-
-store.log = function(text) {
-	if (store.verbosity > 0) {
-		console.log('Shelf v.' + version + ': ' + text);
-	}
-
-};
-
-store.isPersistent = function() {
-	if (!store.types) return false;
-	if (store.type === "volatile") return false;
-	return true;
-};
-
-//if Object.defineProperty works...
-try {
-	Object.defineProperty(store, 'persistent', {
-		set: function(){},
-		get: store.isPersistent,
-		configurable: false
-	});
-}
-catch(e) {
-	// safe case
-	store.persistent = false;
-}
-
-store.decycle = function(o) {
-	if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
-		o = JSON.decycle(o);
-	}
-	return o;
-};
-
-store.retrocycle = function(o) {
-	if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
-		o = JSON.retrocycle(o);
-	}
-	return o;
-};
-
-store.stringify = function(o) {
-	if (!JSON || !JSON.stringify || 'function' !== typeof JSON.stringify) {
-		throw new Error('JSON.stringify not found. Received non-string value and could not serialize.');
-	}
-
-	o = store.decycle(o);
-	return JSON.stringify(o);
-};
-
-store.parse = function(o) {
-	if ('undefined' === typeof o) return undefined;
-	if (JSON && JSON.parse && 'function' === typeof JSON.parse) {
-		try {
-			o = JSON.parse(o);
-		}
-		catch (e) {
-			store.log('Error while parsing a value: ' + e, 'ERR');
-			store.log(o);
-		}
-	}
-
-	o = store.retrocycle(o);
-	return o;
-};
-
-// ## In-memory storage
-// ### fallback for all browsers to enable the API even if we can't persist data
-(function() {
-
-	var memory = {},
-		timeout = {};
-
-	function copy(obj) {
-		return store.parse(store.stringify(obj));
-	}
-
-	store.addType("volatile", function(key, value, options) {
-
-		if (!key) {
-			return copy(memory);
-		}
-
-		if (value === undefined) {
-			return copy(memory[key]);
-		}
-
-		if (timeout[key]) {
-			clearTimeout(timeout[key]);
-			delete timeout[key];
-		}
-
-		if (value === null) {
-			delete memory[key];
-			return null;
-		}
-
-		memory[key] = value;
-		if (options.expires) {
-			timeout[key] = setTimeout(function() {
-				delete memory[key];
-				delete timeout[key];
-			}, options.expires);
-		}
-
-		return value;
-	});
-}());
-
-}('undefined' !== typeof module && 'undefined' !== typeof module.exports ? module.exports: this));
-/**
- * ## Amplify storage for Shelf.js
- *
- * ---
- *
- * v. 1.1.0 22.05.2013 a275f32ee7603fbae6607c4e4f37c4d6ada6c3d5
- *
- * Important! When updating to next Amplify.JS release, remember to change
- *
- * JSON.stringify -> store.stringify
- *
- * to keep support for ciclyc objects
- *
- */
-
-(function(exports) {
-
-var store = exports.store;
-
-if (!store) {
-	console.log('amplify.shelf.js: shelf.js core not found. Amplify storage not available.');
-	return;
-}
-
-if ('undefined' === typeof window) {
-	console.log('amplify.shelf.js: am I running in a browser? Amplify storage not available.');
-	return;
-}
-
-//var rprefix = /^__shelf__/;
-var regex = new RegExp("^" + store.name);
-function createFromStorageInterface( storageType, storage ) {
-	store.addType( storageType, function( key, value, options ) {
-		var storedValue, parsed, i, remove,
-			ret = value,
-			now = (new Date()).getTime();
-
-		if ( !key ) {
-			ret = {};
-			remove = [];
-			i = 0;
-			try {
-				// accessing the length property works around a localStorage bug
-				// in Firefox 4.0 where the keys don't update cross-page
-				// we assign to key just to avoid Closure Compiler from removing
-				// the access as "useless code"
-				// https://bugzilla.mozilla.org/show_bug.cgi?id=662511
-				key = storage.length;
-
-				while ( key = storage.key( i++ ) ) {
-					if ( rprefix.test( key ) ) {
-						parsed = JSON.parse( storage.getItem( key ) );
-						if ( parsed.expires && parsed.expires <= now ) {
-							remove.push( key );
-						} else {
-							ret[ key.replace( rprefix, "" ) ] = parsed.data;
-						}
-					}
-				}
-				while ( key = remove.pop() ) {
-					storage.removeItem( key );
-				}
-			} catch ( error ) {}
-			return ret;
-		}
-
-		// protect against name collisions with direct storage
-		key = "__amplify__" + key;
-
-		if ( value === undefined ) {
-			storedValue = storage.getItem( key );
-			parsed = storedValue ? JSON.parse( storedValue ) : { expires: -1 };
-			if ( parsed.expires && parsed.expires <= now ) {
-				storage.removeItem( key );
-			} else {
-				return parsed.data;
-			}
-		} else {
-			if ( value === null ) {
-				storage.removeItem( key );
-			} else {
-				parsed = store.stringify({
-					data: value,
-					expires: options.expires ? now + options.expires : null
-				});
-				try {
-					storage.setItem( key, parsed );
-				// quota exceeded
-				} catch( error ) {
-					// expire old data and try again
-					store[ storageType ]();
-					try {
-						storage.setItem( key, parsed );
-					} catch( error ) {
-						throw store.error();
-					}
-				}
-			}
-		}
-
-		return ret;
-	});
-}
-
-// localStorage + sessionStorage
-// IE 8+, Firefox 3.5+, Safari 4+, Chrome 4+, Opera 10.5+, iPhone 2+, Android 2+
-for ( var webStorageType in { localStorage: 1, sessionStorage: 1 } ) {
-	// try/catch for file protocol in Firefox and Private Browsing in Safari 5
-	try {
-		// Safari 5 in Private Browsing mode exposes localStorage
-		// but doesn't allow storing data, so we attempt to store and remove an item.
-		// This will unfortunately give us a false negative if we're at the limit.
-		window[ webStorageType ].setItem( "__amplify__", "x" );
-		window[ webStorageType ].removeItem( "__amplify__" );
-		createFromStorageInterface( webStorageType, window[ webStorageType ] );
-	} catch( e ) {}
-}
-
-// globalStorage
-// non-standard: Firefox 2+
-// https://developer.mozilla.org/en/dom/storage#globalStorage
-if ( !store.types.localStorage && window.globalStorage ) {
-	// try/catch for file protocol in Firefox
-	try {
-		createFromStorageInterface( "globalStorage",
-			window.globalStorage[ window.location.hostname ] );
-		// Firefox 2.0 and 3.0 have sessionStorage and globalStorage
-		// make sure we default to globalStorage
-		// but don't default to globalStorage in 3.5+ which also has localStorage
-		if ( store.type === "sessionStorage" ) {
-			store.type = "globalStorage";
-		}
-	} catch( e ) {}
-}
-
-// userData
-// non-standard: IE 5+
-// http://msdn.microsoft.com/en-us/library/ms531424(v=vs.85).aspx
-(function() {
-	// IE 9 has quirks in userData that are a huge pain
-	// rather than finding a way to detect these quirks
-	// we just don't register userData if we have localStorage
-	if ( store.types.localStorage ) {
-		return;
-	}
-
-	// append to html instead of body so we can do this from the head
-	var div = document.createElement( "div" ),
-		attrKey = "amplify";
-	div.style.display = "none";
-	document.getElementsByTagName( "head" )[ 0 ].appendChild( div );
-
-	// we can't feature detect userData support
-	// so just try and see if it fails
-	// surprisingly, even just adding the behavior isn't enough for a failure
-	// so we need to load the data as well
-	try {
-		div.addBehavior( "#default#userdata" );
-		div.load( attrKey );
-	} catch( e ) {
-		div.parentNode.removeChild( div );
-		return;
-	}
-
-	store.addType( "userData", function( key, value, options ) {
-		div.load( attrKey );
-		var attr, parsed, prevValue, i, remove,
-			ret = value,
-			now = (new Date()).getTime();
-
-		if ( !key ) {
-			ret = {};
-			remove = [];
-			i = 0;
-			while ( attr = div.XMLDocument.documentElement.attributes[ i++ ] ) {
-				parsed = JSON.parse( attr.value );
-				if ( parsed.expires && parsed.expires <= now ) {
-					remove.push( attr.name );
-				} else {
-					ret[ attr.name ] = parsed.data;
-				}
-			}
-			while ( key = remove.pop() ) {
-				div.removeAttribute( key );
-			}
-			div.save( attrKey );
-			return ret;
-		}
-
-		// convert invalid characters to dashes
-		// http://www.w3.org/TR/REC-xml/#NT-Name
-		// simplified to assume the starting character is valid
-		// also removed colon as it is invalid in HTML attribute names
-		key = key.replace( /[^\-._0-9A-Za-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c-\u200d\u203f\u2040\u2070-\u218f]/g, "-" );
-		// adjust invalid starting character to deal with our simplified sanitization
-		key = key.replace( /^-/, "_-" );
-
-		if ( value === undefined ) {
-			attr = div.getAttribute( key );
-			parsed = attr ? JSON.parse( attr ) : { expires: -1 };
-			if ( parsed.expires && parsed.expires <= now ) {
-				div.removeAttribute( key );
-			} else {
-				return parsed.data;
-			}
-		} else {
-			if ( value === null ) {
-				div.removeAttribute( key );
-			} else {
-				// we need to get the previous value in case we need to rollback
-				prevValue = div.getAttribute( key );
-				parsed = store.stringify({
-					data: value,
-					expires: (options.expires ? (now + options.expires) : null)
-				});
-				div.setAttribute( key, parsed );
-			}
-		}
-
-		try {
-			div.save( attrKey );
-		// quota exceeded
-		} catch ( error ) {
-			// roll the value back to the previous value
-			if ( prevValue === null ) {
-				div.removeAttribute( key );
-			} else {
-				div.setAttribute( key, prevValue );
-			}
-
-			// expire old data and try again
-			store.userData();
-			try {
-				div.setAttribute( key, parsed );
-				div.save( attrKey );
-			} catch ( error ) {
-				// roll the value back to the previous value
-				if ( prevValue === null ) {
-					div.removeAttribute( key );
-				} else {
-					div.setAttribute( key, prevValue );
-				}
-				throw store.error();
-			}
-		}
-		return ret;
-	});
-}());
-
-
-}(this));
-
 /**
  * # JSUS: JavaScript UtilS.
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Collection of general purpose javascript functions. JSUS helps!
@@ -1558,7 +93,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
         // TODO: this is true also for {}
         if (additional.prototype) {
             JSUS.extend(additional.prototype, target.prototype || target);
-        };
+        }
 
         return target;
     };
@@ -1598,9 +133,9 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @return {boolean} TRUE when executed inside Node.JS environment
      */
     JSUS.isNodeJS = function() {
-	return 'undefined' !== typeof module
-	    && 'undefined' !== typeof module.exports
-	    && 'function' === typeof require;
+        return 'undefined' !== typeof module &&
+            'undefined' !== typeof module.exports &&
+            'function' === typeof require;
     };
 
     // ## Node.JS includes
@@ -1627,7 +162,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
 /**
  * # COMPATIBILITY
  *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Tests browsers ECMAScript 5 compatibility
@@ -1635,6 +170,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
  * For more information see http://kangax.github.com/es5-compat-table/
  */
 (function(JSUS) {
+    "use strict";
 
     function COMPATIBILITY() {}
 
@@ -1689,13 +225,14 @@ if ( !store.types.localStorage && window.globalStorage ) {
 
 /**
  * # ARRAY
- *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions to manipulate arrays
  */
 (function(JSUS) {
+
+    "use strict";
 
     function ARRAY() {}
 
@@ -1710,10 +247,9 @@ if ( !store.types.localStorage && window.globalStorage ) {
      */
     if (!Array.prototype.filter) {
         Array.prototype.filter = function(fun /*, thisp */) {
-            "use strict";
             if (this === void 0 || this === null) throw new TypeError();
 
-            var t = Object(this);
+            var t = new Object(this);
             var len = t.length >>> 0;
             if (typeof fun !== "function") throw new TypeError();
 
@@ -1775,7 +311,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @return {array} The final sequence
      */
     ARRAY.seq = function(start, end, increment, func) {
-        var i;
+        var i, out;
         if ('number' !== typeof start) return false;
         if (start === Infinity) return false;
         if ('number' !== typeof end) return false;
@@ -1838,29 +374,46 @@ if ( !store.types.localStorage && window.globalStorage ) {
     /**
      * ## ARRAY.map
      *
-     * Applies a callback function to each element in the db, store
-     * the results in an array and returns it
+     * Executes a callback to each element of the array and returns the result
      *
      * Any number of additional parameters can be passed after the
-     * callback function
+     * callback function.
      *
      * @return {array} The result of the mapping execution
+     *
      * @see ARRAY.each
      */
     ARRAY.map = function() {
-        if (arguments.length < 2) return;
-        var args = Array.prototype.slice.call(arguments),
-        array = args.shift(),
-        func = args[0];
+        var i, len, args, out, o;
+        var array, func;
+
+        array = arguments[0];
+        func = arguments[1];
 
         if (!ARRAY.isArray(array)) {
-            JSUS.log('ARRAY.map() the first argument must be an array. ' +
-                     'Found: ' + array);
+            JSUS.log('ARRAY.map: first parameter must be array. Found: ' +
+                     array);
+            return;
+        }
+        if ('function' !== typeof func) {
+            JSUS.log('ARRAY.map: second parameter must be function. Found: ' +
+                     func);
             return;
         }
 
-        var out = [], o;
-        for (var i = 0; i < array.length; i++) {
+        len = arguments.length;
+        if (len === 3) args = [null, arguments[2]];
+        else if (len === 4) args = [null, arguments[2], arguments[3]];
+        else {
+            len = len - 1;
+            args = new Array(len);
+            for (i = 1; i < (len); i++) {
+                args[i] = arguments[i+1];
+            }
+        }
+
+        out = [], len = array.length;
+        for (i = 0; i < len; i++) {
             args[0] = array[i];
             o = func.apply(this, args);
             if ('undefined' !== typeof o) out.push(o);
@@ -1883,6 +436,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @param {array} haystack The array to search in
      *
      * @return {mixed} The element that was removed, FALSE if none was removed
+     *
      * @see JSUS.equals
      */
     ARRAY.removeElement = function(needle, haystack) {
@@ -1893,7 +447,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
             func = JSUS.equals;
         }
         else {
-            func = function(a,b) {
+            func = function(a, b) {
                 return (a === b);
             };
         }
@@ -1934,7 +488,6 @@ if ( !store.types.localStorage && window.globalStorage ) {
                 return true;
             }
         }
-        // <!-- console.log(needle, haystack); -->
         return false;
     };
 
@@ -1963,7 +516,8 @@ if ( !store.types.localStorage && window.globalStorage ) {
     /**
      * ## ARRAY.getGroupsSizeN
      *
-     * Returns an array of array containing N elements each
+     * Returns an array of arrays containing N elements each
+     *
      * The last group could have less elements
      *
      * @param {array} array The array to split in subgroups
@@ -2125,27 +679,26 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @see ARRAY.getGroupSizeN
      * @see ARRAY.getNGroups
      * @see ARRAY.matchN
+     *
+     * Kudos: http://rosettacode.org/wiki/Combinations#JavaScript
      */
-    ARRAY.generateCombinations = function(array, r) {
-        var i, j;
-        function values(i, a) {
-            var ret = [];
-            for (var j = 0; j < i.length; j++) ret.push(a[i[j]]);
-            return ret;
+    ARRAY.generateCombinations = function combinations(arr, k) {
+        var i, subI, ret, sub, next;
+        ret = [];
+        for (i = 0; i < arr.length; i++) {
+            if (k === 1) {
+                ret.push( [ arr[i] ] );
+            }
+            else {
+                sub = combinations(arr.slice(i+1, arr.length), k-1);
+                for (subI = 0; subI < sub.length; subI++ ){
+                    next = sub[subI];
+                    next.unshift(arr[i]);
+                    ret.push( next );
+                }
+            }
         }
-        var n = array.length;
-        var indices = [];
-        for (i = 0; i < r; i++) indices.push(i);
-        var final = [];
-        for (i = n - r; i < n; i++) final.push(i);
-        while (!JSUS.equals(indices, final)) {
-            callback(values(indices, array));
-            i = r - 1;
-            while (indices[i] == n - r + i) i -= 1;
-            indices[i] += 1;
-            for (j = i + 1; j < r; j++) indices[j] = indices[i] + j - i;
-        }
-        return values(indices, array);
+        return ret;
     };
 
     /**
@@ -2172,7 +725,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @see ARRAY.generateCombinations
      */
     ARRAY.matchN = function(array, N, strict) {
-        var result, i, copy, group;
+        var result, i, copy, group, len, found;
         if (!array) return;
         if (!N) return array;
 
@@ -2422,13 +975,14 @@ if ( !store.types.localStorage && window.globalStorage ) {
 
 /**
  * # OBJ
- *
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions to manipulate JavaScript objects
  */
 (function(JSUS) {
+
+    "use strict";
 
     function OBJ() {}
 
@@ -2437,6 +991,61 @@ if ( !store.types.localStorage && window.globalStorage ) {
     if ('undefined' !== typeof JSUS.compatibility) {
         compatibility = JSUS.compatibility();
     }
+
+    /**
+     * ## OBJ.createObj
+     *
+     * Polyfill for Object.create (when missing)
+     */
+    OBJ.createObj = (function() {
+        // From MDN Object.create (Polyfill)
+        if (typeof Object.create !== 'function') {
+            // Production steps of ECMA-262, Edition 5, 15.2.3.5
+            // Reference: http://es5.github.io/#x15.2.3.5
+            return (function() {
+                // To save on memory, use a shared constructor
+                function Temp() {}
+
+                // make a safe reference to Object.prototype.hasOwnProperty
+                var hasOwn = Object.prototype.hasOwnProperty;
+
+                return function(O) {
+                    // 1. If Type(O) is not Object or Null
+                    if (typeof O != 'object') {
+                        throw new TypeError('Object prototype may only ' +
+                                            'be an Object or null');
+                    }
+
+                    // 2. Let obj be the result of creating a new object as if
+                    //    by the expression new Object() where Object is the
+                    //    standard built-in constructor with that name
+                    // 3. Set the [[Prototype]] internal property of obj to O.
+                    Temp.prototype = O;
+                    var obj = new Temp();
+                    Temp.prototype = null;
+
+                    // 4. If the argument Properties is present and not
+                    //    undefined, add own properties to obj as if by calling
+                    //    the standard built-in function Object.defineProperties
+                    //    with arguments obj and Properties.
+                    if (arguments.length > 1) {
+                        // Object.defineProperties does ToObject on
+                        // its first argument.
+                        var Properties = new Object(arguments[1]);
+                        for (var prop in Properties) {
+                            if (hasOwn.call(Properties, prop)) {
+                                obj[prop] = Properties[prop];
+                            }
+                        }
+                    }
+
+                    // 5. Return obj
+                    return obj;
+                };
+            })();
+        }
+        return Object.create;
+    })();
 
     /**
      * ## OBJ.equals
@@ -2496,14 +1105,11 @@ if ( !store.types.localStorage && window.globalStorage ) {
 
                 if (!o2[p] && o1[p]) return false;
 
-                switch (typeof o1[p]) {
-                case 'function':
+                if ('function' === typeof o1[p]) {
                     if (o1[p].toString() !== o2[p].toString()) return false;
-
-                    /* falls through */
-                default:
-                    if (!OBJ.equals(o1[p], o2[p])) return false;
                 }
+                else
+                    if (!OBJ.equals(o1[p], o2[p])) return false;
             }
         }
 
@@ -2542,7 +1148,6 @@ if ( !store.types.localStorage && window.globalStorage ) {
         }
         return true;
     };
-
 
     /**
      * ## OBJ.size
@@ -2779,33 +1384,33 @@ if ( !store.types.localStorage && window.globalStorage ) {
         // NaN and +-Infinity are numbers, so no check is necessary.
 
         if ('function' === typeof obj) {
-            //          clone = obj;
-            // <!-- Check when and if we need this -->
-            clone = function() { return obj.apply(clone, arguments); };
+            clone = function() {
+                var len, args;
+                len = arguments.length;
+                if (!len) return obj.call(clone);
+                else if (len === 1) return obj.call(clone, arguments[0]);
+                else if (len === 2) {
+                    return obj.call(clone, arguments[0], arguments[1]);
+                }
+                else {
+                    args = new Array(len);
+                    for (i = 0; i < len; i++) {
+                        args[i] = arguments[i];
+                    }
+                    return obj.apply(clone, args);
+                }
+            };
         }
         else {
             clone = Object.prototype.toString.call(obj) === '[object Array]' ?
                 [] : {};
         }
-
         for (i in obj) {
-            // TODO: index i is being updated, so apply is called on the
-            // last element, instead of the correct one.
-            //if ('function' === typeof obj[i]) {
-            //    value = function() { return obj[i].apply(clone, arguments); };
-            //}
-            // It is not NULL and it is an object
+            // It is not NULL and it is an object.
+            // Even if it is an array we need to use CLONE,
+            // because `slice()` does not clone arrays of objects.
             if (obj[i] && 'object' === typeof obj[i]) {
-                // Is an array.
-                if (Object.prototype.toString.call(obj[i]) ===
-                    '[object Array]') {
-
-                    value = obj[i].slice(0);
-                }
-                // Is an object.
-                else {
-                    value = OBJ.clone(obj[i]);
-                }
+                value = OBJ.clone(obj[i]);
             }
             else {
                 value = obj[i];
@@ -2824,21 +1429,65 @@ if ( !store.types.localStorage && window.globalStorage ) {
                     });
                 }
                 else {
-                    // or we try...
-                    try {
-                        Object.defineProperty(clone, i, {
-                            value: value,
-                            writable: true,
-                            configurable: true
-                        });
-                    }
-                    catch(e) {
-                        clone[i] = value;
-                    }
+                    setProp(clone, i, value);
                 }
             }
         }
         return clone;
+    };
+
+    function setProp(clone, i, value) {
+        try {
+            Object.defineProperty(clone, i, {
+                value: value,
+                writable: true,
+                configurable: true
+            });
+        }
+        catch(e) {
+            clone[i] = value;
+        }
+    }
+
+
+    /**
+     * ## OBJ.classClone
+     *
+     * Creates a copy (keeping class) of the object passed as parameter
+     *
+     * Recursively scans all the properties of the object to clone.
+     * The clone is an instance of the type of obj.
+     *
+     * @param {object} obj The object to clone
+     * @param {Number} depth how deep the copy should be
+     *
+     * @return {object} The clone of the object
+     */
+    OBJ.classClone = function(obj, depth) {
+        var clone, i;
+        if (depth === 0) {
+            return obj;
+        }
+
+        if (obj && 'object' === typeof obj) {
+            clone = Object.prototype.toString.call(obj) === '[object Array]' ?
+                [] : JSUS.createObj(obj.constructor.prototype);
+
+            for (i in obj) {
+                if (obj.hasOwnProperty(i)) {
+                    if (obj[i] && 'object' === typeof obj[i]) {
+                        clone[i] = JSUS.classClone(obj[i], depth - 1);
+                    }
+                    else {
+                        clone[i] = obj[i];
+                    }
+                }
+            }
+            return clone;
+        }
+        else {
+            return JSUS.clone(obj);
+        }
     };
 
     /**
@@ -3471,7 +2120,6 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @param {object} o2 The second object
      *
      * @return {object} The object aggregating the results
-     *
      */
     OBJ.pairwiseWalk = function(o1, o2, cb) {
         var i, out;
@@ -3496,19 +2144,56 @@ if ( !store.types.localStorage && window.globalStorage ) {
         return out;
     };
 
+    /**
+     * ## OBJ.getKeyByValue
+     *
+     * Returns the key/s associated with a specific value
+     *
+     * Uses OBJ.equals so it can perform complicated comparisons of
+     * the value of the keys.
+     *
+     * Properties of the prototype are not skipped.
+     *
+     * @param {object} obj The object to search
+     * @param {mixed} value The value to match
+     * @param {boolean} allKeys Optional. If TRUE, all keys with the
+     *   specific value are returned. Default FALSE
+     *
+     * @return {object} The object aggregating the results
+     *
+     * @see OBJ.equals
+     */
+    OBJ.getKeyByValue = function(obj, value, allKeys) {
+        var key, out;
+        if ('object' !== typeof obj) {
+            throw new TypeError('OBJ.getKeyByValue: obj must be object.');
+        }
+        if (allKeys) out = [];
+        for (key in obj) {
+            if (obj.hasOwnProperty(key) ) {
+                if (OBJ.equals(value, obj[key])) {
+                    if (!allKeys) return key;
+                    else out.push(key);
+                }
+            }
+        }
+        return out;
+    };
+
     JSUS.extend(OBJ);
 
 })('undefined' !== typeof JSUS ? JSUS : module.parent.exports.JSUS);
 
 /**
  * # PARSE
- *
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions related to parsing strings
  */
 (function(JSUS) {
+
+    "use strict";
 
     function PARSE() {}
 
@@ -3548,7 +2233,7 @@ if ( !store.types.localStorage && window.globalStorage ) {
      * @see http://stackoverflow.com/q/901115/3347292
      */
     PARSE.getQueryString = function(name, referer) {
-        var regex;
+        var regex, results;
         if (referer && 'string' !== typeof referer) {
             throw new TypeError('JSUS.getQueryString: referer must be string ' +
                                 'or undefined.');
@@ -3744,6 +2429,305 @@ if ( !store.types.localStorage && window.globalStorage ) {
             return value;
         }
     };
+
+    /**
+     * ## PARSE.range
+     *
+     * Decodes strings into an array of integers
+     *
+     * Let n, m  and l be integers, then the tokens of the string are
+     * interpreted in the following way:
+     * - `*`: Any integer.
+     * - `n`: The integer `n`.
+     * - `begin`: The smallest integer in `available`.
+     * - `end`: The largest integer in `available`.
+     * - `<n`, `<=n`, `>n`, `>=n`: Any integer (strictly) smaller/larger than n.
+     * - `n..m`, `[n,m]`: Any integer between n and m (both inclusively).
+     * - `n..l..m`: Any i
+     * - `[n,m)`: Any integer between n (inclusively) and m (exclusively).
+     * - `(n,m]`: Any integer between n (exclusively) and m (inclusively).
+     * - `(n,m)`: Any integer between n and m (both exclusively).
+     * - `%n`: Divisible by n.
+     * - `%n = m`: Divisible with rest m.
+     * - `!`: Not.
+     * - `|`, `||`, `,`: Or.
+     * - `&`, `&&`: And.
+     * The elements of the resulting array are all elements of the `available`
+     * array which satisfy the expression defined by `expr`.
+     *
+     * Example:
+     * PARSE.range('2..5, >8 & !11', '[-2,12]');
+     *      // [2,3,4,5,9,10,12]
+     * PARSE.range('begin...end/2 | 3*end/4...3...end', '[0,40) & %2 = 1');
+     *      // [1,3,5,7,9,11,13,15,17,19,29,35] (end == 39)
+     * PARSE.range('<=19, 22, %5', '>6 & !>27');
+     *      // [7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,25]
+     * PARSE.range('*','(3,8) & !%4, 22, (10,12]');
+     *      // [5,6,7,11,12,22]
+     * PARSE.range('<4', {
+     *      begin: 0,
+     *      end: 21,
+     *      prev: 0,
+     *      cur: 1,
+     *      next: function() {
+     *          var temp = this.prev;
+     *          this.prev = this.cur;
+     *          this.cur += temp;
+     *          return this.cur;
+     *      },
+     *      isFinished: function() {
+     *          return this.cur + this.prev > this.end;
+     *      }
+     * });
+     *      // [5, 8, 13, 21]
+     *
+     *
+     * @param {string} expr The string specifying the selection expression
+     * @param {mixed} available
+     *  - string to be interpreted according to the same rules as
+     *       `expr`
+     *  - array containing the available elements
+     *  - object providing functions next, isFinished and attributes begin, end
+     *
+     * @return {array} The array containing the specified values
+     */
+    // available can be an array, a string or a object.
+    PARSE.range = function(expr, available) {
+        var i, x;
+        var solution = [];
+        var begin, end, lowerBound, numbers;
+        var invalidChars, invalidBeforeOpeningBracket, invalidDot;
+
+        if ("undefined" === typeof expr) {
+            return [];
+        }
+
+        // If no available numbers defined, assumes all possible are allowed.
+        if ("undefined" === typeof available) {
+            available = expr;
+        }
+        if (!JSUS.isArray(available)) {
+            if ("string" !== typeof available) {
+                if ("function" !== typeof available.next ||
+                    "function" !== typeof available.isFinished ||
+                    "number"   !== typeof available.begin ||
+                    "number"   !== typeof available.end
+                )
+                throw new Error('PARSE.range: available wrong type');
+            }
+        }
+        else if (available.length === 0) {
+            return [];
+        }
+
+        // If the availble points are also only given implicitly, compute set
+        // of available numbers by first guessing a bound.
+        if ("string" === typeof available) {
+            available = preprocessRange(available);
+
+            numbers = available.match(/([-+]?\d+)/g);
+            if (numbers === null) {
+                throw new Error(
+                    'PARSE.range: no numbers in available: ' + available);
+            }
+            lowerBound = Math.min.apply(null, numbers);
+
+            available = PARSE.range(available, {
+                begin: lowerBound,
+                end: Math.max.apply(null, numbers),
+                value: lowerBound,
+                next: function() {
+                    return this.value++;
+                },
+                isFinished: function() {
+                    return this.value > this.end;
+                }
+            });
+        }
+        if (JSUS.isArray(available)) {
+            begin = Math.min.apply(null, available);
+            end = Math.max.apply(null, available);
+        }
+        else {
+            begin = available.begin;
+            end = available.end;
+        }
+
+        // end -> maximal available value.
+        expr = expr.replace(/end/g, parseInt(end));
+
+        // begin -> minimal available value.
+        expr = expr.replace(/begin/g, parseInt(begin));
+
+        // Do all computations.
+        expr = preprocessRange(expr);
+
+        // Round all floats
+        expr = expr.replace(/([-+]?\d+\.\d+)/g, function(match, p1) {
+            return parseInt(p1);
+        });
+
+        // Validate expression to only contain allowed symbols.
+        invalidChars = /[^ \*\d<>=!\|&\.\[\],\(\)\-\+%]/g;
+        if (expr.match(invalidChars)) {
+            throw new Error('invalidChars:' + expr);
+        }
+
+        // & -> && and | -> ||.
+        expr = expr.replace(/([^& ]) *& *([^& ])/g, "$1&&$2");
+        expr = expr.replace(/([^| ]) *\| *([^| ])/g, "$1||$2");
+
+        // n -> (x == n).
+        expr = expr.replace(/([-+]?\d+)/g, "(x==$1)");
+
+        // n has already been replaced by (x==n) so match for that from now on.
+
+        // %n -> !(x%n)
+        expr = expr.replace(/% *\(x==([-+]?\d+)\)/,"!(x%$1)");
+
+        // %n has already been replaced by !(x%n) so match for that from now on.
+        // %n = m, %n == m -> (x%n == m).
+        expr = expr.replace(/!\(x%([-+]?\d+)\) *={1,} *\(x==([-+]?\d+)\)/g,
+            "(x%$1==$2)");
+
+        // <n, <=n, >n, >=n -> (x < n), (x <= n), (x > n), (x >= n)
+        expr = expr.replace(/([<>]=?) *\(x==([-+]?\d+)\)/g, "(x$1$2)");
+
+        // n..l..m -> (x >= n && x <= m && !((x-n)%l)) for positive l.
+        expr = expr.replace(
+            /\(x==([-+]?\d+)\)\.{2,}\(x==(\+?\d+)\)\.{2,}\(x==([-+]?\d+)\)/g,
+            "(x>=$1&&x<=$3&&!((x- $1)%$2))");
+
+        // n..l..m -> (x <= n && x >= m && !((x-n)%l)) for negative l.
+        expr = expr.replace(
+            /\(x==([-+]?\d+)\)\.{2,}\(x==(-\d+)\)\.{2,}\(x==([-+]?\d+)\)/g,
+            "(x<=$1&&x>=$3&&!((x- $1)%$2))");
+
+        // n..m -> (x >= n && x <= m).
+        expr = expr.replace(/\(x==([-+]?\d+)\)\.{2,}\(x==([-+]?\d+)\)/g,
+                "(x>=$1&&x<=$2)");
+
+        // (n,m), ... ,[n,m] -> (x > n && x < m), ... , (x >= n && x <= m).
+        expr = expr.replace(
+            /([(\[]) *\(x==([-+]?\d+)\) *, *\(x==([-+]?\d+)\) *([\])])/g,
+                function (match, p1, p2, p3, p4) {
+                    return "(x>" + (p1 == '(' ? '': '=') + p2 + "&&x<" +
+                        (p4 == ')' ? '' : '=') + p3 + ')';
+            }
+        );
+
+        // * -> true.
+        expr = expr.replace('*', 1);
+
+        // a, b -> (a) || (b)
+        expr = expr.replace(/\)[,] *(!*)\(/g, ")||$1(");
+
+
+        // Validating the expression before eval"ing it.
+        invalidChars = /[^ \d<>=!\|&,\(\)\-\+%x\.]/g;
+        // Only & | ! may be before an opening bracket.
+        invalidBeforeOpeningBracket = /[^ &!|\(] *\(/g;
+        // Only dot in floats.
+        invalidDot = /\.[^\d]|[^\d]\./;
+
+        if (expr.match(invalidChars)) {
+            throw new Error('PARSE.range: invalidChars:' + expr);
+        }
+        if (expr.match(invalidBeforeOpeningBracket)) {
+            throw new Error('PARSE.range: invaludBeforeOpeningBracket:' + expr);
+        }
+        if (expr.match(invalidDot)) {
+            throw new Error('PARSE.range: invalidDot:' + expr);
+        }
+
+        if (JSUS.isArray(available)) {
+            for (i in available) {
+                if (available.hasOwnProperty(i)) {
+                    x = parseInt(available[i]);
+                    if (JSUS.eval(expr.replace(/x/g, x))) {
+                        solution.push(x);
+                    }
+                }
+            }
+        }
+        else {
+            while (!available.isFinished()) {
+                x = parseInt(available.next());
+                if (JSUS.eval(expr.replace(/x/g, x))) {
+                    solution.push(x);
+                }
+            }
+        }
+        return solution;
+    };
+
+    function preprocessRange(expr) {
+        var mult = function(match, p1, p2, p3) {
+            var n1 = parseInt(p1);
+            var n3 = parseInt(p3);
+            return p2 == '*' ? n1*n3 : n1/n3;
+        };
+        var add = function(match, p1, p2, p3) {
+            var n1 = parseInt(p1);
+            var n3 = parseInt(p3);
+            return p2 == '-' ? n1 - n3 : n1 + n3;
+        };
+        var mod = function(match, p1, p2, p3) {
+            var n1 = parseInt(p1);
+            var n3 = parseInt(p3);
+            return n1 % n3;
+        };
+
+        while (expr.match(/([-+]?\d+) *([*\/]) *([-+]?\d+)/g)) {
+            expr = expr.replace(/([-+]?\d+) *([*\/]) *([-+]?\d+)/, mult);
+        }
+
+        while (expr.match(/([-+]?\d+) *([-+]) *([-+]?\d+)/g)) {
+            expr = expr.replace(/([-+]?\d+) *([-+]) *([-+]?\d+)/, add);
+        }
+        while (expr.match(/([-+]?\d+) *% *([-+]?\d+)/g)) {
+            expr = expr.replace(/([-+]?\d+) *% *([-+]?\d+)/, mod);
+        }
+        return expr;
+    }
+
+    /**
+     * ## PARSE.funcName
+     *
+     * Returns the name of the function
+     *
+     * Function.name is a non-standard JavaScript property,
+     * although many browsers implement it. This is a cross-browser
+     * implementation for it.
+     *
+     * In case of anonymous functions, an empty string is returned.
+     *
+     * @param {function} func The function to check
+     *
+     * @return {string} The name of the function
+     *
+     * Kudos to:
+     * http://matt.scharley.me/2012/03/09/monkey-patch-name-ie.html
+     */
+    if ('undefined' !== typeof Function.prototype.name) {
+        PARSE.funcName = function(func) {
+            if ('function' !== typeof func) {
+                throw new TypeError('PARSE.funcName: func must be function.');
+            }
+            return func.name;
+        };
+    }
+    else {
+        PARSE.funcName = function(func) {
+            var funcNameRegex, res;
+            if ('function' !== typeof func) {
+                throw new TypeError('PARSE.funcName: func must be function.');
+            }
+            funcNameRegex = /function\s([^(]{1,})\(/;
+            res = (funcNameRegex).exec(func.toString());
+            return (res && res.length > 1) ? res[1].trim() : "";
+        };
+    }
 
     JSUS.extend(PARSE);
 
