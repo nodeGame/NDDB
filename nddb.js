@@ -167,6 +167,10 @@
         // Objects shared (not cloned) among breeded NDDB instances
         this.__shared = {};
 
+        // ### __formats
+        // Currently supported formats for saving/loading operations.
+        this.__formats = {};
+
         // ### log
         // Std out for log messages
         //
@@ -212,7 +216,13 @@
            }
 
            return trigger2 === 0 ? 1 : 0;
-       });
+        });
+
+        // Add default formats (e.g. CSV, JSON in Node.js).
+        // See `/lib/fs.js`.
+        if ('function' === typeof this.addDefaultFormats) {
+            this.addDefaultFormats();
+        }
 
         // Mixing in user options and defaults.
         this.init(options);
@@ -221,7 +231,7 @@
         if (db) {
             this.importDB(db);
         }
-    }
+    };
 
     /**
      * ### NDDB.addFilter
@@ -248,7 +258,7 @@
      * @param {string} op An alphanumeric id
      * @param {function} cb The callback function
      *
-     * @see QueryBuilder.registerDefaultOperators
+     * @see QueryBuilder.addDefaultOperators
      */
     NDDB.prototype.addFilter = function(op, cb) {
         this.filters[op] = cb;
@@ -256,7 +266,7 @@
     };
 
     /**
-     * ### NDDB.registerDefaultFilters
+     * ### NDDB.addDefaultFilters
      *
      * Register default filters for NDDB
      *
@@ -733,6 +743,18 @@
                 }
             }
         }
+
+        if (options.formats) {
+            if ('object' !== typeof options.formats) {
+                errMsg = 'options.formats must be object or undefined';
+                this.throwErr('TypeError', 'init', errMsg);
+            }
+            for (i in options.formats) {
+                if (options.formats.hasOwnProperty(i)) {
+                    this.addFormat(i, options.formats[i]);
+                }
+            }
+        }
     };
 
     /**
@@ -976,6 +998,7 @@
         options.hooks = this.hooks;
         options.globalCompare = this.globalCompare;
         options.filters = this.__userDefinedFilters;
+        options.formats = this.__formats;
 
         // Must be removed before cloning.
         if (options.log) {

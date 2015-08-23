@@ -97,6 +97,9 @@
         <a href="#__shared">__shared</a>
       </div>
       <div class="heading h3">
+        <a href="#__formats">__formats</a>
+      </div>
+      <div class="heading h3">
         <a href="#log">log</a>
       </div>
       <div class="heading h3">
@@ -106,7 +109,7 @@
         <a href="#nddb.addfilter">NDDB.addFilter</a>
       </div>
       <div class="heading h3">
-        <a href="#nddb.registerdefaultfilters">NDDB.registerDefaultFilters</a>
+        <a href="#nddb.adddefaultfilters">NDDB.addDefaultFilters</a>
       </div>
       <div class="heading h2">
         <a href="#methods">METHODS</a>
@@ -960,6 +963,21 @@ The field is needed by cloneSettings
       </tr>
       <tr>
         <td class="docs">
+<div class="pilwrap" id="__formats">
+  <h3>
+    <a href="#__formats" class="pilcrow">&#182;</a>
+    __formats
+  </h3>
+</div>
+
+
+<p>Currently supported formats for saving/loading operations.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">__formats</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
 <div class="pilwrap" id="log">
   <h3>
     <a href="#log" class="pilcrow">&#182;</a>
@@ -1005,7 +1023,7 @@ The field is needed by cloneSettings
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Adding the "compareInAllFields" function.</p>
 
@@ -1024,7 +1042,7 @@ The field is needed by cloneSettings
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>No need to delete o2[d] afer comparison.</p>
         </td>
@@ -1034,7 +1052,7 @@ The field is needed by cloneSettings
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>We are not interested in sorting.
 Figuring out the right return value.</p>
@@ -1047,13 +1065,26 @@ Figuring out the right return value.</p>
            <span class="p">}</span>
 
            <span class="k">return</span> <span class="nx">trigger2</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
-       <span class="p">});</span></pre></div>
+        <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+</div>
+<p>Add default formats (e.g. CSV, JSON in Node.js).
+See <code>/lib/fs.js</code>.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultFormats</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultFormats</span><span class="p">();</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Mixing in user options and defaults.</p>
         </td>
@@ -1063,14 +1094,14 @@ Figuring out the right return value.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Importing items, if any.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">db</span><span class="p">);</span>
         <span class="p">}</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1119,7 +1150,7 @@ one, will overwrite the old filter without warnings.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">QueryBuilder.registerDefaultOperators
+      <span class="dox_type">QueryBuilder.addDefaultOperators
   </span>
     </div>
   </div>
@@ -1134,10 +1165,10 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="nddb.registerdefaultfilters">
+<div class="pilwrap" id="nddb.adddefaultfilters">
   <h3>
-    <a href="#nddb.registerdefaultfilters" class="pilcrow">&#182;</a>
-    NDDB.registerDefaultFilters
+    <a href="#nddb.adddefaultfilters" class="pilcrow">&#182;</a>
+    NDDB.addDefaultFilters
   </h3>
 </div>
 
@@ -1180,7 +1211,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>Exists.</p>
         </td>
@@ -1222,7 +1253,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>(strict) Equals.</p>
         </td>
@@ -1236,7 +1267,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>(strict) Not Equals.</p>
         </td>
@@ -1250,7 +1281,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Smaller than.</p>
         </td>
@@ -1272,7 +1303,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>Greater than.</p>
         </td>
@@ -1296,7 +1327,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>Smaller than.</p>
         </td>
@@ -1318,7 +1349,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>Smaller or equal than.</p>
         </td>
@@ -1342,7 +1373,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Between.</p>
         </td>
@@ -1388,7 +1419,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>Not Between.</p>
         </td>
@@ -1416,7 +1447,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>In Array.</p>
         </td>
@@ -1450,7 +1481,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>Not In Array.</p>
         </td>
@@ -1486,7 +1517,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>Supports <code>_</code> and <code>%</code> wildcards.</p>
         </td>
@@ -1541,7 +1572,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Like operator (Case Sensitive).</p>
         </td>
@@ -1553,7 +1584,7 @@ one, will overwrite the old filter without warnings.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>Like operator (Case Insensitive).</p>
         </td>
@@ -1730,7 +1761,7 @@ TODO: type checking on input params</span>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>Delete the shared object, it must not be copied by <em>cloneSettings</em>.</p>
         </td>
@@ -1777,7 +1808,7 @@ TODO: type checking on input params</span>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>Views must be created at the end because they are cloning
 all the previous settings (the method would also pollute
@@ -1792,6 +1823,18 @@ this.__options if called before all options in init are set).</p>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">options</span><span class="p">.</span><span class="nx">V</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">V</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">view</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">V</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">formats</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">formats</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">errMsg</span> <span class="o">=</span> <span class="s1">&#39;options.formats must be object or undefined&#39;</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;init&#39;</span><span class="p">,</span> <span class="nx">errMsg</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">options</span><span class="p">.</span><span class="nx">formats</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">formats</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">addFormat</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">formats</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1989,7 +2032,7 @@ accordingly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>Check / create a global index.</p>
         </td>
@@ -1999,7 +2042,7 @@ accordingly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
 <p>Create internal idx.</p>
         </td>
@@ -2020,7 +2063,7 @@ accordingly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>Add to index directly (bypass api).</p>
         </td>
@@ -2030,7 +2073,7 @@ accordingly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
 <p>End create index.</p>
         </td>
@@ -2204,7 +2247,7 @@ so that inheriting objects will preserve their prototype.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
 </div>
 <p>In case the class was inherited.</p>
         </td>
@@ -2272,13 +2315,14 @@ are cloned.</p>
         <span class="nx">options</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__update</span><span class="p">;</span>
         <span class="nx">options</span><span class="p">.</span><span class="nx">hooks</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">;</span>
         <span class="nx">options</span><span class="p">.</span><span class="nx">globalCompare</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">globalCompare</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">filters</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__userDefinedFilters</span><span class="p">;</span></pre></div>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">filters</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__userDefinedFilters</span><span class="p">;</span>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">formats</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__formats</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
 </div>
 <p>Must be removed before cloning.</p>
         </td>
@@ -2291,7 +2335,7 @@ are cloned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
 </div>
 <p>Must be removed before cloning.</p>
         </td>
@@ -2304,7 +2348,7 @@ are cloned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
 <p>Cloning.</p>
         </td>
@@ -2314,7 +2358,7 @@ are cloned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
+  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
 <p>Removing unwanted options.</p>
         </td>
@@ -2326,7 +2370,7 @@ are cloned.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
+  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
 </div>
 <p>'shared' is not in <code>options</code>, we just have
 to remember not to add it later.</p>
@@ -2436,7 +2480,7 @@ to remember not to add it later.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
+  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
 </div>
 <p>Decycle, if possible</p>
         </td>
@@ -2558,7 +2602,7 @@ In the latter case a custom comparator function is built on the fly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
+  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
 </div>
 <p>Given field or '*'.</p>
         </td>
@@ -2599,7 +2643,7 @@ In the latter case a custom comparator function is built on the fly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
+  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
 </div>
 <p>In case v1 and v2 are of different types
 they might not be equal here.</p>
@@ -2610,7 +2654,7 @@ they might not be equal here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
+  <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
 </div>
 <p>Return 1 if everything else fails.</p>
         </td>
@@ -2623,7 +2667,7 @@ they might not be equal here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
+  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
 </div>
 <p>Pre-defined array o fields to check.</p>
         </td>
@@ -2633,7 +2677,7 @@ they might not be equal here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
+  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
 </div>
 <p>Creates the array of comparators functions.</p>
         </td>
@@ -2645,7 +2689,7 @@ they might not be equal here.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
+  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
 </div>
 <p>Every comparator has its own d in scope.
 TODO: here there should be no wildcard '*' (check earlier)</p>
@@ -2672,7 +2716,7 @@ TODO: here there should be no wildcard '*' (check earlier)</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
+  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
 </div>
 <p>We are not interested in sorting.
 Figuring out the right return value</p>
@@ -2869,7 +2913,7 @@ callback returns <em>undefined</em> the entry will be ignored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
+  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
 </div>
 <p>Create a copy of the current settings, without the views
 functions, else we create an infinite loop in the constructor.</p>
@@ -3130,7 +3174,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
+  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
 </div>
 <p>Reset current indexes.</p>
         </td>
@@ -3142,7 +3186,7 @@ the entry does not belong to any view of the index.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
+  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
 </div>
 <p>_hashIt and viewIt do not need idx, it is no harm anyway</p>
         </td>
@@ -3201,7 +3245,7 @@ be deleted.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
+  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
 </div>
 <p>If the same object has been  previously
 added with another index delete the old one.</p>
@@ -3264,7 +3308,7 @@ added with another index delete the old one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
+  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
 </div>
 <p>Element must be deleted, if already in hash.</p>
         </td>
@@ -3281,7 +3325,7 @@ added with another index delete the old one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
+  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
 </div>
 <p>this.__V[idx] = func, this[idx] = new this.constructor();</p>
         </td>
@@ -3291,7 +3335,7 @@ added with another index delete the old one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
+  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
 </div>
 <p>Create a copy of the current settings,
 without the views functions, otherwise
@@ -3360,7 +3404,7 @@ constructor.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
+  <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
 </div>
 <p>Create a copy of the current settings,
 without the hashing functions, otherwise
@@ -3700,7 +3744,7 @@ of the event, and the remaining will be passed to the event listeners.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
+  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
 </div>
 <p>Verify input.</p>
         </td>
@@ -3721,7 +3765,7 @@ of the event, and the remaining will be passed to the event listeners.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
+  <a class="pilcrow" href="#section-116" id="section-116">&#182;</a>
 </div>
 <p>Range-queries need an array as third parameter instance of Array.</p>
         </td>
@@ -3737,7 +3781,7 @@ of the event, and the remaining will be passed to the event listeners.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
+  <a class="pilcrow" href="#section-117" id="section-117">&#182;</a>
 </div>
 <p>It will be nested by the comparator function.</p>
         </td>
@@ -3747,7 +3791,7 @@ of the event, and the remaining will be passed to the event listeners.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-116" id="section-116">&#182;</a>
+  <a class="pilcrow" href="#section-118" id="section-118">&#182;</a>
 </div>
 <p>TODO: when to nest and when keep the '.' in the name?</p>
         </td>
@@ -3763,7 +3807,7 @@ of the event, and the remaining will be passed to the event listeners.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-117" id="section-117">&#182;</a>
+  <a class="pilcrow" href="#section-119" id="section-119">&#182;</a>
 </div>
 <p>Comparison queries need a third parameter.</p>
         </td>
@@ -3776,7 +3820,7 @@ of the event, and the remaining will be passed to the event listeners.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-118" id="section-118">&#182;</a>
+  <a class="pilcrow" href="#section-120" id="section-120">&#182;</a>
 </div>
 <p>TODO: when to nest and when keep the '.' in the name?
 Comparison queries need to have the same
@@ -3798,7 +3842,7 @@ data structure in the compared object</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-119" id="section-119">&#182;</a>
+  <a class="pilcrow" href="#section-121" id="section-121">&#182;</a>
 </div>
 <p>other (e.g. user-defined) operators do not have constraints,
 e.g. no need to transform the value</p>
@@ -3999,7 +4043,7 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
+  <a class="pilcrow" href="#section-125" id="section-125">&#182;</a>
 </div>
 <p>TODO: Support for nested query
      if (!arguments.length) {
@@ -4016,7 +4060,7 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-124" id="section-124">&#182;</a>
+  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
 </div>
 
 <div class="highlight"><pre><code> <span class="p">}</span>
@@ -4087,7 +4131,7 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
+  <a class="pilcrow" href="#section-128" id="section-128">&#182;</a>
 </div>
 <p>TODO: Support for nested query
      if (!arguments.length) {
@@ -4104,7 +4148,7 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
+  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
 </div>
 <p>this.query.addCondition('OR', condition, this.getComparator(d));
      }</p>
@@ -4448,7 +4492,7 @@ further methods can be chained.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-134" id="section-134">&#182;</a>
+  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
 </div>
 <p>Global compare.</p>
         </td>
@@ -4460,7 +4504,7 @@ further methods can be chained.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-135" id="section-135">&#182;</a>
+  <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
 </div>
 <p>User-defined function.</p>
         </td>
@@ -4472,7 +4516,7 @@ further methods can be chained.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
+  <a class="pilcrow" href="#section-138" id="section-138">&#182;</a>
 </div>
 <p>Array of dimensions.</p>
         </td>
@@ -4492,7 +4536,7 @@ further methods can be chained.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
+  <a class="pilcrow" href="#section-139" id="section-139">&#182;</a>
 </div>
 <p>Single dimension.</p>
         </td>
@@ -4816,7 +4860,7 @@ the selected items will be created.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-145" id="section-145">&#182;</a>
+  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
 </div>
 <p>Gets items and resets the current selection.</p>
         </td>
@@ -5019,7 +5063,7 @@ TODO: allow join on multiple properties.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
+  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
 </div>
 <!--
 Construct a better comparator function
@@ -5197,7 +5241,7 @@ specify the name of the properties to copy as an input parameter.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
+  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
 </div>
 <p>Inject the matched obj into the reference one.</p>
         </td>
@@ -5895,7 +5939,7 @@ dimension will be skipped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-164" id="section-164">&#182;</a>
+  <a class="pilcrow" href="#section-166" id="section-166">&#182;</a>
 </div>
 <p>Creates a new group and add entries to it.</p>
         </td>
@@ -5911,7 +5955,7 @@ dimension will be skipped</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-165" id="section-165">&#182;</a>
+  <a class="pilcrow" href="#section-167" id="section-167">&#182;</a>
 </div>
 <p>Reset nddb_pointer in subgroups.</p>
         </td>
@@ -7030,7 +7074,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-192" id="section-192">&#182;</a>
+  <a class="pilcrow" href="#section-194" id="section-194">&#182;</a>
 </div>
 <p>Try to save in the browser, e.g. with Shelf.js.</p>
         </td>
@@ -7117,7 +7161,7 @@ is not loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-194" id="section-194">&#182;</a>
+  <a class="pilcrow" href="#section-196" id="section-196">&#182;</a>
 </div>
 <p>Nothing to load.</p>
         </td>
@@ -7135,7 +7179,7 @@ is not loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-195" id="section-195">&#182;</a>
+  <a class="pilcrow" href="#section-197" id="section-197">&#182;</a>
 </div>
 <p>Retrocycle, if necessary and possible.</p>
         </td>
@@ -7188,7 +7232,7 @@ is not loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-198" id="section-198">&#182;</a>
+  <a class="pilcrow" href="#section-200" id="section-200">&#182;</a>
 </div>
 <p>Creates the query array and internal pointer.</p>
         </td>
@@ -7321,7 +7365,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-203" id="section-203">&#182;</a>
+  <a class="pilcrow" href="#section-205" id="section-205">&#182;</a>
 </div>
 <p>Ready to support nested queries, not yet implemented.</p>
         </td>
@@ -7412,7 +7456,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-204" id="section-204">&#182;</a>
+  <a class="pilcrow" href="#section-206" id="section-206">&#182;</a>
 </div>
 <p>Current condition is TRUE OR</p>
         </td>
@@ -7423,7 +7467,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-205" id="section-205">&#182;</a>
+  <a class="pilcrow" href="#section-207" id="section-207">&#182;</a>
 </div>
 <p>Current condition is FALSE AND</p>
         </td>
@@ -7436,7 +7480,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-206" id="section-206">&#182;</a>
+  <a class="pilcrow" href="#section-208" id="section-208">&#182;</a>
 </div>
 <p>Previous check was an AND or a FALSE OR</p>
         </td>
@@ -7450,7 +7494,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-207" id="section-207">&#182;</a>
+  <a class="pilcrow" href="#section-209" id="section-209">&#182;</a>
 </div>
 <p>A previous OR is TRUE also if follows a TRUE AND</p>
         </td>
@@ -7860,7 +7904,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-219" id="section-219">&#182;</a>
+  <a class="pilcrow" href="#section-221" id="section-221">&#182;</a>
 </div>
 <p>We do indexes separately from the other components of _autoUpdate
 to avoid looping through all the other elements that are unchanged.</p>
