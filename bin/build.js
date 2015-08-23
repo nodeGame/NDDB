@@ -16,6 +16,9 @@ J = require('JSUS').JSUS;
 var pkg = require('../package.json'),
 version = pkg.version;
 
+var rootDir = path.resolve(__dirname, '..') + '/';
+var distDir =  rootDir + 'build/';
+var libDir = rootDir + 'lib/';
 
 function build(options) {
 
@@ -34,11 +37,6 @@ function build(options) {
     console.log('Building NDDB v.' + version + ' with:');
 
     // Defining variables
-
-    var re = new RegExp('node_modules.+');
-
-    var rootDir = path.resolve(__dirname, '..') + '/';
-    var distDir =  rootDir + 'build/';
 
     // jsus
 
@@ -61,6 +59,7 @@ function build(options) {
     // nddb
     var nddb = [
         rootDir + "nddb.js",
+        libDir + 'browser.js'
     ];
 
     // cyclic objects
