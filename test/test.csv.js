@@ -8,14 +8,14 @@ path = require('path'),
 should = require('should'),
 NDDB = require('./../index').NDDB;
 
-var db = new NDDB();
+var db;
 
 var filename = __dirname + '/data.csv';
 
-describe('#loadCSV()', function(){
+describe('#load(".csv")', function(){
 
-    it('should load a csv file with default options', function() {
-
+    it('should load a csv file with default options', function(done) {
+        db = new NDDB();
         db.load(filename, function() {
             db.size().should.eql(4);
             db.last().should.be.eql({
@@ -24,14 +24,54 @@ describe('#loadCSV()', function(){
                 C: "12",
                 D: "Z4"
             });
-
+            done();
         });
 
     });
 
+    it('should load a csv file with empty options', function(done) {
+        db = new NDDB();
+        db.load(filename, {}, function() {
+            db.size().should.eql(4);
+            db.last().should.be.eql({
+                A: "10",
+                B: "11",
+                C: "12",
+                D: "Z4"
+            });
+            done();
+        });
+    });
 });
 
-
-
-// END STRESS
-//}
+// describe('#loadSync(".csv")', function(){
+//
+//     it('should load sync. a csv file with default options', function(done) {
+//         db = new NDDB();
+//         db.loadSync(filename, function() {
+//             db.size().should.eql(4);
+//             db.last().should.be.eql({
+//                 A: "10",
+//                 B: "11",
+//                 C: "12",
+//                 D: "Z4"
+//             });
+//             done();
+//         });
+//
+//     });
+//
+//     it('should load sync. a csv file with empty options', function(done) {
+//         db = new NDDB();
+//         db.loadSync(filename, {}, function() {
+//             db.size().should.eql(4);
+//             db.last().should.be.eql({
+//                 A: "10",
+//                 B: "11",
+//                 C: "12",
+//                 D: "Z4"
+//             });
+//             done();
+//         });
+//     });
+// });

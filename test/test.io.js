@@ -133,11 +133,8 @@ var filename = './db.out';
 var deleteIfExist = function(cb) {
     if (JSUS.existsSync(filename)) {
         fs.unlinkSync(filename);
-        if (cb) cb();
     }
-    else {
-        if (cb) cb();
-    }
+    if (cb) cb();
 };
 
 var testSaveLoad = function(items, compareToImport, compareToLoad) {

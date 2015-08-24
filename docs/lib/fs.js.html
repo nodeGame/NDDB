@@ -243,15 +243,19 @@ Upon loading, the cycles are restored.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
 </div>
-<p>Sync.</p>
+
+<div class="highlight"><pre><code>    <span class="sr">//</span> <span class="n">Sync</span><span class="o">.</span>
+    <span class="n">loadSync:</span> <span class="n">function</span><span class="p">(</span><span class="n">that</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="p">},</span>
+    <span class="n">saveSync:</span> <span class="n">function</span><span class="p">(</span><span class="n">that</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="p">}</span>
+</code></pre></div>
+
+
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">loadSync</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-
-        <span class="p">},</span>
-        <span class="nx">saveSync</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-
-        <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -293,15 +297,40 @@ Upon loading, the cycles are restored.</p>
 
 <p>It accepts a configuration object as third paramter. Available options:</p>
 
-<div class='highlight'><pre><code language=''>{ headers: ['A', 'B', 'C'],      // specify the headers directly
-  adapter: { A:                  //
-               function(i) {
-                   return i-1;
-            }  },
-  writeHeaders: false,           // default true,
-  flags: 'w',                    // default, 'a'
-  encoding: 'utf-8',             // default null
-  mode: 0777,                    // default 0666
+<div class='highlight'><pre><code language=''>{
+
+  headers: ['A', 'B', 'C'],          // Specifies the header names, or set
+                                     // equal to TRUE to use the keys of the
+                                     // object as header names.
+
+  adapter: { A: function(row) {      // An object containing callbacks for
+                 return row['A']-1;  // returning the value for the column
+                }                    // specified in the headers.
+           },
+
+  separator: ',',                    // The character used as separator
+                                     // between values. Default ','.
+
+  quotechar: '"',                    // The character used as quote.
+                                     // Default: '"',
+
+  escapechar: '"',                   // The character that should be skipped.
+                                     // Default '"'.
+
+  commentchar: '',                   // The character used for comments.
+                                     // Default: ''.
+
+  nestedQuotes: false,               // TRUE, if nested quotes are allowed.
+                                     // Default FALSE.
+
+  flags: 'w',                        // The Node.js flag to write to fs.
+                                     // Default: 'a' (append).
+
+  encoding: 'utf-8',                 // The encoding of the file.
+
+  mode: 0777,                        // The permission given to the file.
+                                     // Default: 0666
+
 }
 </code></pre></div>
   </div>
@@ -325,14 +354,6 @@ Upon loading, the cycles are restored.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <a href=" ">http://nodejs.org/api/fs.html#fs_fs_createwritestream_path_options
-
-obj.separator
-obj.quotechar
-obj.escapechar
-obj.commentchar
-obj.columnNames
-obj.columnsFromHeader
-obj.nestedQuotes
 </a>
     </div>
   </div>

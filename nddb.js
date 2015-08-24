@@ -3486,8 +3486,16 @@
      * ### NDDB.load
      *
      * Reads items in the specified format and loads them into db asynchronously
+     *
+     * @param {string} file The name of the file or other persistent storage
+     * @param {object} options Optional. A configuration object. Available
+     *    options are format-dependent.
+     * @param {function} cb Optional. A callback function to execute at
+     *    the end of the operation. If options is not specified,
+     *    cb is the second parameter.
      */
-    NDDB.prototype.load = function(file, cb, options) {
+    NDDB.prototype.load = function(file, options, cb) {
+        if (arguments.length === 2) cb = options, options = undefined;
         executeSaveLoad(this, 'load', file, cb, options);
     };
 
@@ -3495,8 +3503,11 @@
      * ### NDDB.save
      *
      * Saves items in the specified format asynchronously
+     *
+     * @see NDDB.load
      */
-    NDDB.prototype.save = function(file, cb, options) {
+    NDDB.prototype.save = function(file, options, cb) {
+        if (arguments.length === 2) cb = options, options = undefined;
         executeSaveLoad(this, 'save', file, cb, options);
     };
 
@@ -3504,8 +3515,11 @@
      * ### NDDB.loadSync
      *
      * Reads items in the specified format and loads them into db synchronously
+     *
+     * @see NDDB.load
      */
-    NDDB.prototype.loadSync = function(file, cb, options) {
+    NDDB.prototype.loadSync = function(file, options, cb) {
+        if (arguments.length === 2) cb = options, options = undefined;
         executeSaveLoad(this, 'loadSync', file, cb, options);
     };
 
@@ -3513,8 +3527,11 @@
      * ### NDDB.saveSync
      *
      * Saves items in the specified format synchronously
+     *
+     * @see NDDB.load
      */
-    NDDB.prototype.saveSync = function(file, cb, options) {
+    NDDB.prototype.saveSync = function(file, options, cb) {
+        if (arguments.length === 2) cb = options, options = undefined;
         executeSaveLoad(this, 'saveSync', file, cb, options);
     };
 
@@ -3528,10 +3545,10 @@
      * The format object is of the type:
      *
      *     {
-     *       load:     function() {},
-     *       save:     function() {},
-     *       loadSync: function() {},
-     *       saveSync: function() {}
+     *       load:     function() {}, // Async
+     *       save:     function() {}, // Async
+     *       loadSync: function() {}, // Sync
+     *       saveSync: function() {}  // Sync
      *     }
      *
      * @param {string|array} format The format name/s
@@ -3623,7 +3640,17 @@
 
     // ## Helper Methods
 
-
+    /**
+     * ### validateSaveLoadParameters
+     *
+     * Validates the parameters of a call to save, saveSync, load, loadSync
+     *
+     * @param {NDDB} that The reference to the current instance
+     * @param {string} method The name of the method invoking validation
+     * @param {string} file The file parameter
+     * @param {function} cb The callback parameter
+     * @param {object} The options parameter
+     */
     function validateSaveLoadParameters(that, method, file, cb, options) {
         if ('string' !== typeof file || file.trim() === '') {
             that.throwErr('TypeError', method, 'file must be ' +
@@ -3639,33 +3666,75 @@
         }
     }
 
-    function getFormat(file) {
+    /**
+     * ### extractExtension
+     *
+     * Extracts the extension from a file name
+     *
+     * @param {string} file The filename
+     *
+     * @return {string} The extension or NULL if not found
+     */
+    function extractExtension(file) {
         var format;
         format = file.lastIndexOf('.');
-        if (format < 0) format = 'json';
-        else format = file.substr(format+1);
-        return format;
+        return format < 0 ? null : file.substr(format+1);
     }
 
+    /**
+     * ### executeSaveLoad
+     *
+     * Fetches the right format and executes save, saveSync, load, or loadSync
+     *
+     * @param {NDDB} that The reference to the current instance
+     * @param {string} method The name of the method invoking validation
+     * @param {string} file The file parameter
+     * @param {function} cb The callback parameter
+     * @param {object} The options parameter
+     */
     function executeSaveLoad(that, method, file, cb, options) {
-        var ff, format, compress;
+        var ff, defFormat, format;
         validateSaveLoadParameters(that, method, file, cb, options);
         if (!that.storageAvailable()) {
             that.throwErr('Error', 'save', 'no persistent storage available');
         }
         options = options || {};
-        format = getFormat(file);
-        ff = that.getFormat(format, method);
+        format = extractExtension(file);
+        // If the extension was found, try to get the format function.
+        if (format) ff = that.getFormat(format);
+        if (ff) {
+            if (!ff[method]) {
+                that.throwErr('Error', method, 'format ' + format + ' found, ' +
+                              'but method ' + method + ' not available');
+            }
+            ff = ff[method];
+        }
         // Try to get default format, if the extension is not recognized.
-        if (!ff) format = that.getDefaultFormat();
-        if (format) ff = that.getFormat(format, method);
         if (!ff) {
-            that.throwErr('Error', method, format + '.' + method +
-                          ' not found');
+            defFormat = that.getDefaultFormat();
+            if (!defFormat) {
+                that.throwErr('Error', method, 'format ' + format + ' not ' +
+                              'found and no default format specified');
+            }
+            ff = that.getFormat(defFormat, method);
+            if (!ff) {
+                that.throwErr('Error', method, 'format ' + format + ' not ' +
+                              'found, but default format has no method ' +
+                              method);
+            }
         }
         ff(that, file, cb, options);
     }
 
+    /**
+     * ### validateFormatParameters
+     *
+     * Validates the parameters of a call to save, saveSync, load, loadSync
+     *
+     * @param {NDDB} that The reference to the current instance
+     * @param {string|array} method The name/s of format/s
+     * @param {object} obj The format object
+     */
     function validateFormatParameters(that, format, obj) {
         if ('string' !== typeof format &&
             !J.isArray(format) && !format.length) {
