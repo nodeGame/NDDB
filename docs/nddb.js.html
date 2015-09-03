@@ -433,6 +433,9 @@
         <a href="#executesaveload">executeSaveLoad</a>
       </div>
       <div class="heading h3">
+        <a href="#findformatfunction">findFormatFunction</a>
+      </div>
+      <div class="heading h3">
         <a href="#validateformatparameters">validateFormatParameters</a>
       </div>
       <div class="heading h1">
@@ -1152,10 +1155,8 @@ See <code>/lib/fs.js</code>.</p>
 </div>
 <p>Importing items, if any.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">db</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">db</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">importDB</span><span class="p">(</span><span class="nx">db</span><span class="p">);</span>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -4117,7 +4118,7 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
   <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code> <span class="p">}</span>
+<div class="highlight"><pre><code> }
 </code></pre></div>
 
 
@@ -7193,10 +7194,10 @@ but changes on update of the elements of the database.</p>
 
 
 <div class="highlight"><pre><code><span class="p">{</span>
-  <span class="n">load:</span>     <span class="n">function</span><span class="p">()</span> <span class="p">{},</span> <span class="sr">//</span> <span class="n">Async</span>
-  <span class="n">save:</span>     <span class="n">function</span><span class="p">()</span> <span class="p">{},</span> <span class="sr">//</span> <span class="n">Async</span>
-  <span class="n">loadSync:</span> <span class="n">function</span><span class="p">()</span> <span class="p">{},</span> <span class="sr">//</span> <span class="n">Sync</span>
-  <span class="n">saveSync:</span> <span class="n">function</span><span class="p">()</span> <span class="p">{}</span>  <span class="sr">//</span> <span class="n">Sync</span>
+  <span class="nx">load</span><span class="o">:</span>     <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span> <span class="c1">// Async</span>
+  <span class="nx">save</span><span class="o">:</span>     <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span> <span class="c1">// Async</span>
+  <span class="nx">loadSync</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span> <span class="c1">// Sync</span>
+  <span class="nx">saveSync</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{}</span>  <span class="c1">// Sync</span>
 <span class="p">}</span>
 </code></pre></div>
 
@@ -7272,7 +7273,7 @@ but changes on update of the elements of the database.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getFormat</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">op</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">f</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;getFormat&#39;</span><span class="p">,</span> <span class="s1">&#39;format must be string&#39;</span><span class="p">);</span>
         <span class="p">}</span>
@@ -7315,8 +7316,7 @@ but changes on update of the elements of the database.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setDefaultFormat</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">op</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">format</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span>
+         <span class="k">if</span> <span class="p">(</span><span class="nx">format</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span>
             <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">format</span> <span class="o">||</span> <span class="nx">format</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="p">{</span>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;setDefaultFormat&#39;</span><span class="p">,</span> <span class="s1">&#39;format must be &#39;</span> <span class="o">+</span>
@@ -7527,7 +7527,7 @@ but changes on update of the elements of the database.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">executeSaveLoad</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">ff</span><span class="p">,</span> <span class="nx">defFormat</span><span class="p">,</span> <span class="nx">format</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">ff</span><span class="p">,</span> <span class="nx">format</span><span class="p">;</span>
         <span class="nx">validateSaveLoadParameters</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">storageAvailable</span><span class="p">())</span> <span class="p">{</span>
             <span class="nx">that</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="s1">&#39;save&#39;</span><span class="p">,</span> <span class="s1">&#39;no persistent storage available&#39;</span><span class="p">);</span>
@@ -7541,9 +7541,58 @@ but changes on update of the elements of the database.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-207" id="section-207">&#182;</a>
 </div>
-<p>If the extension was found, try to get the format function.</p>
+<p>If try to get the format function based on the extension,
+otherwise try to use the default one. Throws errors.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">format</span><span class="p">)</span> <span class="nx">ff</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getFormat</span><span class="p">(</span><span class="nx">format</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">ff</span> <span class="o">=</span> <span class="nx">findFormatFunction</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">format</span><span class="p">);</span>
+        <span class="nx">ff</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="findformatfunction">
+  <h3>
+    <a href="#findformatfunction" class="pilcrow">&#182;</a>
+    findFormatFunction
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the requested format function or the default one</p>
+
+<p>Throws errors.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">that</span>
+      <span class="dox_type">NDDB</span>
+      <span>The reference to the current instance</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">method</span>
+      <span class="dox_type">string</span>
+      <span>The name of the method invoking validation</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">format</span>
+      <span class="dox_type">string</span>
+      <span>The requested parameter</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">function</span>
+      <span>The requested format function</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">findFormatFunction</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ff</span><span class="p">,</span> <span class="nx">defFormat</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">format</span><span class="p">)</span> <span class="nx">ff</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getFormat</span><span class="p">(</span><span class="nx">format</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">ff</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ff</span><span class="p">[</span><span class="nx">method</span><span class="p">])</span> <span class="p">{</span>
                 <span class="nx">that</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="s1">&#39;format &#39;</span> <span class="o">+</span> <span class="nx">format</span> <span class="o">+</span> <span class="s1">&#39; found, &#39;</span> <span class="o">+</span>
@@ -7556,7 +7605,7 @@ but changes on update of the elements of the database.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-208" id="section-208">&#182;</a>
+  <a class="pilcrow" href="#section-209" id="section-209">&#182;</a>
 </div>
 <p>Try to get default format, if the extension is not recognized.</p>
         </td>
@@ -7573,7 +7622,7 @@ but changes on update of the elements of the database.</p>
                               <span class="nx">method</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
-        <span class="nx">ff</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">ff</span><span class="p">;</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -7695,7 +7744,7 @@ but changes on update of the elements of the database.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-212" id="section-212">&#182;</a>
+  <a class="pilcrow" href="#section-213" id="section-213">&#182;</a>
 </div>
 <p>Creates the query array and internal pointer.</p>
         </td>
@@ -7828,7 +7877,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-217" id="section-217">&#182;</a>
+  <a class="pilcrow" href="#section-218" id="section-218">&#182;</a>
 </div>
 <p>Ready to support nested queries, not yet implemented.</p>
         </td>
@@ -7919,7 +7968,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-218" id="section-218">&#182;</a>
+  <a class="pilcrow" href="#section-219" id="section-219">&#182;</a>
 </div>
 <p>Current condition is TRUE OR</p>
         </td>
@@ -7930,7 +7979,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-219" id="section-219">&#182;</a>
+  <a class="pilcrow" href="#section-220" id="section-220">&#182;</a>
 </div>
 <p>Current condition is FALSE AND</p>
         </td>
@@ -7943,7 +7992,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-220" id="section-220">&#182;</a>
+  <a class="pilcrow" href="#section-221" id="section-221">&#182;</a>
 </div>
 <p>Previous check was an AND or a FALSE OR</p>
         </td>
@@ -7957,7 +8006,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-221" id="section-221">&#182;</a>
+  <a class="pilcrow" href="#section-222" id="section-222">&#182;</a>
 </div>
 <p>A previous OR is TRUE also if follows a TRUE AND</p>
         </td>
@@ -8367,7 +8416,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-233" id="section-233">&#182;</a>
+  <a class="pilcrow" href="#section-234" id="section-234">&#182;</a>
 </div>
 <p>We do indexes separately from the other components of _autoUpdate
 to avoid looping through all the other elements that are unchanged.</p>

@@ -232,10 +232,8 @@
         this.init(options);
 
         // Importing items, if any.
-        if (db) {
-            this.importDB(db);
-        }
-    };
+        if (db) this.importDB(db);
+    }
 
     /**
      * ### NDDB.addFilter
@@ -3582,7 +3580,7 @@
      * @return {function|object} Format object or function or NULL if not found.
      */
     NDDB.prototype.getFormat = function(format, method) {
-        var f, op;
+        var f;
         if ('string' !== typeof format) {
             this.throwErr('TypeError', 'getFormat', 'format must be string');
         }
@@ -3605,8 +3603,7 @@
      * @see NDDB.getDefaultFormat
      */
     NDDB.prototype.setDefaultFormat = function(format) {
-        var f, op;
-        if (format !== null &&
+         if (format !== null &&
             ('string' !== typeof format || format.trim() === '')) {
 
             this.throwErr('TypeError', 'setDefaultFormat', 'format must be ' +
@@ -3693,14 +3690,34 @@
      * @param {object} The options parameter
      */
     function executeSaveLoad(that, method, file, cb, options) {
-        var ff, defFormat, format;
+        var ff, format;
         validateSaveLoadParameters(that, method, file, cb, options);
         if (!that.storageAvailable()) {
             that.throwErr('Error', 'save', 'no persistent storage available');
         }
         options = options || {};
         format = extractExtension(file);
-        // If the extension was found, try to get the format function.
+        // If try to get the format function based on the extension,
+        // otherwise try to use the default one. Throws errors.
+        ff = findFormatFunction(that, method, format);
+        ff(that, file, cb, options);
+    }
+
+    /**
+     * ### findFormatFunction
+     *
+     * Returns the requested format function or the default one
+     *
+     * Throws errors.
+     *
+     * @param {NDDB} that The reference to the current instance
+     * @param {string} method The name of the method invoking validation
+     * @param {string} format The requested parameter
+     *
+     * @return {function} The requested format function
+     */
+    function findFormatFunction(that, method, format) {
+        var ff, defFormat;
         if (format) ff = that.getFormat(format);
         if (ff) {
             if (!ff[method]) {
@@ -3723,9 +3740,8 @@
                               method);
             }
         }
-        ff(that, file, cb, options);
+        return ff;
     }
-
     /**
      * ### validateFormatParameters
      *
