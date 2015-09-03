@@ -40,6 +40,9 @@
         <a href="#getcsvfields">getCsvFields</a>
       </div>
       <div class="heading h3">
+        <a href="#parsecsvtoken">parseCsvToken</a>
+      </div>
+      <div class="heading h3">
         <a href="#loadcb">loadCb</a>
       </div>
     </div>
@@ -253,12 +256,14 @@ Upon loading, the cycles are restored.</p>
 <p>Sync.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">loadSync</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quoted</span><span class="p">,</span> <span class="nx">firstLine</span><span class="p">;</span>
-            <span class="kd">var</span> <span class="nx">obj</span><span class="p">,</span> <span class="nx">tokens</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quoteChar</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">obj</span><span class="p">,</span> <span class="nx">tokens</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">token</span><span class="p">;</span>
             <span class="kd">var</span> <span class="nx">csvReader</span><span class="p">;</span>
 
             <span class="nx">headers</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">;</span>
             <span class="nx">separator</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">separator</span> <span class="o">||</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
+            <span class="nx">quoteChar</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">quoteChar</span> <span class="o">||</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">;</span>
+
             <span class="nx">quoted</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">quoted</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
             <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">file</span><span class="p">).</span><span class="nx">toString</span><span class="p">().</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;\n&#39;</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">l</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">l</span> <span class="o">||</span> <span class="o">!</span><span class="nx">l</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
@@ -266,11 +271,16 @@ Upon loading, the cycles are restored.</p>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">headers</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">;</span>
                     <span class="nx">len</span> <span class="o">=</span> <span class="nx">headers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">parseCsvToken</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;loadSync&#39;</span><span class="p">,</span>
+                                                   <span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">quoteChar</span><span class="p">);</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="p">{</span>
                     <span class="nx">obj</span> <span class="o">=</span> <span class="p">{};</span>
                     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">obj</span><span class="p">[</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                        <span class="nx">obj</span><span class="p">[</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">parseCsvToken</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;loadSync&#39;</span><span class="p">,</span>
+                                                        <span class="nx">tokens</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">quoteChar</span><span class="p">);</span>
                     <span class="p">}</span>
                     <span class="nx">that</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span>
                 <span class="p">}</span>
@@ -544,6 +554,61 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="parsecsvtoken">
+  <h3>
+    <a href="#parsecsvtoken" class="pilcrow">&#182;</a>
+    parseCsvToken
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Parses a string representing an entry from a CSV row</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">that</span>
+      <span class="dox_type">NDDB</span>
+      <span>An NDDB instance</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">method</span>
+      <span class="dox_type">string</span>
+      <span>The name of the invoking metho</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">token</span>
+      <span class="dox_type">object</span>
+      <span>The string to parse</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">quoteChar</span>
+      <span class="dox_type">string</span>
+      <span>Optional. A character to escape</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span>The parsed token</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">parseCsvToken</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">token</span><span class="p">,</span> <span class="nx">quoteChar</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">quoteChar</span> <span class="o">||</span> <span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">quoteChar</span><span class="p">)</span> <span class="k">return</span> <span class="nx">token</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">quoteChar</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="s1">&#39;missing closing quote char: &#39;</span> <span class="o">+</span> <span class="nx">token</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">token</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="loadcb">
   <h3>
     <a href="#loadcb" class="pilcrow">&#182;</a>
@@ -577,7 +642,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>TODO: copy settings, disable updates, insert one by one, update indexes.</p>
         </td>
@@ -587,7 +652,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>Retrocycle if possible.</p>
         </td>
