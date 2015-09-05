@@ -13,18 +13,27 @@ var options;
 
 var filename = __dirname + '/data.csv';
 
+var lastItem = {
+    A: "10",
+    B: "11",
+    C: "12",
+    D: "Z4"
+};
+
+var lastItemUnescaped = {
+    '"A"': '"10"',
+    '"B"': '"11"',
+    '"C"': '"12"',
+    '"D"': '"Z4"'
+};
+
 describe('#load(".csv")', function(){
 
     it('should load a csv file with default options', function(done) {
         db = new NDDB();
         db.load(filename, function() {
             db.size().should.eql(4);
-            db.last().should.be.eql({
-                A: "10",
-                B: "11",
-                C: "12",
-                D: "Z4"
-            });
+            db.last().should.be.eql(lastItem);
             done();
         });
 
@@ -34,12 +43,7 @@ describe('#load(".csv")', function(){
         db = new NDDB();
         db.load(filename, {}, function() {
             db.size().should.eql(4);
-            db.last().should.be.eql({
-                A: "10",
-                B: "11",
-                C: "12",
-                D: "Z4"
-            });
+            db.last().should.be.eql(lastItem);
             done();
         });
     });
@@ -51,38 +55,55 @@ describe('#load(".csv")', function(){
         };
         db.load(filename, options, function() {
             db.size().should.eql(4);
+            db.last().should.be.eql(lastItemUnescaped);
+            done();
+        });
+    });
+    it('should load a csv file with pre-defined headers', function(done) {
+        db = new NDDB();
+        options = {
+            headers: ['q', 'w', 'e', 'r']
+        };
+        db.load(filename, options, function() {
+            db.size().should.eql(5);
+            db.first().should.be.eql({
+                q: 'A',
+                w: 'B',
+                e: 'C',
+                r: 'D'
+            });
             db.last().should.be.eql({
-                '"A"': '"10"',
-                '"B"': '"11"',
-                '"C"': '"12"',
-                '"D"': '"Z4"'
+                q: "10",
+                w: "11",
+                e: "12",
+                r: "Z4"
             });
             done();
         });
     });
-//    it('should load a csv file with pre-defined headers', function(done) {
-//        db = new NDDB();
-//        options = {
-//            headers: ['q', 'w', 'e', 'r']
-//        };
-//        db.load(filename, options, function() {
-//            console.log(db.db);
-//            db.size().should.eql(5);
-//            db.first().should.be.eql({
-//                q: 'A',
-//                w: 'B',
-//                e: 'C',
-//                r: 'D'
-//            });
-//            db.last().should.be.eql({
-//                A: "10",
-//                B: "11",
-//                C: "12",
-//                D: "Z4"
-//            });
-//            done();
-//        });
-//    });
+
+    it('should load a csv file with pre-defined adapter', function(done) {
+        db = new NDDB();
+        options = {
+            headers: ['q', 'w', 'e', 'r']
+        };
+        db.load(filename, options, function() {
+            db.size().should.eql(5);
+            db.first().should.be.eql({
+                q: 'A',
+                w: 'B',
+                e: 'C',
+                r: 'D'
+            });
+            db.last().should.be.eql({
+                q: "10",
+                w: "11",
+                e: "12",
+                r: "Z4"
+            });
+            done();
+        });
+    });
 
 });
 
