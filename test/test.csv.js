@@ -9,6 +9,7 @@ should = require('should'),
 NDDB = require('./../index').NDDB;
 
 var db;
+var options;
 
 var filename = __dirname + '/data.csv';
 
@@ -42,6 +43,25 @@ describe('#load(".csv")', function(){
             done();
         });
     });
+
+//     it('should load a csv file with user-specified options', function(done) {
+//         db = new NDDB();
+//         options = {
+//             quote: '-'
+//         };
+//         db.load(filename, options, function() {
+//             db.size().should.eql(4);
+//             console.log(db.db);
+//             db.last().should.be.eql({
+//                 '"A"': '"10"',
+//                 '"B"': '"11"',
+//                 '"C"': '"12"',
+//                 '"D"': '"Z4"'
+//             });
+//             done();
+//         });
+//     });
+
 });
 
 // describe('#loadSync(".csv")', function(){
