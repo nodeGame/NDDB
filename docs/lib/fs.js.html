@@ -132,8 +132,7 @@ Upon loading, the cycles are restored.</p>
 
     <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../external/cycle.js&#39;</span><span class="p">);</span>
 
-    <span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">),</span>
-    <span class="nx">csv</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;ya-csv&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
 
     <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;JSUS&#39;</span><span class="p">).</span><span class="nx">JSUS</span><span class="p">;</span>
 
@@ -199,7 +198,7 @@ Upon loading, the cycles are restored.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultFormats</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">__formats</span><span class="p">[</span><span class="s1">&#39;json&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">__formats</span><span class="p">.</span><span class="nx">json</span> <span class="o">=</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -246,7 +245,7 @@ Upon loading, the cycles are restored.</p>
             <span class="p">}</span>
         <span class="p">};</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">__formats</span><span class="p">[</span><span class="s1">&#39;csv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">__formats</span><span class="p">.</span><span class="nx">csv</span> <span class="o">=</span> <span class="p">{</span>
 
 </pre></div>
         </td>
@@ -260,6 +259,14 @@ Upon loading, the cycles are restored.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="nx">load</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="nx">that</span><span class="p">.</span><span class="nx">throwError</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
+
+                    <span class="nx">processCsvForLoad</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="s2">&quot;load&quot;</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">},</span>
+            <span class="nx">save</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="nx">processCsvForWrite</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
 
 
 </pre></div>
@@ -273,14 +280,7 @@ Upon loading, the cycles are restored.</p>
 <p>Options.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="nx">setDefaultCsvOptions</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">);</span>
-
-                <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">processCsvForLoad</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
-                <span class="p">});</span>
-            <span class="p">},</span>
-            <span class="nx">save</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="nx">processCsvForWrite</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+                <span class="nx">setDefaultCsvOptions</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="s1">&#39;save&#39;</span><span class="p">);</span>
 
                 <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFile</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span>
 
@@ -301,6 +301,14 @@ Upon loading, the cycles are restored.</p>
                 <span class="kd">var</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">;</span>
                 <span class="kd">var</span> <span class="nx">obj</span><span class="p">,</span> <span class="nx">tokens</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
 
+                <span class="nx">processCsvForLoad</span><span class="p">(</span>  <span class="nx">that</span><span class="p">,</span>
+                                    <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">file</span><span class="p">),</span>
+                                    <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="s2">&quot;loadSync&quot;</span>
+                <span class="p">);</span>
+            <span class="p">},</span>
+            <span class="nx">saveSync</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="nx">processCsvForWrite</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+
 
 </pre></div>
         </td>
@@ -313,15 +321,11 @@ Upon loading, the cycles are restored.</p>
 <p>Options.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="nx">setDefaultCsvOptions</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="s1">&#39;loadSync&#39;</span><span class="p">);</span>
-
-                <span class="nx">processCsvForLoad</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">file</span><span class="p">),</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-            <span class="p">},</span>
-            <span class="nx">saveSync</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="nx">processCsvForWrite</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+                <span class="nx">setDefaultCsvOptions</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="s1">&#39;saveSync&#39;</span><span class="p">);</span>
 
                 <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFileSync</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">cb</span><span class="p">();</span>
+            <span class="p">}</span>
 
         <span class="p">};</span>
 
@@ -357,46 +361,25 @@ Upon loading, the cycles are restored.</p>
         <td class="code highlight"><div class="highlight"><pre>
 
 
-    <span class="kd">function</span> <span class="nx">processCsvForLoad</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">processCsvForLoad</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">obj</span><span class="p">,</span> <span class="nx">tokens</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">obj</span><span class="p">,</span> <span class="nx">tokens</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">token</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">processedTokens</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+        <span class="nx">setDefaultCsvOptions</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">method</span><span class="p">);</span>
 
         <span class="nx">separator</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">separator</span><span class="p">;</span>
         <span class="nx">quote</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">quote</span><span class="p">;</span>
         <span class="nx">escape</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escape</span><span class="p">;</span>
+        <span class="nx">headers</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">;</span>
 
-        <span class="nx">files</span><span class="p">.</span><span class="nx">toString</span><span class="p">().</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;\n&#39;</span><span class="p">)</span>
-            <span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">l</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">l</span> <span class="o">||</span> <span class="o">!</span><span class="nx">l</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-                <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">separator</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">headers</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">;</span>
-                    <span class="nx">len</span> <span class="o">=</span> <span class="nx">headers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">parseCsvToken</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;loadSync&#39;</span><span class="p">,</span>
-                                                   <span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span>
-                                                   <span class="nx">quote</span><span class="p">);</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-                <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">obj</span> <span class="o">=</span> <span class="p">{};</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">obj</span><span class="p">[</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">parseCsvToken</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span>
-                                                        <span class="s1">&#39;loadSync&#39;</span><span class="p">,</span>
-                                                        <span class="nx">tokens</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span>
-                                                        <span class="nx">quote</span><span class="p">);</span>
-                    <span class="p">}</span>
-                    <span class="nx">that</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span>
-                <span class="p">}</span>
-            <span class="p">});</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">cb</span><span class="p">();</span>
-    <span class="p">}</span>
-
-    <span class="kd">function</span> <span class="nx">processCsvForWrite</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">adapter</span><span class="p">,</span> <span class="nx">out</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">,</span> <span class="nx">na</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">data</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">toString</span><span class="p">().</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;\n&#39;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">row</span> <span class="o">||</span> <span class="o">!</span><span class="nx">row</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="nx">processedTokens</span> <span class="o">=</span> <span class="p">[];</span>
+                <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">row</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">separator</span><span class="p">);</span>
 
 
 </pre></div>
@@ -407,14 +390,17 @@ Upon loading, the cycles are restored.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
-<p>Options.</p>
+<p>Processing tokens</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">setDefaultCsvOptions</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="s1">&#39;saveSync&#39;</span><span class="p">);</span>
-        <span class="nx">na</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">na</span><span class="p">;</span>
-        <span class="nx">separator</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">separator</span><span class="p">;</span>
-        <span class="nx">quote</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">quote</span><span class="p">;</span>
-        <span class="nx">escape</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escape</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">escape</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">token</span> <span class="o">=</span> <span class="nx">parseCsvToken</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">token</span><span class="p">,</span> <span class="nx">quote</span><span class="p">);</span>
+                        <span class="nx">result</span> <span class="o">+=</span> <span class="nx">token</span><span class="p">;</span>
+                        <span class="nx">processedTokens</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+                        <span class="nx">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                    <span class="p">}</span>
 
 </pre></div>
         </td>
@@ -424,17 +410,67 @@ Upon loading, the cycles are restored.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
 </div>
-
+<p>Handle if token ends with escape character.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+                    <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">token</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+                        <span class="nx">token</span> <span class="o">=</span> <span class="nx">parseCsvToken</span><span class="p">(</span><span class="nx">token</span><span class="p">);</span>
+                        <span class="nx">token</span> <span class="o">+=</span> <span class="nx">separator</span><span class="p">;</span>
+                        <span class="nx">result</span> <span class="o">+=</span> <span class="nx">token</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">result</span> <span class="o">!==</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Row ending with escape character: &quot;</span> <span class="o">+</span>
+                        <span class="nx">options</span><span class="p">.</span><span class="nx">escape</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">headers</span> <span class="o">=</span> <span class="nx">processedTokens</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">obj</span> <span class="o">=</span> <span class="p">{};</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">headers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">obj</span><span class="p">[</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">processedTokens</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="p">}</span>
+                    <span class="nx">that</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
+
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">cb</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">processCsvForWrite</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">adapter</span><span class="p">,</span> <span class="nx">out</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">,</span> <span class="nx">na</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">token</span><span class="p">,</span> <span class="nx">key</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>Options.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">na</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">na</span><span class="p">;</span>
+        <span class="nx">separator</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">separator</span><span class="p">;</span>
+        <span class="nx">quote</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">quote</span><span class="p">;</span>
+        <span class="nx">escape</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escape</span><span class="p">;</span>
 
         <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="nx">data</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
 
         <span class="nx">headers</span> <span class="o">=</span> <span class="nx">getCsvHeaders</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">headers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">len</span> <span class="o">=</span> <span class="nx">headers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">out</span> <span class="o">+=</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">quote</span><span class="p">,</span>
                                       <span class="nx">escape</span><span class="p">);</span>
 
@@ -444,6 +480,26 @@ Upon loading, the cycles are restored.</p>
         <span class="p">}</span>
         <span class="nx">adapter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">adapter</span> <span class="o">||</span> <span class="p">{};</span>
         <span class="nx">data</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>Escape all separators in the item</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="nx">item</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+                    <span class="nx">token</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">separator</span><span class="p">,</span> <span class="nx">escape</span> <span class="o">+</span> <span class="nx">separator</span><span class="p">);</span>
+                    <span class="nx">item</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">token</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
             <span class="nx">out</span> <span class="o">+=</span> <span class="nx">getCsvRow</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="s1">&#39;saveSync&#39;</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">adapter</span><span class="p">,</span>
                              <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">,</span> <span class="nx">na</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;\n&#39;</span><span class="p">;</span>
         <span class="p">});</span>
@@ -551,7 +607,19 @@ mode: 0777,                        // The permission given to the file.
         <span class="nx">options</span><span class="p">.</span><span class="nx">na</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">na</span> <span class="o">||</span> <span class="s1">&#39;NA&#39;</span><span class="p">;</span>
         <span class="nx">options</span><span class="p">.</span><span class="nx">separator</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">separator</span> <span class="o">||</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
         <span class="nx">options</span><span class="p">.</span><span class="nx">quote</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">quote</span> <span class="o">||</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">escape</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escape</span> <span class="o">||</span> <span class="nx">options</span><span class="p">.</span><span class="nx">quote</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>options.escape = options.escape  || options.quote;</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
     <span class="p">}</span>
 
 
@@ -653,7 +721,7 @@ mode: 0777,                        // The permission given to the file.
     <span class="kd">function</span> <span class="nx">getCsvRow</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">adapter</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span>
                        <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">,</span> <span class="nx">na</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">key</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">token</span><span class="p">;</span>
         <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
@@ -680,7 +748,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>Remove last comma.</p>
         </td>
@@ -856,7 +924,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>We are not interested in outputting "null" or "undefined"</p>
         </td>
@@ -871,7 +939,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Escape quotes and escape char.</p>
         </td>
@@ -879,8 +947,8 @@ mode: 0777,                        // The permission given to the file.
         <span class="k">if</span> <span class="p">(</span><span class="nx">quote</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">out</span> <span class="o">=</span> <span class="nx">quote</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">escape</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-                <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">len</span> <span class="o">=</span> <span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
                     <span class="nx">c</span> <span class="o">=</span> <span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">c</span> <span class="o">===</span> <span class="nx">quote</span> <span class="o">||</span> <span class="nx">c</span> <span class="o">===</span> <span class="nx">escape</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">out</span> <span class="o">+=</span> <span class="nx">escape</span><span class="p">;</span>
@@ -939,7 +1007,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>TODO: copy settings, disable updates,
 insert one by one, update indexes.</p>
@@ -953,7 +1021,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Retrocycle if possible.</p>
         </td>
