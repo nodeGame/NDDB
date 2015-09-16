@@ -11,7 +11,10 @@ NDDB = require('./../index').NDDB;
 var db;
 var options;
 
-var filename = __dirname + '/data.csv';
+var filename = {
+    default: __dirname + '/data.csv',
+    escapeTesting: __dirname + '/data.escapetest.csv'
+};
 
 var lastItem = {
     A: "10",
@@ -27,11 +30,13 @@ var lastItemUnescaped = {
     '"D"': '"Z4"'
 };
 
+
+
 describe('#load(".csv")', function(){
 
     it('should load a csv file with default options', function(done) {
         db = new NDDB();
-        db.load(filename, function() {
+        db.load(filename.default, function() {
             db.size().should.eql(4);
             db.last().should.be.eql(lastItem);
             done();
@@ -41,7 +46,7 @@ describe('#load(".csv")', function(){
 
     it('should load a csv file with empty options', function(done) {
         db = new NDDB();
-        db.load(filename, {}, function() {
+        db.load(filename.default, {}, function() {
             db.size().should.eql(4);
             db.last().should.be.eql(lastItem);
             done();
@@ -53,7 +58,7 @@ describe('#load(".csv")', function(){
         options = {
             quote: '-'
         };
-        db.load(filename, options, function() {
+        db.load(filename.default, options, function() {
             db.size().should.eql(4);
             db.last().should.be.eql(lastItemUnescaped);
             done();
@@ -64,7 +69,7 @@ describe('#load(".csv")', function(){
         options = {
             headers: ['q', 'w', 'e', 'r']
         };
-        db.load(filename, options, function() {
+        db.load(filename.default, options, function() {
             db.size().should.eql(5);
             db.first().should.be.eql({
                 q: 'A',
@@ -87,7 +92,7 @@ describe('#load(".csv")', function(){
         options = {
             headers: ['q', 'w', 'e', 'r']
         };
-        db.load(filename, options, function() {
+        db.load(filename.default, options, function() {
             db.size().should.eql(5);
             db.first().should.be.eql({
                 q: 'A',
@@ -103,6 +108,25 @@ describe('#load(".csv")', function(){
             });
             done();
         });
+    });
+
+
+    it('should load a csv file with default options and unescape seperators',
+    function(done) {
+        db = new NDDB();
+        db.load(filename.escapeTesting, function() {
+            db.size().should.eql(4);
+            db.first();
+            db.next();
+            db.next().should.be.eql({
+                A: '7,5',
+                B: '8',
+                C: '9',
+                D: 'Z3'
+            });
+            done();
+        });
+
     });
 
 });
