@@ -2,13 +2,9 @@ node_modules/
 *~
 .project
 .settings
-test/NDDB_Test.js.old
-test/NDDB_Test.js
-/db.out
+
 *.out
 *.nddb
-
-/nddb2.js
 
 npm-debug.log
 
