@@ -14,7 +14,7 @@ var options;
 var filename = {
     standard: __dirname + '/data.csv',
     escapeTesting: __dirname + '/data.escapetest.csv',
-    lastItemEscape: __dirname + '/data.lastItemEscape.csv'
+    simon: __dirname + '/data.simon.csv'
 };
 
 var lastItem = {
@@ -153,6 +153,20 @@ function getTests(m, it) {
            });
 
        });
+
+
+    it('should ' + m + ' a csv file with default options and unescape '
+    +'separators, quotes and escape characters, and handle \n', function(done) {
+        db = new NDDB();
+        db[m](filename.simon, function() {
+            db.size().should.eql(1);
+            db.first().should.be.eql({
+                Speech: 'Simon says "Hello, I like you"\n'
+            });
+            done();
+        });
+
+    });
 
     //Isn't this the same as above?
    it('should ' + m + ' a csv file with pre-defined adapter', function(done) {

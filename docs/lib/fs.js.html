@@ -362,7 +362,7 @@ Upon loading, the cycles are restored.</p>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">escape</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">result</span> <span class="o">+=</span> <span class="nx">token</span><span class="p">;</span>
                         <span class="nx">processedTokens</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">parseCsvToken</span><span class="p">(</span>
-                            <span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">quote</span>
+                            <span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span>
                         <span class="p">));</span>
                         <span class="nx">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
                     <span class="p">}</span>
@@ -434,7 +434,7 @@ Upon loading, the cycles are restored.</p>
         <span class="k">if</span> <span class="p">(</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">len</span> <span class="o">=</span> <span class="nx">headers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">out</span> <span class="o">+=</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">quote</span><span class="p">,</span>
+                <span class="nx">out</span> <span class="o">+=</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span>
                                       <span class="nx">escape</span><span class="p">);</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="p">(</span><span class="nx">len</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="nx">out</span> <span class="o">+=</span> <span class="nx">separator</span><span class="p">;</span>
@@ -443,26 +443,6 @@ Upon loading, the cycles are restored.</p>
         <span class="p">}</span>
         <span class="nx">adapter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">adapter</span> <span class="o">||</span> <span class="p">{};</span>
         <span class="nx">data</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
-</div>
-<p>Escape all separators in the item</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">item</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">item</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">replace</span><span class="p">(</span>
-                    <span class="nx">separator</span><span class="p">,</span> <span class="nx">escape</span> <span class="o">+</span> <span class="nx">separator</span>
-                    <span class="p">);</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
             <span class="nx">out</span> <span class="o">+=</span> <span class="nx">getCsvRow</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">adapter</span><span class="p">,</span>
                              <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">,</span> <span class="nx">na</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;\n&#39;</span><span class="p">;</span>
         <span class="p">});</span>
@@ -578,7 +558,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>options.escape = options.escape  || options.quote;</p>
         </td>
@@ -690,7 +670,7 @@ mode: 0777,                        // The permission given to the file.
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">out</span> <span class="o">+=</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">item</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">,</span>
+                    <span class="nx">out</span> <span class="o">+=</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">item</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">,</span>
                                           <span class="nx">na</span><span class="p">)</span> <span class="o">+</span> <span class="nx">separator</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -701,7 +681,7 @@ mode: 0777,                        // The permission given to the file.
                 <span class="k">if</span> <span class="p">(</span><span class="nx">adapter</span><span class="p">[</span><span class="nx">h</span><span class="p">])</span> <span class="nx">str</span> <span class="o">=</span> <span class="nx">adapter</span><span class="p">[</span><span class="nx">h</span><span class="p">](</span><span class="nx">item</span><span class="p">);</span>
                 <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">h</span><span class="p">))</span> <span class="nx">str</span> <span class="o">=</span> <span class="nx">item</span><span class="p">[</span><span class="nx">h</span><span class="p">];</span>
                 <span class="k">else</span> <span class="nx">str</span> <span class="o">=</span> <span class="nx">na</span><span class="p">;</span>
-                <span class="nx">out</span> <span class="o">+=</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">,</span> <span class="nx">na</span><span class="p">)</span> <span class="o">+</span>
+                <span class="nx">out</span> <span class="o">+=</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">,</span> <span class="nx">na</span><span class="p">)</span> <span class="o">+</span>
                     <span class="nx">separator</span><span class="p">;</span>
             <span class="p">});</span>
         <span class="p">}</span>
@@ -712,7 +692,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>Remove last comma.</p>
         </td>
@@ -824,7 +804,7 @@ mode: 0777,                        // The permission given to the file.
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">parseCsvToken</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">token</span><span class="p">,</span> <span class="nx">quote</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">parseCsvToken</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">token</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">quote</span> <span class="o">||</span> <span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">quote</span><span class="p">)</span> <span class="k">return</span> <span class="nx">token</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">quote</span><span class="p">)</span> <span class="p">{</span>
@@ -832,7 +812,23 @@ mode: 0777,                        // The permission given to the file.
                           <span class="nx">token</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">token</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">token</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>Replace all occurences without invoking RegExp constructor</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escape</span> <span class="o">+</span> <span class="nx">quote</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="nx">quote</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escape</span> <span class="o">+</span> <span class="nx">escape</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="nx">escape</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">escape</span> <span class="o">+</span> <span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="s1">&#39;\n&#39;</span><span class="p">);</span>
+
     <span class="p">}</span>
 
 
@@ -880,7 +876,7 @@ mode: 0777,                        // The permission given to the file.
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">,</span> <span class="nx">na</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escape</span><span class="p">,</span> <span class="nx">na</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">c</span><span class="p">;</span>
 
 </pre></div>
@@ -898,6 +894,7 @@ mode: 0777,                        // The permission given to the file.
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">token</span><span class="p">)</span> <span class="nx">token</span> <span class="o">=</span> <span class="nb">String</span><span class="p">(</span><span class="nx">token</span><span class="p">);</span>
 
 
+
 </pre></div>
         </td>
       </tr>
@@ -906,7 +903,7 @@ mode: 0777,                        // The permission given to the file.
 <div class="pilwrap">
   <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
-<p>Escape quotes and escape char.</p>
+<p>Escape quotes, separator and escape char.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="nx">quote</span><span class="p">)</span> <span class="p">{</span>
@@ -915,7 +912,7 @@ mode: 0777,                        // The permission given to the file.
                 <span class="nx">len</span> <span class="o">=</span> <span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
                     <span class="nx">c</span> <span class="o">=</span> <span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">c</span> <span class="o">===</span> <span class="nx">quote</span> <span class="o">||</span> <span class="nx">c</span> <span class="o">===</span> <span class="nx">escape</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">c</span> <span class="o">===</span> <span class="nx">quote</span> <span class="o">||</span> <span class="nx">c</span> <span class="o">===</span> <span class="nx">escape</span> <span class="o">||</span> <span class="nx">c</span> <span class="o">===</span> <span class="nx">separator</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">out</span> <span class="o">+=</span> <span class="nx">escape</span><span class="p">;</span>
                     <span class="p">}</span>
                     <span class="nx">out</span> <span class="o">+=</span> <span class="nx">c</span><span class="p">;</span>
