@@ -220,7 +220,7 @@ td.docs {
 td.code {
   padding: 8px 15px 8px 25px;
   width: 100%;
-  vertical-align: bottom;
+  vertical-align: top;
   border-left: 1px solid; }
 
 .background {
@@ -237,7 +237,8 @@ pre, tt, code {
   line-height: 18px;
   font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
   margin: 0;
-  padding: 0; }
+  padding: 0;
+  white-space: pre-wrap; }
 
 .line-num {
   display: inline-block;
@@ -305,6 +306,10 @@ a {
 
 td.code, .background {
   border-left-color: #dededc; }
+
+td.linenos { background-color: #f0f0f0; padding-right: 10px; }
+span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
+pre { line-height: 125%; }
 body .highlight .hll { background-color: #ffffcc }
 body .highlight  { background: #f8f8f8; }
 body .highlight .c { color: #408080; font-style: italic } /* Comment */
@@ -347,7 +352,6 @@ body .highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
 body .highlight .nv { color: #19177C } /* Name.Variable */
 body .highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 body .highlight .w { color: #bbbbbb } /* Text.Whitespace */
-body .highlight .mb { color: #666666 } /* Literal.Number.Bin */
 body .highlight .mf { color: #666666 } /* Literal.Number.Float */
 body .highlight .mh { color: #666666 } /* Literal.Number.Hex */
 body .highlight .mi { color: #666666 } /* Literal.Number.Integer */
@@ -368,3 +372,5 @@ body .highlight .vc { color: #19177C } /* Name.Variable.Class */
 body .highlight .vg { color: #19177C } /* Name.Variable.Global */
 body .highlight .vi { color: #19177C } /* Name.Variable.Instance */
 body .highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+
+  

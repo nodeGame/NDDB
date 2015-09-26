@@ -8,12 +8,13 @@ path = require('path'),
 should = require('should'),
 NDDB = require('./../index').NDDB;
 
-var db;
+var db, db2;
 var options;
 
 var filename = {
     standard: __dirname + '/data.csv',
-    escapeTesting: __dirname + '/data.escapetest.csv'
+    escapeTesting: __dirname + '/data.escapetest.csv',
+    lastItemEscape: __dirname + '/data.lastItemEscape.csv'
 };
 
 var lastItem = {
@@ -153,6 +154,7 @@ function getTests(m, it) {
 
        });
 
+    //Isn't this the same as above?
    it('should ' + m + ' a csv file with pre-defined adapter', function(done) {
         db = new NDDB();
         options = {
@@ -176,7 +178,7 @@ function getTests(m, it) {
         });
     });
 
-
+    //Isn't this the same as above?
     it('should ' + m + ' a csv file with def. options and unescape separators',
        function(done) {
            db = new NDDB();
@@ -196,6 +198,24 @@ function getTests(m, it) {
        });
 }
 
+function getSaveTests(m, it) {
+
+    it('should load, ' + m + ', and reload a csv file', function(done) {
+        db = new NDDB();
+        db.load(filename.standard, function() {
+            db.size().should.eql(4);
+            db2 = new NDDB();
+            db[m](__dirname + '/data.currenttest.csv', function() {
+                db2.load(__dirname + '/data.currenttest.csv', function() {
+                    db2.size().should.eql(4);
+                    db2.last().should.be.eql(lastItem);
+                    done();
+                });
+            });
+        });
+    });
+}
+
 describe('#load(".csv")', function() {
     getTests('load', it);
 });
@@ -203,4 +223,14 @@ describe('#load(".csv")', function() {
 
 describe('#loadSync(".csv")', function() {
     getTests('loadSync', it);
+});
+
+
+describe('#save(".csv")', function() {
+    getSaveTests('save', it);
+});
+
+
+describe('#saveSync(".csv")', function() {
+    getSaveTests('saveSync', it);
 });
