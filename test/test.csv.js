@@ -159,9 +159,20 @@ function getTests(m, it) {
     +'separators, quotes and escape characters, and handle \n', function(done) {
         db = new NDDB();
         db[m](filename.simon, function() {
-            db.size().should.eql(1);
+            db.size().should.eql(3);
             db.first().should.be.eql({
-                Speech: 'Simon says "Hello, I like you"\n'
+                // Sentence containing tab, quote, seperator, linebreak and
+                //  escape.
+                Messages: 'Simon:\t"How are you, Stacey?"\nStacey:\t"\\o.o/"',
+                TimeStamp: '16/3/8:2132'
+            });
+            db.next().should.be.eql({
+                Messages: 'Simon: "Are you coming Saturday?"',
+                TimeStamp: '16/3/8:2134'
+            });
+            db.next().should.be.eql({
+                Messages: 'Stacey: "Yeah, sure \\P"',
+                TimeStamp: '16/3/8:2139'
             });
             done();
         });
