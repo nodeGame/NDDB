@@ -399,7 +399,7 @@ Upon loading, the cycles are restored.</p>
         <span class="nx">escapeCharacter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span><span class="p">;</span>
         <span class="nx">headers</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">;</span>
 
-        <span class="nx">readCb</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span><span class="kd">function</span><span class="p">(</span><span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">readCb</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">row</span> <span class="o">||</span> <span class="o">!</span><span class="nx">row</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
                 <span class="nx">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
                 <span class="nx">processedTokens</span> <span class="o">=</span> <span class="p">[];</span>
@@ -500,11 +500,11 @@ Upon loading, the cycles are restored.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
-    <span class="kd">function</span> <span class="nx">processCsvForWrite</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">filename</span><span class="p">,</span> <span class="nx">writeCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span><span class="nx">options</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span>
-        <span class="nx">errorCb</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">processCsvForWrite</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">filename</span><span class="p">,</span> <span class="nx">writeCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span>
+        <span class="nx">method</span><span class="p">,</span> <span class="nx">errorCb</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">adapter</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span> <span class="nx">na</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">currentItem</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">currentItem</span><span class="p">,</span> <span class="nx">firstCall</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
 
 
@@ -519,38 +519,53 @@ Upon loading, the cycles are restored.</p>
 <p>Options.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span><span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;I was wrong :(&quot;</span><span class="p">);}</span>
         <span class="nx">setDefaultCsvOptions</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">method</span><span class="p">);</span>
         <span class="nx">na</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">na</span><span class="p">;</span>
         <span class="nx">separator</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">separator</span><span class="p">;</span>
         <span class="nx">quote</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">quote</span><span class="p">;</span>
         <span class="nx">escapeCharacter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span><span class="p">;</span>
 
-
         <span class="nx">data</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
         <span class="nx">headers</span> <span class="o">=</span> <span class="nx">getCsvHeaders</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
-        <span class="nx">currentItem</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="nx">adapter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">adapter</span> <span class="o">||</span> <span class="p">{};</span>
 
         <span class="nx">writeCb</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">line</span><span class="p">;</span>
-            <span class="nx">line</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">currentItem</span><span class="o">++</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">len</span> <span class="o">=</span> <span class="nx">headers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">line</span> <span class="o">+=</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span>
-                                          <span class="nx">escapeCharacter</span><span class="p">);</span>
 
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="p">(</span><span class="nx">len</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="nx">line</span> <span class="o">+=</span> <span class="nx">separator</span><span class="p">;</span>
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+</div>
+<p>Self calling function for closure private variables.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="kd">var</span> <span class="nx">firstCall</span><span class="p">,</span> <span class="nx">currentItem</span><span class="p">;</span>
+            <span class="nx">firstCall</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="nx">currentItem</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">line</span><span class="p">;</span>
+                <span class="nx">line</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">firstCall</span> <span class="o">&amp;&amp;</span> <span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">len</span> <span class="o">=</span> <span class="nx">headers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">line</span> <span class="o">+=</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span>
+                                              <span class="nx">escapeCharacter</span><span class="p">);</span>
+
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="p">(</span><span class="nx">len</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="nx">line</span> <span class="o">+=</span> <span class="nx">separator</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="nx">firstCall</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="k">return</span> <span class="nx">line</span><span class="p">;</span>
                 <span class="p">}</span>
-                <span class="k">return</span> <span class="nx">line</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">currentItem</span> <span class="o">&lt;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span>  <span class="nx">getCsvRow</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">data</span><span class="p">[</span><span class="nx">currentItem</span><span class="o">++</span><span class="p">],</span> <span class="nx">headers</span><span class="p">,</span>
-                    <span class="nx">adapter</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span> <span class="nx">na</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="p">},</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">errorCb</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">currentItem</span> <span class="o">&lt;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">getCsvRow</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">data</span><span class="p">[</span><span class="nx">currentItem</span><span class="o">++</span><span class="p">],</span> <span class="nx">headers</span><span class="p">,</span>
+                        <span class="nx">adapter</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span> <span class="nx">na</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">};</span>
+        <span class="p">}(),</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">errorCb</span><span class="p">);</span>
     <span class="p">}</span>
 
 
@@ -661,7 +676,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>options.escapeCharacter = options.escapeCharacter  || options.quote;</p>
         </td>
@@ -795,7 +810,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Remove last comma.</p>
         </td>
@@ -923,7 +938,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>Replace all occurences without invoking RegExp constructor</p>
         </td>
@@ -988,7 +1003,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>We are not interested in outputting "null" or "undefined"</p>
         </td>
@@ -1004,7 +1019,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Escape quotes, separator and escapeCharacter.</p>
         </td>
@@ -1073,7 +1088,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>TODO: copy settings, disable updates,
 insert one by one, update indexes.</p>
@@ -1087,7 +1102,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Retrocycle if possible.</p>
         </td>
@@ -1150,7 +1165,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1200,7 +1215,8 @@ insert one by one, update indexes.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
-    <span class="kd">function</span> <span class="nx">streamingRead</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span><span class="nx">lineProcessorCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">errorCb</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">streamingRead</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">lineProcessorCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span>
+        <span class="nx">errorCb</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">flag</span><span class="p">;</span>
 
 </pre></div>
@@ -1209,7 +1225,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1280,7 +1296,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>adapted from <a href='http://stackoverflow.com/a/21219407'>http://stackoverflow.com/a/21219407</a></p>
         </td>
@@ -1310,7 +1326,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>While file not empty, read into buffer.</p>
         </td>
@@ -1324,7 +1340,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>Add content of buffer to workload.</p>
         </td>
@@ -1340,7 +1356,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>While not on last line of buffer, process lines</p>
         </td>
@@ -1354,7 +1370,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>Do not break on escaped endline characters.</p>
         </td>
@@ -1373,7 +1389,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Process line.</p>
         </td>
@@ -1387,7 +1403,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>Advance to next line.</p>
         </td>
@@ -1403,7 +1419,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>Begin workload with leftover characters for next line.</p>
         </td>
@@ -1422,7 +1438,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1453,7 +1469,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1466,7 +1482,7 @@ insert one by one, update indexes.</p>
 
     <span class="kd">function</span> <span class="nx">processFileStreamOutSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">lineCreatorCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">workload</span><span class="p">,</span> <span class="nx">line</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">buffer</span><span class="p">,</span> <span class="nx">bufferSize</span><span class="p">,</span> <span class="nx">encoding</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">buffer</span><span class="p">,</span> <span class="nx">bufferSize</span><span class="p">,</span> <span class="nx">encoding</span><span class="p">,</span> <span class="nx">usedBytes</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">options</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">encoding</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
@@ -1488,7 +1504,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>Fill workload (assumes short-circuit evaluation)</p>
         </td>
@@ -1505,26 +1521,12 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>Fill buffer completely.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">buffer</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">workload</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="nx">encoding</span><span class="p">);</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
-</div>
-<p>Write buffer to file.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">fs</span><span class="p">.</span><span class="nx">writeSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span><span class="nx">buffer</span><span class="p">);</span>
+            <span class="nx">usedBytes</span> <span class="o">=</span> <span class="nx">buffer</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">workload</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">encoding</span><span class="p">);</span>
 
 
 </pre></div>
@@ -1535,10 +1537,26 @@ insert one by one, update indexes.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
+<p>Write buffer to file.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">fs</span><span class="p">.</span><span class="nx">writeSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">usedBytes</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+</div>
 <p>Compute leftover and put it into workload.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">workload</span> <span class="o">=</span> <span class="nx">workload</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">().</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="nx">workload</span> <span class="o">=</span> <span class="nx">workload</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span>
+                <span class="nx">buffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="nx">encoding</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">usedBytes</span><span class="p">).</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="p">);</span>
 
         <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="nx">workload</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">line</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">);</span>
     <span class="p">}</span>
