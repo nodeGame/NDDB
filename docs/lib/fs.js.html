@@ -31,10 +31,10 @@
         <a href="#helper%20methods">Helper Methods</a>
       </div>
       <div class="heading h3">
-        <a href="#processcsvforload">processCsvForLoad</a>
+        <a href="#loadcsv">loadCsv</a>
       </div>
       <div class="heading h3">
-        <a href="#processcsvforwrite">processCsvForWrite</a>
+        <a href="#savecsv">saveCsv</a>
       </div>
       <div class="heading h3">
         <a href="#setdefaultcsvoptions">setDefaultCsvOptions</a>
@@ -65,6 +65,15 @@
       </div>
       <div class="heading h3">
         <a href="#processfilestreaminsync">processFileStreamInSync</a>
+      </div>
+      <div class="heading h3">
+        <a href="#streamingwrite">streamingWrite</a>
+      </div>
+      <div class="heading h3">
+        <a href="#streamingwritesync">streamingWriteSync</a>
+      </div>
+      <div class="heading h3">
+        <a href="#processfilestreamoutsync">processFileStreamOutSync</a>
       </div>
     </div>
   </div>
@@ -266,13 +275,13 @@ Upon loading, the cycles are restored.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="nx">load</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">processCsvForLoad</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">streamingRead</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span><span class="s1">&#39;load&#39;</span><span class="p">,</span>
+                <span class="nx">loadCsv</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">streamingRead</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span><span class="s1">&#39;load&#39;</span><span class="p">,</span>
                 <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="nx">that</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
                 <span class="p">});</span>
             <span class="p">},</span>
             <span class="nx">save</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">processCsvForWrite</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">streamingWrite</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span>
+                <span class="nx">saveCsv</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">streamingWrite</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span>
                     <span class="s1">&#39;save&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="nx">that</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="s1">&#39;save&#39;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
                     <span class="p">}</span>
@@ -291,12 +300,12 @@ Upon loading, the cycles are restored.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
             <span class="nx">loadSync</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">processCsvForLoad</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">streamingReadSync</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span>
+                <span class="nx">loadCsv</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">streamingReadSync</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span>
                     <span class="s1">&#39;loadSync&#39;</span>
                 <span class="p">);</span>
             <span class="p">},</span>
             <span class="nx">saveSync</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">processCsvForWrite</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">streamingWriteSync</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span>
+                <span class="nx">saveCsv</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">streamingWriteSync</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span>
                     <span class="s1">&#39;saveSync&#39;</span>
                 <span class="p">);</span>
             <span class="p">}</span>
@@ -341,38 +350,73 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="processcsvforload">
+<div class="pilwrap" id="loadcsv">
   <h3>
-    <a href="#processcsvforload" name="processcsvforload" class="pilcrow">&#182;</a>
-    processCsvForLoad
+    <a href="#loadcsv" name="loadcsv" class="pilcrow">&#182;</a>
+    loadCsv
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Parses and tokenizes each line in 'data' and inserts tokens into database</p>
+  <div class="body"><p>Reads csv file and inserts entries into db</p>
+
+<p>Forwards reading to file to <code>readCb</code></p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">cb.</span>
+      <span class="dox_tag_name">that.</span>
+      <span class="dox_type">NDDB</span>
+      <span>An NDDB instance</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">filename.</span>
+      <span class="dox_type">string</span>
+      <span>Name of the file in which to write</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">readCb.</span>
       <span class="dox_type">function</span>
-      <span>Callback to be executed upon completion</span>
+      <span>Callback with the same signature and effect as
+  <code>streamingRead</code>.</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">doneCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback to invoke upon completion of save</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">options.</span>
       <span class="dox_type">object</span>
-      <span>Initial options</span>
+      <span>Options to be forwarded to
+  <code>setDefaultCsvOptions</code> and <code>readCb</code></span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">method.</span>
       <span class="dox_type">string</span>
       <span>The name of the invoking method</span>
     </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">errorCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback to be passed an error.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`setDefaultCsvOptions`</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`streamingWrite`
+</span>
+    </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">processCsvForLoad</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">filename</span><span class="p">,</span> <span class="nx">readCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span>
+
+     <span class="o">*</span><span class="err">/</span>
+    <span class="kd">function</span> <span class="nx">loadCsv</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">filename</span><span class="p">,</span> <span class="nx">readCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span>
         <span class="nx">errorCb</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">;</span>
@@ -466,40 +510,71 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="processcsvforwrite">
+<div class="pilwrap" id="savecsv">
   <h3>
-    <a href="#processcsvforwrite" name="processcsvforwrite" class="pilcrow">&#182;</a>
-    processCsvForWrite
+    <a href="#savecsv" name="savecsv" class="pilcrow">&#182;</a>
+    saveCsv
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Escapes and concatenates tokens in database into one string</p>
+  <div class="body"><p>Fetches data from db and writes it to csv file</p>
+
+<p>Forwards writing to file to <code>writeCb</code>.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">that.</span>
+      <span class="dox_type">NDDB</span>
+      <span>An NDDB instance</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">filename.</span>
+      <span class="dox_type">string</span>
+      <span>Name of the file in which to write</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">writeCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback with the same signature and effect as
+  <code>streamingWrite</code>.</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">doneCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback to invoke upon completion of save</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options.</span>
+      <span class="dox_type">object</span>
+      <span>Options to be forwarded to
+  <code>setDefaultCsvOptions</code> and <code>writeCb</code></span>
+    </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">method.</span>
       <span class="dox_type">string</span>
       <span>The name of the invoking method</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">options.</span>
-      <span class="dox_type">object</span>
-      <span>Initial options</span>
+      <span class="dox_tag_name">errorCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback to be passed an error.</span>
     </div>
-    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name"></span>
-      <span class="dox_type">string</span>
-      <span>out. Content of a CSV file ready to be written to drive</span>
+      <span class="dox_type">`setDefaultCsvOptions`</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`streamingWrite`
+</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-
-    <span class="kd">function</span> <span class="nx">processCsvForWrite</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">filename</span><span class="p">,</span> <span class="nx">writeCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span>
+    <span class="kd">function</span> <span class="nx">saveCsv</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">filename</span><span class="p">,</span> <span class="nx">writeCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span>
         <span class="nx">method</span><span class="p">,</span> <span class="nx">errorCb</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">adapter</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span> <span class="nx">na</span><span class="p">;</span>
@@ -922,11 +997,13 @@ mode: 0777,                        // The permission given to the file.
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">parseCsvToken</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">token</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">quote</span> <span class="o">||</span> <span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">quote</span><span class="p">)</span> <span class="k">return</span> <span class="nx">token</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">quote</span> <span class="o">||</span> <span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="nx">quote</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">quote</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">that</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="s1">&#39;missing closing quote char: &#39;</span> <span class="o">+</span>
-                          <span class="nx">token</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">quote</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="s1">&#39;missing closing quote char: &#39;</span> <span class="o">+</span>
+                              <span class="nx">token</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">token</span> <span class="o">=</span> <span class="nx">token</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
         <span class="p">}</span>
 
 
@@ -938,26 +1015,14 @@ mode: 0777,                        // The permission given to the file.
 <div class="pilwrap">
   <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
-<p>Unescape characters.</p>
+<p>Unescape quote, ecapeCharacter, linebreak and tab.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">return</span> <span class="nx">token</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
-</div>
-<p>Replace all occurences without invoking RegExp constructor.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escapeCharacter</span> <span class="o">+</span> <span class="nx">quote</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="nx">quote</span><span class="p">)</span>
-            <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escapeCharacter</span> <span class="o">+</span> <span class="nx">escapeCharacter</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="nx">escapeCharacter</span><span class="p">)</span>
-            <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escapeCharacter</span> <span class="o">+</span> <span class="s1">&#39;\t&#39;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;\t&#39;</span><span class="p">)</span>
-            <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escapeCharacter</span> <span class="o">+</span> <span class="s1">&#39;\n&#39;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;\n&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">token</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escapeCharacter</span> <span class="o">+</span> <span class="nx">quote</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="nx">quote</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escapeCharacter</span> <span class="o">+</span> <span class="nx">escapeCharacter</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">escapeCharacter</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escapeCharacter</span> <span class="o">+</span> <span class="s1">&#39;\t&#39;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;\t&#39;</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escapeCharacter</span> <span class="o">+</span> <span class="s1">&#39;\n&#39;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;\n&#39;</span><span class="p">);</span>
 
     <span class="p">}</span>
 
@@ -1015,7 +1080,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>We are not interested in outputting "null" or "undefined"</p>
         </td>
@@ -1031,9 +1096,9 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
-<p>Escape quotes, separator and escapeCharacter.</p>
+<p>Escape quote, separator, escapeCharacter, linebreak and tab.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">if</span> <span class="p">(</span><span class="nx">quote</span><span class="p">)</span> <span class="p">{</span>
@@ -1077,14 +1142,14 @@ mode: 0777,                        // The permission given to the file.
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">nddb</span>
+      <span class="dox_tag_name">nddb.</span>
       <span class="dox_type">NDDB</span>
       <span>An NDDB instance</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">s</span>
+      <span class="dox_tag_name">s.</span>
       <span class="dox_type">string</span>
-      <span>The string to retrocycle and  import</span>
+      <span>The string to retrocycle and import</span>
     </div>
   </div>
 </div>
@@ -1100,7 +1165,7 @@ mode: 0777,                        // The permission given to the file.
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>TODO: copy settings, disable updates,
 insert one by one, update indexes.</p>
@@ -1114,7 +1179,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Retrocycle if possible.</p>
         </td>
@@ -1139,7 +1204,7 @@ insert one by one, update indexes.</p>
 </div>
 
   </div>
-  <div class="body"><p>Invokes the functions fs.openSync and processFileStreamInSync</p>
+  <div class="body"><p>Streams file in and applies callback to each line</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1151,17 +1216,29 @@ insert one by one, update indexes.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">lineProcessorCb.</span>
       <span class="dox_type">function</span>
-      <span>A character to surround the value</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">doneCb.</span>
-      <span class="dox_type">function</span>
-      <span>Callback to be executed upon completion</span>
+      <span>Callback to forward to
+  <code>processFileStreamInSync</code></span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">options.</span>
       <span class="dox_type">object</span>
-      <span>Initial options</span>
+      <span>May contain property <code>flag</code> forwarded to
+  <code>fs.open</code> (default: 'r'). All options are forwarded to
+  <code>processFileStreamOutSync</code>.</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">errorCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback to be passed an error.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`fs.open`</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`processFileStreamInSync`
+</span>
     </div>
   </div>
 </div>
@@ -1177,7 +1254,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1203,7 +1280,7 @@ insert one by one, update indexes.</p>
 </div>
 
   </div>
-  <div class="body"><p>Invokes the functions fs.open and processFileStreamInSync</p>
+  <div class="body"><p>Streams file in and applies callback to each line asynchronousely</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1213,14 +1290,31 @@ insert one by one, update indexes.</p>
       <span>Name of file to load into database</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">cb.</span>
+      <span class="dox_tag_name">lineProcessorCb.</span>
       <span class="dox_type">function</span>
-      <span>Callback to be executed upon completion</span>
+      <span>Callback to forward to
+  <code>processFileStreamInSync</code></span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">options.</span>
       <span class="dox_type">object</span>
-      <span>Initial options</span>
+      <span>May contain property <code>flag</code> forwarded to
+  <code>fs.open</code> (default: 'r'). All options are forwarded to
+  <code>processFileStreamOutSync</code>.</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">errorCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback to be passed an error.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`fs.open`</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`processFileStreamInSync`
+</span>
     </div>
   </div>
 </div>
@@ -1237,7 +1331,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1274,7 +1368,7 @@ insert one by one, update indexes.</p>
 </div>
 
   </div>
-  <div class="body"><p>Streams file in and applies callback to each line</p>
+  <div class="body"><p>Reads from file and applies callback for each line.</p>
 
 <p>Reads file part by part into buffer, applies callback to each line in
   file ignoring escaped line breaks.</p>
@@ -1289,12 +1383,34 @@ insert one by one, update indexes.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">lineProcessorCb.</span>
       <span class="dox_type">function</span>
-      <span>Callback applied to each line of file</span>
+      <span>Callback applied for each line in
+  file. Accepts string as input argument.</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">options.</span>
       <span class="dox_type">object</span>
-      <span>Initial options</span>
+      <span>Options object. If typeof options is string,
+  it is treated as options = {encoding: options}
+
+Available options and defaults:
+
+<div class='highlight'><pre><code language=''>{
+
+ encoding: undefined,        // Forwarded as `encoding` to
+                             //`Buffer.write` and `Buffer.toString`
+
+ bufferSize: 4 * 1024,       // Number of bytes to write out at once
+
+ escapeCharacter: "\\"       // Symbol to indicate that subsequent
+                             // character is escaped
+
+}
+</code></pre></div></span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`Buffer`
+</span>
     </div>
   </div>
 </div>
@@ -1308,7 +1424,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>adapted from <a href='http://stackoverflow.com/a/21219407'>http://stackoverflow.com/a/21219407</a></p>
         </td>
@@ -1326,7 +1442,7 @@ insert one by one, update indexes.</p>
             <span class="nx">encoding</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">encoding</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">bufferSize</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bufferSize</span> <span class="o">||</span> <span class="mi">1024</span><span class="p">;</span>
+        <span class="nx">bufferSize</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bufferSize</span> <span class="o">||</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">;</span>
         <span class="nx">escapeChar</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span> <span class="o">||</span> <span class="s2">&quot;\\&quot;</span><span class="p">;</span>
         <span class="nx">buffer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="nx">bufferSize</span><span class="p">);</span>
         <span class="nx">workload</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
@@ -1338,7 +1454,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>While file not empty, read into buffer.</p>
         </td>
@@ -1352,7 +1468,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>Add content of buffer to workload.</p>
         </td>
@@ -1368,7 +1484,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>While not on last line of buffer, process lines</p>
         </td>
@@ -1382,7 +1498,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>Do not break on escaped endline characters.</p>
         </td>
@@ -1401,7 +1517,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Process line.</p>
         </td>
@@ -1415,7 +1531,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>Advance to next line.</p>
         </td>
@@ -1431,7 +1547,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>Begin workload with leftover characters for next line.</p>
         </td>
@@ -1439,6 +1555,67 @@ insert one by one, update indexes.</p>
             <span class="nx">workload</span> <span class="o">=</span> <span class="nx">workload</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">lineBegin</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="streamingwrite">
+  <h3>
+    <a href="#streamingwrite" name="streamingwrite" class="pilcrow">&#182;</a>
+    streamingWrite
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Gets lines from callback and streams them to file asynchronously</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">filename.</span>
+      <span class="dox_type">string</span>
+      <span>Name of the file to which to write</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">lineCreatorCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback to forward to
+  <code>processFileStreamOutSync</code></span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">doneCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback to be executed upon completion</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options.</span>
+      <span class="dox_type">object</span>
+      <span>May contain property <code>flag</code> forwarded to
+  <code>fs.open</code> (default: 'w'). All options are forwarded to
+  <code>processFileStreamOutSync</code>.</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">errorCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback to be passed an error.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`fs.open`</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`processFileStreamOutSync`
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
 
     <span class="kd">function</span> <span class="nx">streamingWrite</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">lineCreatorCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span>
         <span class="nx">errorCb</span><span class="p">)</span> <span class="p">{</span>
@@ -1452,7 +1629,7 @@ insert one by one, update indexes.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
-<p>Open file.</p>
+<p>Open file for read.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="nx">flag</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">flag</span> <span class="o">||</span> <span class="s1">&#39;w&#39;</span><span class="p">;</span>
@@ -1472,6 +1649,61 @@ insert one by one, update indexes.</p>
         <span class="p">});</span>
     <span class="p">}</span>
 
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="streamingwritesync">
+  <h3>
+    <a href="#streamingwritesync" name="streamingwritesync" class="pilcrow">&#182;</a>
+    streamingWriteSync
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Gets lines from callback and streams them to file</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">filename.</span>
+      <span class="dox_type">string</span>
+      <span>Name of the file to which to write</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">lineCreatorCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback to forward to
+  <code>processFileStreamOutSync</code></span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">doneCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback to be executed upon completion</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options.</span>
+      <span class="dox_type">object</span>
+      <span>May contain property <code>flag</code> forwarded to
+  <code>fs.open</code> (default: 'w'). All options are forwarded to
+  <code>processFileStreamOutSync</code>.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`fs.open`</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`processFileStreamOutSync`
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
      <span class="kd">function</span> <span class="nx">streamingWriteSync</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">lineCreatorCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">fd</span><span class="p">,</span> <span class="nx">flag</span><span class="p">;</span>
 
@@ -1481,7 +1713,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1491,6 +1723,65 @@ insert one by one, update indexes.</p>
         <span class="nx">processFileStreamOutSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">lineCreatorCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">doneCb</span><span class="p">)</span> <span class="nx">doneCb</span><span class="p">();</span>
     <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="processfilestreamoutsync">
+  <h3>
+    <a href="#processfilestreamoutsync" name="processfilestreamoutsync" class="pilcrow">&#182;</a>
+    processFileStreamOutSync
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Gets lines from callback and streams them to open file</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">fd.</span>
+      <span class="dox_type">integer</span>
+      <span>File descriptor of file to read</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">lineCreatorCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback which returns a string
+ containing the next line to be written or false if no more lines
+ are to follow.</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options.</span>
+      <span class="dox_type">object</span>
+      <span>Options object. If typeof options is string,
+  it is treated as options = {encoding: options}
+
+Available options and defaults:
+
+<div class='highlight'><pre><code language=''>{
+
+ encoding: undefined,          // Forwarded as `encoding` to
+                               //`Buffer.write` and `Buffer.toString`
+
+ bufferSize: 4 * 1024          // Number of bytes to write out at once
+
+}
+</code></pre></div></span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`Buffer`
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
 
     <span class="kd">function</span> <span class="nx">processFileStreamOutSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">lineCreatorCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">workload</span><span class="p">,</span> <span class="nx">line</span><span class="p">;</span>
@@ -1516,7 +1807,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>Fill workload (assumes short-circuit evaluation)</p>
         </td>
@@ -1533,7 +1824,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Fill buffer completely.</p>
         </td>
@@ -1547,7 +1838,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>Write buffer to file.</p>
         </td>
@@ -1561,7 +1852,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>Compute leftover and put it into workload.</p>
         </td>
