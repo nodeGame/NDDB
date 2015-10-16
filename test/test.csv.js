@@ -112,48 +112,6 @@ function getTests(m, it) {
         });
     });
 
-    it('should ' + m + ' a csv file with pre-defined adapter', function(done) {
-        db = new NDDB();
-        options = {
-            headers: ['q', 'w', 'e', 'r']
-        };
-        db.load(filename.standard, options, function() {
-            db.size().should.eql(5);
-            db.first().should.be.eql({
-                q: 'A',
-                w: 'B',
-                e: 'C',
-                r: 'D'
-            });
-            db.last().should.be.eql({
-                q: "10",
-                w: "11",
-                e: "12",
-                r: "Z4"
-            });
-            done();
-        });
-    });
-
-
-    it('should ' + m + ' a csv file with def. options and unescape separators',
-       function(done) {
-           db = new NDDB();
-           db.load(filename.escapeTesting, function() {
-               db.size().should.eql(4);
-               db.first();
-               db.next();
-               db.next().should.be.eql({
-                   A: '7,5',
-                   B: '8',
-                   C: '9',
-                   D: 'Z3'
-               });
-               done();
-           });
-
-       });
-
 
     it('should ' + m + ' a csv file with default options and unescape '
     +'separators, quotes and escape characters, and handle \n', function(done) {
@@ -179,7 +137,6 @@ function getTests(m, it) {
 
     });
 
-    //Isn't this the same as above?
    it('should ' + m + ' a csv file with pre-defined adapter', function(done) {
         db = new NDDB();
         options = {
@@ -203,7 +160,6 @@ function getTests(m, it) {
         });
     });
 
-    //Isn't this the same as above?
     it('should ' + m + ' a csv file with def. options and unescape separators',
        function(done) {
            db = new NDDB();
