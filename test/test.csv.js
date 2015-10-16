@@ -138,10 +138,21 @@ function getTests(m, it) {
     });
 
    it('should ' + m + ' a csv file with pre-defined adapter', function(done) {
-        db = new NDDB();
+        var options;
+
+        // Doubles all floats
         options = {
+            adapter: function(input) {
+                var out;
+                // Convert to number
+                out = parseFloat(input);
+                return (isNaN(out) ? input : 2*out + "");
+            },
             headers: ['q', 'w', 'e', 'r']
         };
+
+        db = new NDDB();
+
         db[m](filename.standard, options, function() {
             db.size().should.eql(5);
             db.first().should.be.eql({
@@ -151,9 +162,9 @@ function getTests(m, it) {
                 r: 'D'
             });
             db.last().should.be.eql({
-                q: "10",
-                w: "11",
-                e: "12",
+                q: "20",
+                w: "22",
+                e: "24",
                 r: "Z4"
             });
             done();
