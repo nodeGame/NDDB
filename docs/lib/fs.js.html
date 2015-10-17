@@ -58,19 +58,19 @@
         <a href="#loadcb">loadCb</a>
       </div>
       <div class="heading h3">
-        <a href="#streamingreadsync">streamingReadSync</a>
-      </div>
-      <div class="heading h3">
         <a href="#streamingread">streamingRead</a>
       </div>
       <div class="heading h3">
-        <a href="#processfilestreaminsync">processFileStreamInSync</a>
+        <a href="#streamingreadsync">streamingReadSync</a>
       </div>
       <div class="heading h3">
         <a href="#streamingwrite">streamingWrite</a>
       </div>
       <div class="heading h3">
         <a href="#streamingwritesync">streamingWriteSync</a>
+      </div>
+      <div class="heading h3">
+        <a href="#processfilestreaminsync">processFileStreamInSync</a>
       </div>
       <div class="heading h3">
         <a href="#processfilestreamoutsync">processFileStreamOutSync</a>
@@ -360,7 +360,7 @@ Upon loading, the cycles are restored.</p>
   </div>
   <div class="body"><p>Reads csv file and inserts entries into db</p>
 
-<p>Forwards reading to file to <code>readCb</code></p>
+<p>Forwards reading to file to <code>readCb</code>.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1194,82 +1194,6 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="streamingreadsync">
-  <h3>
-    <a href="#streamingreadsync" name="streamingreadsync" class="pilcrow">&#182;</a>
-    streamingReadSync
-  </h3>
-</div>
-
-  </div>
-  <div class="body"><p>Streams file in and applies callback to each line</p>
-  </div>
-  <div class="details">
-    <div class="dox_tag_title">Params</div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">filename.</span>
-      <span class="dox_type">string</span>
-      <span>Name of file to load into database</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">lineProcessorCb.</span>
-      <span class="dox_type">function</span>
-      <span>Callback to forward to
-  <code>processFileStreamInSync</code></span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">options.</span>
-      <span class="dox_type">object</span>
-      <span>May contain property <code>flag</code> forwarded to
-  <code>fs.open</code> (default: 'r'). All options are forwarded to
-  <code>processFileStreamOutSync</code>.</span>
-    </div>
-    <div class="dox_tag_detail">
-      <span class="dox_tag_name">errorCb.</span>
-      <span class="dox_type">function</span>
-      <span>Callback to be passed an error.</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">`fs.open`</span>
-    </div>
-    <div class="dox_tag_title">See</div>
-    <div class="dox_tag_detail">
-      <span class="dox_type">`processFileStreamInSync`
-</span>
-    </div>
-  </div>
-</div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-    <span class="kd">function</span> <span class="nx">streamingReadSync</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">lineProcessorCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">fd</span><span class="p">,</span> <span class="nx">flag</span><span class="p">;</span>
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
-</div>
-<p>Open file.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">flag</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">flag</span> <span class="o">||</span> <span class="s1">&#39;r&#39;</span><span class="p">;</span>
-        <span class="nx">fd</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">openSync</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">flag</span><span class="p">);</span>
-        <span class="nx">processFileStreamInSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">lineProcessorCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">doneCb</span><span class="p">)</span> <span class="nx">doneCb</span><span class="p">();</span>
-    <span class="p">}</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs"><div class="dox">
-  <div class="summary">
 <div class="pilwrap" id="streamingread">
   <h3>
     <a href="#streamingread" name="streamingread" class="pilcrow">&#182;</a>
@@ -1329,7 +1253,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1358,60 +1282,48 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="processfilestreaminsync">
+<div class="pilwrap" id="streamingreadsync">
   <h3>
-    <a href="#processfilestreaminsync" name="processfilestreaminsync" class="pilcrow">&#182;</a>
-    processFileStreamInSync
+    <a href="#streamingreadsync" name="streamingreadsync" class="pilcrow">&#182;</a>
+    streamingReadSync
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Reads from file and applies callback for each line.</p>
-
-<p>Reads file part by part into buffer, applies callback to each line in
-  file ignoring escaped line breaks. Streaming the contents of the file
-  in via fixed size buffer and applying processing directly should be
-  advantageous for large files since it avoids building large strings
-  in memory for processing. To avoid overhead from multiple calls to
-  <code>fs.readSync</code> consider increasing <code>options.bufferSize</code>.</p>
+  <div class="body"><p>Streams file in and applies callback to each line</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">fd.</span>
-      <span class="dox_type">integer</span>
-      <span>File descriptor of file to read</span>
+      <span class="dox_tag_name">filename.</span>
+      <span class="dox_type">string</span>
+      <span>Name of file to load into database</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">lineProcessorCb.</span>
       <span class="dox_type">function</span>
-      <span>Callback applied for each line in
-  file. Accepts string as input argument.</span>
+      <span>Callback to forward to
+  <code>processFileStreamInSync</code></span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">options.</span>
       <span class="dox_type">object</span>
-      <span>Options object. If typeof options is string,
-  it is treated as options = {encoding: options}
-
-Available options and defaults:
-
-<div class='highlight'><pre><code language=''>{
-
- encoding: undefined,        // Forwarded as `encoding` to
-                             //`Buffer.write` and `Buffer.toString`
-
- bufferSize: 4 * 1024,       // Number of bytes to write out at once
-
- escapeCharacter: "\\"       // Symbol to indicate that subsequent
-                             // character is escaped
-
-}
-</code></pre></div></span>
+      <span>May contain property <code>flag</code> forwarded to
+  <code>fs.open</code> (default: 'r'). All options are forwarded to
+  <code>processFileStreamOutSync</code>.</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">errorCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback to be passed an error.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">`Buffer`
+      <span class="dox_type">`fs.open`</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`processFileStreamInSync`
 </span>
     </div>
   </div>
@@ -1419,6 +1331,8 @@ Available options and defaults:
         </td>
         <td class="code highlight"><div class="highlight"><pre>
 
+    <span class="kd">function</span> <span class="nx">streamingReadSync</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">lineProcessorCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">fd</span><span class="p">,</span> <span class="nx">flag</span><span class="p">;</span>
 
 </pre></div>
         </td>
@@ -1426,136 +1340,15 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
-<p>adapted from <a href='http://stackoverflow.com/a/21219407'>http://stackoverflow.com/a/21219407</a></p>
+<p>Open file.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">processFileStreamInSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">lineProcessorCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">read</span><span class="p">,</span> <span class="nx">line</span><span class="p">,</span> <span class="nx">lineBegin</span><span class="p">,</span> <span class="nx">searchBegin</span><span class="p">,</span> <span class="nx">lineEnd</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">buffer</span><span class="p">,</span> <span class="nx">bufferSize</span><span class="p">,</span> <span class="nx">escapeChar</span><span class="p">,</span> <span class="nx">workload</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">encoding</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">options</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">encoding</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
-            <span class="nx">options</span> <span class="o">=</span> <span class="p">{};</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-            <span class="nx">encoding</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">encoding</span><span class="p">;</span>
-        <span class="p">}</span>
-
-        <span class="nx">bufferSize</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bufferSize</span> <span class="o">||</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">;</span>
-        <span class="nx">escapeChar</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span> <span class="o">||</span> <span class="s2">&quot;\\&quot;</span><span class="p">;</span>
-        <span class="nx">buffer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="nx">bufferSize</span><span class="p">);</span>
-        <span class="nx">workload</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
-</div>
-<p>While file not empty, read into buffer.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">while</span> <span class="p">((</span><span class="nx">read</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">bufferSize</span><span class="p">,</span> <span class="kc">null</span><span class="p">))</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
-</div>
-<p>Add content of buffer to workload.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">workload</span> <span class="o">+=</span> <span class="nx">buffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="nx">encoding</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">read</span><span class="p">);</span>
-        <span class="nx">lineBegin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="nx">searchBegin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
-</div>
-<p>While not on last line of buffer, process lines</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">while</span> <span class="p">((</span><span class="nx">lineEnd</span> <span class="o">=</span> <span class="nx">workload</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;\n&quot;</span><span class="p">,</span> <span class="nx">searchBegin</span><span class="p">))</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
-</div>
-<p>Do not break on escaped endline characters.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">workload</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">lineEnd</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="nx">escapeChar</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">searchBegin</span> <span class="o">=</span> <span class="nx">lineEnd</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-                    <span class="k">continue</span><span class="p">;</span>
-                <span class="p">}</span>
-
-                <span class="nx">line</span> <span class="o">=</span> <span class="nx">workload</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">lineBegin</span><span class="p">,</span> <span class="nx">lineEnd</span><span class="p">);</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
-</div>
-<p>Process line.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-                <span class="nx">lineProcessorCb</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
-</div>
-<p>Advance to next line.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-                <span class="nx">lineBegin</span> <span class="o">=</span> <span class="nx">lineEnd</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-                <span class="nx">searchBegin</span> <span class="o">=</span> <span class="nx">lineBegin</span><span class="p">;</span>
-            <span class="p">}</span>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
-</div>
-<p>Begin workload with leftover characters for next line.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">workload</span> <span class="o">=</span> <span class="nx">workload</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">lineBegin</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="nx">flag</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">flag</span> <span class="o">||</span> <span class="s1">&#39;r&#39;</span><span class="p">;</span>
+        <span class="nx">fd</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">openSync</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">flag</span><span class="p">);</span>
+        <span class="nx">processFileStreamInSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">lineProcessorCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">doneCb</span><span class="p">)</span> <span class="nx">doneCb</span><span class="p">();</span>
     <span class="p">}</span>
 
 
@@ -1629,7 +1422,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>Open file for read.</p>
         </td>
@@ -1715,7 +1508,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1724,6 +1517,213 @@ Available options and defaults:
         <span class="nx">fd</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">openSync</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">flag</span><span class="p">);</span>
         <span class="nx">processFileStreamOutSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">lineCreatorCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">doneCb</span><span class="p">)</span> <span class="nx">doneCb</span><span class="p">();</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="processfilestreaminsync">
+  <h3>
+    <a href="#processfilestreaminsync" name="processfilestreaminsync" class="pilcrow">&#182;</a>
+    processFileStreamInSync
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reads from file and applies callback for each line.</p>
+
+<p>Reads file part by part into buffer, applies callback to each line in
+  file ignoring escaped line breaks. Streaming the contents of the file
+  in via fixed size buffer and applying processing directly should be
+  advantageous for large files since it avoids building large strings
+  in memory for processing. To avoid overhead from multiple calls to
+  <code>fs.readSync</code> consider increasing <code>options.bufferSize</code>.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">fd.</span>
+      <span class="dox_type">integer</span>
+      <span>File descriptor of file to read</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">lineProcessorCb.</span>
+      <span class="dox_type">function</span>
+      <span>Callback applied for each line in
+  file. Accepts string as input argument.</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options.</span>
+      <span class="dox_type">object</span>
+      <span>Options object. If typeof options is string,
+  it is treated as options = {encoding: options}
+
+Available options and defaults:
+
+<div class='highlight'><pre><code language=''>{
+
+ encoding: undefined,        // Forwarded as `encoding` to
+                             //`Buffer.write` and `Buffer.toString`
+
+ bufferSize: 4 * 1024,       // Number of bytes to write out at once
+
+ escapeCharacter: "\\"       // Symbol to indicate that subsequent
+                             // character is escaped
+
+}
+</code></pre></div></span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">`Buffer`
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+</div>
+<p>adapted from <a href='http://stackoverflow.com/a/21219407'>http://stackoverflow.com/a/21219407</a></p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">processFileStreamInSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">lineProcessorCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">read</span><span class="p">,</span> <span class="nx">line</span><span class="p">,</span> <span class="nx">lineBegin</span><span class="p">,</span> <span class="nx">searchBegin</span><span class="p">,</span> <span class="nx">lineEnd</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">buffer</span><span class="p">,</span> <span class="nx">bufferSize</span><span class="p">,</span> <span class="nx">escapeChar</span><span class="p">,</span> <span class="nx">workload</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">encoding</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">options</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">encoding</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
+            <span class="nx">options</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+            <span class="nx">encoding</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">encoding</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">bufferSize</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bufferSize</span> <span class="o">||</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">;</span>
+        <span class="nx">escapeChar</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span> <span class="o">||</span> <span class="s2">&quot;\\&quot;</span><span class="p">;</span>
+        <span class="nx">buffer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="nx">bufferSize</span><span class="p">);</span>
+        <span class="nx">workload</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+</div>
+<p>While file not empty, read into buffer.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">while</span> <span class="p">((</span><span class="nx">read</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">bufferSize</span><span class="p">,</span> <span class="kc">null</span><span class="p">))</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+</div>
+<p>Add content of buffer to workload.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">workload</span> <span class="o">+=</span> <span class="nx">buffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="nx">encoding</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">read</span><span class="p">);</span>
+        <span class="nx">lineBegin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="nx">searchBegin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+</div>
+<p>While not on last line of buffer, process lines</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">while</span> <span class="p">((</span><span class="nx">lineEnd</span> <span class="o">=</span> <span class="nx">workload</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;\n&quot;</span><span class="p">,</span> <span class="nx">searchBegin</span><span class="p">))</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+</div>
+<p>Do not break on escaped endline characters.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">workload</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">lineEnd</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="nx">escapeChar</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">searchBegin</span> <span class="o">=</span> <span class="nx">lineEnd</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                    <span class="k">continue</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="nx">line</span> <span class="o">=</span> <span class="nx">workload</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">lineBegin</span><span class="p">,</span> <span class="nx">lineEnd</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+</div>
+<p>Process line.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="nx">lineProcessorCb</span><span class="p">(</span><span class="nx">line</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+</div>
+<p>Advance to next line.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="nx">lineBegin</span> <span class="o">=</span> <span class="nx">lineEnd</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="nx">searchBegin</span> <span class="o">=</span> <span class="nx">lineBegin</span><span class="p">;</span>
+            <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+</div>
+<p>Begin workload with leftover characters for next line.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">workload</span> <span class="o">=</span> <span class="nx">workload</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">lineBegin</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 
 
