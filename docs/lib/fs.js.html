@@ -1369,7 +1369,11 @@ insert one by one, update indexes.</p>
   <div class="body"><p>Reads from file and applies callback for each line.</p>
 
 <p>Reads file part by part into buffer, applies callback to each line in
-  file ignoring escaped line breaks.</p>
+  file ignoring escaped line breaks. Streaming the contents of the file
+  in via fixed size buffer and applying processing directly should be
+  advantageous for large files since it avoids building large strings
+  in memory for processing. To avoid overhead from multiple calls to
+  <code>fs.readSync</code> consider increasing <code>options.bufferSize</code>.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1738,6 +1742,13 @@ Available options and defaults:
 
   </div>
   <div class="body"><p>Gets lines from callback and streams them to open file</p>
+
+<p>Writes buffer by buffer to file filling the buffer with values returned
+  from a callback.  This might be advantageous for large files since it
+  avoids building large strings in memory for write out and might even be
+  used to generate the data on the fly in the callback. To avoid overhead
+  from multiple calls to <code>fs.writeŜync</code> consider increasing
+  <code>options.bufferSize</code>.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
