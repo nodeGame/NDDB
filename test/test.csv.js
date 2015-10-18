@@ -106,10 +106,10 @@ function getLoadTests(m, it) {
                 r: 'D'
             });
             db.last().should.be.eql({
-                q: "10",
-                w: "11",
-                e: "12",
-                r: "Z4"
+                q: '10',
+                w: '11',
+                e: '12',
+                r: 'Z4'
             });
             done();
         });
@@ -148,16 +148,16 @@ function getLoadTests(m, it) {
                 var out;
                 // Convert to number
                 out = parseFloat(item[str]);
-                return (isNaN(out) ? item[str] : 2*out + "");
+                return (isNaN(out) ? item[str] : 2*out + '');
             };
         };
 
         // Doubles all floats
         options = {
             adapter: {
-                q: adapterMaker("q"),
-                e: adapterMaker("e"),
-                r: adapterMaker("r")
+                q: adapterMaker('q'),
+                e: adapterMaker('e'),
+                r: adapterMaker('r')
             },
             headers: ['q', 'w', 'e', 'r']
         };
@@ -171,10 +171,10 @@ function getLoadTests(m, it) {
                 r: 'D'
             });
             db.last().should.be.eql({
-                q: "20",
-                w: "11",
-                e: "24",
-                r: "Z4"
+                q: '20',
+                w: '11',
+                e: '24',
+                r: 'Z4'
             });
             done();
         });
@@ -212,10 +212,10 @@ function getLoadTests(m, it) {
                 X4: 'D'
             });
             db.last().should.be.eql({
-                X1: "10",
-                X2: "11",
-                X3: "12",
-                X4: "Z4"
+                X1: '10',
+                X2: '11',
+                X3: '12',
+                X4: 'Z4'
             });
             db = new NDDB();
 
@@ -230,10 +230,10 @@ function getLoadTests(m, it) {
                         r: 'D'
                     });
                     db.last().should.be.eql({
-                        q: "10",
-                        w: "11",
-                        e: "12",
-                        r: "Z4"
+                        q: '10',
+                        w: '11',
+                        e: '12',
+                        r: 'Z4'
                     });
                     db = new NDDB();
 
@@ -256,15 +256,15 @@ function getLoadTests(m, it) {
                                 db.size().should.be.eql(4);
                                 db.first().should.be.eql({
                                     X1: '1',
-                                    B: '2',
-                                    k: '3',
+                                    B:  '2',
+                                    k:  '3',
                                     X4: 'Z1'
                                 });
                                 db.last().should.be.eql({
-                                    X1: "10",
-                                    B: "11",
-                                    k: "12",
-                                    X4: "Z4"
+                                    X1: '10',
+                                    B:  '11',
+                                    k:  '12',
+                                    X4: 'Z4'
                                 });
 
                                 db = new NDDB();
@@ -275,15 +275,15 @@ function getLoadTests(m, it) {
                                     db.size().should.be.eql(5);
                                     db.first().should.be.eql({
                                         X1: 'A',
-                                        B: 'B',
-                                        k: 'C',
+                                        B:  'B',
+                                        k:  'C',
                                         X4: 'D'
                                     });
                                     db.last().should.be.eql({
-                                        X1: "10",
-                                        B: "11",
-                                        k: "12",
-                                        X4: "Z4"
+                                        X1: '10',
+                                        B:  '11',
+                                        k:  '12',
+                                        X4: 'Z4'
                                     });
 
                                     done();
@@ -315,96 +315,100 @@ function getSaveTests(m, it) {
     });
 
     it('should load, ' + m + ', and reload a csv file with pre-defined adapter',
-     function(done) {
-        db = new NDDB();
-        db.load(filename.standard, function() {
-            var options, adapter;
+        function(done) {
+            db = new NDDB();
+            db.load(filename.standard, function() {
+                var options, adapter;
 
-            adapterMaker = function(str) {
-                return function(item) {
-                    var out;
-                    // Convert to number
-                    out = parseFloat(item[str]);
-                    return (isNaN(out) ? item[str] : 2*out + "");
+                adapterMaker = function(str) {
+                    return function(item) {
+                        var out;
+                        // Convert to number
+                        out = parseFloat(item[str]);
+                        return (isNaN(out) ? item[str] : 2*out + '');
+                    };
                 };
-            };
 
-            // Doubles all floats
-            options = {
-                adapter: {
-                    A: adapterMaker("A"),
-                    C: adapterMaker("C"),
-                    D: adapterMaker("D")
-                },
-                headers: true
-            };
+                // Doubles all floats
+                options = {
+                    adapter: {
+                        A: adapterMaker('A'),
+                        C: adapterMaker('C'),
+                        D: adapterMaker('D')
+                    },
+                    headers: true
+                };
 
-            db.size().should.eql(4);
-            db2 = new NDDB();
-            db[m](filename.temp(2), options, function() {
-                db2.load(filename.temp(2), options, function() {
-                    db2.size().should.eql(4);
-                    db2.last().should.be.eql({
-                        A: "40",
-                        B: "11",
-                        C: "48",
-                        D: "Z4"
-                    });
-                    done();
-                });
-            });
-        });
-    });
-
-    it('should load, ' + m + ', and reload a csv file with several pre-defined'
-      + 'headers', function(done) {
-        db = new NDDB();
-        db.loadSync(filename.standard);
-        db.size().should.eql(4);
-        db2 = new NDDB();
-
-        // Do not save headers
-        db[m](filename.temp(3), {headers: false}, function() {
-            db2.loadSync(filename.temp(3), {headers: ['A','B','C','D']}, null);
-            db2.size().should.eql(4);
-            db2.last().should.be.eql(lastItem);
-
-            db2 = new NDDB();
-
-            // Save user defined headers
-            db[m](filename.temp(3), {headers: ['A', 'B', 'C']},
-                function() {
-                    db2.loadSync(filename.temp(3));
-                    db2.size().should.eql(4);
-                    db2.last().should.be.eql({
-                        A: "10",
-                        B: "11",
-                        C: "12"
-                    });
-                    db2 = new NDDB();
-
-                    // Infer and save headers.
-                    db[m](filename.temp(3), {headers: true}, function() {
-                        db2.loadSync(filename.temp(3),{headers: false}, null);
-                        db2.size().should.eql(5);
-                        db2.first().should.be.eql({
-                            X1: 'A',
-                            X2: 'B',
-                            X3: 'C',
-                            X4: 'D'
-                        });
+                db.size().should.eql(4);
+                db2 = new NDDB();
+                db[m](filename.temp(2), options, function() {
+                    db2.load(filename.temp(2), options, function() {
+                        db2.size().should.eql(4);
                         db2.last().should.be.eql({
-                            X1: "10",
-                            X2: "11",
-                            X3: "12",
-                            X4: "Z4"
+                            A: '40',
+                            B: '11',
+                            C: '48',
+                            D: 'Z4'
                         });
                         done();
                     });
-                }
-            );
-        });
-    });
+                });
+            });
+        }
+    );
+
+    it('should load, ' + m + ', and reload a csv file with several pre-defined'
+        + 'headers', function(done) {
+            db = new NDDB();
+            db.loadSync(filename.standard);
+            db.size().should.eql(4);
+            db2 = new NDDB();
+
+            // Do not save headers
+            db[m](filename.temp(3), {headers: false}, function() {
+                db2.loadSync(filename.temp(3), {headers: ['A','B','C','D']},
+                    null);
+                db2.size().should.eql(4);
+                db2.last().should.be.eql(lastItem);
+
+                db2 = new NDDB();
+
+                // Save user defined headers
+                db[m](filename.temp(3), {headers: ['A', 'B', 'C']},
+                    function() {
+                        db2.loadSync(filename.temp(3));
+                        db2.size().should.eql(4);
+                        db2.last().should.be.eql({
+                            A: '10',
+                            B: '11',
+                            C: '12'
+                        });
+                        db2 = new NDDB();
+
+                        // Infer and save headers.
+                        db[m](filename.temp(3), {headers: true}, function() {
+                            db2.loadSync(filename.temp(3), {headers: false},
+                                null);
+                            db2.size().should.eql(5);
+                            db2.first().should.be.eql({
+                                X1: 'A',
+                                X2: 'B',
+                                X3: 'C',
+                                X4: 'D'
+                            });
+                            db2.last().should.be.eql({
+                                X1: '10',
+                                X2: '11',
+                                X3: '12',
+                                X4: 'Z4'
+                            });
+                            done();
+                        });
+                    }
+                );
+            });
+        }
+    );
 }
 
 describe('#load(".csv")', function() {
