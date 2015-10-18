@@ -486,7 +486,7 @@ Upon loading, the cycles are restored.</p>
                     <span class="p">}</span>
                     <span class="k">else</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
-                            <span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+                            <span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
                         <span class="p">}</span>
                         <span class="nx">processedTokens</span><span class="p">[</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">str</span><span class="p">;</span>
                     <span class="p">}</span>
@@ -691,15 +691,15 @@ Upon loading, the cycles are restored.</p>
 
 <div class='highlight'><pre><code language=''>{
 
-headers: ['A', 'B', 'C'],          // if options.headers === true: use
+headers: true,                     // if options.headers === true: use
                                      //   first line of file as headers;
                                      // if !options.headers: use
-                                     //   ['x1'...'xN'] as headers;
+                                     //   ['X1'...'XN'] as headers;
                                      // if options.headers is an array of
                                      //   strings use it as headers;
                                      // if options.headers is an array
                                      //   containing true/false use entry
-                                     //   from file/'xi' respectively;
+                                     //   from file/'Xi' respectively;
 
 adapter: { A: function(row) {      // An obj containing callbacks for
                  return row['A']-1;  // returning value of the column
@@ -772,7 +772,9 @@ mode: 0777,                        // The permission given to the file.
             <span class="nx">options</span><span class="p">.</span><span class="nx">flags</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">flags</span> <span class="o">||</span> <span class="s1">&#39;a&#39;</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">options</span><span class="p">.</span><span class="nx">headers</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">headers</span> <span class="o">||</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;undefined&quot;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">headers</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span>
 
         <span class="nx">options</span><span class="p">.</span><span class="nx">na</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">na</span> <span class="o">||</span> <span class="s1">&#39;NA&#39;</span><span class="p">;</span>
         <span class="nx">options</span><span class="p">.</span><span class="nx">separator</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">separator</span> <span class="o">||</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
@@ -808,7 +810,7 @@ mode: 0777,                        // The permission given to the file.
 </div>
 
   </div>
-  <div class="body"><p>Returns the CSV headers or undefined if headers are undefined</p>
+  <div class="body"><p>Returns the CSV headers from data or headers</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>

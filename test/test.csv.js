@@ -197,6 +197,104 @@ function getLoadTests(m, it) {
            });
 
        });
+
+    it('should ' + m + ' a csv file with several pre-defined headers',
+     function(done) {
+        db = new NDDB();
+
+        // No headers defined.
+        db[m](filename.standard, {headers: false}, function() {
+            db.size().should.eql(5);
+            db.first().should.be.eql({
+                X1: 'A',
+                X2: 'B',
+                X3: 'C',
+                X4: 'D'
+            });
+            db.last().should.be.eql({
+                X1: "10",
+                X2: "11",
+                X3: "12",
+                X4: "Z4"
+            });
+            db = new NDDB();
+
+            // User defined headers.
+            db[m](filename.standard, {headers: ['q', 'w', 'e', 'r']},
+                function() {
+                    db.size().should.be.eql(5);
+                    db.first().should.be.eql({
+                        q: 'A',
+                        w: 'B',
+                        e: 'C',
+                        r: 'D'
+                    });
+                    db.last().should.be.eql({
+                        q: "10",
+                        w: "11",
+                        e: "12",
+                        r: "Z4"
+                    });
+                    db = new NDDB();
+
+                    // Headers defined in file.
+                    db[m](filename.standard, {headers: true}, function() {
+                        db.size().should.be.eql(4);
+                        db.first().should.be.eql({
+                            A: '1',
+                            B: '2',
+                            C: '3',
+                            D: 'Z1'
+                        });
+                        db.last().should.be.eql(lastItem);
+
+                        db = new NDDB();
+
+                        // Mixed.
+                        db[m](filename.standard, {headers: [false, true, 'k']},
+                            function() {
+                                db.size().should.be.eql(4);
+                                db.first().should.be.eql({
+                                    X1: '1',
+                                    B: '2',
+                                    k: '3',
+                                    X4: 'Z1'
+                                });
+                                db.last().should.be.eql({
+                                    X1: "10",
+                                    B: "11",
+                                    k: "12",
+                                    X4: "Z4"
+                                });
+
+                                db = new NDDB();
+
+                                // Mixed
+                                db[m](filename.standard,
+                                    {headers: [false, 'B', 'k']}, function() {
+                                    db.size().should.be.eql(5);
+                                    db.first().should.be.eql({
+                                        X1: 'A',
+                                        B: 'B',
+                                        k: 'C',
+                                        X4: 'D'
+                                    });
+                                    db.last().should.be.eql({
+                                        X1: "10",
+                                        B: "11",
+                                        k: "12",
+                                        X4: "Z4"
+                                    });
+
+                                    done();
+                                });
+                            }
+                        );
+                    });
+                }
+            );
+        });
+    });
 }
 
 function getSaveTests(m, it) {
@@ -255,6 +353,56 @@ function getSaveTests(m, it) {
                     done();
                 });
             });
+        });
+    });
+
+    it('should load, ' + m + ', and reload a csv file with several pre-defined'
+      + 'headers', function(done) {
+        db = new NDDB();
+        db.loadSync(filename.standard);
+        db.size().should.eql(4);
+        db2 = new NDDB();
+
+        // Do not save headers
+        db[m](filename.temp(3), {headers: false}, function() {
+            db2.loadSync(filename.temp(3), {headers: ['A','B','C','D']}, null);
+            db2.size().should.eql(4);
+            db2.last().should.be.eql(lastItem);
+
+            db2 = new NDDB();
+
+            // Save user defined headers
+            db[m](filename.temp(3), {headers: ['A', 'B', 'C']},
+                function() {
+                    db2.loadSync(filename.temp(3));
+                    db2.size().should.eql(4);
+                    db2.last().should.be.eql({
+                        A: "10",
+                        B: "11",
+                        C: "12"
+                    });
+                    db2 = new NDDB();
+
+                    // Infer and save headers.
+                    db[m](filename.temp(3), {headers: true}, function() {
+                        db2.loadSync(filename.temp(3),{headers: false}, null);
+                        db2.size().should.eql(5);
+                        db2.first().should.be.eql({
+                            X1: 'A',
+                            X2: 'B',
+                            X3: 'C',
+                            X4: 'D'
+                        });
+                        db2.last().should.be.eql({
+                            X1: "10",
+                            X2: "11",
+                            X3: "12",
+                            X4: "Z4"
+                        });
+                        done();
+                    });
+                }
+            );
         });
     });
 }
