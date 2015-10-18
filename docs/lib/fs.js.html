@@ -442,22 +442,22 @@ Upon loading, the cycles are restored.</p>
         <span class="nx">adapter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">adapter</span> <span class="o">||</span> <span class="p">{};</span>
 
         <span class="nx">readCb</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">str</span><span class="p">,</span> <span class="nx">headersFlag</span><span class="p">;</span>
+                <span class="kd">var</span> <span class="nx">str</span><span class="p">,</span> <span class="nx">headersFlag</span><span class="p">;</span>
 
-            <span class="nx">headersFlag</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="nx">headersFlag</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">headers</span> <span class="o">=</span> <span class="p">[];</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">headers</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">headers</span> <span class="o">=</span> <span class="p">[];</span>
-                <span class="nx">headersFlag</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
-            <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">headers</span> <span class="o">=</span> <span class="p">[];</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">headers</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">headers</span> <span class="o">=</span> <span class="p">[];</span>
+                    <span class="nx">headersFlag</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+                <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">row</span> <span class="o">||</span> <span class="o">!</span><span class="nx">row</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-            <span class="nx">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
-            <span class="nx">processedTokens</span> <span class="o">=</span> <span class="p">{};</span>
-            <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">row</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">separator</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">row</span> <span class="o">||</span> <span class="o">!</span><span class="nx">row</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                <span class="nx">processedTokens</span> <span class="o">=</span> <span class="p">{};</span>
+                <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">row</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">separator</span><span class="p">);</span>
 
 
 </pre></div>
@@ -471,28 +471,28 @@ Upon loading, the cycles are restored.</p>
 <p>Processing tokens.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">token</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">escapeCharacter</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">result</span> <span class="o">+=</span> <span class="nx">token</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">token</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">escapeCharacter</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">result</span> <span class="o">+=</span> <span class="nx">token</span><span class="p">;</span>
 
-                    <span class="nx">str</span> <span class="o">=</span> <span class="nx">parseCsvToken</span><span class="p">(</span>
-                        <span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span>
-                    <span class="p">);</span>
+                        <span class="nx">str</span> <span class="o">=</span> <span class="nx">parseCsvToken</span><span class="p">(</span>
+                            <span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span>
+                        <span class="p">);</span>
 
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">headersFlag</span> <span class="o">===</span> <span class="mi">2</span> <span class="o">||</span> <span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">str</span><span class="p">;</span>
-                        <span class="nx">headersFlag</span> <span class="o">=</span> <span class="nx">headersFlag</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
-                    <span class="p">}</span>
-                    <span class="k">else</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
-                            <span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">headersFlag</span> <span class="o">===</span> <span class="mi">2</span> <span class="o">||</span> <span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">str</span><span class="p">;</span>
+                            <span class="nx">headersFlag</span> <span class="o">=</span> <span class="nx">headersFlag</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
                         <span class="p">}</span>
-                        <span class="nx">processedTokens</span><span class="p">[</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">str</span><span class="p">;</span>
+                        <span class="k">else</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
+                                <span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+                            <span class="p">}</span>
+                            <span class="nx">processedTokens</span><span class="p">[</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">str</span><span class="p">;</span>
+                        <span class="p">}</span>
+                        <span class="nx">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+                        <span class="nx">i</span><span class="o">++</span><span class="p">;</span>
                     <span class="p">}</span>
-                    <span class="nx">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
-                    <span class="nx">i</span><span class="o">++</span><span class="p">;</span>
-                <span class="p">}</span>
 
 </pre></div>
         </td>
@@ -505,29 +505,25 @@ Upon loading, the cycles are restored.</p>
 <p>Handle if token ends with escapeCharacter</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">result</span> <span class="o">+=</span> <span class="nx">token</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">separator</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">result</span> <span class="o">!==</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Row ending with escape character: &quot;</span> <span class="o">+</span>
-                    <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span><span class="p">);</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">headersFlag</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">obj</span> <span class="o">=</span> <span class="p">{};</span>
-                <span class="nx">headers</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">adapter</span><span class="p">[</span><span class="nx">h</span><span class="p">])</span> <span class="p">{</span>
-                        <span class="nx">obj</span><span class="p">[</span><span class="nx">h</span><span class="p">]</span> <span class="o">=</span> <span class="nx">adapter</span><span class="p">[</span><span class="nx">h</span><span class="p">](</span><span class="nx">processedTokens</span><span class="p">);</span>
-                    <span class="p">}</span>
                     <span class="k">else</span> <span class="p">{</span>
-                        <span class="nx">obj</span><span class="p">[</span><span class="nx">h</span><span class="p">]</span> <span class="o">=</span> <span class="nx">processedTokens</span><span class="p">[</span><span class="nx">h</span><span class="p">];</span>
+                        <span class="nx">result</span> <span class="o">+=</span> <span class="nx">token</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">separator</span><span class="p">;</span>
                     <span class="p">}</span>
-                <span class="p">});</span>
-                <span class="nx">that</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span>
-            <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">result</span> <span class="o">!==</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Row ending with escape character: &quot;</span> <span class="o">+</span>
+                        <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span><span class="p">);</span>
+                <span class="p">}</span>
 
-        <span class="p">},</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">errorCb</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">headersFlag</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">obj</span> <span class="o">=</span> <span class="p">{};</span>
+                    <span class="nx">headers</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">adapter</span><span class="p">[</span><span class="nx">h</span><span class="p">])</span> <span class="nx">obj</span><span class="p">[</span><span class="nx">h</span><span class="p">]</span> <span class="o">=</span> <span class="nx">adapter</span><span class="p">[</span><span class="nx">h</span><span class="p">](</span><span class="nx">processedTokens</span><span class="p">);</span>
+                        <span class="nx">obj</span><span class="p">[</span><span class="nx">h</span><span class="p">]</span> <span class="o">=</span> <span class="nx">processedTokens</span><span class="p">[</span><span class="nx">h</span><span class="p">];</span>
+                    <span class="p">});</span>
+                    <span class="nx">that</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span>
+                <span class="p">}</span>
+
+            <span class="p">},</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">errorCb</span><span class="p">);</span>
     <span class="p">}</span>
 
 
