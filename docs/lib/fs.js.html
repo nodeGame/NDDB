@@ -509,10 +509,6 @@ Upon loading, the cycles are restored.</p>
                     <span class="nx">result</span> <span class="o">+=</span> <span class="nx">token</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">separator</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">result</span> <span class="o">!==</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Row ending with escape character: &quot;</span> <span class="o">+</span>
-                    <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span><span class="p">);</span>
-            <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">headersFlag</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">obj</span> <span class="o">=</span> <span class="p">{};</span>
