@@ -14,7 +14,10 @@ var options;
 var filename = {
     standard: __dirname + '/data.csv',
     escapeTesting: __dirname + '/data.escapetest.csv',
-    simon: __dirname + '/data.simon.csv'
+    simon: __dirname + '/data.simon.csv',
+    temp: function(num) {
+        return __dirname + '/data.temp' + num + '.csv';
+    }
 };
 
 var lastItem = {
@@ -203,10 +206,52 @@ function getSaveTests(m, it) {
         db.load(filename.standard, function() {
             db.size().should.eql(4);
             db2 = new NDDB();
-            db[m](__dirname + '/data.currenttest.csv', function() {
-                db2.load(__dirname + '/data.currenttest.csv', function() {
+            db[m](filename.temp(1), function() {
+                db2.load(filename.temp(1), function() {
                     db2.size().should.eql(4);
                     db2.last().should.be.eql(lastItem);
+                    done();
+                });
+            });
+        });
+    });
+
+    it('should load, ' + m + ', and reload a csv file with pre-defined adapter',
+     function(done) {
+        db = new NDDB();
+        db.load(filename.standard, function() {
+            var options, adapter;
+
+            adapterMaker = function(str) {
+                return function(item) {
+                    var out;
+                    // Convert to number
+                    out = parseFloat(item[str]);
+                    return (isNaN(out) ? item[str] : 2*out + "");
+                };
+            };
+
+            // Doubles all floats
+            options = {
+                adapter: {
+                    A: adapterMaker("A"),
+                    C: adapterMaker("C"),
+                    D: adapterMaker("D")
+                },
+                headers: true
+            };
+
+            db.size().should.eql(4);
+            db2 = new NDDB();
+            db[m](filename.temp(2), options, function() {
+                db2.load(filename.temp(2), options, function() {
+                    db2.size().should.eql(4);
+                    db2.last().should.be.eql({
+                        A: "40",
+                        B: "11",
+                        C: "48",
+                        D: "Z4"
+                    });
                     done();
                 });
             });
