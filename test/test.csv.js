@@ -34,27 +34,11 @@ var lastItemUnescaped = {
     '"D"': '"Z4"'
 };
 
-// To be used. Maybe.
-var items = [
-    {
-        id: '123456',
-        time: '098765',
-        data: {
-            a: 1,
-            b: 2,
-            c: "the butler said: \"ah.\""
-        }
-    },
-    {
-        id: '123456',
-        time: '098765',
-        data: {
-            a: 1,
-            b: 2,
-            c: 'the butler said: "ah, not now."'
-        },
-    },
-];
+var deleteIfExists = function(filename) {
+    if (JSUS.existsSync(filename)) {
+        fs.unlinkSync(filename);
+    }
+};
 
 
 function getLoadTests(m, it) {
@@ -141,7 +125,7 @@ function getLoadTests(m, it) {
     });
 
     it('should ' + m + ' a csv file with pre-defined adapter', function(done) {
-        var options, adapter;
+        var options, adapterMaker;
 
         adapterMaker = function(str) {
             return function(item) {
@@ -318,7 +302,7 @@ function getSaveTests(m, it) {
         function(done) {
             db = new NDDB();
             db.load(filename.standard, function() {
-                var options, adapter;
+                var options, adapterMaker;
 
                 adapterMaker = function(str) {
                     return function(item) {
@@ -329,7 +313,7 @@ function getSaveTests(m, it) {
                     };
                 };
 
-                // Doubles all floats
+                // Doubles all floats.
                 options = {
                     adapter: {
                         A: adapterMaker('A'),
@@ -364,7 +348,7 @@ function getSaveTests(m, it) {
             db.size().should.eql(4);
             db2 = new NDDB();
 
-            // Do not save headers
+            // Do not save headers.
             db[m](filename.temp(3), {headers: false}, function() {
                 db2.loadSync(filename.temp(3), {headers: ['A','B','C','D']},
                     null);
@@ -373,7 +357,7 @@ function getSaveTests(m, it) {
 
                 db2 = new NDDB();
 
-                // Save user defined headers
+                // Save user defined headers.
                 db[m](filename.temp(3), {headers: ['A', 'B', 'C']},
                     function() {
                         db2.loadSync(filename.temp(3));
@@ -428,4 +412,9 @@ describe('#save(".csv")', function() {
 
 describe('#saveSync(".csv")', function() {
     getSaveTests('saveSync', it);
+    after(function() {
+        deleteIfExists(__dirname + '/data.temp1.csv');
+        deleteIfExists(__dirname + '/data.temp2.csv');
+        deleteIfExists(__dirname + '/data.temp3.csv');
+    });
 });
