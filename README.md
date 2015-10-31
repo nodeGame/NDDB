@@ -119,7 +119,7 @@ select statements is performed using three input parameters:
 
 Available operators include standard logical operators:
 
-   - `=`, `==`, `!=`, ``>`, >=`, `<`, `<=`,
+   - `=`, `==`, `!=`, `>`, >=`, `<`, `<=`,
 
 or advanced comparison operators:
 
@@ -188,6 +188,89 @@ db.select('year', '><', [1900, 1910])
 // { painter: [ 'Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet' ],
 //   year: [ 0, 1929, 1927, 1906, 1891, 1863 ] }
 ```
+### Saving to file
+
+Database can be saved to filesystem using `save` and `saveSync` methods.
+If not specified the format is deducted from the ending of the filename.
+An adapter can be specified to alter the data before storing.
+The adapter is an item in the `options` object.
+Further options can be specified:
+
+```
+{
+
+   headers: true,                     // if options.headers === true: use
+                                      //   first line of file as headers;
+                                      // if !options.headers: use
+                                      //   ['X1'...'XN'] as headers;
+                                      // if options.headers is an array of
+                                      //   strings use it as headers;
+                                      // if options.headers is an array
+                                      //   containing true/false use entry
+                                      //   from file/'Xi' respectively;
+
+
+   adapter: { A: function(row) {      // An obj containing callbacks for
+                  return row['A']-1;  // each header. The callbacks take
+                 }                    // an object of strings and
+            },                        // return a string. Each entry in
+                                      // the file is the result of
+                                      // applying the callback of its
+                                      // column to its row.
+
+
+   separator: ',',                    // The character used as separator
+                                      // between values. Default ','.
+
+   quote: '"',                        // The character used as quote.
+                                      // Default: '"'.
+
+   escapeCharacter: '\',              // The char that should be skipped.
+                                      // Default: '\'.
+
+   commentchar: '',                   // The character used for comments.
+                                      // Default: ''.
+
+   nestedQuotes: false,               // TRUE, if nested quotes allowed.
+                                      // Default FALSE.
+
+   flags: 'w',                        // The Node.js flag to write to fs.
+                                      // Default: 'a' (append).
+
+   encoding: 'utf-8',                 // The encoding of the file.
+
+   mode: 0777,                        // The permission given to the file.
+                                      // Default: 0666
+}
+```
+
+#### Saving Examples
+
+db.save("MyCSV.csv",function() {
+    console.log("Saved db as csv into 'MyCSV.csv'.")
+});
+
+// Define adapter that doubles all numbers in column "A".
+options.adapter = {
+    A: function(item) {
+        var out;
+        out = parseFloat(item["A"]);
+        return (isNaN(out) ? item["A"] : 2*out + '');
+    }
+};
+db.save("MyCSV.csv", options, function() {
+    console.log("Saved db as csv into 'MyCSV.csv', where numbers in column 'A' "
+    +"were doubled.");
+});
+
+### Loading from file
+Entries from file are read and inserted into database using `load` and
+`loadSync` methods.
+Options and adapter are handled analogous to "save" and "saveSync".
+
+#### Loading Example
+
+db.load("MyCSV.csv",function() {console.log("Loaded csv file into database")});
 
 ### Sorting
 
