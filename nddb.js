@@ -4,8 +4,6 @@
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
- *
- * See README.md for documentation and help.
  * ---
  */
 (function(exports, J, store) {
@@ -18,7 +16,7 @@
     if (!J) throw new Error('NDDB: missing dependency: JSUS.');
 
     /**
-     * ## df
+     * ### df
      *
      * Flag indicating support for method Object.defineProperty
      *
@@ -585,7 +583,7 @@
     // ## METHODS
 
     /**
-     * ## NDDB.throwErr
+     * ### NDDB.throwErr
      *
      * Throws an error with a predefined format
      *
@@ -826,61 +824,6 @@
         }
     };
 
-
-    /**
-     * ## nddb_insert
-     *
-     * Insert an item into db and performs update operations
-     *
-     * A new property `.nddbid` is created in the object, and it will be
-     * used to add the element into the global index: `NDDB.nddbid`.
-     *
-     * Emits the 'insert' event, and updates indexes, hashes and views
-     * accordingly.
-     *
-     * @param {object|function} o The item to add to database
-     * @param {boolean} update Optional. If TRUE, updates indexes, hashes,
-     *    and views. Default, FALSE
-     *
-     * @see NDDB.nddbid
-     * @see NDDB.emit
-     *
-     * @api private
-     */
-    function nddb_insert(o, update) {
-        var nddbid;
-        if (('object' !== typeof o) && ('function' !== typeof o)) {
-            this.throwErr('TypeError', 'insert', 'object or function ' +
-                          'expected, ' + typeof o + ' received.');
-        }
-
-        // Check / create a global index.
-        if ('undefined' === typeof o._nddbid) {
-            // Create internal idx.
-            nddbid = J.uniqueKey(this.nddbid.resolve);
-            if (!nddbid) {
-                this.throwErr('Error', 'insert',
-                              'failed to create index: ' + o);
-            }
-            if (df) {
-                Object.defineProperty(o, '_nddbid', { value: nddbid });
-            }
-            else {
-                o._nddbid = nddbid;
-            }
-        }
-        // Add to index directly (bypass api).
-        this.nddbid.resolve[o._nddbid] = this.db.length;
-        // End create index.
-        this.db.push(o);
-        this.emit('insert', o);
-        if (update) {
-            this._indexIt(o, (this.db.length-1));
-            this._hashIt(o);
-            this._viewIt(o);
-        }
-    }
-
     /**
      * ### NDDB.importDB
      *
@@ -1113,10 +1056,6 @@
         this.__C[d] = comparator;
     };
 
-    // ### NDDB.c
-    // @deprecated
-    NDDB.prototype.c = NDDB.prototype.comparator;
-
     /**
      * ### NDDB.getComparator
      *
@@ -1272,11 +1211,6 @@
         this.__I[idx] = func, this[idx] = new NDDBIndex(idx, this);
     };
 
-
-    // ### NDDB.i
-    // @deprecated
-    NDDB.prototype.i = NDDB.prototype.index;
-
     /**
      * ### NDDB.view
      *
@@ -1346,11 +1280,6 @@
         }
         this.__H[idx] = func, this[idx] = {};
     };
-
-    //### NDDB.h
-    //@deprecated
-    NDDB.prototype.h = NDDB.prototype.hash;
-
 
     /**
      * ### NDDB.resetIndexes
@@ -3651,6 +3580,61 @@
 
     // ## Helper Methods
 
+
+    /**
+     * ### nddb_insert
+     *
+     * Insert an item into db and performs update operations
+     *
+     * A new property `.nddbid` is created in the object, and it will be
+     * used to add the element into the global index: `NDDB.nddbid`.
+     *
+     * Emits the 'insert' event, and updates indexes, hashes and views
+     * accordingly.
+     *
+     * @param {object|function} o The item to add to database
+     * @param {boolean} update Optional. If TRUE, updates indexes, hashes,
+     *    and views. Default, FALSE
+     *
+     * @see NDDB.nddbid
+     * @see NDDB.emit
+     *
+     * @api private
+     */
+    function nddb_insert(o, update) {
+        var nddbid;
+        if (('object' !== typeof o) && ('function' !== typeof o)) {
+            this.throwErr('TypeError', 'insert', 'object or function ' +
+                          'expected, ' + typeof o + ' received.');
+        }
+
+        // Check / create a global index.
+        if ('undefined' === typeof o._nddbid) {
+            // Create internal idx.
+            nddbid = J.uniqueKey(this.nddbid.resolve);
+            if (!nddbid) {
+                this.throwErr('Error', 'insert',
+                              'failed to create index: ' + o);
+            }
+            if (df) {
+                Object.defineProperty(o, '_nddbid', { value: nddbid });
+            }
+            else {
+                o._nddbid = nddbid;
+            }
+        }
+        // Add to index directly (bypass api).
+        this.nddbid.resolve[o._nddbid] = this.db.length;
+        // End create index.
+        this.db.push(o);
+        this.emit('insert', o);
+        if (update) {
+            this._indexIt(o, (this.db.length-1));
+            this._hashIt(o);
+            this._viewIt(o);
+        }
+    }
+
     /**
      * ### validateSaveLoadParameters
      *
@@ -4203,7 +4187,6 @@
         return out;
     };
 
-    // ## Closure
 })(
     ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
         module.exports : window ,
