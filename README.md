@@ -445,7 +445,7 @@ db.load('db.csv', function() {
 });
 
 // Loading items into database synchronously.
-db.loadSync('db.csv");
+db.loadSync('db.csv');
 console.log("Loaded csv file into database");
 
 // Loading 'adapted' items into database.
