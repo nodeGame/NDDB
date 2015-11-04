@@ -526,15 +526,14 @@ db.save('db.asd');
    quote: '"',                        // The character used as quote.
                                       // Default: '"'.
 
-   escapeCharacter: '/\',             // The char that should be skipped.
-                                      // Default: '\'.
-
    commentchar: '',                   // The character used for comments.
                                       // Default: ''.
 
    nestedQuotes: false,               // TRUE, if nested quotes allowed.
                                       // Default FALSE.
 
+   escapeCharacter: '\',              // The char that should be skipped.
+                                      // Default: '\'.
 }
 ```
 
