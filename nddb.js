@@ -3491,9 +3491,14 @@
      * @param {function} cb Optional. A callback function to execute at
      *    the end of the operation. If options is not specified,
      *    cb is the second parameter.
+     *
+     * @see NDDB.loadSync
      */
     NDDB.prototype.load = function(file, options, cb) {
-        if (arguments.length === 2) cb = options, options = undefined;
+        if (arguments.length === 2 && 'function' === typeof options) {
+            cb = options;
+            options = undefined;
+        }
         executeSaveLoad(this, 'load', file, cb, options);
     };
 
@@ -3502,10 +3507,13 @@
      *
      * Saves items in the specified format asynchronously
      *
-     * @see NDDB.load
+     * @see NDDB.saveSync
      */
     NDDB.prototype.save = function(file, options, cb) {
-        if (arguments.length === 2) cb = options, options = undefined;
+        if (arguments.length === 2 && 'function' === typeof options) {
+            cb = options;
+            options = undefined;
+        }
         executeSaveLoad(this, 'save', file, cb, options);
     };
 
@@ -3517,7 +3525,10 @@
      * @see NDDB.load
      */
     NDDB.prototype.loadSync = function(file, options, cb) {
-        if (arguments.length === 2) cb = options, options = undefined;
+        if (arguments.length === 2 && 'function' === typeof options) {
+            cb = options;
+            options = undefined;
+        }
         executeSaveLoad(this, 'loadSync', file, cb, options);
     };
 
@@ -3526,10 +3537,13 @@
      *
      * Saves items in the specified format synchronously
      *
-     * @see NDDB.load
+     * @see NDDB.save
      */
     NDDB.prototype.saveSync = function(file, options, cb) {
-        if (arguments.length === 2) cb = options, options = undefined;
+        if (arguments.length === 2 && 'function' === typeof options) {
+            cb = options;
+            options = undefined;
+        }
         executeSaveLoad(this, 'saveSync', file, cb, options);
     };
 

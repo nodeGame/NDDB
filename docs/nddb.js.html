@@ -4118,7 +4118,7 @@ can be chained with the <code>or</code>, and <code>and</code> methods.</p>
   <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code> }
+<div class="highlight"><pre><code> <span class="p">}</span>
 </code></pre></div>
 
 
@@ -7071,11 +7071,19 @@ but changes on update of the elements of the database.</p>
    the end of the operation. If options is not specified,
    cb is the second parameter.</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.loadSync
+  </span>
+    </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">2</span><span class="p">)</span> <span class="nx">cb</span> <span class="o">=</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">options</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
+            <span class="nx">options</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+        <span class="p">}</span>
         <span class="nx">executeSaveLoad</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -7096,14 +7104,17 @@ but changes on update of the elements of the database.</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">NDDB.load
+      <span class="dox_type">NDDB.saveSync
   </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">save</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">2</span><span class="p">)</span> <span class="nx">cb</span> <span class="o">=</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">options</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
+            <span class="nx">options</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+        <span class="p">}</span>
         <span class="nx">executeSaveLoad</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;save&#39;</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -7131,7 +7142,10 @@ but changes on update of the elements of the database.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">loadSync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">2</span><span class="p">)</span> <span class="nx">cb</span> <span class="o">=</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">options</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
+            <span class="nx">options</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+        <span class="p">}</span>
         <span class="nx">executeSaveLoad</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;loadSync&#39;</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -7152,14 +7166,17 @@ but changes on update of the elements of the database.</p>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">NDDB.load
+      <span class="dox_type">NDDB.save
   </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">saveSync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">2</span><span class="p">)</span> <span class="nx">cb</span> <span class="o">=</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">options</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cb</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
+            <span class="nx">options</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+        <span class="p">}</span>
         <span class="nx">executeSaveLoad</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;saveSync&#39;</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -7194,10 +7211,10 @@ but changes on update of the elements of the database.</p>
 
 
 <div class="highlight"><pre><code><span class="p">{</span>
-  <span class="nx">load</span><span class="o">:</span>     <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span> <span class="c1">// Async</span>
-  <span class="nx">save</span><span class="o">:</span>     <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span> <span class="c1">// Async</span>
-  <span class="nx">loadSync</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span> <span class="c1">// Sync</span>
-  <span class="nx">saveSync</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{}</span>  <span class="c1">// Sync</span>
+  <span class="n">load:</span>     <span class="n">function</span><span class="p">()</span> <span class="p">{},</span> <span class="sr">//</span> <span class="n">Async</span>
+  <span class="n">save:</span>     <span class="n">function</span><span class="p">()</span> <span class="p">{},</span> <span class="sr">//</span> <span class="n">Async</span>
+  <span class="n">loadSync:</span> <span class="n">function</span><span class="p">()</span> <span class="p">{},</span> <span class="sr">//</span> <span class="n">Sync</span>
+  <span class="n">saveSync:</span> <span class="n">function</span><span class="p">()</span> <span class="p">{}</span>  <span class="sr">//</span> <span class="n">Sync</span>
 <span class="p">}</span>
 </code></pre></div>
 
