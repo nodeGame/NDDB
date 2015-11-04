@@ -465,7 +465,6 @@ db.load('db2.csv', function() {
 });
 
 // Specify a new format.
-
 db.addFormat('asd', {
    save: function(db, file, cb, options) {
          // save file asynchronously.
@@ -483,7 +482,6 @@ db.addFormat('asd', {
 
 // Saving in the new format.
 db.save('db.asd');
-
 ```
 
 
@@ -528,7 +526,7 @@ db.save('db.asd');
    quote: '"',                        // The character used as quote.
                                       // Default: '"'.
 
-   escapeCharacter: '\',              // The char that should be skipped.
+   escapeCharacter: '/\',             // The char that should be skipped.
                                       // Default: '\'.
 
    commentchar: '',                   // The character used for comments.
