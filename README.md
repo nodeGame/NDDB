@@ -532,8 +532,8 @@ db.save('db.asd');
    nestedQuotes: false,               // TRUE, if nested quotes allowed.
                                       // Default FALSE.
 
-   escapeCharacter: '\',              // The char that should be skipped.
-                                      // Default: '\'.
+   escapeCharacter: '\\',             // The char that should be skipped.
+                                      // Default: \.
 }
 ```
 
