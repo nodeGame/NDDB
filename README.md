@@ -400,7 +400,7 @@ It is possible to specify new formats using the `addFormat` method.
 
 #### Code Examples
 
-```
+```javascript
 // Saving items in JSON format.
 db.save('db.json', function() {
     console.log("Saved db into 'db.json'");
@@ -489,7 +489,7 @@ db.save('db.asd');
 
 #### List of all available options
 
-```
+```javascript
 {
 
    flags: 'w',                        // The Node.js flag to write to fs.
