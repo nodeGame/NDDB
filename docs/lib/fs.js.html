@@ -1554,6 +1554,9 @@ Available options and defaults:
  escapeCharacter: "\\"       // Symbol to indicate that subsequent
                              // character is escaped
 
+ lineBreak: "\n"             // Sequence of characters to denote end of
+                             // line
+
 }
 </code></pre></div></span>
     </div>
@@ -1583,6 +1586,8 @@ Available options and defaults:
         <span class="kd">var</span> <span class="nx">read</span><span class="p">,</span> <span class="nx">line</span><span class="p">,</span> <span class="nx">lineBegin</span><span class="p">,</span> <span class="nx">searchBegin</span><span class="p">,</span> <span class="nx">lineEnd</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">buffer</span><span class="p">,</span> <span class="nx">bufferSize</span><span class="p">,</span> <span class="nx">escapeChar</span><span class="p">,</span> <span class="nx">workload</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">encoding</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">lineBreak</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">options</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">encoding</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
             <span class="nx">options</span> <span class="o">=</span> <span class="p">{};</span>
@@ -1594,6 +1599,7 @@ Available options and defaults:
 
         <span class="nx">bufferSize</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bufferSize</span> <span class="o">||</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">;</span>
         <span class="nx">escapeChar</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span> <span class="o">||</span> <span class="s2">&quot;\\&quot;</span><span class="p">;</span>
+        <span class="nx">lineBreak</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">lineBreak</span> <span class="o">||</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
         <span class="nx">buffer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="nx">bufferSize</span><span class="p">);</span>
         <span class="nx">workload</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
 
@@ -1639,7 +1645,8 @@ Available options and defaults:
 <p>While not on last line of buffer, process lines.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">while</span> <span class="p">((</span><span class="nx">lineEnd</span> <span class="o">=</span> <span class="nx">workload</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;\n&quot;</span><span class="p">,</span> <span class="nx">searchBegin</span><span class="p">))</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">while</span> <span class="p">((</span><span class="nx">lineEnd</span> <span class="o">=</span> <span class="nx">workload</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">lineBreak</span><span class="p">,</span> <span class="nx">searchBegin</span><span class="p">))</span> <span class="o">!==</span>
+                <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
 
 
 </pre></div>
@@ -1686,7 +1693,7 @@ Available options and defaults:
 <p>Advance to next line.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-                <span class="nx">lineBegin</span> <span class="o">=</span> <span class="nx">lineEnd</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="nx">lineBegin</span> <span class="o">=</span> <span class="nx">lineEnd</span> <span class="o">+</span> <span class="nx">lineBreak</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
                 <span class="nx">searchBegin</span> <span class="o">=</span> <span class="nx">lineBegin</span><span class="p">;</span>
             <span class="p">}</span>
 
