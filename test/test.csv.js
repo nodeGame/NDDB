@@ -81,7 +81,7 @@ function getLoadTests(m, it) {
     it('should ' + m + ' a csv file with custom linebreak characters',
         function(done) {
         db = new NDDB();
-        db[m](filename.linebreak, {lineBreak: '\r\n'} , function() {
+        db[m](filename.linebreak, {lineBreak: 'CR\n'} , function() {
             db.size().should.eql(4);
             db.last().should.be.eql(lastItem);
             done();
