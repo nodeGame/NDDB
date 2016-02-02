@@ -15,6 +15,7 @@ var filename = {
     standard: __dirname + '/data.csv',
     escapeTesting: __dirname + '/data.escapetest.csv',
     simon: __dirname + '/data.simon.csv',
+    linebreak: __dirname + '/data.linebreak.csv',
     temp: function(num) {
         return __dirname + '/data.temp' + num + '.csv';
     }
@@ -75,6 +76,24 @@ function getLoadTests(m, it) {
             done();
         });
     });
+
+
+    it('should ' + m + ' a csv file with custom linebreak characters',
+        function(done) {
+        db = new NDDB();
+
+        db.load(filename.standard,function() {
+            db.save(filename.linebreak, { lineBreak: '\r\n' }, function() {
+                db = new NDDB();
+                db[m](filename.linebreak, {lineBreak: '\r\n'} , function() {
+                    db.size().should.eql(4);
+                    db.last().should.be.eql(lastItem);
+                    done();
+                });
+            });
+        });
+    });
+
     it('should ' + m + ' a csv file with pre-defined headers', function(done) {
 
         db = new NDDB();
