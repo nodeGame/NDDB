@@ -1924,6 +1924,9 @@ Available options and defaults:
 
  bufferSize: 4 * 1024          // Number of bytes to write out at once
 
+ lineBreak: "\n"             // Sequence of characters to denote end of
+                             // line
+
 }
 </code></pre></div></span>
     </div>
@@ -1940,6 +1943,7 @@ Available options and defaults:
     <span class="kd">function</span> <span class="nx">processFileStreamOutSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">lineCreatorCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">workload</span><span class="p">,</span> <span class="nx">line</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">buffer</span><span class="p">,</span> <span class="nx">bufferSize</span><span class="p">,</span> <span class="nx">encoding</span><span class="p">,</span> <span class="nx">usedBytes</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">lineBreak</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">options</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">encoding</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
@@ -1949,6 +1953,7 @@ Available options and defaults:
             <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
             <span class="nx">encoding</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">encoding</span><span class="p">;</span>
         <span class="p">}</span>
+        <span class="nx">lineBreak</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">lineBreak</span> <span class="o">||</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
 
         <span class="nx">bufferSize</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bufferSize</span> <span class="o">||</span> <span class="mi">4</span><span class="o">*</span><span class="mi">1024</span><span class="p">;</span>
         <span class="nx">buffer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="nx">bufferSize</span><span class="p">);</span>
@@ -1968,7 +1973,7 @@ Available options and defaults:
         <td class="code highlight"><div class="highlight"><pre>
             <span class="k">while</span> <span class="p">(</span><span class="nx">Buffer</span><span class="p">.</span><span class="nx">byteLength</span><span class="p">(</span><span class="nx">workload</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nx">bufferSize</span> <span class="o">&amp;&amp;</span>
                 <span class="p">(</span><span class="nx">line</span> <span class="o">=</span> <span class="nx">lineCreatorCb</span><span class="p">()))</span> <span class="p">{</span>
-                <span class="nx">workload</span> <span class="o">+=</span> <span class="nx">line</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
+                <span class="nx">workload</span> <span class="o">+=</span> <span class="nx">line</span> <span class="o">+</span> <span class="nx">lineBreak</span><span class="p">;</span>
             <span class="p">}</span>
 
 
