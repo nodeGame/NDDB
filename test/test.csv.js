@@ -88,7 +88,11 @@ function getLoadTests(m, it) {
                 db[m](filename.linebreak, {lineBreak: '\r\n'} , function() {
                     db.size().should.eql(4);
                     db.last().should.be.eql(lastItem);
-                    done();
+
+                    // Delete linebreak file.
+                    fs.unlink(filename.linebreak, function() {
+                        done();
+                    });
                 });
             });
         });
