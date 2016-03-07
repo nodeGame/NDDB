@@ -2,7 +2,7 @@ sudo: false
 language: node_js
 node_js:
   - 0.12
-  - 4.3.x
+  - 4.3
 
 before_install:
 # Get installer script.
