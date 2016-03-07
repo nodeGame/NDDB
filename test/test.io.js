@@ -129,7 +129,6 @@ var hashPainter = function(o) {
 db.hash('painter', hashPainter);
 
 var filename = './db.out';
-var filenameAsync = './db_async.out';
 
 var deleteIfExist = function(cb) {
     if (JSUS.existsSync(filename)) {
