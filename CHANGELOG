@@ -1,5 +1,8 @@
 # NDDB change log
 
+## 1.5.1
+  - Fixed bug execution callback on async load of JSON files.
+
 ## 1.5.0
   - Fixed bug for loading CSV files in Windows.
 
