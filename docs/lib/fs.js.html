@@ -212,6 +212,7 @@ Upon loading, the cycles are restored.</p>
                 <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="nx">that</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
                     <span class="nx">loadCb</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">cb</span><span class="p">();</span>
                 <span class="p">});</span>
             <span class="p">},</span>
             <span class="nx">save</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
@@ -345,7 +346,7 @@ Upon loading, the cycles are restored.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">doneCb.</span>
       <span class="dox_type">function</span>
-      <span>Callback to invoke upon completion of save</span>
+      <span>Callback to invoke upon completion</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">options.</span>
