@@ -129,6 +129,7 @@ var hashPainter = function(o) {
 db.hash('painter', hashPainter);
 
 var filename = './db.out';
+var filenameAsync = './db_async.out';
 
 var deleteIfExist = function(cb) {
     if (JSUS.existsSync(filename)) {
@@ -137,17 +138,27 @@ var deleteIfExist = function(cb) {
     if (cb) cb();
 };
 
+var flag = null;
+
+var callback = function() {
+    flag = 1;
+};
+
 var testSaveLoad = function(items, compareToImport, compareToLoad) {
 
     describe('#saveSync()', function() {
 
         before(function() {
+            flag = null;
             deleteIfExist(function() {
                 db2.clear(true);
                 db = new NDDB();
                 db.importDB(items);
-                db.saveSync(filename);
+                db.saveSync(filename, callback);
             });
+        });
+        after(function() {
+            flag = null;
         });
 
         it('should create a dump file', function() {
@@ -163,13 +174,18 @@ var testSaveLoad = function(items, compareToImport, compareToLoad) {
             }
         });
 
+        it('should execute the callback', function() {
+            flag.should.eql(1);
+        });
     });
 
-    describe('#load()', function() {
+    describe('#loadSync()', function() {
         before(function() {
-            db2.loadSync(filename);
+            flag = null;
+            db2.loadSync(filename, callback);
         });
         after(function() {
+            flag = null;
             deleteIfExist();
         });
 
@@ -180,10 +196,69 @@ var testSaveLoad = function(items, compareToImport, compareToLoad) {
             else {
                 JSUS.equals(db.db, db2.db).should.be.true;
             }
+        });
 
+        it('should execute the callback', function() {
+            flag.should.eql(1);
         });
 
     });
+
+    describe('#save()', function() {
+
+        before(function() {
+            flag = null;
+            deleteIfExist(function() {
+                db2.clear(true);
+                db = new NDDB();
+                db.importDB(items);
+            });
+        });
+        after(function() {
+            flag = null;
+        });
+
+        it('original database save database (cb executed)', function(done) {
+
+            db.save(filename, function() {
+
+                JSUS.existsSync(filename).should.be.true;
+
+                if (compareToImport) {
+                    JSUS.equals(db.db, compareToImport).should.be.true;
+                }
+                else {
+                    db.db.should.be.eql(items);
+                }
+
+                done();
+            });
+        });
+    });
+
+    describe('#load()', function() {
+        before(function() {
+            flag = null;
+        });
+        after(function() {
+            flag = null;
+            deleteIfExist();
+        });
+
+        it('the loaded database should be copy of saved one (cb executed)',
+           function(done) {
+               db2.load(filename, function() {
+                   if (compareToLoad) {
+                       JSUS.equals(db2.db, compareToLoad).should.be.true;
+                   }
+                   else {
+                       JSUS.equals(db.db, db2.db).should.be.true;
+                   }
+                   done();
+               });
+           });
+    });
+
 };
 
 // STRESS TEST
