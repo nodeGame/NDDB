@@ -321,6 +321,25 @@ function getSaveTests(m, it) {
         });
     });
 
+    it('should load, ' + m + ', and reload a csv file using a small buffer',
+        function(done) {
+        var options;
+        options = { bufferSize: 16 };
+
+        db = new NDDB();
+        db.load(filename.standard, options, function() {
+            db.size().should.eql(4);
+            db2 = new NDDB();
+            db[m](filename.temp(1), options, function() {
+                db2.load(filename.temp(1), options, function() {
+                    db2.size().should.eql(4);
+                    db2.last().should.be.eql(lastItem);
+                    done();
+                });
+            });
+        });
+    });
+
     it('should load, ' + m + ', and reload a csv file with pre-defined adapter',
         function(done) {
             db = new NDDB();
