@@ -1,5 +1,8 @@
 # NDDB change log
 
+## 1.6.0
+  - Fixed overflow bug saving large CSV files.
+
 ## 1.5.1
   - Fixed bug execution callback on async load of JSON files.
 

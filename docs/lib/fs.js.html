@@ -1533,7 +1533,7 @@ Available options and defaults:
  encoding: undefined,        // Forwarded as `encoding` to
                              //`Buffer.write` and `Buffer.toString`
 
- bufferSize: 4 * 1024,       // Number of bytes to write out at once
+ bufferSize: 64 * 1024,      // Number of bytes to write out at once
 
  escapeCharacter: "\\"       // Symbol to indicate that subsequent
                              // character is escaped
@@ -1577,7 +1577,7 @@ Available options and defaults:
             <span class="nx">encoding</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">encoding</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">bufferSize</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bufferSize</span> <span class="o">||</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">;</span>
+        <span class="nx">bufferSize</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bufferSize</span> <span class="o">||</span> <span class="mi">64</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">;</span>
         <span class="nx">escapeChar</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span> <span class="o">||</span> <span class="s2">&quot;\\&quot;</span><span class="p">;</span>
         <span class="nx">lineBreak</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">lineBreak</span> <span class="o">||</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
         <span class="nx">buffer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="nx">bufferSize</span><span class="p">);</span>
@@ -1713,7 +1713,7 @@ Available options and defaults:
  encoding: undefined,          // Forwarded as `encoding` to
                                //`Buffer.write` and `Buffer.toString`
 
- bufferSize: 4 * 1024          // Number of bytes to write out at once
+ bufferSize: 64 * 1024         // Number of bytes to write out at once
 
  lineBreak: "\n"             // Sequence of characters to denote end of
                              // line
@@ -1744,7 +1744,7 @@ Available options and defaults:
         <span class="p">}</span>
         <span class="nx">lineBreak</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">lineBreak</span> <span class="o">||</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
 
-        <span class="nx">bufferSize</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bufferSize</span> <span class="o">||</span> <span class="mi">4</span><span class="o">*</span><span class="mi">1024</span><span class="p">;</span>
+        <span class="nx">bufferSize</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bufferSize</span> <span class="o">||</span> <span class="mi">64</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">;</span>
         <span class="nx">buffer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="nx">bufferSize</span><span class="p">);</span>
         <span class="nx">workload</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="k">do</span> <span class="p">{</span></pre></div>
@@ -1791,7 +1791,7 @@ Available options and defaults:
 <p>Compute leftover and put it into workload.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="nx">workload</span> <span class="o">=</span> <span class="nx">workload</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span>
-                <span class="nx">buffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="nx">encoding</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">usedBytes</span><span class="p">).</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="nx">buffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="nx">encoding</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">usedBytes</span><span class="p">).</span><span class="nx">length</span> 
             <span class="p">);</span>
 
         <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="nx">workload</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">line</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">);</span>
