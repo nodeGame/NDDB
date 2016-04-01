@@ -704,7 +704,7 @@ JSUS.compatibility
 </div>
 
 
-<p>A global index of all objects</p>
+<p>A global index of all objects.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">nddbid</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDBIndex</span><span class="p">(</span><span class="s1">&#39;nddbid&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span></pre></div>
         </td>
@@ -3220,9 +3220,9 @@ added with another index delete the old one.</p>
 <p>Create a copy of the current settings,
 without the views functions, otherwise
 we establish an infinite loop in the
-constructor.</p>
+constructor, and the hooks.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                    <span class="nx">settings</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">cloneSettings</span><span class="p">({</span><span class="nx">V</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">});</span>
+        <td class="code highlight"><div class="highlight"><pre>                    <span class="nx">settings</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">cloneSettings</span><span class="p">({</span> <span class="nx">V</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">hooks</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
                     <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">(</span><span class="nx">settings</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">insert</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
@@ -3288,9 +3288,10 @@ constructor.</p>
 </div>
 <p>Create a copy of the current settings,
 without the hashing functions, otherwise
-we crate an infinite loop at first insert.</p>
+we create an infinite loop at first insert,
+and the hooks (should be called only on main db).</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                    <span class="nx">settings</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">cloneSettings</span><span class="p">({</span><span class="nx">H</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">});</span>
+        <td class="code highlight"><div class="highlight"><pre>                    <span class="nx">settings</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">cloneSettings</span><span class="p">({</span> <span class="nx">H</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">hooks</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
                     <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">][</span><span class="nx">hash</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">(</span><span class="nx">settings</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">][</span><span class="nx">hash</span><span class="p">].</span><span class="nx">insert</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>

@@ -40,42 +40,6 @@ var items = [
     },
 ];
 
-var items2 = [
-    {
-        painter: "Jesus",
-        title: "Tea in the desert",
-        year: 0,
-        comment: "Pretty cool!"
-    },
-    {
-        painter: "Dali",
-        title: "Portrait of Paul Eluard",
-        year: 1929,
-        portrait: true
-    },
-    {
-        painter: "Dali",
-        title: "Barcelonese Mannequin",
-        year: 1927
-    },
-    {
-        painter: "Monet",
-        title: "Water Lilies",
-        year: 1906
-    },
-    {
-        painter: "Monet",
-        title: "Wheatstacks (End of Summer)",
-        year: 1891
-    },
-    {
-        painter: "Manet",
-        title: "Olympia",
-        year: 1863
-    },
-];
-
-
 var p1 = 10, p2 = 100, p3 = 1000;
 var copy = null, copy2 = null;
 var counter = 0;
@@ -224,39 +188,25 @@ describe('NDDB Events', function() {
 
 });
 
-describe('NDDB Events with auto-update indexes', function() {
+describe('NDDB Events with auto-update indexes and hashes', function() {
 
     describe('#on(\'insert\') ', function() {
         before(function() {
             db = new NDDB({update: { indexes: true }});
             copy = [];
+            db.hash('painter', function(o) {
+                return o.painter;
+            });
             db.on('insert', function(o) {
                 copy.push(o);
             });
-            db.on('insert', function(o) {
-                db.tag(o.year, o);
-            });
-            db.on('insert', function(o) {
-                counter++;
-            });
-            db.importDB(items2);
+            db.insert(items[0]);
         });
 
         it('should copy all the inserted elements', function() {
-            db.db.should.eql(copy);
+            copy.length.should.eql(1);
         });
 
-        it('should add a tag for each inserted element', function() {
-            db.tags['1863'].should.eql({
-                painter: "Manet",
-                title: "Olympia",
-                year: 1863
-            });
-        });
-
-        it('should add a tag for each inserted element', function() {
-            counter.should.be.eql(items2.length);
-        });
 
     });
 });
