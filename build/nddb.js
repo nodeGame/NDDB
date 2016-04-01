@@ -4854,7 +4854,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
         // ## Public properties.
 
         // ### nddbid
-        // A global index of all objects
+        // A global index of all objects.
         this.nddbid = new NDDBIndex('nddbid', this);
 
         // ### db
@@ -6235,8 +6235,8 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
                     // Create a copy of the current settings,
                     // without the views functions, otherwise
                     // we establish an infinite loop in the
-                    // constructor.
-                    settings = this.cloneSettings({V: ''});
+                    // constructor, and the hooks.
+                    settings = this.cloneSettings({ V: true, hooks: true });
                     this[key] = new NDDB(settings);
                 }
                 this[key].insert(o);
@@ -6275,8 +6275,9 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
                 if (!this[key][hash]) {
                     // Create a copy of the current settings,
                     // without the hashing functions, otherwise
-                    // we crate an infinite loop at first insert.
-                    settings = this.cloneSettings({H: ''});
+                    // we create an infinite loop at first insert,
+                    // and the hooks (should be called only on main db).
+                    settings = this.cloneSettings({ H: true, hooks: true });
                     this[key][hash] = new NDDB(settings);
                 }
                 this[key][hash].insert(o);
