@@ -1,5 +1,8 @@
 # NDDB change log
 
+## 1.7.0
+  - Nested views and hashes do not copy over hooks (hooks are called only once per insert on main db).
+
 ## 1.6.0
   - Fixed overflow bug saving large CSV files.
 
