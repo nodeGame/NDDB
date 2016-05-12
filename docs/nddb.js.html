@@ -3650,7 +3650,7 @@ of the event, and the remaining will be passed to the event listeners.</p>
 </div>
 <p>Range-queries need an array as third parameter instance of Array.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">op</span><span class="p">,[</span><span class="s1">&#39;&gt;&lt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;!in&#39;</span><span class="p">]))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">inArray</span><span class="p">(</span><span class="nx">op</span><span class="p">,[</span><span class="s1">&#39;&gt;&lt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;!in&#39;</span><span class="p">]))</span> <span class="p">{</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">value</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">errText</span> <span class="o">=</span> <span class="s1">&#39;range-queries need an array as third parameter&#39;</span><span class="p">;</span>
@@ -3682,7 +3682,7 @@ of the event, and the remaining will be passed to the event listeners.</p>
                 <span class="p">}</span>
             <span class="p">}</span>
 
-            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">op</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;!=&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;==&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;=&#39;</span><span class="p">])){</span></pre></div>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">inArray</span><span class="p">(</span><span class="nx">op</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;!=&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;==&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;=&#39;</span><span class="p">])){</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -5824,7 +5824,7 @@ dimension will be skipped</p>
 </div>
 <p>Creates a new group and add entries to it.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">in_array</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">groups</span><span class="p">))</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">inArray</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">groups</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">groups</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
                 <span class="nx">out</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">equals</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">getNestedValue</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">elem</span><span class="p">),</span> <span class="nx">el</span><span class="p">))</span> <span class="p">{</span>

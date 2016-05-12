@@ -1733,7 +1733,7 @@
             }
 
             // Range-queries need an array as third parameter instance of Array.
-            if (J.in_array(op,['><', '<>', 'in', '!in'])) {
+            if (J.inArray(op,['><', '<>', 'in', '!in'])) {
 
                 if (!(value instanceof Array)) {
                     errText = 'range-queries need an array as third parameter';
@@ -1750,7 +1750,7 @@
                 }
             }
 
-            else if (J.in_array(op, ['!=', '>', '==', '>=', '<', '<='])){
+            else if (J.inArray(op, ['!=', '>', '==', '>=', '<', '<='])){
                 // Comparison queries need a third parameter.
                 if ('undefined' === typeof value) {
                     errText = 'value cannot be undefined in comparison queries';
@@ -2884,7 +2884,7 @@
             el = J.getNestedValue(key, db[i]);
             if ('undefined' === typeof el) continue;
             // Creates a new group and add entries to it.
-            if (!J.in_array(el, groups)) {
+            if (!J.inArray(el, groups)) {
                 groups.push(el);
                 out = this.filter(function(elem) {
                     if (J.equals(J.getNestedValue(key, elem), el)) {
