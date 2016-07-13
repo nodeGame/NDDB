@@ -1,5 +1,8 @@
 # NDDB change log
 
+## 1.8.0
+  - Removed prepublish script that was causing errors in some systems.
+
 ## 1.7.1
   - JSUS.in_array -> JSUS.inArray
 

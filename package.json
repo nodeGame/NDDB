@@ -1,7 +1,7 @@
 {
   "name": "NDDB",
   "description": "Powerful and versatile 100% javascript object database",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "keywords": [ "db", "no-sql", "cyclic objects", "nddb", "database", "index", "views" ],
   "author": "Stefano Balietti <futur.dorko@gmail.com>",
   "license": "MIT",
@@ -24,7 +24,6 @@
     "url": "https://github.com/nodeGame/NDDB.git"
   },
   "scripts": {
-    "test": "make test",
-    "prepublish": "node bin/make.js build -a"
+    "test": "make test"
   }
 }
