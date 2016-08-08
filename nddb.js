@@ -1,6 +1,6 @@
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
