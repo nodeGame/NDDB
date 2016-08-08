@@ -14,6 +14,8 @@ var options;
 var filename = {
     standard: __dirname + '/data.csv',
     escapeTesting: __dirname + '/data.escapetest.csv',
+    escapeTestingNoQuotes: __dirname + '/data.escapetest_noquotes.csv',
+    unescapeTesting: __dirname + '/data.unescapetest.csv',
     simon: __dirname + '/data.simon.csv',
     linebreak: __dirname + '/data.linebreak.csv',
     temp: function(num) {
@@ -40,7 +42,6 @@ var deleteIfExists = function(filename) {
         fs.unlinkSync(filename);
     }
 };
-
 
 function getLoadTests(m, it) {
 
@@ -187,10 +188,48 @@ function getLoadTests(m, it) {
         });
     });
 
-    it('should ' + m + ' a csv file with def. options and unescape separators',
+    it('should ' + m + ' a csv file with def. options and unescaped separators',
+       function(done) {
+           db = new NDDB();
+           db[m](filename.unescapeTesting, function() {
+               db.size().should.eql(4);
+               db.first();
+               db.next();
+               db.next().should.be.eql({
+                   A: '7,5',
+                   B: '8',
+                   C: '9',
+                   D: 'Z3'
+               });
+               done();
+           });
+
+       });
+
+    it('should ' + m + ' a csv file with def. options and escaped separators',
        function(done) {
            db = new NDDB();
            db[m](filename.escapeTesting, function() {
+               db.size().should.eql(4);
+               db.first();
+               db.next();
+               db.next().should.be.eql({
+                   A: '7,5',
+                   B: '8',
+                   C: '9',
+                   D: 'Z3'
+               });
+               done();
+           });
+
+       });
+
+    it('should ' + m + ' a csv file with def. options and escaped ' +
+       'separators, and no quotes.',
+
+       function(done) {
+           db = new NDDB();
+           db[m](filename.escapeTestingNoQuotes, function() {
                db.size().should.eql(4);
                db.first();
                db.next();
