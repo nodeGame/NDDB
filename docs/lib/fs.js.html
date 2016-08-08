@@ -28,7 +28,7 @@
         <a href="#nddb.adddefaultformats">NDDB.addDefaultFormats</a>
       </div>
       <div class="heading h2">
-        <a href="#helper-methods">Helper Methods</a>
+        <a href="#helper-methods.">Helper Methods.</a>
       </div>
       <div class="heading h3">
         <a href="#loadcsv">loadCsv</a>
@@ -89,7 +89,7 @@
 </div>
 
 
-<p>Copyright(c) 2015 Stefano Balietti
+<p>Copyright(c) 2016 Stefano Balietti
 MIT Licensed.</p>
   </div>
   <div class="body"><p>NDDB file systems routines to save and load items</p>
@@ -299,10 +299,10 @@ Upon loading, the cycles are restored.</p>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="helper-methods">
+<div class="pilwrap" id="helper-methods.">
   <h2>
-    <a href="#helper-methods" class="pilcrow">&#182;</a>
-    Helper Methods
+    <a href="#helper-methods." class="pilcrow">&#182;</a>
+    Helper Methods.
   </h2>
 </div>
 
@@ -413,6 +413,7 @@ Upon loading, the cycles are restored.</p>
             <span class="nx">firstCall</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
                 <span class="kd">var</span> <span class="nx">str</span><span class="p">,</span> <span class="nx">headersFlag</span><span class="p">,</span> <span class="nx">insertTokens</span><span class="p">;</span>
+                <span class="kd">var</span> <span class="nx">tkj</span><span class="p">,</span> <span class="nx">foundJ</span><span class="p">;</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">firstCall</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span></pre></div>
@@ -460,11 +461,87 @@ Upon loading, the cycles are restored.</p>
         <td class="code highlight"><div class="highlight"><pre>                <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">token</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">escapeCharacter</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">result</span> <span class="o">+=</span> <span class="nx">token</span><span class="p">;</span>
+                        <span class="nx">result</span> <span class="o">+=</span> <span class="nx">token</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+</div>
 
-                        <span class="nx">str</span> <span class="o">=</span> <span class="nx">parseCsvToken</span><span class="p">(</span>
-                            <span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span>
-                        <span class="p">);</span>
+<div class="highlight"><pre><code>                    <span class="n">str</span> <span class="o">=</span> <span class="n">parseCsvToken</span><span class="p">(</span>
+                        <span class="n">that</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">quote</span><span class="p">,</span> <span class="n">escapeCharacter</span>
+                    <span class="p">);</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>Handle quotes.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                        <span class="k">if</span> <span class="p">(</span><span class="nx">quote</span> <span class="o">&amp;&amp;</span> <span class="nx">result</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="nx">quote</span><span class="p">)</span> <span class="p">{</span>
+
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">quote</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>Check next tokens, if they close the quote.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                               <span class="nx">tkj</span> <span class="o">=</span> <span class="nx">separator</span><span class="p">;</span>
+                               <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                                   <span class="nx">tkj</span> <span class="o">+=</span> <span class="nx">tokens</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>Last char next token is closing quote.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                                   <span class="k">if</span> <span class="p">(</span><span class="nx">tkj</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">tkj</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="nx">quote</span><span class="p">)</span> <span class="p">{</span>
+                                       <span class="nx">result</span> <span class="o">+=</span> <span class="nx">tkj</span><span class="p">;</span>
+                                       <span class="nx">foundJ</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                                       <span class="k">break</span><span class="p">;</span>
+                                   <span class="p">}</span>
+                                   <span class="k">else</span> <span class="p">{</span>
+                                       <span class="nx">tkj</span> <span class="o">+=</span> <span class="nx">separator</span><span class="p">;</span>
+                                   <span class="p">}</span>
+                               <span class="p">}</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">foundJ</span><span class="p">)</span> <span class="p">{</span>
+                                    <span class="nx">that</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span>
+                                                  <span class="s1">&#39;missing closing quote &#39;</span> <span class="o">+</span>
+                                                  <span class="nx">token</span><span class="p">);</span>
+                                <span class="p">}</span>
+                            <span class="p">}</span>
+                            <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">result</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+                        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>Unescape quote, ecapeCharacter, linebreak and tab.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                        <span class="nx">str</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escapeCharacter</span> <span class="o">+</span> <span class="nx">quote</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="nx">quote</span><span class="p">)</span>
+                            <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escapeCharacter</span> <span class="o">+</span> <span class="nx">escapeCharacter</span><span class="p">)</span>
+                            <span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">escapeCharacter</span><span class="p">)</span>
+                            <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escapeCharacter</span> <span class="o">+</span> <span class="s1">&#39;\t&#39;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;\t&#39;</span><span class="p">)</span>
+                            <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">escapeCharacter</span> <span class="o">+</span> <span class="s1">&#39;\n&#39;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;\n&#39;</span><span class="p">);</span>
 
                         <span class="k">if</span> <span class="p">(</span><span class="nx">firstCall</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
@@ -472,7 +549,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Decide headersFlag for this entry.</p>
         </td>
@@ -482,7 +559,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>Every entry treated the same way.</p>
         </td>
@@ -494,19 +571,19 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>Select this entry to be read as header.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>                                    <span class="nx">headersFlag</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
                                 <span class="p">}</span>
-                                <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span></pre></div>
+                                <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
 </div>
 <p>This header is pre-defined.</p>
         </td>
@@ -518,7 +595,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>This header should be autogenerated.</p>
         </td>
@@ -530,7 +607,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Act according to headersFlag.</p>
         </td>
@@ -540,7 +617,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Autogenerate header and insert token.</p>
         </td>
@@ -553,7 +630,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Read token as header.</p>
         </td>
@@ -574,7 +651,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Handle if token ends with escapeCharacter.</p>
         </td>
@@ -679,7 +756,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Options.</p>
         </td>
@@ -699,7 +776,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Self calling function for closure private variables.</p>
         </td>
@@ -843,7 +920,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>options.escapeCharacter = options.escapeCharacter  || options.quote;</p>
         </td>
@@ -966,7 +1043,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>Remove last comma.</p>
         </td>
@@ -997,7 +1074,7 @@ Upon loading, the cycles are restored.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">method</span>
       <span class="dox_type">string</span>
-      <span>The name of the invoking metho</span>
+      <span>The name of the invoking method</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">token</span>
@@ -1008,6 +1085,11 @@ Upon loading, the cycles are restored.</p>
       <span class="dox_tag_name">quote</span>
       <span class="dox_type">string</span>
       <span>Optional. A character to escape</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">escapeCharacter</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The escape char</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -1032,7 +1114,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>Unescape quote, ecapeCharacter, linebreak and tab.</p>
         </td>
@@ -1092,7 +1174,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>We are not interested in outputting "null" or "undefined"</p>
         </td>
@@ -1103,7 +1185,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>Escape quote, separator, escapeCharacter, linebreak and tab.</p>
         </td>
@@ -1165,7 +1247,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>TODO: copy settings, disable updates,
 insert one by one, update indexes.</p>
@@ -1176,7 +1258,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Retrocycle if possible.</p>
         </td>
@@ -1244,7 +1326,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1323,7 +1405,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1397,7 +1479,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>Open file for read.</p>
         </td>
@@ -1476,7 +1558,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1558,7 +1640,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>adapted from <a href='http://stackoverflow.com/a/21219407'>http://stackoverflow.com/a/21219407</a></p>
         </td>
@@ -1587,7 +1669,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>While file not empty, read into buffer.</p>
         </td>
@@ -1597,7 +1679,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>Add content of buffer to workload.</p>
         </td>
@@ -1609,7 +1691,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
 </div>
 <p>While not on last line of buffer, process lines.</p>
         </td>
@@ -1620,7 +1702,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
 </div>
 <p>Do not break on escaped endline characters.</p>
         </td>
@@ -1635,7 +1717,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
 </div>
 <p>Process line.</p>
         </td>
@@ -1645,7 +1727,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>Advance to next line.</p>
         </td>
@@ -1657,7 +1739,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>Begin workload with leftover characters for next line.</p>
         </td>
@@ -1753,7 +1835,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>Fill workload (assumes short-circuit evaluation).</p>
         </td>
@@ -1766,7 +1848,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
 <p>Fill buffer completely.</p>
         </td>
@@ -1776,7 +1858,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
 </div>
 <p>Write buffer to file.</p>
         </td>
@@ -1786,12 +1868,12 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
 <p>Compute leftover and put it into workload.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="nx">workload</span> <span class="o">=</span> <span class="nx">workload</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span>
-                <span class="nx">buffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="nx">encoding</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">usedBytes</span><span class="p">).</span><span class="nx">length</span> 
+                <span class="nx">buffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="nx">encoding</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">usedBytes</span><span class="p">).</span><span class="nx">length</span>
             <span class="p">);</span>
 
         <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="nx">workload</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">line</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">);</span>

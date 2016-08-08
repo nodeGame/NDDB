@@ -4102,6 +4102,7 @@
      * Removes and entry from the database with the given id and returns it
      *
      * @param {mixed} idx The id of item to remove
+     *
      * @return {object|boolean} The removed item, or FALSE if index is invalid
      *
      * @see NDDB.index
@@ -4128,9 +4129,10 @@
     /**
      * ### NDDBIndex.update
      *
-     * Removes and entry from the database with the given id and returns it
+     * Updates an entry with the given id
      *
      * @param {mixed} idx The id of item to update
+     *
      * @return {object|boolean} The updated item, or FALSE if index is invalid
      *
      * @see NDDB.index
