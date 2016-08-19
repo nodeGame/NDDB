@@ -4774,7 +4774,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
 
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
@@ -8876,6 +8876,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      * Removes and entry from the database with the given id and returns it
      *
      * @param {mixed} idx The id of item to remove
+     *
      * @return {object|boolean} The removed item, or FALSE if index is invalid
      *
      * @see NDDB.index
@@ -8902,9 +8903,10 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
     /**
      * ### NDDBIndex.update
      *
-     * Removes and entry from the database with the given id and returns it
+     * Updates an entry with the given id
      *
      * @param {mixed} idx The id of item to update
+     *
      * @return {object|boolean} The updated item, or FALSE if index is invalid
      *
      * @see NDDB.index
