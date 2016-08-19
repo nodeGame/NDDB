@@ -2393,13 +2393,13 @@ to remember not to add it later.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">compressed</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">spaces</span><span class="p">,</span> <span class="nx">out</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">())</span> <span class="k">return</span> <span class="s1">&#39;[]&#39;</span><span class="p">;</span>
         <span class="nx">compressed</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">compressed</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="nx">compressed</span><span class="p">;</span>
-
         <span class="nx">spaces</span> <span class="o">=</span> <span class="nx">compressed</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="mi">4</span><span class="p">;</span>
-
         <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2407,13 +2407,13 @@ to remember not to add it later.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
-<p>Decycle, if possible</p>
+<p>Decycle, if possible.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">e</span> <span class="o">=</span> <span class="nx">NDDB</span><span class="p">.</span><span class="nx">decycle</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
-            <span class="nx">out</span> <span class="o">+=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">spaces</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="p">;</span>
-        <span class="p">});</span>
-        <span class="nx">out</span> <span class="o">=</span> <span class="nx">out</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/, $/</span><span class="p">,</span><span class="s1">&#39;]&#39;</span><span class="p">);</span>
-
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">item</span> <span class="o">=</span> <span class="nx">NDDB</span><span class="p">.</span><span class="nx">decycle</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="nx">out</span> <span class="o">+=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">spaces</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="nx">len</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="nx">out</span> <span class="o">+=</span> <span class="s1">&#39;, &#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">out</span> <span class="o">+=</span> <span class="s1">&#39;]&#39;</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>

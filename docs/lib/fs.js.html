@@ -751,7 +751,7 @@ Upon loading, the cycles are restored.</p>
         <span class="nx">headers</span> <span class="o">=</span> <span class="nx">getCsvHeaders</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
         <span class="nx">adapter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">adapter</span> <span class="o">||</span> <span class="p">{};</span>
 
-        <span class="nx">writeCb</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        <span class="nx">writeCb</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -784,7 +784,7 @@ Upon loading, the cycles are restored.</p>
                 <span class="p">}</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">};</span>
-        <span class="p">}(),</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">errorCb</span><span class="p">);</span>
+        <span class="p">})(),</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">errorCb</span><span class="p">);</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -1144,7 +1144,7 @@ Upon loading, the cycles are restored.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">loadCb</span><span class="p">(</span><span class="nx">nddb</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">loadCb</span><span class="p">(</span><span class="nx">nddb</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">clean</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">items</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="nx">items</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span></pre></div>
         </td>

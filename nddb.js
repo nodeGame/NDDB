@@ -1017,19 +1017,19 @@
      */
     NDDB.prototype.stringify = function(compressed) {
         var spaces, out;
+        var item, i, len;
         if (!this.size()) return '[]';
         compressed = ('undefined' === typeof compressed) ? true : compressed;
-
         spaces = compressed ? 0 : 4;
-
         out = '[';
-        this.each(function(e) {
-            // Decycle, if possible
-            e = NDDB.decycle(e);
-            out += J.stringify(e, spaces) + ', ';
-        });
-        out = out.replace(/, $/,']');
-
+        i = -1, len = this.db.length;
+        for ( ; ++i < len ; ) {
+            // Decycle, if possible.
+            item = NDDB.decycle(this.db[i]);
+            out += J.stringify(item, spaces);
+            if (i !== len-1) out += ', ';
+        }
+        out += ']';
         return out;
     };
 
@@ -3741,6 +3741,7 @@
         }
         return ff;
     }
+
     /**
      * ### validateFormatParameters
      *
