@@ -930,7 +930,7 @@ Upon loading, the cycles are restored.</p>
       <span class="dox_tag_name">headers</span>
       <span class="dox_type">string</span>
       <span class="dox_type">array</span>
-      <span>Optional. An array of headers returned as it is</span>
+      <span>Optional. Parameter controlling the headers</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">data</span>
@@ -1482,7 +1482,7 @@ insert one by one, update indexes.</p>
                     <span class="nx">processFileStreamOutSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">lineCreatorCb</span><span class="p">,</span>  <span class="nx">options</span><span class="p">);</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">doneCb</span><span class="p">)</span> <span class="nx">doneCb</span><span class="p">();</span>
                 <span class="p">}</span>
-                <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">errorCb</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
