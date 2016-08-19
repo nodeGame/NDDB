@@ -594,10 +594,14 @@
      * @param {string} type Optional. The error type, e.g. 'TypeError'.
      *   Default, 'Error'
      * @param {string} method Optional. The name of the method
-     * @param {string} text Optional. The error text. Default, 'generic error'
+     * @param {string|object} err Optional. The error. Default, 'generic error'
      */
-    NDDB.prototype.throwErr = function(type, method, text) {
-        var errMsg;
+    NDDB.prototype.throwErr = function(type, method, err) {
+        var errMsg, text;
+
+        if ('object' === typeof err) text = err.stack || err;
+        else if ('string' === typeof err) text = err;
+
         text = text || 'generic error';
         errMsg = this._getConstrName();
         if (method) errMsg = errMsg + '.' + method;

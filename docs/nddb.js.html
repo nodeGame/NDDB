@@ -1680,15 +1680,20 @@ one, will overwrite the old filter without warnings.</p>
       <span>Optional. The name of the method</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">text</span>
+      <span class="dox_tag_name">err</span>
       <span class="dox_type">string</span>
-      <span>Optional. The error text. Default, 'generic error'</span>
+      <span class="dox_type">object</span>
+      <span>Optional. The error. Default, 'generic error'</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">throwErr</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">errMsg</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">throwErr</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">errMsg</span><span class="p">,</span> <span class="nx">text</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">err</span><span class="p">)</span> <span class="nx">text</span> <span class="o">=</span> <span class="nx">err</span><span class="p">.</span><span class="nx">stack</span> <span class="o">||</span> <span class="nx">err</span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">err</span><span class="p">)</span> <span class="nx">text</span> <span class="o">=</span> <span class="nx">err</span><span class="p">;</span>
+
         <span class="nx">text</span> <span class="o">=</span> <span class="nx">text</span> <span class="o">||</span> <span class="s1">&#39;generic error&#39;</span><span class="p">;</span>
         <span class="nx">errMsg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getConstrName</span><span class="p">();</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">method</span><span class="p">)</span> <span class="nx">errMsg</span> <span class="o">=</span> <span class="nx">errMsg</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">method</span><span class="p">;</span>
