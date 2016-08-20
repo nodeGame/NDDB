@@ -513,10 +513,17 @@ db.save('db.asd');
                                       //
                                       // Saving:
                                       //  - true: use keys of first
-                                      //      item as column names
+                                      //      item as column names (default)
                                       //  - 'all': collect all keys
                                       //      from all elements and use
                                       //      as column names
+                                      //  - function: a callback that
+                                      //      takes each unique key in
+                                      //      the db and returns: 
+                                      //      another substitute string,
+                                      //      an array of strings to add,
+                                      //      null to exclude the key,
+                                      //      undefined to keep it.
                                       //  - false: no headers
                                       //  - array of strings: used as
                                       //      is for column names (keys
