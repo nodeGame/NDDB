@@ -148,7 +148,38 @@ function getLoadTests(m, it) {
 
     });
 
-    it('should ' + m + ' a csv file with pre-defined adapter', function(done) {
+    it('should ' + m + ' a csv file with adapter with strings', function(done) {
+        var options, adapterMaker;
+
+        // Doubles all floats
+        options = {
+            adapter: {
+                q: 'e',
+                e: 'r',
+                r: 'q'
+            },
+            headers: ['q', 'w', 'e', 'r']
+        };
+        db = new NDDB();
+        db[m](filename.standard, options, function() {
+            db.size().should.eql(5);
+            db.first().should.be.eql({
+                q: 'C',
+                w: 'B',
+                e: 'D',
+                r: 'A'
+            });
+            db.last().should.be.eql({
+                q: '12',
+                w: '11',
+                e: 'Z4',
+                r: '10'
+            });
+            done();
+        });
+    });
+
+    it('should ' + m + ' a csv file with adapter with cbs', function(done) {
         var options, adapterMaker;
 
         adapterMaker = function(str) {

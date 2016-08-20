@@ -1,7 +1,10 @@
 # NDDB change log
 
+## 1.10.0
+  - Improved saving to CSV, headers option can be a function, and adapter parameters can be strings.
+
 ## 1.9.0
-  - Loading from CSV correctly handles unescaped separators in quotes".
+  - Loading from CSV correctly handles unescaped separators in quotes.
 
 ## 1.8.0
   - Removed prepublish script that was causing errors in some systems.
