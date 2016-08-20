@@ -83,10 +83,10 @@ function getLoadTests(m, it) {
         function(done) {
         db = new NDDB();
 
-        db.load(filename.standard,function() {
+        db.load(filename.standard, function() {
             db.save(filename.linebreak, { lineBreak: '\r\n' }, function() {
                 db = new NDDB();
-                db[m](filename.linebreak, {lineBreak: '\r\n'} , function() {
+                db[m](filename.linebreak, { lineBreak: '\r\n' } , function() {
                     db.size().should.eql(4);
                     db.last().should.be.eql(lastItem);
 
