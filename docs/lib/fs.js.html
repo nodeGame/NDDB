@@ -70,7 +70,7 @@
         <a href="#processfilestreamoutsync">processFileStreamOutSync</a>
       </div>
       <div class="heading h3">
-        <a href="#collectheaders">collectHeaders</a>
+        <a href="#collectallheaders">collectAllHeaders</a>
       </div>
     </div>
   </div>
@@ -804,55 +804,7 @@ Upon loading, the cycles are restored.</p>
   </div>
   <div class="body"><p>Set default options depending on the CSV method</p>
 
-<p>Available options and defaults:</p>
-
-<div class='highlight'><pre><code language=''>{
-
-  headers: true,                     // if options.headers === true: use
-                                     //   first line of file as headers;
-                                     // if !options.headers: use
-                                     //   ['X1'...'XN'] as headers;
-                                     // if options.headers is an array of
-                                     //   strings use it as headers;
-                                     // if options.headers is an array
-                                     //   containing true/false use entry
-                                     //   from file/'Xi' respectively;
-
-
-  adapter: { A: function(row) {      // An obj containing callbacks for
-                 return row['A'];    // each header. The callbacks take
-                }                    // an object of strings and
-           },                        // return a string. Each entry in
-                                     // the file is the result of
-                                     // applying the callback of its
-                                     // column to its row.
-
-
-  separator: ',',                    // The character used as separator
-                                     // between values. Default ','.
-
-  quote: '"',                        // The character used as quote.
-                                     // Default: '"'.
-
-  escapeCharacter: '\',              // The char that should be skipped.
-                                     // Default: '\'.
-
-  commentchar: '',                   // The character used for comments.
-                                     // Default: ''.
-
-  nestedQuotes: false,               // TRUE, if nested quotes allowed.
-                                     // Default FALSE.
-
-  flags: 'w',                        // The Node.js flag to write to fs.
-                                     // Default: 'a' (append).
-
-  encoding: 'utf-8',                 // The encoding of the file.
-
-  mode: 0777,                        // The permission given to the file.
-                                     // Default: 0666
-
-}
-</code></pre></div>
+<p>See README.md for details.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -865,6 +817,10 @@ Upon loading, the cycles are restored.</p>
       <span class="dox_tag_name">method</span>
       <span class="dox_type">string</span>
       <span>The name of the invoking method</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">README.md</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -898,17 +854,8 @@ Upon loading, the cycles are restored.</p>
         <span class="nx">options</span><span class="p">.</span><span class="nx">na</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">na</span> <span class="o">||</span> <span class="s1">&#39;NA&#39;</span><span class="p">;</span>
         <span class="nx">options</span><span class="p">.</span><span class="nx">separator</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">separator</span> <span class="o">||</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
         <span class="nx">options</span><span class="p">.</span><span class="nx">quote</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">quote</span> <span class="o">||</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span> <span class="o">||</span> <span class="s1">&#39;\\&#39;</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
-</div>
-<p>options.escapeCharacter = options.escapeCharacter  || options.quote;</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="p">}</span></pre></div>
+        <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span> <span class="o">||</span> <span class="s1">&#39;\\&#39;</span><span class="p">;</span>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1040,7 +987,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Remove last comma.</p>
         </td>
@@ -1095,7 +1042,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>We are not interested in outputting "null" or "undefined"</p>
         </td>
@@ -1106,7 +1053,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>Escape quote, separator, escapeCharacter, linebreak and tab.</p>
         </td>
@@ -1168,7 +1115,7 @@ Upon loading, the cycles are restored.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>TODO: copy settings, disable updates,
 insert one by one, update indexes.</p>
@@ -1179,7 +1126,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Retrocycle if possible.</p>
         </td>
@@ -1247,7 +1194,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1326,7 +1273,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1400,7 +1347,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>Open file for read.</p>
         </td>
@@ -1479,7 +1426,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1549,21 +1496,12 @@ Available options and defaults:
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">`Buffer`
-  </span>
+      <a href="http://stackoverflow.com/a/21219407
+  ">`Buffer`
+Kudos:</a>
     </div>
   </div>
 </div>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
-</div>
-<p>adapted from <a href='http://stackoverflow.com/a/21219407'>http://stackoverflow.com/a/21219407</a></p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">processFileStreamInSync</span><span class="p">(</span><span class="nx">fd</span><span class="p">,</span> <span class="nx">lineProcessorCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">read</span><span class="p">,</span> <span class="nx">line</span><span class="p">,</span> <span class="nx">lineBegin</span><span class="p">,</span> <span class="nx">searchBegin</span><span class="p">,</span> <span class="nx">lineEnd</span><span class="p">;</span>
@@ -1590,7 +1528,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>While file not empty, read into buffer.</p>
         </td>
@@ -1600,7 +1538,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>Add content of buffer to workload.</p>
         </td>
@@ -1612,7 +1550,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 <p>While not on last line of buffer, process lines.</p>
         </td>
@@ -1623,7 +1561,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>Do not break on escaped endline characters.</p>
         </td>
@@ -1638,7 +1576,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>Process line.</p>
         </td>
@@ -1648,7 +1586,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>Advance to next line.</p>
         </td>
@@ -1660,7 +1598,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>Begin workload with leftover characters for next line.</p>
         </td>
@@ -1756,7 +1694,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
 </div>
 <p>Fill workload (assumes short-circuit evaluation).</p>
         </td>
@@ -1769,7 +1707,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
 </div>
 <p>Fill buffer completely.</p>
         </td>
@@ -1779,7 +1717,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>Write buffer to file.</p>
         </td>
@@ -1789,7 +1727,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>Compute leftover and put it into workload.</p>
         </td>
@@ -1804,15 +1742,23 @@ Available options and defaults:
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="collectheaders">
+<div class="pilwrap" id="collectallheaders">
   <h3>
-    <a href="#collectheaders" class="pilcrow">&#182;</a>
-    collectHeaders
+    <a href="#collectallheaders" class="pilcrow">&#182;</a>
+    collectAllHeaders
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Collects all the unique keys of all the</p>
+  <div class="body"><p>Collects and processes all the unique keys in the database</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span>out The array of headers</span>
+    </div>
   </div>
 </div>
         </td>
@@ -1834,7 +1780,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>If string, substitute it.</p>
         </td>
@@ -1848,7 +1794,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
 <p>If array, expand it.</p>
         </td>
@@ -1863,7 +1809,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
 </div>
 <p>Else, e.g. null, ignore it.</p>
         </td>
