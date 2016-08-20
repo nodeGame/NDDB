@@ -5368,10 +5368,14 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      * @param {string} type Optional. The error type, e.g. 'TypeError'.
      *   Default, 'Error'
      * @param {string} method Optional. The name of the method
-     * @param {string} text Optional. The error text. Default, 'generic error'
+     * @param {string|object} err Optional. The error. Default, 'generic error'
      */
-    NDDB.prototype.throwErr = function(type, method, text) {
-        var errMsg;
+    NDDB.prototype.throwErr = function(type, method, err) {
+        var errMsg, text;
+
+        if ('object' === typeof err) text = err.stack || err;
+        else if ('string' === typeof err) text = err;
+
         text = text || 'generic error';
         errMsg = this._getConstrName();
         if (method) errMsg = errMsg + '.' + method;
@@ -5791,19 +5795,19 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      */
     NDDB.prototype.stringify = function(compressed) {
         var spaces, out;
+        var item, i, len;
         if (!this.size()) return '[]';
         compressed = ('undefined' === typeof compressed) ? true : compressed;
-
         spaces = compressed ? 0 : 4;
-
         out = '[';
-        this.each(function(e) {
-            // Decycle, if possible
-            e = NDDB.decycle(e);
-            out += J.stringify(e, spaces) + ', ';
-        });
-        out = out.replace(/, $/,']');
-
+        i = -1, len = this.db.length;
+        for ( ; ++i < len ; ) {
+            // Decycle, if possible.
+            item = NDDB.decycle(this.db[i]);
+            out += J.stringify(item, spaces);
+            if (i !== len-1) out += ', ';
+        }
+        out += ']';
         return out;
     };
 
@@ -8515,6 +8519,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
         }
         return ff;
     }
+
     /**
      * ### validateFormatParameters
      *
