@@ -647,8 +647,11 @@ Upon loading, the cycles are restored.</p>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">insertTokens</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">obj</span> <span class="o">=</span> <span class="p">{};</span>
                     <span class="nx">headers</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">adapter</span><span class="p">[</span><span class="nx">h</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">adapter</span><span class="p">[</span><span class="nx">h</span><span class="p">])</span> <span class="p">{</span>
                             <span class="nx">obj</span><span class="p">[</span><span class="nx">h</span><span class="p">]</span> <span class="o">=</span> <span class="nx">adapter</span><span class="p">[</span><span class="nx">h</span><span class="p">](</span><span class="nx">processedTokens</span><span class="p">);</span>
+                        <span class="p">}</span>
+                        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">adapter</span><span class="p">[</span><span class="nx">h</span><span class="p">])</span> <span class="p">{</span>
+                            <span class="nx">obj</span><span class="p">[</span><span class="nx">h</span><span class="p">]</span> <span class="o">=</span> <span class="nx">processedTokens</span><span class="p">[</span><span class="nx">adapter</span><span class="p">[</span><span class="nx">h</span><span class="p">]];</span>
                         <span class="p">}</span>
                         <span class="k">else</span> <span class="p">{</span>
                             <span class="nx">obj</span><span class="p">[</span><span class="nx">h</span><span class="p">]</span> <span class="o">=</span> <span class="nx">processedTokens</span><span class="p">[</span><span class="nx">h</span><span class="p">];</span>
