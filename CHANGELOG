@@ -1,5 +1,10 @@
 # NDDB change log
 
+## 1.11.0
+  - `#.split()` accepts two parameters: the level of recursion, and whether to use use the position inside the array ar key.
+  - `#.clear()` does not require a confirmation parameter any longer.
+  - `#.clear()` sets previous indexes, hashes or views to NULL, instead of deleting them.
+
 ## 1.10.0
   - Improved saving to CSV, headers option can be a function, and adapter parameters can be strings.
 

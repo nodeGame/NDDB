@@ -2264,7 +2264,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
 
 /**
  * # ARRAY
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions to manipulate arrays
@@ -2358,7 +2358,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
         if (start === end) return [start];
 
         if (increment === 0) return false;
-        if (!JSUS.in_array(typeof increment, ['undefined', 'number'])) {
+        if (!JSUS.inArray(typeof increment, ['undefined', 'number'])) {
             return false;
         }
 
@@ -2508,16 +2508,14 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      * For objects, deep equality comparison is performed
      * through JSUS.equals.
      *
-     * Alias ARRAY.in_array (deprecated)
-     *
      * @param {mixed} needle The element to search in the array
      * @param {array} haystack The array to search in
      *
      * @return {boolean} TRUE, if the element is contained in the array
      *
-     *  @see JSUS.equals
+     * @see JSUS.equals
      */
-    ARRAY.inArray = ARRAY.in_array = function(needle, haystack) {
+    ARRAY.inArray = function(needle, haystack) {
         var func, i, len;
         if (!haystack) return false;
         func = JSUS.equals;
@@ -2528,6 +2526,12 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
             }
         }
         return false;
+    };
+
+    ARRAY.in_array = function(needle, haystack) {
+        console.log('***ARRAY.in_array is deprecated. ' +
+                    'Use ARRAY.inArray instead.***');
+        return ARRAY.inArray(needle, haystack);
     };
 
     /**
@@ -2647,7 +2651,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
             do {
                 idx = JSUS.randomInt(start,limit);
             }
-            while (JSUS.in_array(idx, extracted));
+            while (JSUS.inArray(idx, extracted));
             extracted.push(idx);
 
             if (idx == 1) {
@@ -2888,7 +2892,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      */
     ARRAY.arrayIntersect = function(a1, a2) {
         return a1.filter( function(i) {
-            return JSUS.in_array(i, a2);
+            return JSUS.inArray(i, a2);
         });
     };
 
@@ -2906,7 +2910,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      */
     ARRAY.arrayDiff = function(a1, a2) {
         return a1.filter( function(i) {
-            return !(JSUS.in_array(i, a2));
+            return !(JSUS.inArray(i, a2));
         });
     };
 
@@ -2971,7 +2975,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
         if (!array) return out;
 
         ARRAY.each(array, function(e) {
-            if (!ARRAY.in_array(e, out)) {
+            if (!ARRAY.inArray(e, out)) {
                 out.push(e);
             }
         });
@@ -3014,7 +3018,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
 
 /**
  * # OBJ
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions to manipulate JavaScript objects
@@ -3951,12 +3955,12 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
     /**
      * ## OBJ.split
      *
-     * Splits an object along a specified dimension, and returns
-     * all the copies in an array.
+     * Splits an object along a specified dimension
+     *
+     * All fragments are returned in an array (as copies).
      *
      * It creates as many new objects as the number of properties
-     * contained in the specified dimension. The object are identical,
-     * but for the given dimension, which was split. E.g.
+     * contained in the specified dimension. E.g.
      *
      * ```javascript
      *  var o = { a: 1,
@@ -3981,40 +3985,108 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      * ```
      *
      * @param {object} o The object to split
-     * @param {sting} key The name of the property to split
+     * @param {string} key The name of the property to split
+     * @param {number} l Optional. The recursion level. Default: 1.
+     * @param {boolean} positionAsKey Optional. If TRUE, the position
+     *   of an element in the array to split will be used as key.
      *
-     * @return {object} A copy of the object with split values
+     * @return {array} A list of copies of the object with split values
      */
-    OBJ.split = function(o, key) {
-        var out, model, splitValue;
-        if (!o) return;
-        if (!key || 'object' !== typeof o[key]) {
-            return JSUS.clone(o);
-        }
+    OBJ.split = (function() {
+        var makeClone, splitValue;
+        var model, level, _key, posAsKeys;
 
-        out = [];
-        model = JSUS.clone(o);
-        model[key] = {};
+        makeClone = function(value, out, keys) {
+            var i, len, tmp, copy;
+            copy = JSUS.clone(model);
 
-        splitValue = function(value) {
-            var i, copy;
-            for (i in value) {
-                copy = JSUS.clone(model);
-                if (value.hasOwnProperty(i)) {
-                    if ('object' === typeof value[i]) {
-                        out = out.concat(splitValue(value[i]));
-                    }
-                    else {
-                        copy[key][i] = value[i];
-                        out.push(copy);
+            switch(keys.length) {
+            case 0:
+                copy[_key] = JSUS.clone(value);
+                break;
+            case 1:
+                copy[_key][keys[0]] = JSUS.clone(value);
+                break;
+            case 2:
+                copy[_key][keys[0]] = {};
+                copy[_key][keys[0]][keys[1]] = JSUS.clone(value);
+                break;
+            default:
+                i = -1, len = keys.length-1;
+                tmp = copy[_key];
+                for ( ; ++i < len ; ) {
+                    tmp[keys[i]] = {};
+                    tmp = tmp[keys[i]];
+                }
+                tmp[keys[keys.length-1]] = JSUS.clone(value);
+            }
+            out.push(copy);
+            return;
+        };
+
+        splitValue = function(value, out, curLevel, keysArray) {
+            var i, curPosAsKey;
+
+            // level == 0 means no limit.
+            if (level && (curLevel >= level)) {
+                makeClone(value, out, keysArray);
+            }
+            else {
+
+                curPosAsKey = posAsKeys || !JSUS.isArray(value);
+
+                for (i in value) {
+                    if (value.hasOwnProperty(i)) {
+
+                        if ('object' === typeof value[i] &&
+                            (level && ((curLevel+1) <= level))) {
+
+                            splitValue(value[i], out, (curLevel+1),
+                                       curPosAsKey ?
+                                       keysArray.concat(i) : keysArray);
+                        }
+                        else {
+                            makeClone(value[i], out, curPosAsKey ?
+                                      keysArray.concat(i) : keysArray);
+                        }
                     }
                 }
             }
-            return out;
         };
 
-        return splitValue(o[key]);
-    };
+        return function(o, key, l, positionAsKey) {
+            var out;
+            if ('object' !== typeof o) {
+                throw new TypeError('JSUS.split: o must be object. Found: ' +
+                                    o);
+            }
+            if ('string' !== typeof key || key.trim() === '') {
+                throw new TypeError('JSUS.split: key must a non-empty ' +
+                                    'string. Found: ' + key);
+            }
+            if (l && ('number' !== typeof l || l < 0)) {
+                throw new TypeError('JSUS.split: l must a non-negative ' +
+                                    'number or undefined. Found: ' + l);
+            }
+            model = JSUS.clone(o);
+            if ('object' !== typeof o[key]) return [model];
+            // Init.
+            out = [];
+            _key = key;
+            model[key] = {};
+            level = 'undefined' === typeof l ? 1 : l;
+            posAsKeys = positionAsKey;
+            // Recursively compute split.
+            splitValue(o[key], out, 0, []);
+            // Cleanup.
+            _key = undefined;
+            model = undefined;
+            level = undefined;
+            posAsKeys = undefined;
+            // Return.
+            return out;
+        };
+    })();
 
     /**
      * ## OBJ.melt
@@ -4062,12 +4134,12 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      *   not found
      */
     OBJ.uniqueKey = function(obj, prefixName, stop) {
-        var name;
-        var duplicateCounter = 1;
+        var name, duplicateCounter;
         if (!obj) {
             JSUS.log('Cannot find unique name in undefined object', 'ERR');
             return;
         }
+        duplicateCounter = 1;
         prefixName = '' + (prefixName ||
                            Math.floor(Math.random()*1000000000000000));
         stop = stop || 1000000;
@@ -4225,7 +4297,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
 
 /**
  * # PARSE
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Collection of static functions related to parsing strings
@@ -4377,13 +4449,16 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      * @see PARSE.stringify
      */
     PARSE.stringifyAll = function(o, spaces) {
-        for (var i in o) {
-            if (!o.hasOwnProperty(i)) {
-                if ('object' === typeof o[i]) {
-                    o[i] = PARSE.stringifyAll(o[i]);
-                }
-                else {
-                    o[i] = o[i];
+        var i;
+        if ('object' === typeof o) {
+            for (i in o) {
+                if (!o.hasOwnProperty(i)) {
+                    if ('object' === typeof o[i]) {
+                        o[i] = PARSE.stringifyAll(o[i]);
+                    }
+                    else {
+                        o[i] = o[i];
+                    }
                 }
             }
         }
@@ -4404,7 +4479,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      * @see JSON.parse
      * @see PARSE.stringify_prefix
      */
-    PARSE.parse = function(str) {
+    PARSE.parse = (function() {
 
         var len_prefix = PARSE.stringify_prefix.length,
             len_func = PARSE.marker_func.length,
@@ -4414,29 +4489,21 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
             len_inf = PARSE.marker_inf.length,
             len_minus_inf = PARSE.marker_minus_inf.length;
 
-
-        var o = JSON.parse(str);
-        return walker(o);
-
         function walker(o) {
+            var i;
             if ('object' !== typeof o) return reviver(o);
-
-            for (var i in o) {
+            for (i in o) {
                 if (o.hasOwnProperty(i)) {
-                    if ('object' === typeof o[i]) {
-                        walker(o[i]);
-                    }
-                    else {
-                        o[i] = reviver(o[i]);
-                    }
+                    if ('object' === typeof o[i]) walker(o[i]);
+                    else o[i] = reviver(o[i]);
                 }
             }
-
             return o;
         }
 
         function reviver(value) {
-            var type = typeof value;
+            var type;
+            type = typeof value;
 
             if (type === 'string') {
                 if (value.substring(0, len_prefix) !== PARSE.stringify_prefix) {
@@ -4467,101 +4534,200 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
             }
             return value;
         }
+
+        return function(str) {
+            return walker(JSON.parse(str));
+        };
+
+    })();
+
+    /**
+     * ## PARSE.isInt
+     *
+     * Checks if a value is an integer number or a string containing one
+     *
+     * Non-numbers, Infinity, NaN, and floats will return FALSE
+     *
+     * @param {mixed} n The value to check
+     * @param {number} lower Optional. If set, n must be greater than lower
+     * @param {number} upper Optional. If set, n must be smaller than upper
+     *
+     * @return {boolean|number} The parsed integer, or FALSE if none was found
+     *
+     * @see PARSE.isFloat
+     * @see PARSE.isNumber
+     */
+    PARSE.isInt = function(n, lower, upper) {
+        var regex, i;
+        regex = /^-?\d+$/;
+        if (!regex.test(n)) return false;
+        i = parseInt(n, 10);
+        if (i !== parseFloat(n)) return false;
+        return PARSE.isNumber(i, lower, upper);
+    };
+
+    /**
+     * ## PARSE.isFloat
+     *
+     * Checks if a value is a float number or a string containing one
+     *
+     * Non-numbers, Infinity, NaN, and integers will return FALSE
+     *
+     * @param {mixed} n The value to check
+     * @param {number} lower Optional. If set, n must be greater than lower
+     * @param {number} upper Optional. If set, n must be smaller than upper
+     *
+     * @return {boolean|number} The parsed float, or FALSE if none was found
+     *
+     * @see PARSE.isInt
+     * @see PARSE.isNumber
+     */
+    PARSE.isFloat = function(n, lower, upper) {
+        var regex;
+        regex = /^-?\d*(\.\d+)?$/;
+        if (!regex.test(n)) return false;
+        if (n.toString().indexOf('.') === -1) return false;
+        return PARSE.isNumber(n, lower, upper);
+    };
+
+    /**
+     * ## PARSE.isNumber
+     *
+     * Checks if a value is a number (int or float) or a string containing one
+     *
+     * Non-numbers, Infinity, NaN will return FALSE
+     *
+     * @param {mixed} n The value to check
+     * @param {number} lower Optional. If set, n must be greater than lower
+     * @param {number} upper Optional. If set, n must be smaller than upper
+     *
+     * @return {boolean|number} The parsed number, or FALSE if none was found
+     *
+     * @see PARSE.isInt
+     * @see PARSE.isFloat
+     */
+    PARSE.isNumber = function(n, lower, upper) {
+        if (isNaN(n) || !isFinite(n)) return false;
+        n = parseFloat(n);
+        if ('number' === typeof lower && n < lower) return false;
+        if ('number' === typeof upper && n > upper) return false;
+        return n;
     };
 
     /**
      * ## PARSE.range
      *
-     * Decodes strings into an array of integers
+     * Decodes semantic strings into an array of integers
      *
      * Let n, m  and l be integers, then the tokens of the string are
      * interpreted in the following way:
-     * - `*`: Any integer.
-     * - `n`: The integer `n`.
-     * - `begin`: The smallest integer in `available`.
-     * - `end`: The largest integer in `available`.
-     * - `<n`, `<=n`, `>n`, `>=n`: Any integer (strictly) smaller/larger than n.
-     * - `n..m`, `[n,m]`: Any integer between n and m (both inclusively).
-     * - `n..l..m`: Any i
-     * - `[n,m)`: Any integer between n (inclusively) and m (exclusively).
-     * - `(n,m]`: Any integer between n (exclusively) and m (inclusively).
-     * - `(n,m)`: Any integer between n and m (both exclusively).
-     * - `%n`: Divisible by n.
-     * - `%n = m`: Divisible with rest m.
-     * - `!`: Not.
-     * - `|`, `||`, `,`: Or.
-     * - `&`, `&&`: And.
+     *
+     *  - `*`: Any integer
+     *  - `n`: The integer `n`
+     *  - `begin`: The smallest integer in `available`
+     *  - `end`: The largest integer in `available`
+     *  - `<n`, `<=n`, `>n`, `>=n`: Any integer (strictly) smaller/larger than n
+     *  - `n..m`, `[n,m]`: Any integer between n and m (both inclusively)
+     *  - `n..l..m`: Any i
+     *  - `[n,m)`: Any integer between n (inclusively) and m (exclusively)
+     *  - `(n,m]`: Any integer between n (exclusively) and m (inclusively)
+     *  - `(n,m)`: Any integer between n and m (both exclusively)
+     *  - `%n`: Divisible by n
+     *  - `%n = m`: Divisible with rest m
+     *  - `!`: Logical not
+     *  - `|`, `||`, `,`: Logical or
+     *  - `&`, `&&`: Logical and
+     *
      * The elements of the resulting array are all elements of the `available`
      * array which satisfy the expression defined by `expr`.
      *
-     * Example:
-     * PARSE.range('2..5, >8 & !11', '[-2,12]');
-     *      // [2,3,4,5,9,10,12]
-     * PARSE.range('begin...end/2 | 3*end/4...3...end', '[0,40) & %2 = 1');
-     *      // [1,3,5,7,9,11,13,15,17,19,29,35] (end == 39)
-     * PARSE.range('<=19, 22, %5', '>6 & !>27');
-     *      // [7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,25]
-     * PARSE.range('*','(3,8) & !%4, 22, (10,12]');
-     *      // [5,6,7,11,12,22]
-     * PARSE.range('<4', {
-     *      begin: 0,
-     *      end: 21,
-     *      prev: 0,
-     *      cur: 1,
-     *      next: function() {
-     *          var temp = this.prev;
-     *          this.prev = this.cur;
-     *          this.cur += temp;
-     *          return this.cur;
-     *      },
-     *      isFinished: function() {
-     *          return this.cur + this.prev > this.end;
-     *      }
-     * });
-     *      // [5, 8, 13, 21]
+     * Examples:
      *
+     *   PARSE.range('2..5, >8 & !11', '[-2,12]'); // [2,3,4,5,9,10,12]
      *
-     * @param {string} expr The string specifying the selection expression
-     * @param {mixed} available
-     *  - string to be interpreted according to the same rules as
-     *       `expr`
-     *  - array containing the available elements
-     *  - object providing functions next, isFinished and attributes begin, end
+     *   PARSE.range('begin...end/2 | 3*end/4...3...end', '[0,40) & %2 = 1');
+     *        // [1,3,5,7,9,11,13,15,17,19,29,35] (end == 39)
+     *
+     *   PARSE.range('<=19, 22, %5', '>6 & !>27');
+     *        // [7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,25]
+     *
+     *   PARSE.range('*','(3,8) & !%4, 22, (10,12]'); // [5,6,7,11,12,22]
+     *
+     *   PARSE.range('<4', {
+     *       begin: 0,
+     *       end: 21,
+     *       prev: 0,
+     *       cur: 1,
+     *       next: function() {
+     *           var temp = this.prev;
+     *           this.prev = this.cur;
+     *           this.cur += temp;
+     *           return this.cur;
+     *       },
+     *       isFinished: function() {
+     *           return this.cur + this.prev > this.end;
+     *       }
+     *   }); // [5, 8, 13, 21]
+     *
+     * @param {string|number} expr The selection expression
+     * @param {mixed} available Optional. If undefined `expr` is used. If:
+     *  - string: it is interpreted according to the same rules as `expr`;
+     *  - array: it is used as it is;
+     *  - object: provide functions next, isFinished and attributes begin, end
      *
      * @return {array} The array containing the specified values
+     *
+     * @see JSUS.eval
      */
-    // available can be an array, a string or a object.
     PARSE.range = function(expr, available) {
-        var i, x;
-        var solution = [];
+        var i,len, x;
+        var solution;
         var begin, end, lowerBound, numbers;
         var invalidChars, invalidBeforeOpeningBracket, invalidDot;
 
-        if ("undefined" === typeof expr) {
-            return [];
-        }
+        solution = [];
+        if ('undefined' === typeof expr) return solution;
 
+        // TODO: this could be improved, i.e. if it is a number, many
+        // checks and regular expressions could be avoided.
+        if ('number' === typeof expr) expr = '' + expr;
+        else if ('string' !== typeof expr) {
+            throw new TypeError('PARSE.range: expr must be string, number, ' +
+                                'undefined.');
+        }
         // If no available numbers defined, assumes all possible are allowed.
-        if ("undefined" === typeof available) {
+        if ('undefined' === typeof available) {
             available = expr;
         }
-        if (!JSUS.isArray(available)) {
-            if ("string" !== typeof available) {
-                if ("function" !== typeof available.next ||
-                    "function" !== typeof available.isFinished ||
-                    "number"   !== typeof available.begin ||
-                    "number"   !== typeof available.end
-                )
-                throw new Error('PARSE.range: available wrong type');
+        else if (JSUS.isArray(available)) {
+            if (available.length === 0) return solution;
+            begin = Math.min.apply(null, available);
+            end = Math.max.apply(null, available);
+        }
+        else if ('object' === typeof available) {
+            if ('function' !== typeof available.next) {
+                throw new TypeError('PARSE.range: available.next must be ' +
+                                    'function.');
             }
-        }
-        else if (available.length === 0) {
-            return [];
-        }
+            if ('function' !== typeof available.isFinished) {
+                throw new TypeError('PARSE.range: available.isFinished must ' +
+                                    'be function.');
+            }
+            if ('number' !== typeof available.begin) {
+                throw new TypeError('PARSE.range: available.begin must be ' +
+                                    'number.');
+            }
+            if ('number' !== typeof available.end) {
+                throw new TypeError('PARSE.range: available.end must be ' +
+                                    'number.');
+            }
 
-        // If the availble points are also only given implicitly, compute set
-        // of available numbers by first guessing a bound.
-        if ("string" === typeof available) {
+            begin = available.begin;
+            end = available.end;
+        }
+        else if ('string' === typeof available) {
+            // If the availble points are also only given implicitly,
+            // compute set of available numbers by first guessing a bound.
             available = preprocessRange(available);
 
             numbers = available.match(/([-+]?\d+)/g);
@@ -4582,34 +4748,32 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
                     return this.value > this.end;
                 }
             });
-        }
-        if (JSUS.isArray(available)) {
             begin = Math.min.apply(null, available);
             end = Math.max.apply(null, available);
         }
         else {
-            begin = available.begin;
-            end = available.end;
+            throw new TypeError('PARSE.range: available must be string, ' +
+                                'array, object or undefined.');
         }
 
         // end -> maximal available value.
-        expr = expr.replace(/end/g, parseInt(end));
+        expr = expr.replace(/end/g, parseInt(end, 10));
 
         // begin -> minimal available value.
-        expr = expr.replace(/begin/g, parseInt(begin));
+        expr = expr.replace(/begin/g, parseInt(begin, 10));
 
         // Do all computations.
         expr = preprocessRange(expr);
 
         // Round all floats
         expr = expr.replace(/([-+]?\d+\.\d+)/g, function(match, p1) {
-            return parseInt(p1);
+            return parseInt(p1, 10);
         });
 
         // Validate expression to only contain allowed symbols.
         invalidChars = /[^ \*\d<>=!\|&\.\[\],\(\)\-\+%]/g;
         if (expr.match(invalidChars)) {
-            throw new Error('invalidChars:' + expr);
+            throw new Error('PARSE.range: invalid characters found: ' + expr);
         }
 
         // & -> && and | -> ||.
@@ -4658,9 +4822,11 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
         // * -> true.
         expr = expr.replace('*', 1);
 
+        // Remove spaces.
+        expr = expr.replace(/\s/g, '');
+
         // a, b -> (a) || (b)
         expr = expr.replace(/\)[,] *(!*)\(/g, ")||$1(");
-
 
         // Validating the expression before eval"ing it.
         invalidChars = /[^ \d<>=!\|&,\(\)\-\+%x\.]/g;
@@ -4670,28 +4836,28 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
         invalidDot = /\.[^\d]|[^\d]\./;
 
         if (expr.match(invalidChars)) {
-            throw new Error('PARSE.range: invalidChars:' + expr);
+            throw new Error('PARSE.range: invalid characters found: ' + expr);
         }
         if (expr.match(invalidBeforeOpeningBracket)) {
-            throw new Error('PARSE.range: invaludBeforeOpeningBracket:' + expr);
+            throw new Error('PARSE.range: invalid character before opending ' +
+                            'bracket found: ' + expr);
         }
         if (expr.match(invalidDot)) {
-            throw new Error('PARSE.range: invalidDot:' + expr);
+            throw new Error('PARSE.range: invalid dot found: ' + expr);
         }
 
         if (JSUS.isArray(available)) {
-            for (i in available) {
-                if (available.hasOwnProperty(i)) {
-                    x = parseInt(available[i]);
-                    if (JSUS.eval(expr.replace(/x/g, x))) {
-                        solution.push(x);
-                    }
+            i = -1, len = available.length;
+            for ( ; ++i < len ; ) {
+                x = parseInt(available[i], 10);
+                if (JSUS.eval(expr.replace(/x/g, x))) {
+                    solution.push(x);
                 }
             }
         }
         else {
             while (!available.isFinished()) {
-                x = parseInt(available.next());
+                x = parseInt(available.next(), 10);
                 if (JSUS.eval(expr.replace(/x/g, x))) {
                     solution.push(x);
                 }
@@ -4702,18 +4868,18 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
 
     function preprocessRange(expr) {
         var mult = function(match, p1, p2, p3) {
-            var n1 = parseInt(p1);
-            var n3 = parseInt(p3);
+            var n1 = parseInt(p1, 10);
+            var n3 = parseInt(p3, 10);
             return p2 == '*' ? n1*n3 : n1/n3;
         };
         var add = function(match, p1, p2, p3) {
-            var n1 = parseInt(p1);
-            var n3 = parseInt(p3);
+            var n1 = parseInt(p1, 10);
+            var n3 = parseInt(p3, 10);
             return p2 == '-' ? n1 - n3 : n1 + n3;
         };
         var mod = function(match, p1, p2, p3) {
-            var n1 = parseInt(p1);
-            var n3 = parseInt(p3);
+            var n1 = parseInt(p1, 10);
+            var n3 = parseInt(p3, 10);
             return n1 % n3;
         };
 
@@ -5588,18 +5754,12 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      * @api private
      */
     NDDB.prototype._autoUpdate = function(options) {
-        var update = options ? J.merge(this.__update, options) : this.__update;
+        var update;
+        update = options ? J.merge(this.__update, options) : this.__update;
 
-        if (update.pointer) {
-            this.nddb_pointer = this.db.length-1;
-        }
-        if (update.sort) {
-            this.sort();
-        }
-
-        if (update.indexes) {
-            this.rebuildIndexes();
-        }
+        if (update.pointer) this.nddb_pointer = this.db.length-1;
+        if (update.sort) this.sort();
+        if (update.indexes) this.rebuildIndexes();
     };
 
     /**
@@ -7063,6 +7223,8 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      * Removes all entries from the database
      *
      * @return {NDDB} A new instance of NDDB with no entries
+     *
+     * TODO: do we still need this method?
      */
     NDDB.prototype.removeAllEntries = function() {
         if (!this.db.length) return this;
@@ -7082,38 +7244,27 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      * and resets the current query selection
      *
      * Hooks, indexing, comparator, views, and hash functions are not deleted.
-     *
-     * Requires an additional parameter to confirm the deletion.
-     *
-     * @return {boolean} TRUE, if the database was cleared
      */
-    NDDB.prototype.clear = function(confirm) {
+    NDDB.prototype.clear = function() {
         var i;
-        if (confirm) {
-            this.db = [];
-            this.nddbid.resolve = {};
-            this.tags = {};
-            this.query.reset();
-            this.nddb_pointer = 0;
-            this.lastSelection = [];
-            this.hashtray.clear();
 
-            for (i in this.__H) {
-                if (this[i]) delete this[i];
-            }
-            for (i in this.__C) {
-                if (this[i]) delete this[i];
-            }
-            for (i in this.__I) {
-                if (this[i]) delete this[i];
-            }
-        }
-        else {
-            this.log('Do you really want to clear the current dataset? ' +
-                     'Please use clear(true)', 'WARN');
-        }
+        this.db = [];
+        this.nddbid.resolve = {};
+        this.tags = {};
+        this.query.reset();
+        this.nddb_pointer = 0;
+        this.lastSelection = [];
+        this.hashtray.clear();
 
-        return confirm;
+        for (i in this.__H) {
+            if (this[i]) this[i] = null;
+        }
+        for (i in this.__C) {
+            if (this[i]) this[i] = null;
+        }
+        for (i in this.__I) {
+            if (this[i]) this[i] = null;
+        }
     };
 
 
@@ -7248,20 +7399,23 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
     /**
      * ### NDDB.split
      *
-     * Splits all the entries  containing the specified dimension
+     * Splits recursively all the entries containing the specified dimension
      *
      * If a active selection if found, operation is applied only to the subset.
      *
-     * New entries are created and a new NDDB object is breeded
-     * to allows method chaining.
+     * A NDDB object is breeded containing all the split items.
      *
      * @param {string} key The dimension along which items will be split
+     * @param {number} level Optional. Limits how deep to perform the split.
+     *   Value equal to 0 means no limit in the recursive split.
+     * @param {boolean} positionAsKey Optional. If TRUE, when splitting an
+     *   array the position of an element is used as key. Default: FALSE.
      *
      * @return {NDDB} A new database containing the split entries
      *
      * @see JSUS.split
      */
-    NDDB.prototype.split = function(key) {
+    NDDB.prototype.split = function(key, level, positionAsKey) {
         var out, i, db, len;
         if ('string' !== typeof key) {
             this.throwErr('TypeError', 'split', 'key must be string');
@@ -7270,7 +7424,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
         len = db.length;
         out = [];
         for (i = 0; i < len; i++) {
-            out = out.concat(J.split(db[i], key));
+            out = out.concat(J.split(db[i], key, level, positionAsKey));
         }
         return this.breed(out);
     };
@@ -7648,7 +7802,7 @@ if (parseInt(ws + '08') !== 8 || parseInt(ws + '0x16') !== 22) {
      * groups[1].fetch(); // [ { a: 3, b: 4 } ]
      * ```
      *
-     * @param {string} key If the dimension for grouping
+     * @param {string} key The dimension for grouping
      *
      * @return {array} outs The array of NDDB (or constructor) groups
      */
