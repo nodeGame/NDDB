@@ -814,18 +814,12 @@
      * @api private
      */
     NDDB.prototype._autoUpdate = function(options) {
-        var update = options ? J.merge(this.__update, options) : this.__update;
+        var update;
+        update = options ? J.merge(this.__update, options) : this.__update;
 
-        if (update.pointer) {
-            this.nddb_pointer = this.db.length-1;
-        }
-        if (update.sort) {
-            this.sort();
-        }
-
-        if (update.indexes) {
-            this.rebuildIndexes();
-        }
+        if (update.pointer) this.nddb_pointer = this.db.length-1;
+        if (update.sort) this.sort();
+        if (update.indexes) this.rebuildIndexes();
     };
 
     /**
@@ -2289,6 +2283,8 @@
      * Removes all entries from the database
      *
      * @return {NDDB} A new instance of NDDB with no entries
+     *
+     * TODO: do we still need this method?
      */
     NDDB.prototype.removeAllEntries = function() {
         if (!this.db.length) return this;
@@ -2308,35 +2304,26 @@
      * and resets the current query selection
      *
      * Hooks, indexing, comparator, views, and hash functions are not deleted.
-     *
-     * Requires an additional parameter to confirm the deletion.
-     *
-     * @return {boolean} TRUE, if the database was cleared
      */
-    NDDB.prototype.clear = function(confirm) {
+    NDDB.prototype.clear = function() {
         var i;
-        if (confirm) {
-            this.db = [];
-            this.nddbid.resolve = {};
-            this.tags = {};
-            this.query.reset();
-            this.nddb_pointer = 0;
-            this.lastSelection = [];
-            this.hashtray.clear();
 
-            for (i in this.__H) {
-                if (this[i]) delete this[i];
-            }
-            for (i in this.__C) {
-                if (this[i]) delete this[i];
-            }
-            for (i in this.__I) {
-                if (this[i]) delete this[i];
-            }
+        this.db = [];
+        this.nddbid.resolve = {};
+        this.tags = {};
+        this.query.reset();
+        this.nddb_pointer = 0;
+        this.lastSelection = [];
+        this.hashtray.clear();
+
+        for (i in this.__H) {
+            if (this[i]) this[i] = null;
         }
-        else {
-            this.log('Do you really want to clear the current dataset? ' +
-                     'Please use clear(true)', 'WARN');
+        for (i in this.__C) {
+            if (this[i]) this[i] = null;
+        }
+        for (i in this.__I) {
+            if (this[i]) this[i] = null;
         }
 
         return confirm;
@@ -2474,20 +2461,23 @@
     /**
      * ### NDDB.split
      *
-     * Splits all the entries  containing the specified dimension
+     * Splits recursively all the entries containing the specified dimension
      *
      * If a active selection if found, operation is applied only to the subset.
      *
-     * New entries are created and a new NDDB object is breeded
-     * to allows method chaining.
+     * A NDDB object is breeded containing all the split items.
      *
      * @param {string} key The dimension along which items will be split
+     * @param {number} level Optional. Limits how deep to perform the split.
+     *   Value equal to 0 means no limit in the recursive split.
+     * @param {boolean} positionAsKey Optional. If TRUE, when splitting an
+     *   array the position of an element is used as key. Default: FALSE.
      *
      * @return {NDDB} A new database containing the split entries
      *
      * @see JSUS.split
      */
-    NDDB.prototype.split = function(key) {
+    NDDB.prototype.split = function(key, level, positionAsKey) {
         var out, i, db, len;
         if ('string' !== typeof key) {
             this.throwErr('TypeError', 'split', 'key must be string');
@@ -2496,7 +2486,7 @@
         len = db.length;
         out = [];
         for (i = 0; i < len; i++) {
-            out = out.concat(J.split(db[i], key));
+            out = out.concat(J.split(db[i], key, level, positionAsKey));
         }
         return this.breed(out);
     };
@@ -2874,7 +2864,7 @@
      * groups[1].fetch(); // [ { a: 3, b: 4 } ]
      * ```
      *
-     * @param {string} key If the dimension for grouping
+     * @param {string} key The dimension for grouping
      *
      * @return {array} outs The array of NDDB (or constructor) groups
      */
