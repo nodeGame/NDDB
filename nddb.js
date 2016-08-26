@@ -2325,8 +2325,6 @@
         for (i in this.__I) {
             if (this[i]) this[i] = null;
         }
-
-        return confirm;
     };
 
 

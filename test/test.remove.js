@@ -8,7 +8,7 @@ NDDB = require('./../nddb').NDDB;
 
 var db = new NDDB({
     update: {
-	indexes: true,
+        indexes: true,
     }
 });
 
@@ -20,9 +20,9 @@ var ids = ['z','x'];//['z','x','c','v'];
 
 var hashable = [
     {
-   	painter: "Jesus",
-   	title: "Tea in the desert",
-   	year: 0,
+        painter: "Jesus",
+        title: "Tea in the desert",
+        year: 0,
     },
     {
         painter: "Dali",
@@ -50,7 +50,7 @@ var hashable = [
         title: "Olympia",
         year: 1863
     },
-    
+
 ];
 
 var not_hashable = [
@@ -60,14 +60,14 @@ var not_hashable = [
         speed: 350,
     },
     {
-	car: "Fiat",
-	model: "500",
-	speed: 100,
+        car: "Fiat",
+        model: "500",
+        speed: 100,
     },
     {
-	car: "BMW",
-	model: "Z4",
-	speed: 250,
+        car: "BMW",
+        model: "Z4",
+        speed: 250,
     },
 ];
 
@@ -83,17 +83,17 @@ var hashPainter = function(o) {
 describe('NDDB Remove Operations:', function() {
 
     before(function(){
-	db = new NDDB({
-	    update: {
-		indexes: true,
-	    }
-	});
-	db.hash('painter', hashPainter);
+        db = new NDDB({
+            update: {
+                indexes: true,
+            }
+        });
+        db.hash('painter', hashPainter);
 
-	db.importDB(not_hashable);
-	db.importDB(hashable);
+        db.importDB(not_hashable);
+        db.importDB(hashable);
     });
-    
+
     describe('Removing elements not in index (Ferrari)', function() {
         before(function(){
             testcase = db.select('car', '=', 'Ferrari').execute();
@@ -103,63 +103,60 @@ describe('NDDB Remove Operations:', function() {
             testcase = null;
             tmp = null;
         });
-        
+
         it('the selection should be empty', function() {
             testcase.size().should.be.eql(0);
         });
-        
+
         it('Ferrari should still be in the original database', function() {
             db.select('car', '=', 'Ferrari').execute().size().should.be.eql(1);
         });
-        
+
         it('original length should not change', function() {
             db.size().should.eql(nitems);
         });
-        
+
     });
-    
+
     describe('Removing elements that are indexed', function() {
         before(function(){
             tmp = db.size();
             testcase = db.select('painter', '=', 'Monet').execute();
             testcase.removeAllEntries();
-            db.rebuildIndexes();    
+            db.rebuildIndexes();
 
-            
+
         });
-        
+
         it('should not decrease the length of the database', function() {
             db.size().should.be.eql(tmp);
         });
-        
+
         it('should leave the length of the index unchanged', function() {
             db.painter.should.have.property('Monet');
         });
-        
+
     });
-    
+
     describe('#clear()',function() {
 
         before(function() {
             db.importDB(hashable);
             db.tag('A', db.first());
-            db.clear(true);
+            db.clear();
         });
 
         it('should clear all items',function() {
             db.size().should.eql(0);
         });
-        
+
         it('should clear all tags',function() {
             JSUS.size(db.tags).should.eql(0);
         });
-        
+
         it('should clear indexes and hashes',function() {
-            ('undefined' === typeof db.painter).should.be.true;
+            (!db.painter).should.be.true;
         });
     });
 
 });
-
-
-
