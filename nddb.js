@@ -1338,11 +1338,12 @@
      * @see NDDB._hashIt
      */
     NDDB.prototype.rebuildIndexes = function() {
-        var h = !(J.isEmpty(this.__H)),
-        i = !(J.isEmpty(this.__I)),
+        var h, i, v, cb, idx;
+
+        h = !(J.isEmpty(this.__H));
+        i = !(J.isEmpty(this.__I));
         v = !(J.isEmpty(this.__V));
 
-        var cb, idx;
         if (!h && !i && !v) return;
 
         if (h && !i && !v) {

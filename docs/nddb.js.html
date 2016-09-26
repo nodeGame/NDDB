@@ -3007,11 +3007,12 @@ the entry does not belong to any view of the index.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">rebuildIndexes</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">h</span> <span class="o">=</span> <span class="o">!</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">__H</span><span class="p">)),</span>
-        <span class="nx">i</span> <span class="o">=</span> <span class="o">!</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">__I</span><span class="p">)),</span>
+        <span class="kd">var</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">idx</span><span class="p">;</span>
+
+        <span class="nx">h</span> <span class="o">=</span> <span class="o">!</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">__H</span><span class="p">));</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">!</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">__I</span><span class="p">));</span>
         <span class="nx">v</span> <span class="o">=</span> <span class="o">!</span><span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">__V</span><span class="p">));</span>
 
-        <span class="kd">var</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">idx</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">h</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">i</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">v</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">h</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">i</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
