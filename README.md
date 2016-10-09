@@ -119,7 +119,7 @@ select statements is performed using three input parameters:
 
 Available operators include standard logical operators:
 
-   - `=`, `==`, `!=`, `>`, >=`, `<`, `<=`,
+   - `=`, `==`, `!=`, `>`, `>=`, `<`, `<=`,
 
 or advanced comparison operators:
 
