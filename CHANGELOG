@@ -1,5 +1,8 @@
 # NDDB change log
 
+## 1.12.0
+  - Fix bug loading csv files: unquoted numbers are parsed as number when loading.
+
 ## 1.11.0
   - `#.split()` accepts two parameters: the level of recursion, and whether to use use the position inside the array ar key.
   - `#.clear()` does not require a confirmation parameter any longer.
