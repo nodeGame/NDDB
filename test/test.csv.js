@@ -24,15 +24,15 @@ var filename = {
 };
 
 var lastItem = {
-    A: "10",
-    B: "11",
+    A: 10,
+    B: 11,
     C: "12",
     D: "Z4"
 };
 
 var lastItemUnescaped = {
-    '"A"': '"10"',
-    '"B"': '"11"',
+    '"A"': 10,
+    '"B"': 11,
     '"C"': '"12"',
     '"D"': '"Z4"'
 };
@@ -114,8 +114,8 @@ function getLoadTests(m, it) {
                 r: 'D'
             });
             db.last().should.be.eql({
-                q: '10',
-                w: '11',
+                q: 10,
+                w: 11,
                 e: '12',
                 r: 'Z4'
             });
@@ -171,9 +171,9 @@ function getLoadTests(m, it) {
             });
             db.last().should.be.eql({
                 q: '12',
-                w: '11',
+                w: 11,
                 e: 'Z4',
-                r: '10'
+                r: 10
             });
             done();
         });
@@ -211,7 +211,7 @@ function getLoadTests(m, it) {
             });
             db.last().should.be.eql({
                 q: '20',
-                w: '11',
+                w: 11,
                 e: '24',
                 r: 'Z4'
             });
@@ -289,8 +289,8 @@ function getLoadTests(m, it) {
                 X4: 'D'
             });
             db.last().should.be.eql({
-                X1: '10',
-                X2: '11',
+                X1: 10,
+                X2: 11,
                 X3: '12',
                 X4: 'Z4'
             });
@@ -307,8 +307,8 @@ function getLoadTests(m, it) {
                         r: 'D'
                     });
                     db.last().should.be.eql({
-                        q: '10',
-                        w: '11',
+                        q: 10,
+                        w: 11,
                         e: '12',
                         r: 'Z4'
                     });
@@ -338,8 +338,8 @@ function getLoadTests(m, it) {
                                     X4: 'Z1'
                                 });
                                 db.last().should.be.eql({
-                                    X1: '10',
-                                    B:  '11',
+                                    X1: 10,
+                                    B:  11,
                                     k:  '12',
                                     X4: 'Z4'
                                 });
@@ -357,8 +357,8 @@ function getLoadTests(m, it) {
                                         X4: 'D'
                                     });
                                     db.last().should.be.eql({
-                                        X1: '10',
-                                        B:  '11',
+                                        X1: 10,
+                                        B:  11,
                                         k:  '12',
                                         X4: 'Z4'
                                     });
@@ -442,7 +442,7 @@ function getSaveTests(m, it) {
                         db2.size().should.eql(4);
                         db2.last().should.be.eql({
                             A: '40',
-                            B: '11',
+                            B: 11,
                             C: '48',
                             D: 'Z4'
                         });
@@ -453,8 +453,8 @@ function getSaveTests(m, it) {
         }
     );
 
-    it('should load, ' + m + ', and reload a csv file with several pre-defined'
-        + 'headers', function(done) {
+    it('should load, ' + m + ', and reload a csv file with several '
+        + 'pre-defined headers', function(done) {
             db = new NDDB();
             db.loadSync(filename.standard);
             db.size().should.eql(4);
@@ -475,8 +475,8 @@ function getSaveTests(m, it) {
                         db2.loadSync(filename.temp(3));
                         db2.size().should.eql(4);
                         db2.last().should.be.eql({
-                            A: '10',
-                            B: '11',
+                            A: 10,
+                            B: 11,
                             C: '12'
                         });
                         db2 = new NDDB();
@@ -493,8 +493,8 @@ function getSaveTests(m, it) {
                                 X4: 'D'
                             });
                             db2.last().should.be.eql({
-                                X1: '10',
-                                X2: '11',
+                                X1: 10,
+                                X2: 11,
                                 X3: '12',
                                 X4: 'Z4'
                             });
