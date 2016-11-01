@@ -2536,7 +2536,7 @@
         if (this.db.length && this.query.query.length) {
             if (doNotReset && 'boolean' !== typeof doNotReset) {
                 this.throwErr('TypeError', 'fetch',
-                              'doNotReset must be undefined or boolean.');
+                              'doNotReset must be undefined or boolean');
             }
             db = this.db.filter(this.query.get.call(this.query));
             if (!doNotReset) this.query.reset();
@@ -3599,7 +3599,7 @@
         var nddbid;
         if (('object' !== typeof o) && ('function' !== typeof o)) {
             this.throwErr('TypeError', 'insert', 'object or function ' +
-                          'expected, ' + typeof o + ' received.');
+                          'expected, ' + typeof o + ' received');
         }
 
         // Check / create a global index.
