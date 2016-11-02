@@ -752,7 +752,7 @@ a number before.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">saveCsv</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">filename</span><span class="p">,</span> <span class="nx">writeCb</span><span class="p">,</span> <span class="nx">doneCb</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span>
         <span class="nx">method</span><span class="p">,</span> <span class="nx">errorCb</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">adapter</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span> <span class="nx">na</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span> <span class="nx">na</span><span class="p">,</span> <span class="nx">bool2num</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">data</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span></pre></div>
         </td>
@@ -769,6 +769,7 @@ a number before.</p>
         <span class="nx">separator</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">separator</span><span class="p">;</span>
         <span class="nx">quote</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">quote</span><span class="p">;</span>
         <span class="nx">escapeCharacter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">escapeCharacter</span><span class="p">;</span>
+        <span class="nx">bool2num</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">bool2num</span><span class="p">;</span>
 
         <span class="nx">data</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
         <span class="nx">headers</span> <span class="o">=</span> <span class="nx">getCsvHeaders</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
@@ -794,7 +795,7 @@ a number before.</p>
                     <span class="nx">len</span> <span class="o">=</span> <span class="nx">headers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
                     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">line</span> <span class="o">+=</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">headers</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span>
-                                              <span class="nx">escapeCharacter</span><span class="p">);</span>
+                                               <span class="nx">escapeCharacter</span><span class="p">,</span> <span class="nx">na</span><span class="p">,</span> <span class="nx">bool2num</span><span class="p">);</span>
 
                         <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="p">(</span><span class="nx">len</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="nx">line</span> <span class="o">+=</span> <span class="nx">separator</span><span class="p">;</span>
                     <span class="p">}</span>
@@ -803,7 +804,8 @@ a number before.</p>
                 <span class="p">}</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">currentItem</span> <span class="o">&lt;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">return</span> <span class="nx">getCsvRow</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">data</span><span class="p">[</span><span class="nx">currentItem</span><span class="o">++</span><span class="p">],</span> <span class="nx">headers</span><span class="p">,</span>
-                        <span class="nx">adapter</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span> <span class="nx">na</span><span class="p">);</span>
+                                     <span class="nx">adapter</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span>
+                                     <span class="nx">na</span><span class="p">,</span> <span class="nx">bool2num</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">};</span>
@@ -965,6 +967,31 @@ a number before.</p>
   be used to pre-process the values of the corresponding key before
   returning it</span>
     </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">separator</span>
+      <span class="dox_type">string</span>
+      <span>Optional. A character to separate tokens</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">quote</span>
+      <span class="dox_type">string</span>
+      <span>Optional. A character to surround the value</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">escapeCharacter</span>
+      <span class="dox_type">string</span>
+      <span>Optional. A character to escape</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">na</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The value for undefined and nulls</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">bool2num</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. If TRUE, converts booleans to 0/1</span>
+    </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
@@ -975,15 +1002,16 @@ a number before.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">getCsvRow</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">adapter</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span>
-                       <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span> <span class="nx">na</span><span class="p">)</span> <span class="p">{</span>
+                       <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span> <span class="nx">na</span><span class="p">,</span> <span class="nx">bool2num</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">key</span><span class="p">;</span>
         <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">out</span> <span class="o">+=</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">item</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span>
-                                        <span class="nx">escapeCharacter</span><span class="p">,</span> <span class="nx">na</span><span class="p">)</span> <span class="o">+</span> <span class="nx">separator</span><span class="p">;</span>
+                    <span class="nx">out</span> <span class="o">+=</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">item</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span> <span class="nx">separator</span><span class="p">,</span>
+                                          <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span>
+                                          <span class="nx">na</span><span class="p">,</span> <span class="nx">bool2num</span><span class="p">)</span> <span class="o">+</span> <span class="nx">separator</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -999,7 +1027,7 @@ a number before.</p>
                 <span class="p">}</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">str</span><span class="p">)</span> <span class="nx">str</span> <span class="o">=</span> <span class="nx">na</span><span class="p">;</span>
                 <span class="nx">out</span> <span class="o">+=</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span>
-                    <span class="nx">na</span><span class="p">)</span> <span class="o">+</span> <span class="nx">separator</span><span class="p">;</span>
+                                      <span class="nx">na</span><span class="p">,</span> <span class="nx">bool2num</span><span class="p">)</span> <span class="o">+</span> <span class="nx">separator</span><span class="p">;</span>
             <span class="p">});</span>
         <span class="p">}</span></pre></div>
         </td>
@@ -1042,9 +1070,19 @@ a number before.</p>
       <span>Optional. A character to surround the value</span>
     </div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">quote</span>
+      <span class="dox_tag_name">escapeCharacter</span>
       <span class="dox_type">string</span>
       <span>Optional. A character to escape</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">na</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The value for undefined and nulls</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">bool2num</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. If TRUE, converts booleans to 0/1</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -1055,7 +1093,9 @@ a number before.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span> <span class="nx">na</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">createCsvToken</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">separator</span><span class="p">,</span> <span class="nx">quote</span><span class="p">,</span> <span class="nx">escapeCharacter</span><span class="p">,</span>
+                            <span class="nx">na</span><span class="p">,</span> <span class="nx">bool2num</span><span class="p">)</span> <span class="p">{</span>
+
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">c</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -1066,7 +1106,8 @@ a number before.</p>
 </div>
 <p>Numbers are returned as they are.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">token</span><span class="p">)</span> <span class="k">return</span> <span class="nx">token</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">bool2num</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;boolean&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">token</span><span class="p">)</span> <span class="k">return</span> <span class="nx">token</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">token</span><span class="p">)</span> <span class="k">return</span> <span class="nx">token</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
