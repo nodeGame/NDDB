@@ -1178,7 +1178,7 @@ a number before.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">loadCb</span><span class="p">(</span><span class="nx">nddb</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">clean</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">loadCb</span><span class="p">(</span><span class="nx">nddb</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">items</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
         <span class="nx">items</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span></pre></div>
         </td>
@@ -1191,13 +1191,23 @@ a number before.</p>
 <p>TODO: copy settings, disable updates,
 insert one by one, update indexes.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">items</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+</div>
+<p>TODO: avoid double for.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">items</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>Retrocycle if possible.</p>
         </td>
@@ -1265,7 +1275,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1344,7 +1354,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1418,7 +1428,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Open file for read.</p>
         </td>
@@ -1497,7 +1507,7 @@ insert one by one, update indexes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>Open file.</p>
         </td>
@@ -1599,7 +1609,7 @@ Kudos:</a>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>While file not empty, read into buffer.</p>
         </td>
@@ -1609,7 +1619,7 @@ Kudos:</a>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>Add content of buffer to workload.</p>
         </td>
@@ -1621,7 +1631,7 @@ Kudos:</a>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>While not on last line of buffer, process lines.</p>
         </td>
@@ -1632,7 +1642,7 @@ Kudos:</a>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>Do not break on escaped endline characters.</p>
         </td>
@@ -1647,7 +1657,7 @@ Kudos:</a>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
 </div>
 <p>Process line.</p>
         </td>
@@ -1657,7 +1667,7 @@ Kudos:</a>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
 </div>
 <p>Advance to next line.</p>
         </td>
@@ -1669,7 +1679,7 @@ Kudos:</a>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
 </div>
 <p>Begin workload with leftover characters for next line.</p>
         </td>
@@ -1765,7 +1775,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>Fill workload (assumes short-circuit evaluation).</p>
         </td>
@@ -1778,7 +1788,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
 <p>Fill buffer completely.</p>
         </td>
@@ -1788,7 +1798,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
+  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
 </div>
 <p>Write buffer to file.</p>
         </td>
@@ -1798,7 +1808,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-64" id="section-64">&#182;</a>
+  <a class="pilcrow" href="#section-65" id="section-65">&#182;</a>
 </div>
 <p>Compute leftover and put it into workload.</p>
         </td>
@@ -1851,7 +1861,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
 <p>If string, substitute it.</p>
         </td>
@@ -1865,7 +1875,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
+  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
 </div>
 <p>If array, expand it.</p>
         </td>
@@ -1880,7 +1890,7 @@ Available options and defaults:
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
 <p>Else, e.g. null, ignore it.</p>
         </td>
