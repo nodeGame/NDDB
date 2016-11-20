@@ -4036,6 +4036,8 @@
         this.idx = idx;
         this.nddb = nddb;
         this.resolve = {};
+        this.keys = [];
+        this.resolveKeys = {};
     }
 
     /**
@@ -4048,6 +4050,8 @@
      */
     NDDBIndex.prototype._add = function(idx, dbidx) {
         this.resolve[idx] = dbidx;
+        this.resolveKeys[idx] = this.keys.length;
+        this.keys.push('' + idx);
     };
 
     /**
@@ -4059,6 +4063,8 @@
      */
     NDDBIndex.prototype._remove = function(idx) {
         delete this.resolve[idx];
+        this.keys.splice(this.resolveKeys[idx],1);
+        delete this.resolveKeys[idx];
     };
 
     /**
@@ -4069,7 +4075,7 @@
      * @return {number} The number of elements in the index
      */
     NDDBIndex.prototype.size = function() {
-        return J.size(this.resolve);
+        return this.keys.length;
     };
 
     /**
@@ -4162,7 +4168,7 @@
      * @see NDDBIndex.getAllKeyElements
      */
     NDDBIndex.prototype.getAllKeys = function() {
-        return J.keys(this.resolve);
+        return this.keys;
     };
 
     /**
@@ -4175,11 +4181,13 @@
      * @see NDDBIndex.getAllKeys
      */
     NDDBIndex.prototype.getAllKeyElements = function() {
-        var out = {}, idx;
-        for (idx in this.resolve) {
-            if (this.resolve.hasOwnProperty(idx)) {
-                out[idx] = this.nddb.db[this.resolve[idx]];
-            }
+        var out, idx, i, len;
+        out = {};
+        i = -1, len = this.keys.length;
+        for ( ; ++i < len ; ) {
+            idx = this.keys[i];
+            // TODO CHECK HERE
+            out[idx] = this.nddb.db[this.[idx]];
         }
         return out;
     };

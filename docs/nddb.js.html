@@ -8102,6 +8102,8 @@ always decides the overall logic value. E.g. :</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">idx</span> <span class="o">=</span> <span class="nx">idx</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span> <span class="o">=</span> <span class="nx">nddb</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">keys</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolveKeys</span> <span class="o">=</span> <span class="p">{};</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -8135,6 +8137,8 @@ always decides the overall logic value. E.g. :</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_add</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idx</span><span class="p">,</span> <span class="nx">dbidx</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">dbidx</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">resolveKeys</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">keys</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">keys</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;&#39;</span> <span class="o">+</span> <span class="nx">idx</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -8163,6 +8167,8 @@ always decides the overall logic value. E.g. :</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_remove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">keys</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resolveKeys</span><span class="p">[</span><span class="nx">idx</span><span class="p">],</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolveKeys</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -8190,7 +8196,7 @@ always decides the overall logic value. E.g. :</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">size</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">keys</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -8415,7 +8421,7 @@ to avoid looping through all the other elements that are unchanged.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getAllKeys</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">keys</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -8448,11 +8454,21 @@ to avoid looping through all the other elements that are unchanged.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getAllKeyElements</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">idx</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">idx</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">idx</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">out</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">[</span><span class="nx">idx</span><span class="p">]];</span>
-            <span class="p">}</span>
+        <span class="kd">var</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">idx</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="nx">out</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">keys</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">idx</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">keys</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-234" id="section-234">&#182;</a>
+</div>
+<p>TODO CHECK HERE</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">out</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="k">this</span><span class="p">.[</span><span class="nx">idx</span><span class="p">]];</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
     <span class="p">};</span>
