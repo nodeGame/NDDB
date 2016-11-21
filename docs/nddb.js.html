@@ -8098,12 +8098,57 @@ always decides the overall logic value. E.g. :</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NDDBIndex</span><span class="p">(</span><span class="nx">idx</span><span class="p">,</span> <span class="nx">nddb</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">idx</span> <span class="o">=</span> <span class="nx">idx</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span> <span class="o">=</span> <span class="nx">nddb</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span> <span class="o">=</span> <span class="p">{};</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">keys</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">resolveKeys</span> <span class="o">=</span> <span class="p">{};</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">NDDBIndex</span><span class="p">(</span><span class="nx">idx</span><span class="p">,</span> <span class="nx">nddb</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-224" id="section-224">&#182;</a>
+</div>
+<p>The name of the index.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">idx</span> <span class="o">=</span> <span class="nx">idx</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-225" id="section-225">&#182;</a>
+</div>
+<p>Reference to the whole nddb database.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span> <span class="o">=</span> <span class="nx">nddb</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-226" id="section-226">&#182;</a>
+</div>
+<p>Map indexed-item to a position in the original database.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-227" id="section-227">&#182;</a>
+</div>
+<p>List of all keys in <code>resolve</code> object.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">keys</span> <span class="o">=</span> <span class="p">[];</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-228" id="section-228">&#182;</a>
+</div>
+<p>Map indexed-item to a position in <code>keys</code> array (for fast deletion).</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">resolveKeys</span> <span class="o">=</span> <span class="p">{};</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -8377,7 +8422,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-231" id="section-231">&#182;</a>
+  <a class="pilcrow" href="#section-236" id="section-236">&#182;</a>
 </div>
 <p>We do indexes separately from the other components of _autoUpdate
 to avoid looping through all the other elements that are unchanged.</p>
@@ -8458,17 +8503,8 @@ to avoid looping through all the other elements that are unchanged.</p>
         <span class="nx">out</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">keys</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="nx">idx</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">keys</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-234" id="section-234">&#182;</a>
-</div>
-<p>TODO CHECK HERE</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">out</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="k">this</span><span class="p">.[</span><span class="nx">idx</span><span class="p">]];</span>
+            <span class="nx">idx</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">keys</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="nx">out</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">[</span><span class="nx">idx</span><span class="p">]];</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
     <span class="p">};</span>

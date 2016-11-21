@@ -4033,10 +4033,15 @@
      * @param {array} The reference to the original database
      */
     function NDDBIndex(idx, nddb) {
+        // The name of the index.
         this.idx = idx;
+        // Reference to the whole nddb database.
         this.nddb = nddb;
+        // Map indexed-item to a position in the original database.
         this.resolve = {};
+        // List of all keys in `resolve` object.
         this.keys = [];
+        // Map indexed-item to a position in `keys` array (for fast deletion).
         this.resolveKeys = {};
     }
 
@@ -4186,8 +4191,7 @@
         i = -1, len = this.keys.length;
         for ( ; ++i < len ; ) {
             idx = this.keys[i];
-            // TODO CHECK HERE
-            out[idx] = this.nddb.db[this.[idx]];
+            out[idx] = this.nddb.db[this.resolve[idx]];
         }
         return out;
     };
