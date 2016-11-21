@@ -4055,20 +4055,25 @@
      */
     NDDBIndex.prototype._add = function(idx, dbidx) {
         this.resolve[idx] = dbidx;
-        this.resolveKeys[idx] = this.keys.length;
-        this.keys.push('' + idx);
+        // We add it to the keys array only if it a new index.
+        // If it is an already existing element, we don't care
+        // if it changing position in the original db.
+        if ('undefined' === typeof this.resolveKeys[idx]) {
+            this.resolveKeys[idx] = this.keys.length;
+            this.keys.push('' + idx);
+        }
     };
 
     /**
      * ### NDDBIndex._remove
      *
-     * Adds an item to the index
+     * Removes an item from index
      *
      * @param {mixed} idx The id to remove from the index
      */
     NDDBIndex.prototype._remove = function(idx) {
         delete this.resolve[idx];
-        this.keys.splice(this.resolveKeys[idx],1);
+        this.keys.splice(this.resolveKeys[idx], 1);
         delete this.resolveKeys[idx];
     };
 
@@ -4121,7 +4126,7 @@
         o = this.nddb.db[dbidx];
         if ('undefined' === typeof o) return;
         this.nddb.db.splice(dbidx, 1);
-        delete this.resolve[idx];
+        this._remove(idx);
         this.nddb.emit('remove', o);
         this.nddb._autoUpdate();
         return o;
@@ -4173,7 +4178,7 @@
      * @see NDDBIndex.getAllKeyElements
      */
     NDDBIndex.prototype.getAllKeys = function() {
-        return this.keys;
+        return this.keys.slice(0);
     };
 
     /**
