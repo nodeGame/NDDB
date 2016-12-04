@@ -1260,7 +1260,9 @@
      * the entry does not belong to any view of the index.
      *
      * @param {string} idx The name of index
-     * @param {function} func The hashing function
+     * @param {function} func Optional. The hashing function. Default: a
+     *   function that returns a property named after the index
+     *
      *
      * @see NDDB.view
      * @see NDDB.isReservedWord
@@ -1273,10 +1275,15 @@
         if (this.isReservedWord(idx)) {
             this.throwErr('TypeError', 'hash', 'idx is reserved word: ' + idx);
         }
-        if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'hash', 'func must be function');
+        if ('undefined' === typeof func) {
+            func = function(item) { return item[idx]; };
         }
-        this.__H[idx] = func, this[idx] = {};
+        else if ('function' !== typeof func) {
+            this.throwErr('TypeError', 'hash', 'func must be function or ' +
+                          'undefined. Found: ' + func);
+        }
+        this[idx] = {};
+        this.__H[idx] = func;
     };
 
     /**

@@ -2849,7 +2849,8 @@ the entry does not belong to any view of the index.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">func</span>
       <span class="dox_type">function</span>
-      <span>The hashing function</span>
+      <span>Optional. The hashing function. Default: a
+  function that returns a property named after the index</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -2874,10 +2875,15 @@ the entry does not belong to any view of the index.</p>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isReservedWord</span><span class="p">(</span><span class="nx">idx</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;hash&#39;</span><span class="p">,</span> <span class="s1">&#39;idx is reserved word: &#39;</span> <span class="o">+</span> <span class="nx">idx</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;hash&#39;</span><span class="p">,</span> <span class="s1">&#39;func must be function&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">func</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">item</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span> <span class="p">};</span>
         <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">__H</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">func</span><span class="p">,</span> <span class="k">this</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;hash&#39;</span><span class="p">,</span> <span class="s1">&#39;func must be function or &#39;</span> <span class="o">+</span>
+                          <span class="s1">&#39;undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">func</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">__H</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">func</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
