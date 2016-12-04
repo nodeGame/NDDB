@@ -254,6 +254,11 @@ var not_art_items = [
     },
 ];
 
+// Default view: returns items with a value 
+// of the property 'painter' !== undefined.
+db.view('painter');
+
+// Make the view function explicit.
 db.view('art', function(o) {
   return o.painter;
 });
@@ -265,6 +270,7 @@ db.view('cars', function(o) {
 db.rebuildIndexes();
 
 db.size();          // 9
+db.painter.size();  // NDDB with 6 art entries
 db.art.size();      // NDDB with 6 art entries
 db.cars.size();     // NDDB with 3 car entries
 ```
@@ -275,8 +281,9 @@ Define a custom hash function that creates a new view on each of the
 painters in the database:
 
 ```javascript
+db.hash('painter');
+// Or the equivalent explicit formulation.
 db.hash('painter', function(o) {
-    if (!o) return undefined;
     return o.painter;
 });
 
@@ -309,22 +316,24 @@ Define a custom indexing function that gives fast, direct access to
 the items of the database;
 
 ```javascript
-db.index('pid', function(o) {
+db.index('id');
+// Or the equivalent explicit definition.
+db.index('id', function(o) {
     return o.id;
 });
 
 db.rebuildIndexes();
 
-db.pid.get(0).name; // Picasso
+db.id.get(0).name; // Picasso
 
-db.pid.update(0, {
+db.id.update(0, {
   comment: "Good job Pablo!"
 });
 
 // Counts items in selection.
 db.select('comment').count(); // 1
 
-var picasso = db.pid.remove(0);
+var picasso = db.id.remove(0);
 db.size(); // (0)
 
 // Get all available keys in the index
@@ -333,6 +342,10 @@ db.painter.getAllKeys(); // ['0','1', ... ]
 // Get all elements indexed by their key in one object
 db.painter.getAllKeyElements();
 ```
+
+#### Default index
+
+All inserted items are indexed
 
 ## Example of a configuration object
 
