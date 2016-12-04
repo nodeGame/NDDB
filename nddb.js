@@ -1191,7 +1191,8 @@
      * the entry does not need to be indexed.
      *
      * @param {string} idx The name of index
-     * @param {function} func The hashing function
+     * @param {function} func Optional. The hashing function. Default: a
+     *   function that returns the property named after the index
      *
      * @see NDDB.isReservedWord
      * @see NDDB.rebuildIndexes
@@ -1203,8 +1204,12 @@
         if (this.isReservedWord(idx)) {
             this.throwErr('TypeError', 'index', 'idx is reserved word: ' + idx);
         }
-        if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'index', 'func must be function');
+        if ('undefined' === typeof func) {
+            func = function(item) { return item[idx]; };
+        }
+        else if ('function' !== typeof func) {
+            this.throwErr('TypeError', 'index', 'func must be function or ' +
+                          'undefined. Found: ' + func);
         }
         this.__I[idx] = func, this[idx] = new NDDBIndex(idx, this);
     };
@@ -1222,7 +1227,8 @@
      * callback returns _undefined_ the entry will be ignored.
      *
      * @param {string} idx The name of index
-     * @param {function} func The hashing function
+     * @param {function} func Optional. The hashing function. Default: a
+     *   function that returns the property named after the index
      *
      * @see NDDB.hash
      * @see NDDB.isReservedWord
@@ -1236,8 +1242,12 @@
         if (this.isReservedWord(idx)) {
             this.throwErr('TypeError', 'view', 'idx is reserved word: ' + idx);
         }
-        if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'view', 'func must be function');
+        if ('undefined' === typeof func) {
+            func = function(item) { return item[idx]; };
+        }
+        else if ('function' !== typeof func) {
+            this.throwErr('TypeError', 'view', 'func must be function or ' +
+                          'undefined. Found: ' + func);
         }
         // Create a copy of the current settings, without the views
         // functions, else we create an infinite loop in the constructor.
@@ -1261,8 +1271,7 @@
      *
      * @param {string} idx The name of index
      * @param {function} func Optional. The hashing function. Default: a
-     *   function that returns a property named after the index
-     *
+     *   function that returns the property named after the index
      *
      * @see NDDB.view
      * @see NDDB.isReservedWord
