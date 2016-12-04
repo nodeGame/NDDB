@@ -351,7 +351,7 @@ indexed against it:
 
 
 ```javascript
-db.nddbid.get('123456'); // Returns items with nddbid equal to 123456.
+db.nddbid.get('123456'); // Returns the item with nddbid equal to 123456.
 ```
 
 ## Example of a configuration object
