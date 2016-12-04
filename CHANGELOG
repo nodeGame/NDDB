@@ -1,5 +1,8 @@
 # NDDB change log
 
+## 1.14.0
+  - Default functions for methods index, hash, and view.
+
 ## 1.13.0
   - Speeded-up method `#NDDBIndex.getAllKeys()`.
   
