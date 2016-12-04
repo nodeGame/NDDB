@@ -104,7 +104,7 @@ db.importDB(items);
 Retrieve the database size:
 
 ```javascript
-var db_size = db.size(); // 6
+db.size(); // 6
 ```
 
 ### Select Items
@@ -175,8 +175,8 @@ db.select('painter', '=', 'Dali')
 Fetch all paintings of the beginning of XX's century:
 
 ```javascript
-    db.select('year', '><', [1900, 1910])
-      .fetch(); // 2 items
+db.select('year', '><', [1900, 1910])
+  .fetch(); // 2 items
 ```
 
 Fetch separately all the painters and all the dates of the paintings:
@@ -195,8 +195,8 @@ Define a global comparator function that sorts all the entries chronologically:
 
 ```javascript
 db.globalCompator = function (o1, o2) {
-    if (o1.year < o2.year) return 1;
-    if (o1.year < o2.year) return 2;
+    if (o1.year < o2.year) return -1;
+    if (o1.year > o2.year) return 1;
     return 0;
 };
 ```
@@ -254,7 +254,7 @@ var not_art_items = [
     },
 ];
 
-// Default view: returns items with a value 
+// Default view: returns items with the value
 // of the property 'painter' !== undefined.
 db.view('painter');
 
@@ -282,7 +282,7 @@ painters in the database:
 
 ```javascript
 db.hash('painter');
-// Or the equivalent explicit formulation.
+// Or the equivalent explicit function definition.
 db.hash('painter', function(o) {
     return o.painter;
 });
@@ -317,7 +317,7 @@ the items of the database;
 
 ```javascript
 db.index('id');
-// Or the equivalent explicit definition.
+// Or the equivalent explicit function definition.
 db.index('id', function(o) {
     return o.id;
 });
@@ -345,7 +345,14 @@ db.painter.getAllKeyElements();
 
 #### Default index
 
-All inserted items are indexed
+The property `._nddbid` is added to every inserted item. The property
+is not enumerable (if the environment allows it), and all items are
+indexed against it:
+
+
+```javascript
+db.nddbid.get('123456'); // Returns items with nddbid equal to 123456.
+```
 
 ## Example of a configuration object
 
