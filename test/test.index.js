@@ -82,7 +82,6 @@ var element = {
 
 
 var indexPainter = function(o) {
-    if (!o) return undefined;
     return o.id;
 }
 
@@ -224,6 +223,7 @@ describe('NDDB Indexing Operations:', function() {
 
      describe('#NDDBIndex.update()', function() {
          before(function() {
+             // This alters the default index test below.
              db.painter.update('5', {
                  id: undefined
              });
@@ -256,5 +256,39 @@ describe('NDDB Indexing Operations:', function() {
             tmp.should.be.eql(['1','2','3','4','5']);
          });
      });
+
+    // Default hash.
+
+    describe('**default index** Importing not-indexable items', function() {
+        before(function(){
+            db = new NDDB();
+            db.init({ update: { indexes: true } });
+
+            db.index('id');
+            db.importDB(not_indexable);
+        });
+
+        it('should not create the special indexes', function() {
+            db.id.should.not.exist;
+            db.size().should.eql(not_indexable.length);
+        });
+    });
+
+    describe('**default index** Importing indexeable items', function() {
+        before(function(){
+            db.importDB(indexable);
+        });
+
+        it('should create the special indexes', function() {
+            db.id.should.exist;
+            console.log(db.id.keys);
+            // One painter was changed id to undefined.
+            db.id.size().should.be.eql((indexable.length - 1));
+        });
+
+        it('should increase the length of the database', function() {
+            db.size().should.be.eql(nitems);
+        });
+    });
 
 });
