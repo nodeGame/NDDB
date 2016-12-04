@@ -76,7 +76,6 @@ var element = {
 
 
 var paintersView = function(o) {
-    if (!o) return undefined;
     return o.painter;
 }
 
@@ -126,7 +125,9 @@ describe('NDDB Views Operations:', function() {
         });
     });
 
-    describe('Elements updated in the db should be updated in the views', function() {
+    describe('Elements updated in the db should be updated in the views',
+             function() {
+
         before(function(){
             var j = db.selexec('painter', '=', 'Jesus').update({
                 painter: 'JSUS'
@@ -134,26 +135,62 @@ describe('NDDB Views Operations:', function() {
         });
 
 
-        it('updated property \'painter\' should be reflected in the index', function() {
+        it('updated property \'painter\' should be reflected in the index',
+           function() {
+
             db.art.selexec('painter', '=', 'JSUS').count().should.be.eql(1);
 
         });
     });
 
-    describe('Elements updated in the views should be updated in the db', function() {
+    describe('Elements updated in the views should be updated in the db',
+             function() {
+
         before(function(){
             var j = db.art.selexec('painter', '=', 'JSUS').update({
                 painter: 'Jesus'
             });
         });
 
-        it('updated property \'painter\' should be reflected in the index', function() {
+        it('updated property \'painter\' should be reflected in the index',
+           function() {
+
             db.selexec('painter', '=', 'Jesus').count().should.be.eql(1);
         });
     });
 
+    // Default view.
+
+    // Default hash.
+
+    describe('**default view** Importing not-hashable items', function() {
+        before(function(){
+            db = new NDDB();
+            db.init({ update: { indexes: true } });
+
+            db.view('painter');
+            db.importDB(not_art_items);
+        });
+
+        it('should not create the special indexes', function() {
+            db.painter.should.not.exist;
+            db.size().should.eql(not_art_items.length);
+        });
+    });
+
+    describe('**default view** Importing hashable items', function() {
+        before(function(){
+            db.importDB(art_items);
+        });
+
+        it('should create the special indexes', function() {
+            db.painter.should.exist;
+            db.painter.size().should.be.eql(art_items.length);
+        });
+
+        it('should increase the length of the database', function() {
+            db.size().should.be.eql(nitems);
+        });
+    });
+
 });
-
-
-
-
