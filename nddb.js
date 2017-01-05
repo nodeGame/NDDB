@@ -1,6 +1,6 @@
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
@@ -172,6 +172,10 @@
         // ### __defaultFormat
         // Default format for saving and loading items.
         this.__defaultFormat = null;
+
+        // ### __wd
+        // Default working directory for saving and loading files.
+        this.__wd = null;
 
         // ### log
         // Std out for log messages
@@ -759,6 +763,15 @@
                 }
             }
         }
+
+        if (options.defaultFormat) {
+            this.setDefaultFormat(options.defaultFormat);
+        }
+
+        if (options.wd && 'function' === typeof this.setWD) {
+            this.setWD(options.wd);
+        }
+
     };
 
     /**
@@ -942,6 +955,8 @@
         options.globalCompare = this.globalCompare;
         options.filters = this.__userDefinedFilters;
         options.formats = this.__formats;
+        options.defaultFormat = this.__defaultFormat;
+        options.wd = this.__wd;
 
         // Must be removed before cloning.
         if (options.log) {
