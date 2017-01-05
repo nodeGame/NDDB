@@ -202,14 +202,16 @@ unless force parameter is set</p>
                 <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;setWD&#39;</span><span class="p">,</span> <span class="s1">&#39;wd must be &#39;</span> <span class="o">+</span>
                               <span class="s1">&#39;a non-empty string. Found: &#39;</span> <span class="o">+</span> <span class="nx">wd</span><span class="p">);</span>
             <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">fs</span><span class="p">.</span><span class="nx">existSync</span><span class="p">(</span><span class="nx">wd</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">fs</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="nx">wd</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;setWD&#39;</span><span class="p">,</span> <span class="s1">&#39;working directory &#39;</span> <span class="o">+</span>
                               <span class="s1">&#39;does not exist: &#39;</span> <span class="o">+</span> <span class="nx">wd</span><span class="p">);</span>
             <span class="p">}</span>
-            <span class="nx">stat</span> <span class="o">=</span> <span class="nx">lstatSync</span><span class="p">(</span><span class="nx">wd</span><span class="p">);</span>
+            <span class="nx">stat</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">lstatSync</span><span class="p">(</span><span class="nx">wd</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stat</span><span class="p">.</span><span class="nx">isDirectory</span><span class="p">())</span> <span class="p">{</span>
-
+                <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="s1">&#39;setWD&#39;</span><span class="p">,</span> <span class="s1">&#39;working directory not &#39;</span> <span class="o">+</span>
+                              <span class="s1">&#39;valid: &#39;</span> <span class="o">+</span> <span class="nx">wd</span><span class="p">);</span>
             <span class="p">}</span>
+            <span class="nx">wd</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">wd</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">__wd</span> <span class="o">=</span> <span class="nx">wd</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -244,7 +246,7 @@ unless force parameter is set</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getWD</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">__wd</span> <span class="o">||</span> <span class="nx">process</span><span class="p">.</span><span class="nx">cwd</span><span class="p">();</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">__wd</span> <span class="o">||</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">cwd</span><span class="p">(),</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
