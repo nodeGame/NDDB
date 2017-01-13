@@ -1,5 +1,9 @@
 # NDDB change log
 
+## 1.15.0
+ - `#.setWD()` and `#.getWD() to set and get current working directory.
+ - Event listeners that returns FALSE block the operation they are listening to, and also skip successive event listeners on the same event.
+
 ## 1.14.1
   - Default functions for methods index, hash, and view.
 

@@ -30,7 +30,7 @@ Developer-friendly thanks to an easy api, detailed documentation, and
 - Iterator: `previous`, `next`, `first`, `last`
 - Tagging: `tag`
 - Event listener / emitter: `on`, `off`, `emit`
-- Saving and Loading: `save`, `saveSync`, `load`, `loadSync`
+- Saving and Loading: `save`, `saveSync`, `load`, `loadSync`, `setWD`, `getWD`
 
 The complete NDDB api documentation is available
 [here](http://nodegame.github.com/NDDB/docs/nddb.js.html).
@@ -519,6 +519,26 @@ db.addFormat('asd', {
 db.save('db.asd');
 ```
 
+### Setting the current working directory (node.js environment)
+
+It is possible to specify the current working directory to avoid
+typing long file paths.
+
+```javascript
+// Saving items in JSON format.
+db.load('/home/this/user/on/that/dir/db.json');
+db.load('/home/this/user/on/that/dir/db2.json');
+db.load('/home/this/user/on/that/dir/db3.json');
+
+// Can be shortened to:
+db.setWD('/home/this/user/on/that/dir');
+db.load('db.json');
+db.load('db2.json');
+db.load('db3.json');
+
+// Get current working directory:
+db.getWD(); // /home/this/user/on/that/dir/
+```
 
 #### List of all available options
 
