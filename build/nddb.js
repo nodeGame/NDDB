@@ -5428,7 +5428,7 @@
 
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
@@ -5600,6 +5600,10 @@
         // ### __defaultFormat
         // Default format for saving and loading items.
         this.__defaultFormat = null;
+
+        // ### __wd
+        // Default working directory for saving and loading files.
+        this.__wd = null;
 
         // ### log
         // Std out for log messages
@@ -6187,6 +6191,15 @@
                 }
             }
         }
+
+        if (options.defaultFormat) {
+            this.setDefaultFormat(options.defaultFormat);
+        }
+
+        if (options.wd && 'function' === typeof this.setWD) {
+            this.setWD(options.wd);
+        }
+
     };
 
     /**
@@ -6258,11 +6271,13 @@
      * @param {array} db Array of items to import
      */
     NDDB.prototype.importDB = function(db) {
-        var i;
+        var i, len;
         if (!J.isArray(db)) {
-            this.throwErr('TypeError', 'importDB', 'db must be array');
+            this.throwErr('TypeError', 'importDB', 'db must be array. Found: ' +
+                         db);
         }
-        for (i = 0; i < db.length; i++) {
+        i = -1, len = db.length;
+        for ( ; ++i < len ; ) {
             nddb_insert.call(this, db[i], this.__update.indexes);
         }
         this._autoUpdate({indexes: false});
@@ -6283,11 +6298,19 @@
      *  - null
      *
      * @param {object} o The item or array of items to insert
-     * @see NDDB._insert
+     *
+     * @return {object|boolean} o The inserted object (might have been
+     *   updated by on('insert') callbacks), or FALSE if the object could
+     *   not be inserted, e.g. if a on('insert') callback returned FALSE.
+     *
+     * @see nddb_insert
      */
     NDDB.prototype.insert = function(o) {
-        nddb_insert.call(this, o, this.__update.indexes);
+        var res;
+        res = nddb_insert.call(this, o, this.__update.indexes);
+        if (res === false) return false;
         this._autoUpdate({indexes: false});
+        return o;
     };
 
     /**
@@ -6370,6 +6393,8 @@
         options.globalCompare = this.globalCompare;
         options.filters = this.__userDefinedFilters;
         options.formats = this.__formats;
+        options.defaultFormat = this.__defaultFormat;
+        options.wd = this.__wd;
 
         // Must be removed before cloning.
         if (options.log) {
@@ -7045,11 +7070,20 @@
      *
      * Accepts any number of parameters, the first one is the name
      * of the event, and the remaining will be passed to the event listeners.
+     *
+     * If a registered event listener returns FALSE, subsequent event
+     * listeners are **not** executed, and the method returns FALSE.
+     *
+     * @param {string} The event type ('insert', 'delete', 'update')
+     *
+     * @return {boolean} TRUE under normal conditions, or FALSE if at least
+     *   one callback function returned FALSE.
      */
     NDDB.prototype.emit = function() {
         var event;
         var h, h2;
         var i, len, argLen, args;
+        var res;
         event = arguments[0];
         if ('string' !== typeof event) {
             this.throwErr('TypeError', 'emit', 'first argument must be string');
@@ -7058,64 +7092,72 @@
             this.throwErr('TypeError', 'emit', 'unknown event: ' + event);
         }
         len = this.hooks[event].length;
-        if (!len) return;
+        if (!len) return true;
         argLen = arguments.length;
 
         switch(len) {
 
         case 1:
             h = this.hooks[event][0];
-            if (argLen === 1) h.call(this);
-            else if (argLen === 2) h.call(this, arguments[1]);
+            if (argLen === 1) res = h.call(this);
+            else if (argLen === 2) res = h.call(this, arguments[1]);
             else if (argLen === 3) {
-                h.call(this, arguments[1], arguments[2]);
+                res = h.call(this, arguments[1], arguments[2]);
             }
             else {
                 args = new Array(argLen-1);
                 for (i = 0; i < argLen; i++) {
                     args[i] = arguments[i+1];
                 }
-                h.apply(this, args);
+                res = h.apply(this, args);
             }
             break;
         case 2:
             h = this.hooks[event][0], h2 = this.hooks[event][1];
             if (argLen === 1) {
-                h.call(this);
-                h2.call(this);
+                res = h.call(this) !== false;
+                res = res && h2.call(this) !== false;
             }
             else if (argLen === 2) {
-                h.call(this, arguments[1]);
-                h2.call(this, arguments[1]);
+                res = h.call(this, arguments[1]) !== false;
+                res = res && h2.call(this, arguments[1]) !== false;
             }
             else if (argLen === 3) {
-                h.call(this, arguments[1], arguments[2]);
-                h2.call(this, arguments[1], arguments[2]);
+                res = h.call(this, arguments[1], arguments[2]) !== false;
+                res = res && h2.call(this, arguments[1], arguments[2])!== false;
             }
             else {
                 args = new Array(argLen-1);
                 for (i = 0; i < argLen; i++) {
                     args[i] = arguments[i+1];
                 }
-                h.apply(this, args);
-                h2.apply(this, args);
+                res = h.apply(this, args) !== false;
+                res = res && h2.apply(this, args) !== false;
             }
             break;
         default:
-
              if (argLen === 1) {
                  for (i = 0; i < len; i++) {
-                     this.hooks[event][i].call(this);
+                     res = this.hooks[event][i].call(this) !== false;
+                     if (res === false) break;
                  }
             }
             else if (argLen === 2) {
+                res = true;
                 for (i = 0; i < len; i++) {
-                    this.hooks[event][i].call(this, arguments[1]);
+                    res = this.hooks[event][i].call(this,
+                                                    arguments[1]) !== false;
+                    if (res === false) break;
+
                 }
             }
             else if (argLen === 3) {
+                res = true;
                 for (i = 0; i < len; i++) {
-                    this.hooks[event][i].call(this, arguments[1], arguments[2]);
+                    res = this.hooks[event][i].call(this,
+                                                    arguments[1],
+                                                    arguments[2]) !== false;
+                    if (res === false) break;
                 }
             }
             else {
@@ -7123,12 +7165,15 @@
                 for (i = 0; i < argLen; i++) {
                     args[i] = arguments[i+1];
                 }
+                res = true;
                 for (i = 0; i < len; i++) {
-                    this.hooks[event][i].apply(this, args);
+                    res = this.hooks[event][i].apply(this, args) !== false;
+                    if (res === false) break;
                 }
 
             }
         }
+        return res;
     };
 
     // ## Sort and Select
@@ -7685,11 +7730,11 @@
      *
      * Updates all selected entries
      *
-     * Mix ins the properties of the _update_ object in each
-     * selected item.
+     * Mixins the properties of the _update_ object in each of the
+     * selected items.
      *
-     * Properties from the _update_ object that are not found in
-     * the selected items will be created.
+     * Some selected items can be skipped from update if a callback
+     * on('update') returns FALSE.
      *
      * @param {object} update An object containing the properties
      *  that will be updated.
@@ -7697,23 +7742,26 @@
      * @return {NDDB} A new instance of NDDB with updated entries
      *
      * @see JSUS.mixin
+     * @see NDDB.emit
      */
     NDDB.prototype.update = function(update) {
-        var i, len, db;
+        var i, len, db, res;
         if ('object' !== typeof update) {
             this.throwErr('TypeError', 'update', 'update must be object');
         }
 
         // Gets items and resets the current selection.
         db = this.fetch();
-        if (db.length) {
-            len = db.length;
+        len = db.length;
+        if (len) {
             for (i = 0; i < len; i++) {
-                this.emit('update', db[i], update);
-                J.mixin(db[i], update);
-                this._indexIt(db[i]);
-                this._hashIt(db[i]);
-                this._viewIt(db[i]);
+                res = this.emit('update', db[i], update);
+                if (res === true) {
+                    J.mixin(db[i], update);
+                    this._indexIt(db[i]);
+                    this._hashIt(db[i]);
+                    this._viewIt(db[i]);
+                }
             }
             this._autoUpdate({indexes: false});
         }
@@ -7728,10 +7776,10 @@
      * Removes all entries from the database
      *
      * @return {NDDB} A new instance of NDDB with no entries
-     *
-     * TODO: do we still need this method?
      */
     NDDB.prototype.removeAllEntries = function() {
+        console.log('***NDDB.removeAllEntries is deprecated. Use ' +
+                    'NDDB.clear instead***');
         if (!this.db.length) return this;
         this.emit('remove', this.db);
         this.nddbid.resolve = {};
@@ -9034,13 +9082,16 @@
      * @param {boolean} update Optional. If TRUE, updates indexes, hashes,
      *    and views. Default, FALSE
      *
+     * @return {boolean} TRUE, if item was inserted, FALSE otherwise, e.g.
+     *   if a callback on('insert') returned FALSE.
+     *
      * @see NDDB.nddbid
      * @see NDDB.emit
      *
      * @api private
      */
     function nddb_insert(o, update) {
-        var nddbid;
+        var nddbid, res;
         if (('object' !== typeof o) && ('function' !== typeof o)) {
             this.throwErr('TypeError', 'insert', 'object or function ' +
                           'expected, ' + typeof o + ' received');
@@ -9064,13 +9115,16 @@
         // Add to index directly (bypass api).
         this.nddbid.resolve[o._nddbid] = this.db.length;
         // End create index.
+        res = this.emit('insert', o);
+        // Stop inserting elements if one callback returned FALSE.
+        if (res === false) return false;
         this.db.push(o);
-        this.emit('insert', o);
         if (update) {
             this._indexIt(o, (this.db.length-1));
             this._hashIt(o);
             this._viewIt(o);
         }
+        return true
     }
 
     /**
@@ -9557,21 +9611,25 @@
      *
      * @param {mixed} idx The id of item to remove
      *
-     * @return {object|boolean} The removed item, or FALSE if index is invalid
+     * @return {object|boolean} The removed item, or FALSE if the
+     *   index is invalid or if the object could not be removed,
+     *   e.g. if a on('remove') callback returned FALSE.
      *
      * @see NDDB.index
+     * @see NDDB.emit
      * @see NDDBIndex.get
      * @see NDDBIndex.update
      */
     NDDBIndex.prototype.remove = function(idx) {
-        var o, dbidx;
+        var o, dbidx, res;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
         o = this.nddb.db[dbidx];
-        if ('undefined' === typeof o) return;
+        if ('undefined' === typeof o) return false;
+        res = this.nddb.emit('remove', o);
+        if (res === false) return false;
         this.nddb.db.splice(dbidx, 1);
         this._remove(idx);
-        this.nddb.emit('remove', o);
         this.nddb._autoUpdate();
         return o;
     };
@@ -9587,19 +9645,21 @@
      *
      * @param {mixed} idx The id of item to update
      *
-     * @return {object|boolean} The updated item, or FALSE if index is invalid
+     * @return {object|boolean} The updated item, or FALSE if
+     *   index is invalid, or a callback on('update') returned FALSE.
      *
      * @see NDDB.index
      * @see NDDBIndex.get
      * @see NDDBIndex.remove
      */
     NDDBIndex.prototype.update = function(idx, update) {
-        var o, dbidx, nddb;
+        var o, dbidx, nddb, res;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
         nddb = this.nddb;
         o = nddb.db[dbidx];
-        nddb.emit('update', o, update);
+        res = nddb.emit('update', o, update);
+        if (res === false) return false;
         J.mixin(o, update);
         // We do indexes separately from the other components of _autoUpdate
         // to avoid looping through all the other elements that are unchanged.
