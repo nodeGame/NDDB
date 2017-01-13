@@ -49,10 +49,10 @@ describe('NDDB Events', function() {
     describe('#on(\'insert\') ',function() {
         before(function() {
             copy = [];
-            db.on('insert', function(o){
+            db.on('insert', function(o) {
                 copy.push(o);
             });
-            db.on('insert', function(o){
+            db.on('insert', function(o) {
                 db.tag(o.year, o);
             });
             db.importDB(items);
@@ -186,6 +186,58 @@ describe('NDDB Events', function() {
 
     });
 
+    describe('#on(\'insert\') return=FALSE',function() {
+        before(function() {
+            copy = [];
+            db.on('insert', function(o) {
+                return false;
+            });
+            db.on('insert', function(o) {
+                db.tag(o.year, o);
+                counter++;
+            });
+            db.importDB(items);
+        });
+
+        it('should create a db with size 0', function() {
+            db.size().should.eql(0);
+        });
+
+        it('should create a db with no tags', function() {
+            J.size(db.tags).should.eql(0);
+        });
+
+        it('should not execute subsequent event listeners', function() {
+            counter.should.eql(0);
+        });
+    });
+
+    describe('#emit(\'insert\') + 2 param return = FALSE', function() {
+        before(function() {
+            copy = [];
+            db.off('insert');
+            db.on('insert', function(o, p1, p2) {
+                return false;
+            });
+            db.on('insert', function(o, p1, p2) {
+                counter++;
+            });
+            var i, len;
+            i = -1, len = items.length;
+            for ( ; ++i < len ; ) {
+                db.emit('insert', items[i], p1, p2);
+            }
+        });
+
+        it('should create a db with size 0', function() {
+            db.size().should.eql(0);
+        });
+
+        it('should not execute subsequent event listeners', function() {
+            counter.should.eql(0);
+        });
+
+    });
 });
 
 describe('NDDB Events with auto-update indexes and hashes', function() {

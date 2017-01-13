@@ -310,6 +310,21 @@ db.on('insert', function(o) {
 });
 ```
 
+Event listeners can block the execution of the operation it is
+listening to by returning `false`. No errors are thrown.
+
+```javascript
+db.on('insert', function(o) {
+    if (o.year > 3000) return false;
+});
+```
+
+Attention! The order in which the event listeners are added
+matters. In fact, if an event listeners return `false`, all successive
+event listeners will be skipped.
+
+Other events to listen to are: `update`, `remove`.
+
 ### Indexes
 
 Define a custom indexing function that gives fast, direct access to
