@@ -2062,11 +2062,13 @@ local options.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">importDB</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">db</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;importDB&#39;</span><span class="p">,</span> <span class="s1">&#39;db must be array&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;importDB&#39;</span><span class="p">,</span> <span class="s1">&#39;db must be array. Found: &#39;</span> <span class="o">+</span>
+                         <span class="nx">db</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
             <span class="nx">nddb_insert</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">__update</span><span class="p">.</span><span class="nx">indexes</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_autoUpdate</span><span class="p">({</span><span class="nx">indexes</span><span class="o">:</span> <span class="kc">false</span><span class="p">});</span>
@@ -2104,17 +2106,29 @@ local options.</p>
       <span class="dox_type">object</span>
       <span>The item or array of items to insert</span>
     </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">boolean</span>
+      <span>o The inserted object (might have been
+  updated by on('insert') callbacks), or FALSE if the object could
+  not be inserted, e.g. if a on('insert') callback returned FALSE.</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">NDDB._insert
+      <span class="dox_type">nddb_insert
   </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">insert</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">nddb_insert</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">__update</span><span class="p">.</span><span class="nx">indexes</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">res</span><span class="p">;</span>
+        <span class="nx">res</span> <span class="o">=</span> <span class="nx">nddb_insert</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">__update</span><span class="p">.</span><span class="nx">indexes</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_autoUpdate</span><span class="p">({</span><span class="nx">indexes</span><span class="o">:</span> <span class="kc">false</span><span class="p">});</span>
+        <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -3505,6 +3519,24 @@ and the hooks (should be called only on main db).</p>
 
 <p>Accepts any number of parameters, the first one is the name
 of the event, and the remaining will be passed to the event listeners.</p>
+
+<p>If a registered event listener returns FALSE, subsequent event
+listeners are <strong>not</strong> executed, and the method returns FALSE.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">The</span>
+      <span class="dox_type">string</span>
+      <span>event type ('insert', 'delete', 'update')</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE under normal conditions, or FALSE if at least
+  one callback function returned FALSE.</span>
+    </div>
   </div>
 </div>
         </td>
@@ -3512,6 +3544,7 @@ of the event, and the remaining will be passed to the event listeners.</p>
         <span class="kd">var</span> <span class="nx">event</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">h2</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">argLen</span><span class="p">,</span> <span class="nx">args</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">res</span><span class="p">;</span>
         <span class="nx">event</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;emit&#39;</span><span class="p">,</span> <span class="s1">&#39;first argument must be string&#39;</span><span class="p">);</span>
@@ -3520,64 +3553,72 @@ of the event, and the remaining will be passed to the event listeners.</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;emit&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown event: &#39;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">event</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">len</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">len</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
         <span class="nx">argLen</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
         <span class="k">switch</span><span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
             <span class="nx">h</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">event</span><span class="p">][</span><span class="mi">0</span><span class="p">];</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">argLen</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="nx">h</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argLen</span> <span class="o">===</span> <span class="mi">2</span><span class="p">)</span> <span class="nx">h</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">argLen</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argLen</span> <span class="o">===</span> <span class="mi">2</span><span class="p">)</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argLen</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">h</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">argLen</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">argLen</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
                 <span class="p">}</span>
-                <span class="nx">h</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
             <span class="nx">h</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">event</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nx">h2</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">event</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">argLen</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">h</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-                <span class="nx">h2</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">&amp;&amp;</span> <span class="nx">h2</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argLen</span> <span class="o">===</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">h</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-                <span class="nx">h2</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">&amp;&amp;</span> <span class="nx">h2</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argLen</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">h</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
-                <span class="nx">h2</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">&amp;&amp;</span> <span class="nx">h2</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">!==</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">args</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">argLen</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">argLen</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
                 <span class="p">}</span>
-                <span class="nx">h</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
-                <span class="nx">h2</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">h</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">&amp;&amp;</span> <span class="nx">h2</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">default</span><span class="o">:</span>
-
              <span class="k">if</span> <span class="p">(</span><span class="nx">argLen</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                  <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                     <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">event</span><span class="p">][</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+                     <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">event</span><span class="p">][</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">;</span>
+                     <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
                  <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argLen</span> <span class="o">===</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">event</span><span class="p">][</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+                    <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">event</span><span class="p">][</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span>
+                                                    <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argLen</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">event</span><span class="p">][</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+                    <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">event</span><span class="p">][</span><span class="nx">i</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span>
+                                                    <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                    <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
@@ -3585,12 +3626,15 @@ of the event, and the remaining will be passed to the event listeners.</p>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">argLen</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
                 <span class="p">}</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">event</span><span class="p">][</span><span class="nx">i</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+                    <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">hooks</span><span class="p">[</span><span class="nx">event</span><span class="p">][</span><span class="nx">i</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
                 <span class="p">}</span>
 
             <span class="p">}</span>
         <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -4748,11 +4792,11 @@ to the callback</p>
   </div>
   <div class="body"><p>Updates all selected entries</p>
 
-<p>Mix ins the properties of the <em>update</em> object in each
-selected item.</p>
+<p>Mixins the properties of the <em>update</em> object in each of the
+selected items.</p>
 
-<p>Properties from the <em>update</em> object that are not found in
-the selected items will be created.</p>
+<p>Some selected items can be skipped from update if a callback
+on('update') returns FALSE.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -4770,14 +4814,18 @@ the selected items will be created.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">JSUS.mixin
+      <span class="dox_type">JSUS.mixin</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.emit
   </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">db</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">db</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="s1">&#39;update must be object&#39;</span><span class="p">);</span>
         <span class="p">}</span></pre></div>
@@ -4791,14 +4839,16 @@ the selected items will be created.</p>
 <p>Gets items and resets the current selection.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">db</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">len</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">update</span><span class="p">);</span>
-                <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">update</span><span class="p">);</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_indexIt</span><span class="p">(</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_hashIt</span><span class="p">(</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_viewIt</span><span class="p">(</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">update</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">update</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_indexIt</span><span class="p">(</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_hashIt</span><span class="p">(</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_viewIt</span><span class="p">(</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_autoUpdate</span><span class="p">({</span><span class="nx">indexes</span><span class="o">:</span> <span class="kc">false</span><span class="p">});</span>
         <span class="p">}</span>
@@ -4837,14 +4887,14 @@ the selected items will be created.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">NDDB</span>
-      <span>A new instance of NDDB with no entries
-
-TODO: do we still need this method?</span>
+      <span>A new instance of NDDB with no entries</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeAllEntries</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;***NDDB.removeAllEntries is deprecated. Use &#39;</span> <span class="o">+</span>
+                    <span class="s1">&#39;NDDB.clear instead***&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;remove&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">nddbid</span><span class="p">.</span><span class="nx">resolve</span> <span class="o">=</span> <span class="p">{};</span>
@@ -7305,6 +7355,13 @@ accordingly.</p>
       <span>Optional. If TRUE, updates indexes, hashes,
    and views. Default, FALSE</span>
     </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if item was inserted, FALSE otherwise, e.g.
+  if a callback on('insert') returned FALSE.</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">NDDB.nddbid</span>
@@ -7323,7 +7380,7 @@ accordingly.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">nddb_insert</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">nddbid</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">nddbid</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;TypeError&#39;</span><span class="p">,</span> <span class="s1">&#39;insert&#39;</span><span class="p">,</span> <span class="s1">&#39;object or function &#39;</span> <span class="o">+</span>
                           <span class="s1">&#39;expected, &#39;</span> <span class="o">+</span> <span class="k">typeof</span> <span class="nx">o</span> <span class="o">+</span> <span class="s1">&#39; received&#39;</span><span class="p">);</span>
@@ -7378,13 +7435,24 @@ accordingly.</p>
 </div>
 <p>End create index.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;insert&#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;insert&#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-202" id="section-202">&#182;</a>
+</div>
+<p>Stop inserting elements if one callback returned FALSE.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_indexIt</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_hashIt</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_viewIt</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
         <span class="p">}</span>
+        <span class="k">return</span> <span class="kc">true</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -7539,7 +7607,7 @@ accordingly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-205" id="section-205">&#182;</a>
+  <a class="pilcrow" href="#section-206" id="section-206">&#182;</a>
 </div>
 <p>If try to get the format function based on the extension,
 otherwise try to use the default one. Throws errors.</p>
@@ -7605,7 +7673,7 @@ otherwise try to use the default one. Throws errors.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-207" id="section-207">&#182;</a>
+  <a class="pilcrow" href="#section-208" id="section-208">&#182;</a>
 </div>
 <p>Try to get default format, if the extension is not recognized.</p>
         </td>
@@ -7744,7 +7812,7 @@ otherwise try to use the default one. Throws errors.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-211" id="section-211">&#182;</a>
+  <a class="pilcrow" href="#section-212" id="section-212">&#182;</a>
 </div>
 <p>Creates the query array and internal pointer.</p>
         </td>
@@ -7877,7 +7945,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-216" id="section-216">&#182;</a>
+  <a class="pilcrow" href="#section-217" id="section-217">&#182;</a>
 </div>
 <p>Ready to support nested queries, not yet implemented.</p>
         </td>
@@ -7968,7 +8036,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-217" id="section-217">&#182;</a>
+  <a class="pilcrow" href="#section-218" id="section-218">&#182;</a>
 </div>
 <p>Current condition is TRUE OR</p>
         </td>
@@ -7979,7 +8047,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-218" id="section-218">&#182;</a>
+  <a class="pilcrow" href="#section-219" id="section-219">&#182;</a>
 </div>
 <p>Current condition is FALSE AND</p>
         </td>
@@ -7992,7 +8060,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-219" id="section-219">&#182;</a>
+  <a class="pilcrow" href="#section-220" id="section-220">&#182;</a>
 </div>
 <p>Previous check was an AND or a FALSE OR</p>
         </td>
@@ -8006,7 +8074,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-220" id="section-220">&#182;</a>
+  <a class="pilcrow" href="#section-221" id="section-221">&#182;</a>
 </div>
 <p>A previous OR is TRUE also if follows a TRUE AND</p>
         </td>
@@ -8149,7 +8217,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-225" id="section-225">&#182;</a>
+  <a class="pilcrow" href="#section-226" id="section-226">&#182;</a>
 </div>
 <p>The name of the index.</p>
         </td>
@@ -8159,7 +8227,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-226" id="section-226">&#182;</a>
+  <a class="pilcrow" href="#section-227" id="section-227">&#182;</a>
 </div>
 <p>Reference to the whole nddb database.</p>
         </td>
@@ -8169,7 +8237,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-227" id="section-227">&#182;</a>
+  <a class="pilcrow" href="#section-228" id="section-228">&#182;</a>
 </div>
 <p>Map indexed-item to a position in the original database.</p>
         </td>
@@ -8179,7 +8247,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-228" id="section-228">&#182;</a>
+  <a class="pilcrow" href="#section-229" id="section-229">&#182;</a>
 </div>
 <p>List of all keys in <code>resolve</code> object.</p>
         </td>
@@ -8189,7 +8257,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-229" id="section-229">&#182;</a>
+  <a class="pilcrow" href="#section-230" id="section-230">&#182;</a>
 </div>
 <p>Map indexed-item to a position in <code>keys</code> array (for fast deletion).</p>
         </td>
@@ -8232,7 +8300,7 @@ always decides the overall logic value. E.g. :</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-231" id="section-231">&#182;</a>
+  <a class="pilcrow" href="#section-232" id="section-232">&#182;</a>
 </div>
 <p>We add it to the keys array only if it a new index.
 If it is an already existing element, we don't care
@@ -8377,11 +8445,17 @@ if it changing position in the original db.</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
       <span class="dox_type">boolean</span>
-      <span>The removed item, or FALSE if index is invalid</span>
+      <span>The removed item, or FALSE if the
+  index is invalid or if the object could not be removed,
+  e.g. if a on('remove') callback returned FALSE.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">NDDB.index</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.emit</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -8396,14 +8470,15 @@ if it changing position in the original db.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">dbidx</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">dbidx</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
         <span class="nx">dbidx</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">dbidx</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="nx">o</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">dbidx</span><span class="p">];</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;remove&#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">dbidx</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_remove</span><span class="p">(</span><span class="nx">idx</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;remove&#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">.</span><span class="nx">_autoUpdate</span><span class="p">();</span>
         <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -8449,7 +8524,8 @@ if it changing position in the original db.</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
       <span class="dox_type">boolean</span>
-      <span>The updated item, or FALSE if index is invalid</span>
+      <span>The updated item, or FALSE if
+  index is invalid, or a callback on('update') returned FALSE.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -8468,19 +8544,20 @@ if it changing position in the original db.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">NDDBIndex</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idx</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">dbidx</span><span class="p">,</span> <span class="nx">nddb</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">dbidx</span><span class="p">,</span> <span class="nx">nddb</span><span class="p">,</span> <span class="nx">res</span><span class="p">;</span>
         <span class="nx">dbidx</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">dbidx</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="nx">nddb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nddb</span><span class="p">;</span>
         <span class="nx">o</span> <span class="o">=</span> <span class="nx">nddb</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">dbidx</span><span class="p">];</span>
-        <span class="nx">nddb</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span>
+        <span class="nx">res</span> <span class="o">=</span> <span class="nx">nddb</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="nx">J</span><span class="p">.</span><span class="nx">mixin</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-238" id="section-238">&#182;</a>
+  <a class="pilcrow" href="#section-239" id="section-239">&#182;</a>
 </div>
 <p>We do indexes separately from the other components of _autoUpdate
 to avoid looping through all the other elements that are unchanged.</p>
