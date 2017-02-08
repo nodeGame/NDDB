@@ -1,5 +1,8 @@
 # NDDB change log
 
+## 1.15.1
+- Fixed bug that was not keeping updated the keys array of the NDDBIndex upon removal of items from index.
+
 ## 1.15.0
  - `#.setWD()` and `#.getWD() to set and get current working directory.
  - Event listeners that returns FALSE block the operation they are listening to, and also skip successive event listeners on the same event.
