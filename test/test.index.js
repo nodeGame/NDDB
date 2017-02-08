@@ -221,7 +221,7 @@ describe('NDDB Indexing Operations:', function() {
          });
      });
 
-     describe('#NDDBIndex.update()', function() {
+     describe('#NDDBIndex.update() - removing id painter idx 5', function() {
          before(function() {
              // This alters the default index test below.
              db.painter.update('5', {
@@ -229,21 +229,25 @@ describe('NDDB Indexing Operations:', function() {
              });
          });
 
-         it('updated painter with idx 5 should not be found in index',
-            function() {
-                var p = db.painter.get('5');
-                ('boolean' === typeof p).should.be.true;
-                p.should.be.false;
-            });
+         it('updated painter 5 should not be found in index', function() {
+             var p = db.painter.get('5');
+             ('boolean' === typeof p).should.be.true;
+             p.should.be.false;
+         });
 
-// it('updated painter with idx 5 should not be found in the view',function() {
-//          db.pview.selexec('id', '=', 5).size().should.be.eql(0);
-//     db.pview.selexec('painter', '=', 'Monet').size().should.be.eql(1);
-// });
-//
-// it('updated painter with idx 5 should not be found in the hash', function() {
-//     console.log(db.phash['5'].db);
-// });
+         it('keys array of index should not contain element 5', function() {
+             db.painter.keys.indexOf('5').should.eql(-1);
+         });
+
+         it('view of painters should not have painter 5',function() {
+             db.pview.selexec('id', '=', 5).size().should.be.eql(0);
+             db.pview.selexec('painter', '=', 'Monet').size().should.be.eql(1);
+         });
+
+         it('hash of player 5 should have length 0', function() {
+             db.phash['5'].db.length.should.eql(0);
+         });
+
      });
 
      describe('#NDDBIndex.getAllKeys() - item with same id', function() {
@@ -281,7 +285,6 @@ describe('NDDB Indexing Operations:', function() {
 
         it('should create the special indexes', function() {
             db.id.should.exist;
-            console.log(db.id.keys);
             // One painter was changed id to undefined.
             db.id.size().should.be.eql((indexable.length - 1));
         });

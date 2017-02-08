@@ -1457,7 +1457,7 @@
                 if (index !== oldIdx) {
                     if ('undefined' !== typeof oldIdx) {
                         if ('undefined' !== typeof this[key].resolve[oldIdx]) {
-                            delete this[key].resolve[oldIdx];
+                            this[key]._remove(oldIdx);
                         }
                     }
                 }

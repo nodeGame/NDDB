@@ -3192,7 +3192,7 @@ added with another index delete the old one.</p>
         <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">!==</span> <span class="nx">oldIdx</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">oldIdx</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">resolve</span><span class="p">[</span><span class="nx">oldIdx</span><span class="p">])</span> <span class="p">{</span>
-                            <span class="k">delete</span> <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">resolve</span><span class="p">[</span><span class="nx">oldIdx</span><span class="p">];</span>
+                            <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">_remove</span><span class="p">(</span><span class="nx">oldIdx</span><span class="p">);</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
