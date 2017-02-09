@@ -610,7 +610,10 @@ unless force parameter is set</p>
                                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">foundJ</span><span class="p">)</span> <span class="p">{</span>
                                     <span class="nx">that</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span>
                                                   <span class="s1">&#39;missing closing quote &#39;</span> <span class="o">+</span>
-                                                  <span class="nx">token</span><span class="p">);</span>
+                                                  <span class="s1">&#39;(quote=&#39;</span> <span class="o">+</span> <span class="nx">quote</span> <span class="o">+</span> <span class="s1">&#39; sep=&#39;</span> <span class="o">+</span>
+                                                  <span class="nx">separator</span> <span class="o">+</span> <span class="s1">&#39; escape=&#39;</span> <span class="o">+</span>
+                                                  <span class="nx">escapeCharacter</span> <span class="o">+</span> <span class="s1">&#39;). &#39;</span> <span class="o">+</span>
+                                                  <span class="s1">&#39;Row: &#39;</span> <span class="o">+</span> <span class="nx">token</span> <span class="p">);</span>
                                 <span class="p">}</span>
                             <span class="p">}</span>
                             <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">result</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
