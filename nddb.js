@@ -1,6 +1,6 @@
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
@@ -88,7 +88,7 @@
         this.db = [];
 
         // ### lastSelection
-        // The subset of items that were selected during the last operations
+        // The subset of items that were selected during the last operation
         // Notice: some of the items might not exist any more in the database.
         // @see NDDB.fetch
         this.lastSelection = [];
@@ -817,22 +817,36 @@
     /**
      * ### NDDB._autoUpdate
      *
-     * Performs a series of automatic checkings and updates the db
+     * Updates pointer, indexes, and sort items
      *
-     * Checkings are performed according to current configuration, or to
-     * local options.
+     * What is updated depends on configuration stored in `this.__update`.
      *
      * @param {object} options Optional. Configuration object
+     *
+     * @see NDDB.__update
      *
      * @api private
      */
     NDDB.prototype._autoUpdate = function(options) {
-        var update;
-        update = options ? J.merge(this.__update, options) : this.__update;
+        var u;
+        u = this.__update;
+        options = options || {};
 
-        if (update.pointer) this.nddb_pointer = this.db.length-1;
-        if (update.sort) this.sort();
-        if (update.indexes) this.rebuildIndexes();
+        if (options.pointer ||
+            ('undefined' === typeof options.pointer && u.pointer)) {
+
+            this.nddb_pointer = this.db.length-1;
+        }
+        if (options.sort ||
+            ('undefined' === typeof options.sort && u.sort)) {
+
+            this.sort();
+        }
+        if (options.indexes ||
+            ('undefined' === typeof options.indexes && u.indexes)) {
+
+            this.rebuildIndexes();
+        }
     };
 
     /**
@@ -870,18 +884,35 @@
      *  - null
      *
      * @param {object} o The item or array of items to insert
+     * @param {object} updateRules Optional. Update rules to overwrite
+     *   system-wide settings stored in `this.__update`
      *
      * @return {object|boolean} o The inserted object (might have been
      *   updated by on('insert') callbacks), or FALSE if the object could
      *   not be inserted, e.g. if a on('insert') callback returned FALSE.
      *
+     * @see NDDB.__update
      * @see nddb_insert
      */
-    NDDB.prototype.insert = function(o) {
+    NDDB.prototype.insert = function(o, updateRules) {
         var res;
-        res = nddb_insert.call(this, o, this.__update.indexes);
+        if ('undefined' === typeof updateRules) {
+            updateRules = this.__update;
+        }
+        else if ('object' !== typeof updateRules) {
+            this.throwErr('TypeError', 'insert',
+                          'updateRules must be object or undefined. Found: ',
+                          updateRules);
+        }
+        res = nddb_insert.call(this, o, updateRules.indexes);
         if (res === false) return false;
-        this._autoUpdate({indexes: false});
+        // If updateRules.indexes is false, then we do not want to do it.
+        // If it was true, we did it already.
+        this._autoUpdate({
+            indexes: false,
+            pointer: updateRules.pointer,
+            sort: updateRules.sort
+        });
         return o;
     };
 
@@ -893,7 +924,7 @@
      * It always returns the length of the full database, regardless of
      * current selection.
      *
-     * @return {number} The length of the database
+     * @return {number} The total number of elements in the database
      *
      * @see NDDB.count
      */
@@ -2160,6 +2191,50 @@
         return this.breed(shuffled);
     };
 
+    /**
+     * ### NDDB.random
+     *
+     * Breeds a new database with N randomly selected items
+     *
+     * @param {number} N How many random items to include
+     *
+     * @return {NDDB} A new instance of NDDB with the shuffled entries
+     */
+    NDDB.prototype.random = function(N, strict) {
+        var i, len, used, out, idx;
+        if ('number' !== typeof N) {
+            this.throwErr('TypeError', 'random',
+                          'N must be number Found: ' + N);
+        }
+        if (N < 1) {
+            this.throwErr('Error', 'random', 'N must be > 0. Found: ' + N);
+        }
+        len = this.db.length;
+        if (N > len && strict !== false) {
+            this.throwErr('Error', 'random', 'not enough items in db. Found: ' +
+                          len + '. Requested: ' + N);
+        }
+        // Heuristic.
+        if (N < (len/3)) {
+            i = 0;
+            out = new Array(N);
+            used = {};
+            while (i < N) {
+                idx = J.randomInt(0, len)-1;
+                if ('undefined' === typeof used[idx]) {
+                    used[idx] = true;
+                    out[i] = this.db[idx];
+                    i++;
+                }
+            }
+        }
+        else {
+            out = J.shuffle(this.db);
+            out = out.slice(0, N);
+        }
+        return this.breed(out);
+    };
+
     // ## Custom callbacks
 
     /**
@@ -2310,37 +2385,55 @@
      *
      * @param {object} update An object containing the properties
      *  that will be updated.
+     * @param {object} updateRules Optional. Update rules to overwrite
+     *   system-wide settings stored in `this.__update`
      *
      * @return {NDDB} A new instance of NDDB with updated entries
      *
      * @see JSUS.mixin
      * @see NDDB.emit
      */
-    NDDB.prototype.update = function(update) {
+    NDDB.prototype.update = function(update, updateRules) {
         var i, len, db, res;
         if ('object' !== typeof update) {
-            this.throwErr('TypeError', 'update', 'update must be object');
+            this.throwErr('TypeError', 'update',
+                          'update must be object. Found: ', update);
         }
-
+        if ('undefined' === typeof updateRules) {
+            updateRules = this.__update;
+        }
+        else if ('object' !== typeof updateRules) {
+            this.throwErr('TypeError', 'update',
+                          'updateRules must be object or undefined. Found: ',
+                          updateRules);
+        }
         // Gets items and resets the current selection.
         db = this.fetch();
         len = db.length;
         if (len) {
             for (i = 0; i < len; i++) {
-                res = this.emit('update', db[i], update);
+                res = this.emit('update', db[i], update, i);
                 if (res === true) {
                     J.mixin(db[i], update);
-                    this._indexIt(db[i]);
-                    this._hashIt(db[i]);
-                    this._viewIt(db[i]);
+                    if (updateRules.indexes) {
+                        this._indexIt(db[i]);
+                        this._hashIt(db[i]);
+                        this._viewIt(db[i]);
+                    }
                 }
             }
-            this._autoUpdate({indexes: false});
+            // If updateRules.indexes is false, then we do not want to do it.
+            // If it was true, we did it already
+            this._autoUpdate({
+                indexes: false,
+                pointer: updateRules.pointer,
+                sort: updateRules.sort
+            });
         }
         return this;
     };
 
-    //## Deletion
+    // ## Deletion
 
     /**
      * ### NDDB.removeAllEntries
@@ -3638,7 +3731,6 @@
 
     // ## Helper Methods
 
-
     /**
      * ### nddb_insert
      *
@@ -3651,7 +3743,7 @@
      * accordingly.
      *
      * @param {object|function} o The item to add to database
-     * @param {boolean} update Optional. If TRUE, updates indexes, hashes,
+     * @param {boolean} doUpdate Optional. If TRUE, updates indexes, hashes,
      *    and views. Default, FALSE
      *
      * @return {boolean} TRUE, if item was inserted, FALSE otherwise, e.g.
@@ -3662,7 +3754,7 @@
      *
      * @api private
      */
-    function nddb_insert(o, update) {
+    function nddb_insert(o, doUpdate) {
         var nddbid, res;
         if (('object' !== typeof o) && ('function' !== typeof o)) {
             this.throwErr('TypeError', 'insert', 'object or function ' +
@@ -3687,11 +3779,11 @@
         // Add to index directly (bypass api).
         this.nddbid.resolve[o._nddbid] = this.db.length;
         // End create index.
-        res = this.emit('insert', o);
+        res = this.emit('insert', o, this.db.length);
         // Stop inserting elements if one callback returned FALSE.
         if (res === false) return false;
         this.db.push(o);
-        if (update) {
+        if (doUpdate) {
             this._indexIt(o, (this.db.length-1));
             this._hashIt(o);
             this._viewIt(o);
@@ -4198,7 +4290,7 @@
         if ('undefined' === typeof dbidx) return false;
         o = this.nddb.db[dbidx];
         if ('undefined' === typeof o) return false;
-        res = this.nddb.emit('remove', o);
+        res = this.nddb.emit('remove', o, dbidx);
         if (res === false) return false;
         this.nddb.db.splice(dbidx, 1);
         this._remove(idx);
@@ -4230,7 +4322,7 @@
         if ('undefined' === typeof dbidx) return false;
         nddb = this.nddb;
         o = nddb.db[dbidx];
-        res = nddb.emit('update', o, update);
+        res = nddb.emit('update', o, update, dbidx);
         if (res === false) return false;
         J.mixin(o, update);
         // We do indexes separately from the other components of _autoUpdate

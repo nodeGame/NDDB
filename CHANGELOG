@@ -1,5 +1,10 @@
 # NDDB change log
 
+## Current
+- Events "insert", "remove", "update" receive the ordinal position of the item in the database as last parameter.
+- Update rules can be passed to insert and update methods.
+- `#NDDB.random(N)` selects N random items and breeds a new DB.
+
 ## 1.15.1
 - Fixed bug that was not keeping updated the keys array of the NDDBIndex upon removal of items from index.
 
