@@ -6,7 +6,7 @@
  * NDDB is a powerful and versatile object database for node.js and the browser.
  * ---
  */
-(function(exports, J, store) {
+(function(exports, J) {
 
     "use strict";
 
@@ -2313,12 +2313,11 @@
     /**
      * ### NDDB.map
      *
-     * Applies a callback function to each element in the db, store
-     * the results in an array and returns it.
+     * Maps a callback to each element of the db and returns an array
      *
      * It accepts a variable number of input arguments, but the first one
-     * must be a valid callback, and all the following are passed as parameters
-     * to the callback
+     * must be a valid callback, and all the following are passed as
+     * parameters to the callback.
      *
      * @return {array} out The result of the mapping
      *
@@ -4373,8 +4372,5 @@
     ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
         module.exports : window ,
     ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
-        module.parent.exports.JSUS || require('JSUS').JSUS : JSUS,
-    ('object' === typeof module && 'function' === typeof require) ?
-        module.parent.exports.store ||
-        require('shelf.js/build/shelf-fs.js').store : this.store
+        module.parent.exports.JSUS || require('JSUS').JSUS : JSUS
 );
