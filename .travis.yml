@@ -12,8 +12,7 @@ before_install:
 
 install:
   - node nodegame-installer.js @dev --install-dir node_modules --no-spinner --branch v4
-  - npm install -g should
-  - npm install -g mocha
+  - npm install --only=dev
 
 script:
 # Add NDDB tests here.
