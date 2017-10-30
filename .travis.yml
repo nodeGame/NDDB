@@ -7,7 +7,7 @@ node_js:
 
 before_install:
 # Get installer script.
-  - wget https://github.com/nodeGame/nodegame/raw/master/nodegame-installer.js
+  - wget https://raw.githubusercontent.com/nodeGame/nodegame/master/bin/nodegame-installer.js
   - chmod a+x nodegame-installer.js
 
 install:
