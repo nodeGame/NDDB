@@ -19,6 +19,5 @@ script:
   - npm test
 
 # Test Ultimatum game.
-  - ls -la node_modules
   - cd node_modules/nodegame/games/ultimatum-game
   - ./bin/run-standalone-test-v4.sh
