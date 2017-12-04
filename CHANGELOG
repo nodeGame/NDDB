@@ -4,6 +4,7 @@
 - Events "insert", "remove", "update" receive the ordinal position of the item in the database as last parameter.
 - Update rules can be passed to insert and update methods.
 - `#NDDB.random(N)` selects N random items and breeds a new DB.
+- CSV saving automatically takes care of objects. The level of nestedness can be controlled with the option `.objectLevel`.
 
 ## 1.15.1
 - Fixed bug that was not keeping updated the keys array of the NDDBIndex upon removal of items from index.
