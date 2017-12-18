@@ -1,6 +1,6 @@
 # NDDB change log
 
-## Current
+## 1.16.0
 - Events "insert", "remove", "update" receive the ordinal position of the item in the database as last parameter.
 - Update rules can be passed to insert and update methods.
 - `#NDDB.random(N)` selects N random items and breeds a new DB.
