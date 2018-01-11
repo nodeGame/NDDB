@@ -1,5 +1,5 @@
 // Requiring and exporting JSUS
-var JSUS = require('./../node_modules/JSUS').JSUS;
+var JSUS = require('JSUS').JSUS;
 module.exports.JSUS = JSUS;
 
 var util = require('util'),
