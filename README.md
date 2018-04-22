@@ -645,26 +645,12 @@ separately, or create a new build that includes it already. See the
 build help for options.
 
 ```javascript
-node make.nddb.js build // Standard build,
-node make.nddb.js build -a -o nddb-full // Full build
+node make build // Standard build,
+node make build -a -o nddb-full // Full build
 ```
 
 The build file file will be created inside the `build/` directory.
 
-
-### Help
-
-```javascript
-node make.nddb.js --help
-```
-
-## API Documentation
-
-Create html API documentation using the make file in the bin directory:
-
-```javascript
-node make.nddb.js doc
-```
 
 ## License
 
