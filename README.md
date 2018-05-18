@@ -627,7 +627,7 @@ of the browser. If the limit is reached an error will be thrown.
 
 ## Test
 
-NDDB relies on [mocha](http://visionmedia.github.com/mocha/) and
+NDDB relies on [mocha](http://mochajs.org/) and
 [should.js](http://github.com/visionmedia/should.js) for testing.
 
     $ npm install # will load all necessary dependencies
