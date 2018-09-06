@@ -1,5 +1,8 @@
 # NDDB change log
 
+## 1.18.0
+- Default line break is set to os.EOL.
+
 ## 1.17.0
 - Minor bug fixes.
 
