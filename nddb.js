@@ -609,7 +609,7 @@
         text = text || 'generic error';
         errMsg = this._getConstrName();
         if (method) errMsg = errMsg + '.' + method;
-        errMsg = errMsg + ': ' + text + '.';
+        errMsg = errMsg + ': ' + text;
         if (type === 'TypeError') throw new TypeError(errMsg);
         throw new Error(errMsg);
     };
