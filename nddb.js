@@ -1617,10 +1617,12 @@
      */
     NDDB.prototype.on = function(event, func) {
         if ('string' !== typeof event) {
-            this.throwErr('TypeError', 'on', 'event must be string');
+            this.throwErr('TypeError', 'on', 'event must be string. Found: ' +
+                         event);
         }
         if ('function' !== typeof func) {
-            this.throwErr('TypeError', 'on', 'func must be function');
+            this.throwErr('TypeError', 'on', 'func must be function. Found: ' +
+                          func);
         }
         if (!this.hooks[event]) {
             this.throwErr('TypeError', 'on', 'unknown event: ' + event);
