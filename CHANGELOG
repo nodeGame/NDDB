@@ -1,5 +1,8 @@
 # NDDB change log
 
+## 1.18.1
+- Updated package.json.
+
 ## 1.18.0
 - Default line break is set to os.EOL.
 
