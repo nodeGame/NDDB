@@ -2,7 +2,16 @@
   "name": "NDDB",
   "description": "Powerful and versatile 100% javascript object database",
   "version": "1.18.1",
-  "keywords": [ "db", "no-sql", "cyclic objects", "nddb", "database", "index", "views", "nodegame" ],
+  "keywords": [
+    "db",
+    "no-sql",
+    "cyclic objects",
+    "nddb",
+    "database",
+    "index",
+    "views",
+    "nodegame"
+  ],
   "author": "Stefano Balietti <futur.dorko@gmail.com>",
   "license": "MIT",
   "dependencies": {
@@ -13,10 +22,12 @@
     "JSUS": ">= 0.10.0"
   },
   "devDependencies": {
-    "mocha": ">= 0.3.0",
-    "should": "4.4.1"
+    "mocha": "^6.1.1",
+    "should": "^4.4.1"
   },
-  "engines": { "node":  ">=0.10.0" },
+  "engines": {
+    "node": ">=0.10.0"
+  },
   "main": "index.js",
   "repository": {
     "type": "git",
