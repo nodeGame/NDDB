@@ -1,5 +1,8 @@
 # NDDB change log
 
+## 1.19.0
+- Improved autodetect of csv line breaks.
+
 ## 1.18.1
 - Updated package.json.
 
