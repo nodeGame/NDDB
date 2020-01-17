@@ -1,25 +1,28 @@
 # NDDB change log
 
+## 1.19.1
+ - Path join of working directory.
+
 ## 1.19.0
-- Improved autodetect of csv line breaks.
+ - Improved autodetect of csv line breaks.
 
 ## 1.18.1
-- Updated package.json.
+ - Updated package.json.
 
 ## 1.18.0
-- Default line break is set to os.EOL.
+ - Default line break is set to os.EOL.
 
 ## 1.17.0
-- Minor bug fixes.
+ - Minor bug fixes.
 
 ## 1.16.0
-- Events "insert", "remove", "update" receive the ordinal position of the item in the database as last parameter.
-- Update rules can be passed to insert and update methods.
-- `#NDDB.random(N)` selects N random items and breeds a new DB.
-- CSV saving automatically takes care of objects. The level of nestedness can be controlled with the option `.objectLevel`.
+ - Events "insert", "remove", "update" receive the ordinal position of the item in the database as last parameter.
+ - Update rules can be passed to insert and update methods.
+ - `#NDDB.random(N)` selects N random items and breeds a new DB.
+ - CSV saving automatically takes care of objects. The level of nestedness can be controlled with the option `.objectLevel`.
 
 ## 1.15.1
-- Fixed bug that was not keeping updated the keys array of the NDDBIndex upon removal of items from index.
+ - Fixed bug that was not keeping updated the keys array of the NDDBIndex upon removal of items from index.
 
 ## 1.15.0
  - `#.setWD()` and `#.getWD() to set and get current working directory.
