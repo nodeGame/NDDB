@@ -1,10 +1,8 @@
 sudo: false
 language: node_js
 node_js:
-  - 6
-  - 7
-  - 8
   - 10
+  - 12
  
 before_install:
 # Get installer script.
@@ -14,7 +12,7 @@ before_install:
 install:
   - npm install --only=dev
   # --branch v4  
-  - node nodegame-installer.js @dev --install-dir node_modules --no-spinner --yes
+  - node nodegame-installer.js @dev --install-dir node_modules --no-spinner --yes --no-parent-dir-check
 
 script:
 # Add NDDB tests here.
