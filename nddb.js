@@ -107,7 +107,8 @@
         this.hooks = {
             insert: [],
             remove: [],
-            update: []
+            update: [],
+            setwd: []
         };
 
         // ### nddb_pointer
@@ -1291,7 +1292,7 @@
      * @see NDDB.rebuildIndexes
      */
     NDDB.prototype.view = function(idx, func) {
-        var settings;
+        var settings, that;
         if (('string' !== typeof idx) && ('number' !== typeof idx)) {
             this.throwErr('TypeError', 'view', 'idx must be string or number');
         }
@@ -1308,7 +1309,8 @@
         // Create a copy of the current settings, without the views
         // functions, else we create an infinite loop in the constructor.
         settings = this.cloneSettings( {V: ''} );
-        this.__V[idx] = func, this[idx] = new NDDB(settings);
+        this.__V[idx] = func;
+        this[idx] = new NDDB(settings);
     };
 
     /**
@@ -1349,6 +1351,7 @@
         }
         this[idx] = {};
         this.__H[idx] = func;
+
     };
 
     /**
