@@ -1,5 +1,8 @@
 # NDDB change log
 
+## 1.19.2
+ - `#NDDB.setWD` is applied to all views and hashes.
+
 ## 1.19.1
  - Path join of working directory.
 
