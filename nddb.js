@@ -705,6 +705,29 @@
             this.initLog(options.log, options.logCtx);
         }
 
+        if (options.formats) {
+            if ('object' !== typeof options.formats) {
+                errMsg = 'options.formats must be object or undefined';
+                this.throwErr('TypeError', 'init', errMsg);
+            }
+            for (i in options.formats) {
+                if (options.formats.hasOwnProperty(i)) {
+                    this.addFormat(i, options.formats[i]);
+                }
+            }
+        }
+
+        if (options.defaultFormat) {
+            this.setDefaultFormat(options.defaultFormat);
+        }
+
+        if (options.wd && 'function' === typeof this.setWD) {
+            this.setWD(options.wd);
+        }
+
+        // Below there might modifications to the options
+        // object via the cloneSettings method.
+
         if (options.C) {
             if ('object' !== typeof options.C) {
                 errMsg = 'options.C must be object or undefined';
@@ -752,27 +775,6 @@
                 }
             }
         }
-
-        if (options.formats) {
-            if ('object' !== typeof options.formats) {
-                errMsg = 'options.formats must be object or undefined';
-                this.throwErr('TypeError', 'init', errMsg);
-            }
-            for (i in options.formats) {
-                if (options.formats.hasOwnProperty(i)) {
-                    this.addFormat(i, options.formats[i]);
-                }
-            }
-        }
-
-        if (options.defaultFormat) {
-            this.setDefaultFormat(options.defaultFormat);
-        }
-
-        if (options.wd && 'function' === typeof this.setWD) {
-            this.setWD(options.wd);
-        }
-
     };
 
     /**
