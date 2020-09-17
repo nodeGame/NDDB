@@ -1,6 +1,6 @@
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2020 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
@@ -108,7 +108,9 @@
             insert: [],
             remove: [],
             update: [],
-            setwd: []
+            setwd: [],
+            save: [],
+            load: []
         };
 
         // ### nddb_pointer
@@ -177,6 +179,12 @@
         // ### __wd
         // Default working directory for saving and loading files.
         this.__wd = null;
+
+        // ### __parentDb
+        // The parent NDDB instance from which this db was created.
+        // Set in views and hashes.
+        // @experimental
+        this.__parentDb = null;
 
         // ### log
         // Std out for log messages
@@ -950,8 +958,8 @@
      */
     NDDB.prototype.breed = function(db) {
         if (db && !J.isArray(db)) {
-            this.throwErr('TypeError', 'importDB', 'db must be array ' +
-                          'or undefined');
+            this.throwErr('TypeError', 'breed', 'db must be array ' +
+                          'or undefined. Found: ' + db);
         }
         // In case the class was inherited.
         return new this.constructor(this.cloneSettings(), db || this.fetch());
@@ -1040,6 +1048,7 @@
             options.logCtx = logCtxCopy;
             this.__options.logCtx = logCtxCopy;
         }
+
         return options;
     };
 
@@ -1313,6 +1322,9 @@
         settings = this.cloneSettings( {V: ''} );
         this.__V[idx] = func;
         this[idx] = new NDDB(settings);
+        // Reference to this instance.
+        this[idx].__parentDb = this;
+
     };
 
     /**
@@ -1533,6 +1545,7 @@
                     continue;
                 }
                 //this.__V[idx] = func, this[idx] = new this.constructor();
+                // TODO: When is the view not already created? Check!
                 if (!this[key]) {
                     // Create a copy of the current settings,
                     // without the views functions, otherwise
@@ -1540,6 +1553,8 @@
                     // constructor, and the hooks.
                     settings = this.cloneSettings({ V: true, hooks: true });
                     this[key] = new NDDB(settings);
+                    // Reference to this instance.
+                    this[key].__parentDb = this;
                 }
                 this[key].insert(o);
             }
@@ -1583,6 +1598,8 @@
                     this[key][hash] = new NDDB(settings);
                 }
                 this[key][hash].insert(o);
+                // Reference to this instance.
+                this[key][hash].__parentDb = this;
                 this.hashtray.set(key, o._nddbid, hash);
             }
         }
@@ -1690,7 +1707,7 @@
      *   one callback function returned FALSE.
      */
     NDDB.prototype.emit = function() {
-        var event;
+        var event, hooks;
         var h, h2;
         var i, len, argLen, args;
         var res;
@@ -1698,17 +1715,21 @@
         if ('string' !== typeof event) {
             this.throwErr('TypeError', 'emit', 'first argument must be string');
         }
-        if (!this.hooks[event]) {
+
+        // If this is a child db (e.g. a hash or a view)
+        hooks = this.__parentDb ? this.__parentDb.hooks : this.hooks;
+
+        if (!hooks[event]) {
             this.throwErr('TypeError', 'emit', 'unknown event: ' + event);
         }
-        len = this.hooks[event].length;
+        len = hooks[event].length;
         if (!len) return true;
         argLen = arguments.length;
 
         switch(len) {
 
         case 1:
-            h = this.hooks[event][0];
+            h = hooks[event][0];
             if (argLen === 1) res = h.call(this);
             else if (argLen === 2) res = h.call(this, arguments[1]);
             else if (argLen === 3) {
@@ -1723,7 +1744,7 @@
             }
             break;
         case 2:
-            h = this.hooks[event][0], h2 = this.hooks[event][1];
+            h = hooks[event][0], h2 = hooks[event][1];
             if (argLen === 1) {
                 res = h.call(this) !== false;
                 res = res && h2.call(this) !== false;
@@ -1748,14 +1769,14 @@
         default:
              if (argLen === 1) {
                  for (i = 0; i < len; i++) {
-                     res = this.hooks[event][i].call(this) !== false;
+                     res = hooks[event][i].call(this) !== false;
                      if (res === false) break;
                  }
             }
             else if (argLen === 2) {
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = this.hooks[event][i].call(this,
+                    res = hooks[event][i].call(this,
                                                     arguments[1]) !== false;
                     if (res === false) break;
 
@@ -1764,7 +1785,7 @@
             else if (argLen === 3) {
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = this.hooks[event][i].call(this,
+                    res = hooks[event][i].call(this,
                                                     arguments[1],
                                                     arguments[2]) !== false;
                     if (res === false) break;
@@ -1777,7 +1798,7 @@
                 }
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = this.hooks[event][i].apply(this, args) !== false;
+                    res = hooks[event][i].apply(this, args) !== false;
                     if (res === false) break;
                 }
 
@@ -3851,15 +3872,21 @@
      */
     function executeSaveLoad(that, method, file, cb, options) {
         var ff, format;
-        validateSaveLoadParameters(that, method, file, cb, options);
         if (!that.storageAvailable()) {
             that.throwErr('Error', 'save', 'no persistent storage available');
         }
+        validateSaveLoadParameters(that, method, file, cb, options);
         options = options || {};
         format = extractExtension(file);
         // If try to get the format function based on the extension,
         // otherwise try to use the default one. Throws errors.
         ff = findFormatFunction(that, method, format);
+        // Emit save or load. Options can be modified.
+        that.emit(method.charAt(0) === 's' ? 'save' : 'load', options, {
+            file: file,
+            format: format,
+            cb: cb
+        });
         ff(that, file, cb, options);
     }
 
