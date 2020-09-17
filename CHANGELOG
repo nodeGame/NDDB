@@ -1,7 +1,9 @@
 # NDDB change log
 
-## 1.19.2
+## 1.20.0
  - `#NDDB.setWD` is applied to all views and hashes.
+ - New emit events: 'setwd', 'load', 'save'.
+ - Experimental: __parentDb property added to Hashes and Views.
 
 ## 1.19.1
  - Path join of working directory.
