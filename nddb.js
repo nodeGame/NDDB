@@ -241,7 +241,7 @@
 
         // Stores information about data saved/stored recurrently.
         // @experimental.
-        this.__recurrentData = {};
+        this.__recurrent = {};
 
         // Mixing in user options and defaults.
         this.init(options);
@@ -1333,7 +1333,7 @@
      * @see NDDB.rebuildIndexes
      */
     NDDB.prototype.view = function(idx, func) {
-        var settings, that;
+        var settings;
         if (('string' !== typeof idx) && ('number' !== typeof idx)) {
             this.throwErr('TypeError', 'view', 'idx must be string or number');
         }
@@ -1355,6 +1355,7 @@
         // Reference to this instance.
         this[idx].__parentDb = this;
 
+        return this[idx];
     };
 
     /**
