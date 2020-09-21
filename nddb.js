@@ -239,6 +239,10 @@
             this.addDefaultFormats();
         }
 
+        // Stores information about data saved/stored recurrently.
+        // @experimental.
+        this.__recurrentData = {};
+
         // Mixing in user options and defaults.
         this.init(options);
 
@@ -941,6 +945,32 @@
      */
     NDDB.prototype.size = function() {
         return this.db.length;
+    };
+
+    /**
+     * ### NDDB.slice
+     *
+     * Creates a clone of the current NDDB object
+     *
+     * Takes care of calling the actual constructor of the class,
+     * so that inheriting objects will preserve their prototype.
+     *
+     * @param {array} db Optional. Array of items to import in the new database.
+     *   Default, items currently in the database
+     *
+     * @return {NDDB|object} The new database
+     */
+    NDDB.prototype.slice = function(start, end) {
+        if ('number' !== typeof start) {
+            this.throwErr('TypeError', 'slice', 'start must be number. ' +
+                          'Found: ' + start);
+        }
+        if ('undefined' !== typeof end && 'number' !== typeof end) {
+            this.throwErr('TypeError', 'slice', 'end must be number or ' +
+                          'undefined. Found: ' + end);
+        }
+        // In case the class was inherited.
+        return this.breed(this.fetch().slice(start, end));
     };
 
     /**
@@ -2094,10 +2124,8 @@
         }
         db = this.fetch();
         len = db.length;
-        for (i = 0 ; i < db.length ; i++) {
-            if (J.equals(db[i], o)) {
-                return true;
-            }
+        for (i = 0 ; i < len ; i++) {
+            if (J.equals(db[i], o)) return true;
         }
         return false;
     };
@@ -2606,7 +2634,7 @@
      * @api private
      */
     NDDB.prototype._join = function(key1, key2, comparator, pos, select) {
-        var out, idxs, foreign_key, key;
+        var out, foreign_key, key;
         var i, j, o, o2;
         if (!key1 || !key2) return this.breed([]);
 
@@ -2616,7 +2644,7 @@
             select = (select instanceof Array) ? select : [select];
         }
 
-        out = [], idxs = [];
+        out = [];
         for (i = 0; i < this.db.length; i++) {
 
             foreign_key = J.getNestedValue(key1, this.db[i]);
@@ -2846,11 +2874,11 @@
         return out;
     };
 
-    function getValuesArray(o, key) {
+    function getValuesArray(o) {
         return J.obj2Array(o, 1);
     }
 
-    function getKeyValuesArray(o, key) {
+    function getKeyValuesArray(o) {
         return J.obj2KeyedArray(o, 1);
     }
 
@@ -2858,14 +2886,14 @@
     function getValuesArray_KeyString(o, key) {
         var el = J.getNestedValue(key, o);
         if ('undefined' !== typeof el) {
-            return J.obj2Array(el,1);
+            return J.obj2Array(el, 1);
         }
     }
 
     function getValuesArray_KeyArray(o, key) {
         var el = J.subobj(o, key);
         if (!J.isEmpty(el)) {
-            return J.obj2Array(el,1);
+            return J.obj2Array(el, 1);
         }
     }
 
