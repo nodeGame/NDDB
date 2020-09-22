@@ -239,9 +239,11 @@
             this.addDefaultFormats();
         }
 
-        // Stores information about data saved/stored recurrently.
+        // Stores information about files saved (e.g., headers).
+        // Keys are filenames. There is one centeral cache for
+        // all hashes and views.
         // @experimental.
-        this.__recurrent = {};
+        this.__cache = {};
 
         // Mixing in user options and defaults.
         this.init(options);
