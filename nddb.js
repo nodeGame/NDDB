@@ -6,12 +6,22 @@
  * NDDB is a powerful and versatile object database for node.js and the browser.
  * ---
  */
-(function(exports, J) {
+(function(J) {
 
     "use strict";
 
-    // Expose constructors
-    exports.NDDB = NDDB;
+    if ('undefined' !== typeof module &&
+        'undefined' !== typeof module.exports) {
+
+        J = module.parent.exports.JSUS || require('JSUS').JSUS;
+        module.exports = NDDB;
+        // Backward compatibility.
+        module.exports.NDDB = NDDB;
+    }
+    else {
+        J = JSUS;
+        window.NDDB = NDDB;
+    }
 
     if (!J) throw new Error('NDDB: missing dependency: JSUS.');
 
@@ -4433,9 +4443,4 @@
         return out;
     };
 
-})(
-    ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
-        module.exports : window ,
-    ('undefined' !== typeof module && 'undefined' !== typeof module.exports) ?
-        module.parent.exports.JSUS || require('JSUS').JSUS : JSUS
-);
+})();
