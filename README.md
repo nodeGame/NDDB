@@ -41,6 +41,7 @@ Load the library in Node.js:
 
 ```javascript
 const NDDB = require('NDDB');
+
 // Backward-compatible mode.
 // const NDDB = require('NDDB').NDDB;
 ```
@@ -521,6 +522,27 @@ db.addFormat('asd', {
 db.save('db.asd');
 ```
 
+### Recurrent Saving (node.js environment CSV) _NEW_
+
+**experimental feature**
+
+The database, or its views and hashes, can periodically save updates to file system. This feature is useful for incremental processes, such as logs.
+
+```javascript
+// Incrementally save to the same csv file all new entries in the art view.
+db.art.save('art.csv', {
+    recurrent: true,               // Periodically saves updates.
+    recurrentInterval: 15000       // How often to save (default: 10secs).
+});
+
+// One liner: create a view and add a recurrent save statement.
+db.view('title').save('titles.csv', {
+    headers: [ 'title' ],          // Save only titles.
+    recurrent: true
+});
+```
+
+
 ### Setting the current working directory (node.js environment)
 
 It is possible to specify the current working directory to avoid
@@ -540,25 +562,6 @@ db.load('db3.json');
 
 // Get current working directory:
 db.getWD(); // /home/this/user/on/that/dir/
-```
-
-### Recurrent Saving (node.js environment CSV)
-
-The database, or its views and hashes, can periodically save updates to file system. This feature is useful for incremental processes, such as logs.
-
-```javascript
-
-    // Incrementally save to the same csv file all new entries in the art view.
-    db.art.save('art.csv', {
-        recurrent: true,               // Periodically saves updates.
-        recurrentInterval: 15000       // How often to save (default: 10secs).
-    });
-
-    // One liner: create a view and add a recurrent save statement.
-    db.view('title').save('titles.csv', {
-        headers: [ 'title' ],          // Save only titles.
-        recurrent: true
-    });
 ```
 
 #### List of all available options
