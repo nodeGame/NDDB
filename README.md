@@ -11,7 +11,7 @@ group-by, basic statistics, custom operations, saving and loading from
 file system and browser localStorage, and much more.
 
 Developer-friendly thanks to an easy api, detailed documentation, and
-**100%** test coverage.
+wide test coverage.
 
 ## List of features
 
@@ -32,15 +32,17 @@ Developer-friendly thanks to an easy api, detailed documentation, and
 - Event listener / emitter: `on`, `off`, `emit`
 - Saving and Loading: `save`, `saveSync`, `load`, `loadSync`, `setWD`, `getWD`
 
-The complete NDDB api documentation is available
-[here](http://nodegame.github.com/NDDB/docs/nddb.js.html).
+<!-- The complete NDDB api documentation is available
+[here](http://nodegame.github.com/NDDB/docs/nddb.js.html). -->
 
 ## Usage
 
 Load the library in Node.js:
 
 ```javascript
-var NDDB = require('NDDB').NDDB;
+const NDDB = require('NDDB');
+// Backward-compatible mode.
+// const NDDB = require('NDDB').NDDB;
 ```
 
 or in the browser add a script tag in the page:
@@ -53,7 +55,7 @@ or in the browser add a script tag in the page:
 Create an instance of NDDB:
 
 ```javascript
-var db = new NDDB();
+let db = new NDDB();
 ```
 
 Insert an item into the database:
@@ -69,7 +71,7 @@ db.insert({
 Import a collection of items:
 
 ```javascript
-var items = [
+let items = [
     {
         painter: "Dali",
         title: "Portrait of Paul Eluard",
@@ -236,7 +238,7 @@ consistent set of entries:
 
 ```javascript
 // Let us add some cars to our previous database of paintings.
-var not_art_items = [
+let not_art_items = [
     {
       car: "Ferrari",
       model: "F10",
@@ -302,7 +304,7 @@ Listen to the `insert` event and modify the inserted items by adding
 an external index to them:
 
 ```javascript
-var id = 0;
+let id = 0;
 function getMyId(){ return id++; };
 
 db.on('insert', function(o) {
@@ -348,7 +350,7 @@ db.id.update(0, {
 // Counts items in selection.
 db.select('comment').count(); // 1
 
-var picasso = db.id.remove(0);
+let picasso = db.id.remove(0);
 db.size(); // (0)
 
 // Get all available keys in the index
@@ -372,13 +374,13 @@ db.nddbid.get('123456'); // Returns the item with nddbid equal to 123456.
 ## Example of a configuration object
 
 ```javascript
-var logFunc = function(txt, level) {
+let logFunc = function(txt, level) {
   if (level > 0) {
     console.log(txt);
   }
 };
 
-var options = {
+let options = {
   tags:  {},          // Collection of tags
   update: {           // On every insert, remove and update:
     indexes:  true,   // Updates the indexes, if any
@@ -409,7 +411,7 @@ var options = {
   }
 }
 
-var nddb = new NDDB(options);
+let nddb = new NDDB(options);
 
 // or
 
@@ -464,7 +466,7 @@ db.save('db.out', function() {
 
 // Transform items before saving them to CSV format.
 // Define adapter function that doubles all numbers in column "A".
-var options = {};
+let options = {};
 options.adapter = {
     A: function(item) { return item.A * 2; }
 };
@@ -490,7 +492,7 @@ db.load('db2.csv', function() {
 
 // Transform items before loading them into database.
 // Loading items into database.
-var options = {};
+options = {};
 options.adapter = {
     A: function(item) { return item.A / 2; }
 };
@@ -540,6 +542,25 @@ db.load('db3.json');
 db.getWD(); // /home/this/user/on/that/dir/
 ```
 
+### Recurrent Saving (node.js environment CSV)
+
+The database, or its views and hashes, can periodically save updates to file system. This feature is useful for incremental processes, such as logs.
+
+```javascript
+
+    // Incrementally save to the same csv file all new entries in the art view.
+    db.art.save('art.csv', {
+        recurrent: true,               // Periodically saves updates.
+        recurrentInterval: 15000       // How often to save (default: 10secs).
+    });
+
+    // One liner: create a view and add a recurrent save statement.
+    db.view('title').save('titles.csv', {
+        headers: [ 'title' ],          // Save only titles.
+        recurrent: true
+    });
+```
+
 #### List of all available options
 
 ```javascript
@@ -574,7 +595,7 @@ db.getWD(); // /home/this/user/on/that/dir/
                                       //      as column names
                                       //  - function: a callback that
                                       //      takes each unique key in
-                                      //      the db and returns: 
+                                      //      the db and returns:
                                       //      another substitute string,
                                       //      an array of strings to add,
                                       //      null to exclude the key,
@@ -583,12 +604,12 @@ db.getWD(); // /home/this/user/on/that/dir/
                                       //  - array of strings: used as
                                       //      is for column names (keys
                                       //      not listed are omitted)
-                                      
+
 
 
    adapter: { A: function(row) {      // An obj containing callbacks for
                   return row['A']-1;  // given csv columns. Callbacks take
-                 }                    // an object (a row of the csv 
+                 }                    // an object (a row of the csv
             },                        // file, or an item of the
                                       // database) and return a value to
                                       // be saved to file or inserted
@@ -649,7 +670,7 @@ node make build // Standard build,
 node make build -a -o nddb-full // Full build
 ```
 
-The build file file will be created inside the `build/` directory.
+The build file will be created inside the `build/` directory.
 
 
 ## License
