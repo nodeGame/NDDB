@@ -326,7 +326,7 @@ Attention! The order in which the event listeners are added
 matters. In fact, if an event listeners return `false`, all successive
 event listeners will be skipped.
 
-Other events to listen to are: `update`, `remove`.
+Other events to listen to are: `update`, `remove`, `setwd`, `save`, `load`.
 
 ### Indexes
 
