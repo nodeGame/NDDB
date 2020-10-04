@@ -753,7 +753,7 @@ db.getWD(); // /home/this/user/on/that/dir/
                 return row['A']-1;  // given csv column names. Callbacks take
             }                       // an object (a row of the csv file
         }                           // file on load, or an item of the
-                                    // database on save) and return a value to
+    },                              // database on save) and return a value to
                                     // be saved/loaded under that property name.
 
     separator: ',',                 // The character used as separator
