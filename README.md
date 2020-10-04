@@ -319,8 +319,7 @@ db.on('insert', function(o) {
 
 #### Undo insert, update, remove.
 
-Event listeners can block the execution of the operation it is
-listening to by returning `false`. No errors are thrown.
+Event listeners can block the execution of the operation by returning `false`. No errors are thrown.
 
 ```javascript
 // Insert event.
