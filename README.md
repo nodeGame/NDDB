@@ -749,11 +749,12 @@ db.getWD(); // /home/this/user/on/that/dir/
                                     //      not listed are omitted)
 
     adapter: {
-        A:  function(row) {         // An object containing callbacks for
-                return row['A']-1;  // given csv column names. Callbacks take
-            }                       // an object (a row of the csv file
-        }                           // file on load, or an item of the
-    },                              // database on save) and return a value to
+        // Update the year property
+        year: function(row) {       // An object containing callbacks for
+            return row['year']-1;   // given csv column names. Callbacks take
+        }                           // an object (a row of the csv file
+    },                              // file on load, or an item of the
+                                    // database on save) and return a value to
                                     // be saved/loaded under that property name.
 
     separator: ',',                 // The character used as separator
