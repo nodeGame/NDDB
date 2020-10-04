@@ -332,10 +332,10 @@ db.on('insert', function(item) {
 // Update event.
 // Parameters:
 //   - item: the item to update.
-//   - update: is object containing the properties to update/add.
-//   - idx: is the index of the item in the reference database (note: in a
-//         sub-selection or in the main database, the index of the same
-//         item may differ.)
+//   - update: an object containing the properties to update/add.
+//   - idx: the index of the item in the reference database (note: in a
+//          sub-selection, the index of the item may differ from its index
+//          in the main database.)
 db.on('update', function(item, update, idx) {
     if (update.year > 3000) return false; // Item is not updated.
 });
@@ -343,9 +343,9 @@ db.on('update', function(item, update, idx) {
 // Remove event.
 // Parameters:
 //   - item: the item to remove.
-//   - idx: is the index of the item in the reference database (note: in a
-//         sub-selection or in the main database, the index of the same
-//         item may differ.)
+//   - idx: the index of the item in the reference database (note: in a
+//          sub-selection, the index of the item may differ from its index
+//          in the main database.)
 db.on('remove', function(item, idx) {
     if (item.year < 3000) return false; // Item is not removed.
 });
