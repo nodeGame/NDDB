@@ -112,33 +112,31 @@ db.size(); // 6
 
 ### Select Items
 
-Select statements must begin with `select`, and can be concatened by
-any number of subsequent `and` and `or` statements. The comparison in
-select statements is performed using three input parameters:
+Select statements begin with `select` and can be refined with
+`and` and `or` statements. Select statements accept three input parameters:
 
   - 'property'
   - 'operator'
   - any additional number of arguments required by operator
 
-Available operators include standard logical operators:
+Basic operators include standard logical operators:
 
    - `=`, `==`, `!=`, `>`, `>=`, `<`, `<=`,
 
-or advanced comparison operators:
+Advanced comparison operators include:
 
    - `E`: field exists (can be omitted, it is the default one)
-   - `><`: between values (expects array)
-   - `<>`: not between values (expects array)
-   - `in`: element is found in array (expects array)
-   - `!in`: element is noi found in array (expects array)
+   - `><`: between values (expects an array as third parameter)
+   - `<>`: not between values (expects an array as third parameter)
+   - `in`: element is found in array (expects an array as third parameter)
+   - `!in`: element is noi found in array (expects an array as third parameter)
    - `LIKE`: string SQL LIKE (case sensitive)
    - `iLIKE`: string SQL LIKE (case insensitive)
 
 It is possible to access and compare nested properties simply
 separating them with `.`.
 
-After a selection is finished, items can be returned using one of the
-`fetch` statements.
+To return the selected items in an array use a `fetch` statement.
 
 #### Select Examples
 
@@ -217,24 +215,24 @@ db.reverse(); // Order: Dali, Dali, Picasso, Monet, Monet, Manet
 ```
 
 Define a custom comparator function for the name of the painter, which
-gives highest priorities to the canvases of Picasso;
+gives highest priorities to the canvases of Picasso:
 
 ```javascript
 db.compare('painter', function (o1, o2) {
     if (o1.painter === 'Picasso') return -1;
     if (o2.painter === 'Picasso') return 1;
-}
+});
 ```
 
-Sort all the paintings by painter
+Sort all the paintings by painter using the new comparator:
 
 ```javascript
-db.sort('painter'); // Picasso is always listed first
+db.sort('painter'); // Picasso is always listed first.
 ```
 
 ### Views
 
-Splits the database in sub-database, each containing semantically
+Splits the database in sub-databases, each containing semantically
 consistent set of entries:
 
 ```javascript
@@ -280,7 +278,7 @@ db.cars.size();     // NDDB with 3 car entries
 
 ### Hashing
 
-Define a custom hash function that creates a new view on each of the
+Define a custom hash function that creates a new view for each of the
 painters in the database:
 
 ```javascript
@@ -317,7 +315,7 @@ db.on('insert', function(item) {
 });
 ```
 
-#### Undo insert, update, remove.
+#### Cancel insert, update, remove.
 
 Event listeners can block the execution of the operation by returning `false`. No errors are thrown.
 
@@ -351,16 +349,15 @@ db.on('remove', function(item, idx) {
 });
 ```
 
-Attention! The order in which the event listeners are added
-matters. In fact, if an event listener returns `false`, all successive
-event listeners are skipped.
+Attention! The order in which the event listeners are added matters.
+If an event listener returns `false`, all successive event listeners are skipped.
 
 #### Modifying save/load options.
 
 ```javascript
-// Save/load event.
+// Save/load event (both sync or async).
 // Parameters:
-//   - options: user options for the save/load event.
+//   - options: object with the user options for the save/load event.
 //   - info: an object containing information about the save/load command,
 //           which cannot be altered. Format:
 //           {
@@ -377,7 +374,6 @@ db.on('save', function(options, info) {
 ```
 
 #### Intercept changes in working directory
-
 
 ```javascript
 // Set working directory event.
@@ -424,7 +420,7 @@ db.painter.getAllKeyElements();
 #### Default index
 
 The property `._nddbid` is added to every inserted item. The property
-is not enumerable (if the environment allows it), and all items are
+is not enumerable (if the environment permits it), and all items are
 indexed against it:
 
 
@@ -432,7 +428,7 @@ indexed against it:
 db.nddbid.get('123456'); // Returns the item with nddbid equal to 123456.
 ```
 
-## Example of a configuration object
+## Configuration Options
 
 ```javascript
 let logFunc = function(txt, level) {
@@ -456,15 +452,16 @@ let options = {
   logCtx: logCtx      // The context of execution for the log function
   nddb_pointer: 4,    // Set the pointer to element of index 4
   globalCompare: function(o1, o2) {
-    // comparing code
+    // Comparator.
   },
   filters: {          // Extends NDDB with new operators for select queries
-    '%': function(d, value, comparator){
+    '%': function(d, value, comparator) {
           return function(elem) {
             if ((elem[d] % value) === 0) {
               return elem;
             }
           }
+      }
   },
   share: {           // Contains objects that are copied by reference to
                      // in every new instance of NDDB.
@@ -480,9 +477,7 @@ nddb = new NDDB();
 nddb.init(options);
 ```
 
-
 ## Saving and Loading Items
-
 
 The items in the database can be saved and loaded using the `save` and
 `load` methods, and their synchronous implementations `saveSync` and
@@ -490,13 +485,13 @@ The items in the database can be saved and loaded using the `save` and
 
 ### Saving and loading to file system (node.js environment)
 
-Two formats are natively supported: `.json` and `.csv`, and they are
-detected by the extension of the filename. If a differ extension is
-found, NDDB will fall back to the default format (usually json).
+Two formats are natively supported: `.json` and `.csv` (automatically
+detected by the filename's extension. For unknown extensions, NDDB falls
+back to the default format (json, but it can be overridden).
 
 It is possible to specify new formats using the `addFormat` method.
 
-#### Code Examples
+#### Save/Load Examples
 
 ```javascript
 // Saving items in JSON format.
@@ -586,7 +581,7 @@ db.save('db.asd');
 
 **experimental feature**
 
-The database, or its views and hashes, can periodically save updates to file system. This feature is useful for incremental processes, such as logs.
+The database, or its views and hashes, periodically save updates to the file system. This feature is useful for incremental processes, such as logs.
 
 ```javascript
 // Incrementally save to the same csv file all new entries in the art view.
@@ -601,7 +596,6 @@ db.view('title').save('titles.csv', {
     recurrent: true
 });
 ```
-
 
 ### Setting the current working directory (node.js environment)
 
@@ -629,69 +623,81 @@ db.getWD(); // /home/this/user/on/that/dir/
 ```javascript
 {
 
-   flags: 'w',                        // The Node.js flag to write to fs.
-                                      // Default: 'a' (append).
+    flags: 'w',                     // The Node.js flag to write to fs.
+                                    // Default: 'a' (append).
 
-   encoding: 'utf-8',                 // The encoding of the file.
+    encoding: 'utf-8',              // The encoding of the file.
 
-   mode: 0777,                        // The permission given to the file.
-                                      // Default: 0666
+    mode: 0777,                     // The permission given to the file.
+                                    // Default: 0666
 
-   // Options below are processed when the CSV format is detected.
+    // Options below are processed when the CSV format is detected.
 
-   headers: true,                     // Loading:
-                                      //  - true: use first line of
-                                      //      file as key names (default)
-                                      //  - false: use [ 'X1'...'XN' ]
-                                      //      as key names;
-                                      //  - array of strings: used as
-                                      //      is as key names;
-                                      //  - array of booleans: selects
-                                      //      key names in order from
-                                      //      columns in csv file
-                                      //
-                                      // Saving:
-                                      //  - true: use keys of first
-                                      //      item as column names (default)
-                                      //  - 'all': collect all keys
-                                      //      from all elements and use
-                                      //      as column names
-                                      //  - function: a callback that
-                                      //      takes each unique key in
-                                      //      the db and returns:
-                                      //      another substitute string,
-                                      //      an array of strings to add,
-                                      //      null to exclude the key,
-                                      //      undefined to keep it.
-                                      //  - false: no headers
-                                      //  - array of strings: used as
-                                      //      is for column names (keys
-                                      //      not listed are omitted)
+    headers: true,                  // Loading:
+                                    //  - true: use first line of
+                                    //      file as key names (default)
+                                    //  - false: use [ 'X1'...'XN' ]
+                                    //      as key names;
+                                    //  - array of strings: used as
+                                    //      is as key names;
+                                    //  - array of booleans: selects
+                                    //      key names in order from
+                                    //      columns in csv file
+                                    //
+                                    // Saving:
+                                    //  - true: use keys of first
+                                    //      item as column names (default)
+                                    //  - 'all': collect all keys
+                                    //      from all elements and use
+                                    //      as column names
+                                    //  - function: a callback that
+                                    //      takes each unique key in
+                                    //      the db and returns:
+                                    //      another substitute string,
+                                    //      an array of strings to add,
+                                    //      null to exclude the key,
+                                    //      undefined to keep it.
+                                    //  - false: no headers
+                                    //  - array of strings: used as
+                                    //      is for column names (keys
+                                    //      not listed are omitted)
 
+    adapter: {
+        A:  function(row) {         // An object containing callbacks for
+                return row['A']-1;  // given csv column names. Callbacks take
+            }                       // an object (a row of the csv file
+        }                           // file on load, or an item of the
+                                    // database on save) and return a value to
+                                    // be saved/loaded under that property name.
 
+    separator: ',',                 // The character used as separator
+                                    // between values. Default ','.
 
-   adapter: { A: function(row) {      // An obj containing callbacks for
-                  return row['A']-1;  // given csv columns. Callbacks take
-                 }                    // an object (a row of the csv
-            },                        // file, or an item of the
-                                      // database) and return a value to
-                                      // be saved to file or inserted
-                                      // in the object's key.
+    quote: '"',                     // The character used as quote.
+                                    // Default: '"'.
 
-   separator: ',',                    // The character used as separator
-                                      // between values. Default ','.
+    commentchar: '',                // The character used for comments.
+                                    // Default: ''.
 
-   quote: '"',                        // The character used as quote.
-                                      // Default: '"'.
+    nestedQuotes: false,            // TRUE, if nested quotes allowed.
+                                    // Default FALSE.
 
-   commentchar: '',                   // The character used for comments.
-                                      // Default: ''.
+    escapeCharacter: '\\',          // The char that should be skipped.
+                                    // Default: \.
 
-   nestedQuotes: false,               // TRUE, if nested quotes allowed.
-                                      // Default FALSE.
+    // API experimental (syntax may change), SAVE ONLY.
 
-   escapeCharacter: '\\',             // The char that should be skipped.
-                                      // Default: \.
+    flatten: true,                  // If TRUE, it flattens all items
+                                    // currently selected into one row.
+
+    recurrent: true,                // If TRUE, it periodically checks if
+                                    // new items are inserted in the database
+                                    // and saves them to file system.
+
+    recurrentInterval: 20000,       // Number of milliseconds to wait before
+                                    // checking for updates in the database.
+                                    // Default: 10000
+
 }
 ```
 
