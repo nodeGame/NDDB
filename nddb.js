@@ -1819,18 +1819,15 @@
             else if (argLen === 2) {
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = hooks[event][i].call(this,
-                                                    arguments[1]) !== false;
+                    res = hooks[event][i].call(this, arguments[1]) !== false;
                     if (res === false) break;
-
                 }
             }
             else if (argLen === 3) {
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = hooks[event][i].call(this,
-                                                    arguments[1],
-                                                    arguments[2]) !== false;
+                    res = hooks[event][i].call(this, arguments[1],
+                                                     arguments[2]) !== false;
                     if (res === false) break;
                 }
             }

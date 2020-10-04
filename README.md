@@ -299,10 +299,14 @@ db.painter.Manet    // NDDB with 1 elements in db
 db.painter.Dali     // NDDB with 2 elements in db
 ```
 
-### Listenting to events
+### Listening to events
+
+NDDB fires the following events: `insert`, `update`, `remove`, `setwd`, `save`, `load`. Users can listen to these events and modify their behavior.
+
+#### Decorating objects on insert
 
 Listen to the `insert` event and modify the inserted items by adding
-an external index to them:
+an external index:
 
 ```javascript
 let id = 0;
@@ -313,20 +317,77 @@ db.on('insert', function(o) {
 });
 ```
 
+#### Undo insert, update, remove.
+
 Event listeners can block the execution of the operation it is
 listening to by returning `false`. No errors are thrown.
 
 ```javascript
-db.on('insert', function(o) {
-    if (o.year > 3000) return false;
+// Insert event.
+// Parameters:
+//  - item: the item to insert.
+db.on('insert', function(item) {
+    if (item.year > 3000) return false; // Item is not added.
+});
+
+// Update event.
+// Parameters:
+//   - item: the item to update.
+//   - update: is object containing the properties to update/add.
+//   - idx: is the index of the item in the reference database (note: in a
+//         sub-selection or in the main database, the index of the same
+//         item may differ.)
+db.on('update', function(item, update, idx) {
+    if (update.year > 3000) return false; // Item is not updated.
+});
+
+// Remove event.
+// Parameters:
+//   - item: the item to remove.
+//   - idx: is the index of the item in the reference database (note: in a
+//         sub-selection or in the main database, the index of the same
+//         item may differ.)
+db.on('remove', function(item, idx) {
+    if (item.year < 3000) return false; // Item is not removed.
 });
 ```
 
 Attention! The order in which the event listeners are added
-matters. In fact, if an event listeners return `false`, all successive
-event listeners will be skipped.
+matters. In fact, if an event listener returns `false`, all successive
+event listeners are skipped.
 
-Other events to listen to are: `update`, `remove`, `setwd`, `save`, `load`.
+#### Modifying save/load options.
+
+```javascript
+// Save/load event.
+// Parameters:
+//   - options: user options for the save/load event.
+//   - info: an object containing information about the save/load command,
+//           which cannot be altered. Format:
+//           {
+//               file:     'path/to/file.csv',
+//               format:   'csv',
+//               cb:       function() {},   // User defined function, if any.
+//           }
+//
+db.on('save', function(options, info) {
+    if (info.format === 'csv') {
+        options.headers = [ 'id', 'time', 'action'];  // Modify headers.
+    }
+});
+```
+
+#### Intercept changes in working directory
+
+
+```javascript
+// Set working directory event.
+// Parameters:
+//   - wd: The new working directory.
+db.on('setwd', function(wd) {
+    // Take note of the change, the value cannot be modified.
+});
+```
 
 ### Indexes
 
