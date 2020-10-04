@@ -401,7 +401,7 @@ db.on('insert', function(item) {
 });
 ```
 
-#### Cancel insert, update, remove.
+#### Cancel operations: insert, update, remove.
 
 Event listeners can block the execution of the operation by returning `false`. No errors are thrown.
 
