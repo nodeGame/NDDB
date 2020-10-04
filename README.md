@@ -62,6 +62,7 @@ let db = new NDDB();
 Insert an item into the database:
 
 ```javascript
+// Add one item to the database.
 db.insert({
     painter: "Picasso",
     title: "Les Demoiselles d'Avignon",
@@ -101,6 +102,7 @@ let items = [
     }
 ];
 
+// Import an array of items at once.
 db.importDB(items);
 ```
 
@@ -136,8 +138,6 @@ Advanced comparison operators include:
 It is possible to access and compare nested properties simply
 separating them with `.`.
 
-To return the selected items in an array use a `fetch` statement.
-
 #### Select Examples
 
 Select all paintings from Dali:
@@ -165,29 +165,115 @@ Select all portraits:
 db.select('portrait'); // 1 item
 ```
 
-Fetch all paintings from Dali that are before 1928:
+Select all paintings from Dali that are before 1928:
 
 ```javascript
 db.select('painter', '=', 'Dali')
-  .and('year', '<', 1928);
-  .fetch(); // 1 item
+  .and('year', '<', 1928); // 1 item
 ```
 
-Fetch all paintings of the beginning of XX's century:
+Select all paintings of the beginning of XX's century:
 
 ```javascript
-db.select('year', '><', [1900, 1910])
-  .fetch(); // 2 items
+db.select('year', '><', [1900, 1910]) // 2 items
 ```
 
-Fetch separately all the painters and all the dates of the paintings:
+### Fetching items
+
+Select statements are not evaluated until a `fetch` statement is invoked, returning the array of selected items, and preventing further chaining.
 
 ```javascript
-db.select('year', '><', [1900, 1910])
-  .fetchValues(['painter', 'title']);
+db.select('painter', '=', 'Dali').fetch();
 
-// { painter: [ 'Jesus', 'Dali', 'Dali', 'Monet', 'Monet', 'Manet' ],
-//   year: [ 0, 1929, 1927, 1906, 1891, 1863 ] }
+// [
+// {
+//     painter: "Dali",
+//     title: "Portrait of Paul Eluard",
+//     year: 1929,
+//     portrait: true
+// },
+// {
+//     painter: "Dali",
+//     title: "Barcelonese Mannequin",
+//     year: 1927
+// }
+// ]
+```
+
+Other fetch methods can manipulate the items before they are returned.
+
+```javascript
+// Create a new database without the items by Picasso.
+let newDb = db.select('painter', '!=', 'Picasso').breed();
+
+// fetchValues
+//
+// Fetch all the values of specified properties and return them in an object.
+newDb.fetchValues(['painter', 'title']);
+
+// {
+//   painter: [ 'Dali', 'Dali', 'Monet', 'Monet', 'Manet' ],
+//   year: [ 1929, 1927, 1906, 1891, 1863 ]
+// }
+
+// fetchSubObj
+//
+// Keeps only specified properties in the objects, before returning them in
+// an array (items in the original database are NOT modified).
+newDb.fetchSubObj(['painter', 'title']);
+
+// [
+//     {
+//         painter: "Dali",
+//         year: 1929
+//     },
+//     {
+//         painter: "Dali",
+//         year: 1927
+//     },
+//     {
+//         painter: "Monet",
+//         year: 1906
+//     },
+//     {
+//         painter: "Monet",
+//         year: 1891
+//     },
+//     {
+//         painter: "Manet",
+//         year: 1863
+//     }
+// ]    
+
+// fetchArray
+//
+// Returns the items as arrays.
+newDb.fetchArray()
+// [
+//  [ 'Dali', 'Portrait of Paul Eluard', 1929, true ],
+//  [ 'Dali', 'Barcelonese Mannequin', 1927 ],
+//  [ 'Monet', 'Water Lilies', 1906 ],
+//  [ 'Monet', 'Wheatstacks (End of Summer)', 1891 ],
+//  [ 'Manet', 'Olympia', 1863 ]
+// ]
+
+
+// fetchKeyArray
+//
+// Returns the items as arrays (including the keys).
+newDb.fetchKeyArray()
+// [
+//   [
+//     'painter', 'Dali', 'title', 'Portrait of Paul Eluard', 'year',
+//     1929, 'portrait', true
+//   ],
+//   [ 'painter', 'Dali', 'title', 'Barcelonese Mannequin', 'year', 1927 ],
+//   [ 'painter', 'Monet', 'title', 'Water Lilies', 'year', 1906 ],
+//   [
+//     'painter', 'Monet', 'title', 'Wheatstacks (End of Summer)', 'year', 1891
+//   ],
+//   [ 'painter', 'Manet', 'title', 'Olympia', 'year', 1863 ]
+// ]
 ```
 
 ### Sorting
