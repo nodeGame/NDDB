@@ -312,8 +312,8 @@ an external index:
 let id = 0;
 function getMyId(){ return id++; };
 
-db.on('insert', function(o) {
-    o.painter.id = getMyId();
+db.on('insert', function(item) {
+    item.myId = getMyId();
 });
 ```
 
