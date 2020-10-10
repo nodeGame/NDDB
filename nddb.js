@@ -1500,7 +1500,7 @@
             };
         }
         else if (h && !i && v) {
-            cb = function(o, idx) {
+            cb = function(o) {
                 this._hashIt(o);
                 this._viewIt(o);
             };
@@ -1759,20 +1759,28 @@
             this.throwErr('TypeError', 'emit', 'first argument must be string');
         }
 
-        // If this is a child db (e.g. a hash or a view)
-        hooks = this.__parentDb ? this.__parentDb.hooks : this.hooks;
-
-        if (!hooks[event]) {
+        hooks = this.hooks[event];
+        if (!hooks) {
             this.throwErr('TypeError', 'emit', 'unknown event: ' + event);
         }
-        len = hooks[event].length;
+
+        // If this is a child db (e.g. a hash or a view) must fire also the
+        // parent hooks. Local hooks fire first.
+        // Check: all events should be fired on the parent? E.g., setWD?
+        if (this.__parentDb) {
+            hooks = hooks.length ?
+                    hooks.concat(this.__parentDb.hooks[event]) :
+                    this.__parentDb.hooks[event];
+        }
+
+        len = hooks.length;
         if (!len) return true;
         argLen = arguments.length;
 
         switch(len) {
 
         case 1:
-            h = hooks[event][0];
+            h = hooks[0];
             if (argLen === 1) res = h.call(this);
             else if (argLen === 2) res = h.call(this, arguments[1]);
             else if (argLen === 3) {
@@ -1787,7 +1795,7 @@
             }
             break;
         case 2:
-            h = hooks[event][0], h2 = hooks[event][1];
+            h = hooks[0], h2 = hooks[1];
             if (argLen === 1) {
                 res = h.call(this) !== false;
                 res = res && h2.call(this) !== false;
@@ -1812,22 +1820,22 @@
         default:
              if (argLen === 1) {
                  for (i = 0; i < len; i++) {
-                     res = hooks[event][i].call(this) !== false;
+                     res = hooks[i].call(this) !== false;
                      if (res === false) break;
                  }
             }
             else if (argLen === 2) {
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = hooks[event][i].call(this, arguments[1]) !== false;
+                    res = hooks[i].call(this, arguments[1]) !== false;
                     if (res === false) break;
                 }
             }
             else if (argLen === 3) {
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = hooks[event][i].call(this, arguments[1],
-                                                     arguments[2]) !== false;
+                    res = hooks[i].call(this, arguments[1],
+                                        arguments[2]) !== false;
                     if (res === false) break;
                 }
             }
@@ -1838,7 +1846,7 @@
                 }
                 res = true;
                 for (i = 0; i < len; i++) {
-                    res = hooks[event][i].apply(this, args) !== false;
+                    res = hooks[i].apply(this, args) !== false;
                     if (res === false) break;
                 }
 
@@ -3870,15 +3878,15 @@
     function validateSaveLoadParameters(that, method, file, cb, options) {
         if ('string' !== typeof file || file.trim() === '') {
             that.throwErr('TypeError', method, 'file must be ' +
-                          'a non-empty string');
+                          'a non-empty string. Found: ' + file);
         }
         if (cb && 'function' !== typeof cb) {
             that.throwErr('TypeError', method, 'cb must be function ' +
-                          'or undefined');
+                          'or undefined. Found: ' + cb);
         }
         if (options && 'object' !== typeof options) {
             that.throwErr('TypeError', method, 'options must be object ' +
-                          'or undefined');
+                          'or undefined. Found: ' + options);
         }
     }
 
