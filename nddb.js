@@ -3581,7 +3581,7 @@
      *
      * @param {string|number} tag An alphanumeric id
      * @param {mixed} idx Optional. The reference to the object.
-     *   Defaults, `nddb_pointer`
+     *   Defaults, last element in db
      * @return {object} ref A reference to the tagged object
      *
      * @see NDDB.resolveTag
@@ -3595,7 +3595,7 @@
         ref = null, typeofIdx = typeof idx;
 
         if (typeofIdx === 'undefined') {
-            ref = this.db[this.nddb_pointer];
+            ref = this.db[this.db.length-1];
         }
         else if (typeofIdx === 'number') {
 
