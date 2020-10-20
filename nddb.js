@@ -123,6 +123,18 @@
             load: []
         };
 
+        // ### sharedHooks
+        // The list of hooks and associated callbacks shared with child database
+        // @experimental
+        this.sharedHooks = {
+            insert: [],
+            remove: [],
+            update: [],
+            setwd: [],
+            save: [],
+            load: []
+        };
+
         // ### nddb_pointer
         // Pointer for iterating along all the elements
         this.nddb_pointer = 0;
@@ -1117,6 +1129,8 @@
      *
      * Cyclic objects are decycled.
      *
+     * Evaluates pending queries with `fetch`.
+     *
      * @param {boolean} TRUE, if compressed
      *
      * @return {string} out A machine-readable representation of the database
@@ -1124,16 +1138,17 @@
      * @see JSUS.stringify
      */
     NDDB.prototype.stringify = function(compressed) {
-        var spaces, out;
+        var db, spaces, out;
         var item, i, len;
         if (!this.size()) return '[]';
         compressed = ('undefined' === typeof compressed) ? true : compressed;
         spaces = compressed ? 0 : 4;
         out = '[';
-        i = -1, len = this.db.length;
+        db = this.fetch();
+        i = -1, len = db.length;
         for ( ; ++i < len ; ) {
             // Decycle, if possible.
-            item = NDDB.decycle(this.db[i]);
+            item = NDDB.decycle(db[i]);
             out += J.stringify(item, spaces);
             if (i !== len-1) out += ', ';
         }
@@ -1359,9 +1374,10 @@
             this.throwErr('TypeError', 'view', 'func must be function or ' +
                           'undefined. Found: ' + func);
         }
-        // Create a copy of the current settings, without the views
-        // functions, else we create an infinite loop in the constructor.
-        settings = this.cloneSettings( {V: ''} );
+        // Create a copy of the current settings, without the views and hooks
+        // functions, else we create an infinite loop in the constructor or
+        // hooks are executed multiple times.
+        settings = this.cloneSettings( { V: true, hooks: true } );
         this.__V[idx] = func;
         this[idx] = new NDDB(settings);
         // Reference to this instance.
@@ -1639,10 +1655,10 @@
                     // and the hooks (should be called only on main db).
                     settings = this.cloneSettings({ H: true, hooks: true });
                     this[key][hash] = new NDDB(settings);
+                    // Reference to this instance.
+                    this[key][hash].__parentDb = this;
                 }
                 this[key][hash].insert(o);
-                // Reference to this instance.
-                this[key][hash].__parentDb = this;
                 this.hashtray.set(key, o._nddbid, hash);
             }
         }
@@ -1677,10 +1693,16 @@
      * });
      * ```
      *
-     * @param {string} event The name of an event: 'insert', 'update', 'remove'
+     * @param {string} event The name of an event
      * @param {function} func The callback function associated to the event
+     * @param {boolean} shared Optional. Experimental. If TRUE, this event
+     *   is shared with all nested databases. Careful! It may created
+     *   infinite loops. Default: FALSE.
+     *
+     * @see NDDB.emit
+     * @experimental shared parameter
      */
-    NDDB.prototype.on = function(event, func) {
+    NDDB.prototype.on = function(event, func, shared) {
         if ('string' !== typeof event) {
             this.throwErr('TypeError', 'on', 'event must be string. Found: ' +
                          event);
@@ -1693,6 +1715,7 @@
             this.throwErr('TypeError', 'on', 'unknown event: ' + event);
         }
         this.hooks[event].push(func);
+        if (shared) this.sharedHooks[event].push(func);
     };
 
     /**
@@ -1722,9 +1745,15 @@
 
         if (!func) {
             this.hooks[event] = [];
+            this.sharedHooks[event] = [];
             return true;
         }
         for (i = 0; i < this.hooks[event].length; i++) {
+            // Shared hooks contains at most as many items as hooks, but
+            // probably much less.
+            if (this.sharedHooks[event][i] == func) {
+                this.sharedHooks[event].splice(i, 1);
+            }
             if (this.hooks[event][i] == func) {
                 this.hooks[event].splice(i, 1);
                 return true;
@@ -1769,8 +1798,8 @@
         // Check: all events should be fired on the parent? E.g., setWD?
         if (this.__parentDb) {
             hooks = hooks.length ?
-                    hooks.concat(this.__parentDb.hooks[event]) :
-                    this.__parentDb.hooks[event];
+                    hooks.concat(this.__parentDb.sharedHooks[event]) :
+                    this.__parentDb.sharedHooks[event];
         }
 
         len = hooks.length;
@@ -3908,7 +3937,11 @@
     /**
      * ### executeSaveLoad
      *
-     * Fetches the right format and executes save, saveSync, load, or loadSync
+     * Executes save, saveSync, load, or loadSync for the requested format
+     *
+     * Evaluates pending queries with `fetch`.
+     * Technical note: for the JSON format, queries are fetched by
+     * the `stringify` method, for the CSV format, by the `saveCsv`.
      *
      * @param {NDDB} that The reference to the current instance
      * @param {string} method The name of the method invoking validation

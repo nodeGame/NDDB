@@ -1,11 +1,16 @@
 # NDDB change log
 
-## 1.20.0
+## 2.0.0
  - `#NDDB.setWD` is applied to all views and hashes.
  - New emit events: 'setwd', 'load', 'save'.
- - Experimental: __parentDb property added to Hashes and Views.
- - Recurrent CSV saving.
+ - Improved CSV saving: keepUpdated, updatesOnly, updateDelay, flatten,
+ flattenByGroup options.
  - Cache for all CSV files.
+ - `#NDDB.tag` default value is last element in db (before nddb_pointer).
+ - `#NDDB.stringify` fetches query, so saving in JSON format is applied to current selection (consistent with csv format).
+ - Saving option `flag` deprecated, use `flags instead.
+ - Experimental: __parentDb property added to Hashes and Views.
+ - Experimental: `#NDDB.on` accepts third parameter for hooks that are shared with child databases.
 
 ## 1.19.1
  - Path join of working directory.
