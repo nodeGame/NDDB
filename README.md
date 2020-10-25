@@ -162,6 +162,7 @@ db.select(['painter', 'portrait'], 'iLIKE', '%e%') // 5 items
 Select all portraits:
 
 ```javascript
+// Property 'portrait' must not be undefined.
 db.select('portrait'); // 1 item
 ```
 
@@ -390,7 +391,7 @@ NDDB fires the following events: `insert`, `update`, `remove`, `setwd`, `save`, 
 #### Decorating objects on insert
 
 Listen to the `insert` event and modify the inserted items by adding
-an external index:
+an index that is incremented sequentially:
 
 ```javascript
 let id = 0;
@@ -401,7 +402,7 @@ db.on('insert', function(item) {
 });
 ```
 
-#### Cancel operations: insert, update, remove.
+#### Canceling operations: insert, update, remove.
 
 Event listeners can block the execution of the operation by returning `false`. No errors are thrown.
 
@@ -605,7 +606,36 @@ db.setDefaultFormat('csv');
 db.save('db.out', function() {
     console.log("Saved db into db.out'");
 });
+```
 
+#### Adding a New Format
+
+```js
+// Specify a new format.
+db.addFormat('asd', {
+   save: function(db, file, cb, options) {
+         // save file asynchronously.
+   },
+   load: function(db, file, cb, options) {
+         // load file asynchronously.
+   },
+   saveSync: function(db, file, cb, options) {
+         // save file synchronously.
+   },
+   loadSync: function(db, file, cb, options) {
+         // load file synchronously.
+   }
+});
+
+// Saving in the new format.
+db.save('db.asd');
+```
+
+### CSV Advanced Options
+
+#### Specifying an Adapter
+
+```js
 // Transform items before saving them to CSV format.
 // Define adapter function that doubles all numbers in column "A".
 let options = {};
@@ -642,46 +672,81 @@ options.adapter = {
 db.load('db2.csv', function() {
                    console.log("Loaded csv file into database");
 });
-
-// Specify a new format.
-db.addFormat('asd', {
-   save: function(db, file, cb, options) {
-         // save file asynchronously.
-   },
-   load: function(db, file, cb, options) {
-         // load file asynchronously.
-   },
-   saveSync: function(db, file, cb, options) {
-         // save file synchronously.
-   },
-   loadSync: function(db, file, cb, options) {
-         // load file synchronously.
-   }
-});
-
-// Saving in the new format.
-db.save('db.asd');
 ```
 
-### Recurrent Saving (node.js environment CSV) _NEW_
+#### Saving Updates
 
-**experimental feature**
+To automatically save to the file system every new entry added to the database, or its views and hashes, use the `keepUpdated` flag. This feature is especially useful for incremental processes, such as logs.
 
-The database, or its views and hashes, periodically save updates to the file system. This feature is useful for incremental processes, such as logs.
+Let's assume that objects containing user comments are added to the database at random intervals. To automatically save
 
-```javascript
-// Incrementally save to the same csv file all new entries in the art view.
-db.art.save('art.csv', {
-    recurrent: true,               // Periodically saves updates.
-    recurrentInterval: 15000       // How often to save (default: 10secs).
-});
+```js
+// Create a new 'comment' view and save all updates to CSV file.
+db.view('comment').save('comments.csv', {
 
-// One liner: create a view and add a recurrent save statement.
-db.view('title').save('titles.csv', {
-    headers: [ 'title' ],          // Save only titles.
-    recurrent: true
+    // Specify a custom header.
+    header: [ 'timestamp', 'user', 'comment' ],
+
+    // Incrementally save to the same csv file all new entries.
+    keepUpdated: true,  
+
+    // As new items are generally clustered in time, it is good to add some
+    // before saving the updates the view. Default: 10000 milliseconds
+    updateDelay: 5000    
 });
 ```
+
+Alternatively, if you know already when a new set of comments are added to the database, you can manually control when to save the new updates, using the `updatesOnly` flag.
+
+```js
+// Feedback view already created.
+db.comment.save('comments.csv', {
+
+    // Custom header.
+    header: [ 'timestamp', 'user', 'feedback' ],
+
+    // Saves only updates from previous save command.
+    updatesOnly: true
+});
+```
+
+#### Flatten Items
+
+If a single user enters multiple items in the database, but you need only one row in the CSV file, you can use the `flatten` flag.
+
+```js
+db.view('user').save('users.csv', {
+
+    // Custom header.
+    header: [
+        "user", "comment", "date", "name", "last", "rating"
+    ],
+
+    // Merges all items together.
+    flatten: true,
+});
+```
+
+If multiple users have done the same, the option `flattenByGroup` will create one new CSV row per group.
+
+
+```js
+db.user.save('users.csv', {
+
+    // Custom header.
+    header: [
+        "user", "comment", "date", "name", "last", "rating"
+    ],
+
+    // Merges all items together.
+    flatten: true,
+
+    // One row per user (can also be a function returning the id of the group).
+    flattenByGroup: 'user',
+});
+```
+
+In case you need to periodically flatten the items, use the `flatten` option in combination with the `updatesOnly` flag.
 
 ### Setting the current working directory (node.js environment)
 
