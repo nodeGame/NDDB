@@ -696,7 +696,7 @@ db.view('comment').save('comments.csv', {
     keepUpdated: true,  
 
     // As new items are generally clustered in time, it is good to add some
-    // before saving the updates the view. Default: 10000 milliseconds
+    // delay before saving the updates. Default: 10000 milliseconds
     updateDelay: 5000    
 });
 ```
@@ -732,7 +732,7 @@ db.view('user').save('users.csv', {
 });
 ```
 
-If multiple users have done the same, the option `flattenByGroup` will create one new CSV row per group.
+If you have multiple users in the database, the option `flattenByGroup` will create one CSV row per group (e.g., user).
 
 
 ```js
