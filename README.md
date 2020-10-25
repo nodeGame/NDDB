@@ -640,7 +640,10 @@ db.save('db.asd');
 // Define adapter function that doubles all numbers in column "A".
 let options = {};
 options.adapter = {
-    A: function(item) { return item.A * 2; }
+    A: function(item) { return item.A * 2; },
+
+    // Rename a property (must specify shorterName in a custom header).
+    shorterName: 'moreComplexAndLongerName'
 };
 db.save('db2.csv', options, function() {
     console.log("Saved db as csv into 'db2.csv', where numbers in column 'A'" +
