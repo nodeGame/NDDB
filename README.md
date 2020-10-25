@@ -637,12 +637,14 @@ db.save('db.asd');
 
 ```js
 // Transform items before saving them to CSV format.
-// Define adapter function that doubles all numbers in column "A".
+
 let options = {};
 options.adapter = {
+
+    // Double all numbers in column "A".
     A: function(item) { return item.A * 2; },
 
-    // Rename a property (must specify shorterName in a custom header).
+    // Rename a property (must add shorterName to a custom header).
     shorterName: 'moreComplexAndLongerName'
 };
 db.save('db2.csv', options, function() {
