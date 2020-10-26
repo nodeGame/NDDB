@@ -581,6 +581,9 @@ It is possible to specify new formats using the `addFormat` method.
 #### Save/Load Examples
 
 ```javascript
+
+// SAVING.
+
 // Saving items in JSON format.
 db.save('db.json', function() {
     console.log("Saved db into 'db.json'");
@@ -606,6 +609,18 @@ db.setDefaultFormat('csv');
 db.save('db.out', function() {
     console.log("Saved db into db.out'");
 });
+
+// LOADING.
+
+// Loading items into database synchronously.
+db.loadSync('db.csv');
+console.log("Loaded csv file into database");
+
+// Loading 'adapted' items into database.
+db.load('db.csv', function() {
+                   console.log("Loaded csv file into database");
+});
+
 ```
 
 #### Adding a New Format
@@ -638,14 +653,15 @@ db.save('db.asd');
 ```js
 // Transform items before saving them to CSV format.
 
-let options = {};
-options.adapter = {
+let options = {
+    adapter: {
 
-    // Double all numbers in column "A".
-    A: function(item) { return item.A * 2; },
+        // Double all numbers in column "A".
+        A: function(item) { return item.A * 2; },
 
-    // Rename a property (must add shorterName to a custom header).
-    shorterName: 'moreComplexAndLongerName'
+        // Rename a property (must add shorterName to a custom header).
+        shorterName: 'moreComplexAndLongerName'
+    }
 };
 db.save('db2.csv', options, function() {
     console.log("Saved db as csv into 'db2.csv', where numbers in column 'A'" +
@@ -653,37 +669,24 @@ db.save('db2.csv', options, function() {
 });
 
 
-// Loading items into database.
-db.load('db.csv', function() {
-                  console.log("Loaded csv file into database");
-});
-
-// Loading items into database synchronously.
-db.loadSync('db.csv');
-console.log("Loaded csv file into database");
-
-// Loading 'adapted' items into database.
-db.load('db2.csv', function() {
-                   console.log("Loaded csv file into database");
-});
-
 // Transform items before loading them into database.
 // Loading items into database.
-options = {};
-options.adapter = {
-    A: function(item) { return item.A / 2; }
+options = {
+    adapter = {
+        A: function(item) { return item.A / 2; }
+    }
 };
 
-db.load('db2.csv', function() {
+db.load('db2.csv', options, function() {
                    console.log("Loaded csv file into database");
 });
 ```
 
 #### Saving Updates
 
-To automatically save to the file system every new entry added to the database, or its views and hashes, use the `keepUpdated` flag. This feature is especially useful for incremental processes, such as logs.
+To automatically save to the file system every new entry added to the database (as well as views and hashes) use the `keepUpdated` flag. This feature is especially useful for incremental processes, such as logs.
 
-Let's assume that objects containing user comments are added to the database at random intervals. To automatically save
+Let's assume that objects containing user comments are added to the database at random intervals. Here is the code snippet to automatically save them:
 
 ```js
 // Create a new 'comment' view and save all updates to CSV file.
