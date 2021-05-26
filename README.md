@@ -455,7 +455,7 @@ If an event listener returns `false`, all successive event listeners are skipped
 //
 db.on('save', function(options, info) {
     if (info.format === 'csv') {
-        options.headers = [ 'id', 'time', 'action'];  // Modify headers.
+        options.header = [ 'id', 'time', 'action'];  // Modify header.
     }
 });
 ```
@@ -792,7 +792,7 @@ db.getWD(); // /home/this/user/on/that/dir/
 
     // Options below are processed when the CSV format is detected.
 
-    headers: true,                  // Loading:
+    header: true,                  // Loading:
                                     //  - true: use first line of
                                     //      file as key names (default)
                                     //  - false: use [ 'X1'...'XN' ]
@@ -816,7 +816,7 @@ db.getWD(); // /home/this/user/on/that/dir/
                                     //      an array of strings to add,
                                     //      null to exclude the key,
                                     //      undefined to keep it.
-                                    //  - false: no headers
+                                    //  - false: no header
                                     //  - array of strings: used as
                                     //      is for column names (keys
                                     //      not listed are omitted)
