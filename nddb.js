@@ -89,6 +89,8 @@
 
         // ## Public properties.
 
+        this.name = options.name || 'nddb';
+
         // ### nddbid
         // A global index of all objects.
         this.nddbid = new NDDBIndex('nddbid', this);
@@ -1125,25 +1127,28 @@
     /**
      * ### NDDB.stringify
      *
-     * Returns a machine-readable representation of the database
+     * Stringifies the items in the database in an expanded JSON format
      *
-     * Cyclic objects are decycled.
+     * Cyclic objects are decycled, functions, null, undefined, are kept.
      *
      * Evaluates pending queries with `fetch`.
      *
-     * @param {boolean} TRUE, if compressed
+     * @param {boolean} compress Optional. If TRUE, JSON is pretty-printed
+     * @param {boolean} enclose Optional. If TRUE, items are enclosed in an
+     *   array so that they can be read with a require statement.
      *
      * @return {string} out A machine-readable representation of the database
      *
      * @see JSUS.stringify
      */
-    NDDB.prototype.stringify = function(compressed) {
+    NDDB.prototype.stringify = function(compress, enclose) {
         var db, spaces, out;
         var item, i, len;
-        if (!this.size()) return '[]';
-        compressed = ('undefined' === typeof compressed) ? true : compressed;
-        spaces = compressed ? 0 : 4;
-        out = '[';
+        enclose = 'undefined' === typeof enclose ? true: enclose;
+        if (!this.size()) return enclose ? '[]' : '';
+        compress = ('undefined' === typeof compress) ? true : compress;
+        spaces = compress ? 0 : 4;
+        out = enclose ? '[' : '';
         db = this.fetch();
         i = -1, len = db.length;
         for ( ; ++i < len ; ) {
@@ -1152,7 +1157,7 @@
             out += J.stringify(item, spaces);
             if (i !== len-1) out += ', ';
         }
-        out += ']';
+        if (enclose) out += ']';
         return out;
     };
 
@@ -1377,7 +1382,7 @@
         // Create a copy of the current settings, without the views and hooks
         // functions, else we create an infinite loop in the constructor or
         // hooks are executed multiple times.
-        settings = this.cloneSettings( { V: true, hooks: true } );
+        settings = this.cloneSettings( { V: true, hooks: true, name: idx } );
         this.__V[idx] = func;
         this[idx] = new NDDB(settings);
         // Reference to this instance.
@@ -3829,7 +3834,6 @@
      * Dummy property. If overwritten it will be invoked by constructor
      */
     NDDB.prototype.addDefaultFormats = null;
-
 
     // ## Helper Methods
 
