@@ -1373,6 +1373,7 @@
             this.throwErr('TypeError', 'view', 'idx is reserved word: ' + idx);
         }
         if ('undefined' === typeof func) {
+            // View checks for undefined later.
             func = function(item) { return item[idx]; };
         }
         else if ('function' !== typeof func) {
@@ -1382,8 +1383,9 @@
         // Create a copy of the current settings, without the views and hooks
         // functions, else we create an infinite loop in the constructor or
         // hooks are executed multiple times.
-        settings = this.cloneSettings( { V: true, hooks: true, name: idx } );
         this.__V[idx] = func;
+        settings = this.cloneSettings( { V: true, hooks: true} );
+        settings.name = idx;
         this[idx] = new NDDB(settings);
         // Reference to this instance.
         this[idx].__parentDb = this;
@@ -1609,6 +1611,7 @@
                     continue;
                 }
                 //this.__V[idx] = func, this[idx] = new this.constructor();
+
                 // TODO: When is the view not already created? Check!
                 if (!this[key]) {
                     // Create a copy of the current settings,
@@ -1616,6 +1619,8 @@
                     // we establish an infinite loop in the
                     // constructor, and the hooks.
                     settings = this.cloneSettings({ V: true, hooks: true });
+                    settings.name = key;
+
                     this[key] = new NDDB(settings);
                     // Reference to this instance.
                     this[key].__parentDb = this;
@@ -1659,6 +1664,7 @@
                     // we create an infinite loop at first insert,
                     // and the hooks (should be called only on main db).
                     settings = this.cloneSettings({ H: true, hooks: true });
+                    settings.name = hash;
                     this[key][hash] = new NDDB(settings);
                     // Reference to this instance.
                     this[key][hash].__parentDb = this;
