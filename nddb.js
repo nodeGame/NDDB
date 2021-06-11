@@ -1429,7 +1429,7 @@
             this.throwErr('TypeError', 'hash', 'func must be function or ' +
                           'undefined. Found: ' + func);
         }
-        this[idx] = {};
+        this[idx] = {}; // new NDDBHash();
         this.__H[idx] = func;
 
     };
@@ -1620,6 +1620,7 @@
                     // constructor, and the hooks.
                     settings = this.cloneSettings({ V: true, hooks: true });
                     settings.name = key;
+                    // console.log('saving...', this.name, this.size());
 
                     this[key] = new NDDB(settings);
                     // Reference to this instance.
@@ -4297,6 +4298,31 @@
     NDDBHashtray.prototype.clear = function() {
         this.resolve = {};
     };
+
+
+    // Inheriting from NDDB.
+
+    // function NDDBHash(conf) {
+    //
+    //     var len = 0;
+    //
+    //     this.__add = function(key, nddb) {
+    //         this[key] = nddb;
+    //
+    //         if (conf) nddb.init(conf);
+    //
+    //         len++;
+    //     };
+    //
+    //     this.__size = function() { return len; };
+    //
+    // }
+
+
+
+
+
+
 
     /**
      * # NDDBIndex
