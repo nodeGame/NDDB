@@ -672,7 +672,7 @@ db.save('db2.csv', options, function() {
 // Transform items before loading them into database.
 // Loading items into database.
 options = {
-    adapter = {
+    adapter: {
         A: function(item) { return item.A / 2; }
     }
 };
