@@ -3689,10 +3689,6 @@
      * @see NDDB.loadSync
      */
     NDDB.prototype.load = function(file, options, cb) {
-        if (arguments.length === 2 && 'function' === typeof options) {
-            cb = options;
-            options = undefined;
-        }
         executeSaveLoad(this, 'load', file, cb, options);
     };
 
@@ -3704,10 +3700,6 @@
      * @see NDDB.saveSync
      */
     NDDB.prototype.save = function(file, options, cb) {
-        if (arguments.length === 2 && 'function' === typeof options) {
-            cb = options;
-            options = undefined;
-        }
         executeSaveLoad(this, 'save', file, cb, options);
     };
 
@@ -3719,11 +3711,18 @@
      * @see NDDB.load
      */
     NDDB.prototype.loadSync = function(file, options, cb) {
-        if (arguments.length === 2 && 'function' === typeof options) {
-            cb = options;
-            options = undefined;
-        }
         executeSaveLoad(this, 'loadSync', file, cb, options);
+    };
+
+    /**
+     * ### NDDB.loadSync
+     *
+     * Reads items in the specified format and loads them into db synchronously
+     *
+     * @see NDDB.load
+     */
+    NDDB.prototype.loadSyncAll = function(file, options, cb) {
+        executeSaveLoad(this, 'loadSyncAll', file, cb, options);
     };
 
     /**
@@ -3734,10 +3733,6 @@
      * @see NDDB.save
      */
     NDDB.prototype.saveSync = function(file, options, cb) {
-        if (arguments.length === 2 && 'function' === typeof options) {
-            cb = options;
-            options = undefined;
-        }
         executeSaveLoad(this, 'saveSync', file, cb, options);
     };
 
@@ -3965,6 +3960,12 @@
         if (!that.storageAvailable()) {
             that.throwErr('Error', 'save', 'no persistent storage available');
         }
+        // Cb not specified.
+        if ('undefined' === typeof options && 'object' === typeof cb) {
+            options = cb;
+            cb = undefined;
+        }
+
         validateSaveLoadParameters(that, method, file, cb, options);
         options = options || {};
         format = extractExtension(file);
