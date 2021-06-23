@@ -3680,7 +3680,7 @@
      * Reads items in the specified format and loads them into db asynchronously
      *
      * @param {string} file The name of the file or other persistent storage
-     * @param {object} options Optional. A configuration object. Available
+     * @param {object} opts Optional. A configuration object. Available
      *    options are format-dependent.
      * @param {function} cb Optional. A callback function to execute at
      *    the end of the operation. If options is not specified,
@@ -3688,8 +3688,8 @@
      *
      * @see NDDB.loadSync
      */
-    NDDB.prototype.load = function(file, options, cb) {
-        executeSaveLoad(this, 'load', file, cb, options);
+    NDDB.prototype.load = function(file, opts, cb) {
+        return executeSaveLoad(this, 'load', file, cb, opts);
     };
 
     /**
@@ -3699,8 +3699,8 @@
      *
      * @see NDDB.saveSync
      */
-    NDDB.prototype.save = function(file, options, cb) {
-        executeSaveLoad(this, 'save', file, cb, options);
+    NDDB.prototype.save = function(file, opts, cb) {
+        return executeSaveLoad(this, 'save', file, cb, opts);
     };
 
     /**
@@ -3710,8 +3710,8 @@
      *
      * @see NDDB.load
      */
-    NDDB.prototype.loadSync = function(file, options, cb) {
-        executeSaveLoad(this, 'loadSync', file, cb, options);
+    NDDB.prototype.loadSync = function(file, opts, cb) {
+        return executeSaveLoad(this, 'loadSync', file, cb, opts);
     };
 
     /**
@@ -3721,8 +3721,15 @@
      *
      * @see NDDB.load
      */
-    NDDB.prototype.loadSyncAll = function(file, options, cb) {
-        executeSaveLoad(this, 'loadSyncAll', file, cb, options);
+    NDDB.prototype.loadSyncAll = function(dir, opts, cb) {
+        var file;
+        opts = opts || {};
+        if (!opts.format) {
+            file = opts.file;
+            if (!file && 'string' === typeof opts.filter) file = opts.filter;
+            if (file) opts.format = getExtension(file);
+        }
+        return executeSaveLoad(this, 'loadSyncAll', dir, cb, opts);
     };
 
     /**
@@ -3732,8 +3739,8 @@
      *
      * @see NDDB.save
      */
-    NDDB.prototype.saveSync = function(file, options, cb) {
-        executeSaveLoad(this, 'saveSync', file, cb, options);
+    NDDB.prototype.saveSync = function(file, opts, cb) {
+        return executeSaveLoad(this, 'saveSync', file, cb, opts);
     };
 
     // ## Formats.
@@ -3926,7 +3933,7 @@
     }
 
     /**
-     * ### extractExtension
+     * ### getExtension
      *
      * Extracts the extension from a file name
      *
@@ -3934,7 +3941,7 @@
      *
      * @return {string} The extension or NULL if not found
      */
-    function extractExtension(file) {
+    function getExtension(file) {
         var format;
         format = file.lastIndexOf('.');
         return format < 0 ? null : file.substr(format+1);
@@ -3968,7 +3975,7 @@
 
         validateSaveLoadParameters(that, method, file, cb, options);
         options = options || {};
-        format = extractExtension(file);
+        format = options.format || getExtension(file);
         // If try to get the format function based on the extension,
         // otherwise try to use the default one. Throws errors.
         ff = findFormatFunction(that, method, format);
@@ -3979,6 +3986,8 @@
             cb: cb
         });
         ff(that, file, cb, options);
+
+        return that;
     }
 
     /**
