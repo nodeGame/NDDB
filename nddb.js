@@ -274,6 +274,12 @@
 
         // Importing items, if any.
         if (db) this.importDB(db);
+
+        if (options.sync) {
+            this.load('nddb.json', { sync: true }, () => {
+                console.log(this.size());
+            });
+        }
     }
 
     /**
