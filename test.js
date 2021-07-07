@@ -1,16 +1,16 @@
 const NDDB = require('NDDB');
 
-const db = new NDDB({ sync: true });
+const db = new NDDB({ sync: 'db.json' });
 
-return;
-
-db.sync({ updateDelay: 100 });
+// db.sync({ updateDelay: 100 });
 
 db.insert({a: 1, b: 2 });
 db.insert({a: 2, b: 3 });
 db.insert({a: 3, b: 4 });
 setTimeout(() => db.insert({a:3, b:5}), 200);
 
+
+return;
 
 
 setTimeout(() => {

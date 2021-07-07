@@ -1,6 +1,6 @@
 /**
  * # NDDB: N-Dimensional Database
- * Copyright(c) 2020 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2021 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * NDDB is a powerful and versatile object database for node.js and the browser.
@@ -275,10 +275,8 @@
         // Importing items, if any.
         if (db) this.importDB(db);
 
-        if (options.sync) {
-            this.load('nddb.json', { sync: true }, () => {
-                console.log(this.size());
-            });
+        if (options.sync && 'function' === typeof NDDB.prototype.sync) {
+            this.sync({ filename: options.sync, load: true, cb: options.cb });
         }
     }
 
