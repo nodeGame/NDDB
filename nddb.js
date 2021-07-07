@@ -82,14 +82,14 @@
      * @param {object} options Optional. Configuration options
      * @param {db} db Optional. An initial set of items to import
      */
-    function NDDB(options, db) {
+    function NDDB(opts, db) {
         var that;
         that = this;
-        options = options || {};
+        opts = opts || {};
 
         // ## Public properties.
 
-        this.name = options.name || 'nddb';
+        this.name = opts.name || 'nddb';
 
         // ### nddbid
         // A global index of all objects.
@@ -213,8 +213,8 @@
         // ### log
         // Std out for log messages
         //
-        // It can be overriden in options by another function (`options.log`).
-        // `options.logCtx` specif the context of execution.
+        // It can be overriden in options by another function (`opts.log`).
+        // `opts.logCtx` specif the context of execution.
         // @see NDDB.initLog
         this.log = console.log;
 
@@ -270,13 +270,13 @@
         this.__cache = {};
 
         // Mixing in user options and defaults.
-        this.init(options);
+        this.init(opts);
 
         // Importing items, if any.
         if (db) this.importDB(db);
 
-        if (options.sync && 'function' === typeof NDDB.prototype.sync) {
-            this.sync({ filename: options.sync, load: true, cb: options.cb });
+        if (opts.journal && 'function' === typeof NDDB.prototype.journal) {
+            this.journal({ filename: opts.journal, load: true, cb: opts.cb });
         }
     }
 
@@ -3931,8 +3931,10 @@
                           'or undefined. Found: ' + cb);
         }
         if (options && 'object' !== typeof options) {
-            that.throwErr('TypeError', method, 'options must be object ' +
-                          'or undefined. Found: ' + options);
+            if ('function' !== typeof options || 'undefined' !== typeof cb) {
+                that.throwErr('TypeError', method, 'options must be object ' +
+                    'or undefined. Found: ' + options);
+            }
         }
     }
 
@@ -4480,6 +4482,7 @@
      */
     NDDBIndex.prototype.update = function(idx, update) {
         var o, dbidx, nddb, res;
+        if ('undefined' === typeof update) return false;
         dbidx = this.resolve[idx];
         if ('undefined' === typeof dbidx) return false;
         nddb = this.nddb;
