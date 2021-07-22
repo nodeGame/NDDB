@@ -3719,24 +3719,6 @@
     };
 
     /**
-     * ### NDDB.loadSync
-     *
-     * Reads items in the specified format and loads them into db synchronously
-     *
-     * @see NDDB.load
-     */
-    NDDB.prototype.loadSyncAll = function(dir, opts, cb) {
-        var file;
-        opts = opts || {};
-        if (!opts.format) {
-            file = opts.file;
-            if (!file && 'string' === typeof opts.filter) file = opts.filter;
-            if (file) opts.format = getExtension(file);
-        }
-        return executeSaveLoad(this, 'loadSyncAll', dir, cb, opts);
-    };
-
-    /**
      * ### NDDB.saveSync
      *
      * Saves items in the specified format synchronously
@@ -3746,6 +3728,32 @@
     NDDB.prototype.saveSync = function(file, opts, cb) {
         return executeSaveLoad(this, 'saveSync', file, cb, opts);
     };
+
+    /**
+     * ### NDDB.loadDirSync
+     *
+     * Load in the specified format and loads them into db synchronously
+     *
+     * @see NDDB.loadSync
+     */
+    NDDB.prototype.loadDirSync = function(dir, opts, cb) {
+        decorateLoadDirOpts(opts);
+        return executeSaveLoad(this, 'loadDirSync', dir, cb, opts);
+    };
+
+    /**
+     * ### NDDB.loadDir
+     *
+     * Load in the specified format and loads them into db synchronously
+     *
+     * @see NDDB.loadSync
+     */
+    NDDB.prototype.loadDir = function(dir, opts, cb) {
+        decorateLoadDirOpts(opts);
+        return executeSaveLoad(this, 'loadDir', dir, cb, opts);
+    };
+
+
 
     // ## Formats.
 
@@ -4082,6 +4090,23 @@
                 that.throwErr('TypeError', 'addFormat',
                               'loadSync function is not a function');
             }
+        }
+    }
+
+    /**
+     * ### decorateLoadDirOpts
+     *
+     * Adds file and format when possible
+     *
+     * @param {object} obj The options to decorate
+     */
+    function decorateLoadDirOpts(opts) {
+        var file;
+        opts = opts || {};
+        if (!opts.format) {
+            file = opts.file;
+            if (!file && 'string' === typeof opts.filter) file = opts.filter;
+            if (file) opts.format = getExtension(file);
         }
     }
 
