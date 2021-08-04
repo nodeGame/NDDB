@@ -23,6 +23,9 @@
         window.NDDB = NDDB;
     }
 
+    // Might get overwritten in index.js.
+    NDDB.lineBreak = '\n';
+
     if (!J) throw new Error('NDDB: missing dependency: JSUS.');
 
     /**
@@ -50,7 +53,7 @@
      * @see https://github.com/douglascrockford/JSON-js/
      */
     NDDB.decycle = function(e) {
-        if (JSON && JSON.decycle && 'function' === typeof JSON.decycle) {
+        if (JSON && 'function' === typeof JSON.decycle) {
             e = JSON.decycle(e);
         }
         return e;
@@ -68,7 +71,7 @@
      * @see https://github.com/douglascrockford/JSON-js/
      */
     NDDB.retrocycle = function(e) {
-        if (JSON && JSON.retrocycle && 'function' === typeof JSON.retrocycle) {
+        if (JSON && 'function' === typeof JSON.retrocycle) {
             e = JSON.retrocycle(e);
         }
         return e;
@@ -148,6 +151,7 @@
 
         // ### filters
         // Available db filters
+        this.filters = {};
         this.addDefaultFilters();
 
         // ### __userDefinedFilters
@@ -334,7 +338,6 @@
      * @see NDDB.filters
      */
     NDDB.prototype.addDefaultFilters = function() {
-        if (!this.filters) this.filters = {};
         var that;
         that = this;
 
@@ -1131,39 +1134,73 @@
     /**
      * ### NDDB.stringify
      *
-     * Stringifies the items in the database in an expanded JSON format
+     * Stringifies the items in the database in *JSON format
      *
      * Cyclic objects are decycled, functions, null, undefined, are kept.
      *
      * Evaluates pending queries with `fetch`.
      *
-     * @param {boolean} compress Optional. If TRUE, JSON is pretty-printed
-     * @param {boolean} enclose Optional. If TRUE, items are enclosed in an
-     *   array so that they can be read with a require statement.
+     * @param {object} opts Configuration options:
+     *    - enclose:    adds [] around all items. Default: false.
+     *    - comma:      separates items with a comma. Default: false.
+     *    - pretty:     pretty-print items. Default: false
+     *    - lineBreak:  line-break separator. Default: os.EOL or '\n';
+     *    - decycle:    Decycle ciclic objects. Default: true.
      *
      * @return {string} out A machine-readable representation of the database
      *
      * @see JSUS.stringify
      */
-    NDDB.prototype.stringify = function(compress, enclose) {
-        var db, spaces, out;
-        var item, i, len;
-        enclose = 'undefined' === typeof enclose ? true: enclose;
-        if (!this.size()) return enclose ? '[]' : '';
-        compress = ('undefined' === typeof compress) ? true : compress;
-        spaces = compress ? 0 : 4;
-        out = enclose ? '[' : '';
-        db = this.fetch();
-        i = -1, len = db.length;
-        for ( ; ++i < len ; ) {
-            // Decycle, if possible.
-            item = NDDB.decycle(db[i]);
-            out += J.stringify(item, spaces);
-            if (i !== len-1) out += ', ';
-        }
-        if (enclose) out += ']';
-        return out;
-    };
+    NDDB.prototype.stringify = (function() {
+
+        function stringifyItem(item, lineBreak, spaces, comma, decycle) {
+            var item, res, re;
+            // TODO: merge stringify and decycle in one.
+            if (decycle) item = NDDB.decycle(item);
+            res = J.stringify(item, spaces);
+            // Auto-escaped.
+            // if (stripLineBreaks) {
+            //     re = new RegExp(lineBreak, 'g');
+            //     res = res.replace(re, lineBreakReplace);
+            // }
+            if (comma) res += ', ';
+            if (lineBreak) res += lineBreak;
+            return res;
+        };
+
+        return function(opts) {
+            var db, i, len, out;
+            var spaces, lineBreak, decycle;
+
+            opts = opts || {};
+
+            if (!this.size()) return opts.enclose ? '[]' : '';
+
+            spaces = opts.pretty ? 4 : 0;
+            out = opts.enclose ? '[' : '';
+
+            db = this.fetch();
+
+            lineBreak = opts.lineBreak || NDDB.lineBreak;
+            decycle = opts.decycle !== false;
+
+            // Main loop.
+            i = -1, len = (db.length -1);
+            for ( ; ++i < len ; ) {
+                out += stringifyItem(db[i], lineBreak, spaces,
+                                     opts.comma, decycle);
+            }
+            // Last item (no comma).
+            out += stringifyItem(db[i], lineBreak, spaces, false, decycle);
+
+            if (opts.enclose) out += ']';
+            return out;
+        };
+    });
+
+
+
+
 
     /**
      * ### NDDB.comparator
@@ -2355,6 +2392,33 @@
     };
 
     // ## Custom callbacks
+
+    /**
+     * ### NDDB.table
+     *
+     * Returns the frequency table for the specified indexes
+     *
+     * TODO: support multiple indexes, at least two.
+     * TODO: support returning a sorted array.
+     * TODO: keep table in memory if key is already an index
+     *
+     * @param {string} idx The name of first index
+     *
+     * @return {object} res An object containing the frequency table
+     */
+    NDDB.prototype.table = function(idx) {
+        var res, db, i, v;
+        db = this.fetch();
+        res = {};
+        for (i = 0; i < db.length; i++) {
+            v = db[i][idx];
+            if ('undefined' !== typeof v) {
+                if ('undefined' === typeof res[v]) res[v] = 1;
+                else res[v]++;
+            }
+        }
+        return res;
+    };
 
     /**
      * ### NDDB.filter

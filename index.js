@@ -1,8 +1,14 @@
 /**
- * # NDDB: N-Dimensional Database 
- * Copyright(c) 2015 Stefano Balietti
+ * # NDDB: N-Dimensional Database
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  */
-module.exports = require('./nddb.js');    
+const NDDB = require('./nddb.js');
+NDDB.lineBreak = require('os').EOL;
+module.exports = NDDB;
+
 // Lib
 require('./lib/fs.js');
+
+// Cycle/Decycle
+require('./external/cycle.js');
