@@ -7,8 +7,12 @@ const NDDB = require('./nddb.js');
 NDDB.lineBreak = require('os').EOL;
 module.exports = NDDB;
 
+const path = require('path');
+
 // Lib
-require('./lib/fs.js');
+require(path.resolve('lib', 'static.js'));
+require(path.resolve('lib', 'util.js'));
+require(path.resolve('lib', 'fs.js'));
 
 // Cycle/Decycle
-require('./external/cycle.js');
+require(path.resolve('external', 'cycle.js'));

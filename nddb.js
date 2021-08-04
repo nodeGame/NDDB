@@ -1176,13 +1176,14 @@
 
             if (!this.size()) return opts.enclose ? '[]' : '';
 
+            decycle = opts.decycle !== false;
+            lineBreak = opts.lineBreak || NDDB.lineBreak;
+
             spaces = opts.pretty ? 4 : 0;
-            out = opts.enclose ? '[' : '';
+            out = opts.enclose ? '[' + lineBreak : '';
 
             db = this.fetch();
 
-            lineBreak = opts.lineBreak || NDDB.lineBreak;
-            decycle = opts.decycle !== false;
 
             // Main loop.
             i = -1, len = (db.length -1);
@@ -1196,7 +1197,7 @@
             if (opts.enclose) out += ']';
             return out;
         };
-    });
+    })();
 
 
 
@@ -3793,32 +3794,6 @@
         return executeSaveLoad(this, 'saveSync', file, cb, opts);
     };
 
-    /**
-     * ### NDDB.loadDirSync
-     *
-     * Load in the specified format and loads them into db synchronously
-     *
-     * @see NDDB.loadSync
-     */
-    NDDB.prototype.loadDirSync = function(dir, opts, cb) {
-        decorateLoadDirOpts(opts);
-        return executeSaveLoad(this, 'loadDirSync', dir, cb, opts);
-    };
-
-    /**
-     * ### NDDB.loadDir
-     *
-     * Load in the specified format and loads them into db synchronously
-     *
-     * @see NDDB.loadSync
-     */
-    NDDB.prototype.loadDir = function(dir, opts, cb) {
-        decorateLoadDirOpts(opts);
-        return executeSaveLoad(this, 'loadDir', dir, cb, opts);
-    };
-
-
-
     // ## Formats.
 
     /**
@@ -4038,7 +4013,9 @@
      * @param {string} method The name of the method invoking validation
      * @param {string} file The file parameter
      * @param {function} cb The callback parameter
-     * @param {object} The options parameter
+     * @param {object} options The options parameter
+     *
+     * @return {NDDB} that The current instance for chaining
      */
     function executeSaveLoad(that, method, file, cb, options) {
         var ff, format;
@@ -4054,7 +4031,7 @@
         validateSaveLoadParameters(that, method, file, cb, options);
         options = options || {};
         format = options.format || getExtension(file);
-        // If try to get the format function based on the extension,
+        // Try to get the format function based on the extension,
         // otherwise try to use the default one. Throws errors.
         ff = findFormatFunction(that, method, format);
         // Emit save or load. Options can be modified.
@@ -4154,23 +4131,6 @@
                 that.throwErr('TypeError', 'addFormat',
                               'loadSync function is not a function');
             }
-        }
-    }
-
-    /**
-     * ### decorateLoadDirOpts
-     *
-     * Adds file and format when possible
-     *
-     * @param {object} obj The options to decorate
-     */
-    function decorateLoadDirOpts(opts) {
-        var file;
-        opts = opts || {};
-        if (!opts.format) {
-            file = opts.file;
-            if (!file && 'string' === typeof opts.filter) file = opts.filter;
-            if (file) opts.format = getExtension(file);
         }
     }
 
