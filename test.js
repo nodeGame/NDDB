@@ -28,9 +28,9 @@ console.log(aa)
 
 db.saveSync('aa.ndjson');
 
-db.saveSync('aa.json');
+// db.saveSync('aa.json');
 
-db.saveSync('aa.nddb');
+// db.saveSync('aa.nddb');
 
 db2 = new NDDB();
 

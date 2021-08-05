@@ -10,9 +10,9 @@ module.exports = NDDB;
 const path = require('path');
 
 // Lib
-require(path.resolve('lib', 'static.js'));
-require(path.resolve('lib', 'fs.js'));
-require(path.resolve('lib', 'journal.js'));
+require('./lib/static.js');
+require('./lib/fs.js');
+require('./lib/journal.js');
 
 // Cycle/Decycle
-require(path.resolve('external', 'cycle.js'));
+require('./external/cycle.js');
