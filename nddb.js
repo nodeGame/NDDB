@@ -3842,13 +3842,7 @@
      */
     NDDB.prototype.getFormat = function(format, method) {
         var f;
-        if ('string' !== typeof format) {
-            this.throwErr('TypeError', 'getFormat', 'format must be string');
-        }
-        if (method && 'string' !== typeof method) {
-            this.throwErr('TypeError', 'getFormat', 'method must be string ' +
-                          'or undefined');
-        }
+
         f = this.__formats[format];
         if (f && method) f = f[method];
         return f || null;

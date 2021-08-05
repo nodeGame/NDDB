@@ -12,7 +12,7 @@ const path = require('path');
 // Lib
 require('./lib/static.js');
 require('./lib/fs.js');
-require('./lib/journal.js');
+
 
 // Cycle/Decycle
 require('./external/cycle.js');

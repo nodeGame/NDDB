@@ -2,6 +2,15 @@ const NDDB = require('NDDB');
 
 const db = new NDDB();
 
+db.loadSync('test.ndjson');
+console.log(db.size())
+db.forEach((item, i) => console.log(item));
+
+return;
+db.stream('test.ndjson');
+db.stream('test.csv');
+db.stream('test.json');
+
 a = {a: 1, b: 2, s: 'also dice "Hello!"\r\n OK!' };
 b = {a: 2, b: 3, n: null, m: undefined, f: function() { return 1; } };
 c = {};
@@ -20,6 +29,7 @@ db.insert(a);
 db.insert(b);
 db.insert(c);
 db.insert(d);
+
 
 
 aa = db.stringify();
