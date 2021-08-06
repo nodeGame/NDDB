@@ -5,7 +5,17 @@ const NDDB = require('NDDB');
 //     filename: 'aa.csv', header: ['a', 'b', 'c', 'd', 'n', 'm', 'f', 's'] }
 // );
 
-const db = NDDB.db();
+// const db = NDDB.db();
+
+
+let cb = (db) => {
+    console.log(db);
+    console.log(db.size());
+};
+
+let db = NDDB.load('_a.json', cb);
+
+return;
 
 // db.stream('_test.ndjson');
 // db.stream('_test2.csv', { flatten: true, flattenByGroup: 'a' }); //
@@ -29,25 +39,8 @@ db.insert(a);
 db.insert(b);
 db.insert(c);
 db.insert(d);
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
-console.log('-')
 
-db.save('_a.csv', function() {console.log('done')});
+db.save('_a.ndjson', function() {console.log('done')});
 console.log('Before done');
 
 return;
