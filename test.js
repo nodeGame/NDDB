@@ -1,21 +1,15 @@
 const NDDB = require('NDDB');
 
 
-NDDB.convert('bb.json', {
-    filename: 'aa.csv', header: ['a', 'b', 'c', 'd', 'n', 'm', 'f', 's'] });
-return;
+// NDDB.convert('bb.json', {
+//     filename: 'aa.csv', header: ['a', 'b', 'c', 'd', 'n', 'm', 'f', 's'] }
+// );
 
-const db = new NDDB();
+const db = NDDB.db();
 
-
-db.loadSync('test.ndjson');
-console.log(db.size())
-db.forEach((item, i) => console.log(item));
-
-return;
-db.stream('test.ndjson');
-db.stream('test.csv');
-db.stream('test.json');
+// db.stream('_test.ndjson');
+// db.stream('_test2.csv', { flatten: true, flattenByGroup: 'a' }); //
+// db.stream('_test.json');
 
 a = {a: 1, b: 2, s: 'also dice "Hello!"\r\n OK!' };
 b = {a: 2, b: 3, n: null, m: undefined, f: function() { return 1; } };
@@ -35,12 +29,35 @@ db.insert(a);
 db.insert(b);
 db.insert(c);
 db.insert(d);
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
+console.log('-')
 
+db.save('_a.csv', function() {console.log('done')});
+console.log('Before done');
+
+return;
 
 
 aa = db.stringify();
 
 console.log(aa)
+
+return
 
 db.saveSync('aa.ndjson');
 

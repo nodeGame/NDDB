@@ -4034,7 +4034,10 @@
             options = cb;
             cb = undefined;
         }
-
+        else if ('undefined' === typeof cb && 'function' === typeof options) {
+            cb = options;
+            options = undefined;
+        }
         validateSaveLoadParameters(that, method, file, cb, options);
         options = options || {};
         format = options.format || getExtension(file);
