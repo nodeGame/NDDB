@@ -1,6 +1,12 @@
 const NDDB = require('NDDB');
 
+
+NDDB.convert('bb.json', {
+    filename: 'aa.csv', header: ['a', 'b', 'c', 'd', 'n', 'm', 'f', 's'] });
+return;
+
 const db = new NDDB();
+
 
 db.loadSync('test.ndjson');
 console.log(db.size())

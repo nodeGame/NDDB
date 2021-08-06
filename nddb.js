@@ -23,9 +23,6 @@
         window.NDDB = NDDB;
     }
 
-    // Might get overwritten in index.js.
-    NDDB.lineBreak = '\n';
-
     if (!J) throw new Error('NDDB: missing dependency: JSUS.');
 
     /**
@@ -40,6 +37,22 @@
      * JSUS.compatibility
      */
     var df = J.compatibility().defineProperty;
+
+    /**
+     * ### NDDB.db
+     *
+     * Returns a new db
+     *
+     * @param {object} options Optional. Configuration options
+     * @param {db} db Optional. An initial set of items to import
+     *
+     * @return {object} A new database
+     */
+    NDDB.db = function(opts, db) { return new NDDB(opts, db); };
+
+    // Might get overwritten in index.js.
+    NDDB.lineBreak = '\n';
+
 
     /**
      * ### NDDB.decycle
