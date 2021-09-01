@@ -845,34 +845,24 @@ db.getWD(); // /home/this/user/on/that/dir/
     escapeCharacter: '\\',          // The char that should be skipped.
                                     // Default: \.
 
+    objectLevel: 2,                 // For saving only, the level of nested
+                                    // objects to expand into csv columns.
+
     // API experimental (syntax may change), SAVE ONLY.
 
     flatten: true,                  // If TRUE, it flattens all items
                                     // currently selected into one row.
 
-    recurrent: true,                // If TRUE, it periodically checks if
+    keepUpdated: true,                // If TRUE, it periodically checks if
                                     // new items are inserted in the database
                                     // and saves them to file system.
 
-    recurrentInterval: 20000,       // Number of milliseconds to wait before
+    updateDelay: 20000,       // Number of milliseconds to wait before
                                     // checking for updates in the database.
                                     // Default: 10000
 
 }
 ```
-
-### Saving and loading to the local storage (browser environment)
-
-Items persistance in the browser is available only if NDDB is built
-with the [Shelf.js](https://github.com/shakty/shelf.js)
-extension. Alternatively, a custom `store` function taking as input
-the name of the local database could be defined.
-
-All items will be saved in the JSON format.
-
-Notice that there exist limitations to maximum number of items that
-can be saved, depending on the local storage maximum capacity settings
-of the browser. If the limit is reached an error will be thrown.
 
 
 ## Test
