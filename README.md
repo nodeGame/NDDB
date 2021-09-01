@@ -845,19 +845,22 @@ db.getWD(); // /home/this/user/on/that/dir/
     escapeCharacter: '\\',          // The char that should be skipped.
                                     // Default: \.
 
-    objectLevel: 2,                 // For saving only, the level of nested
-                                    // objects to expand into csv columns.
-
     // API experimental (syntax may change), SAVE ONLY.
+
+    objectLevel: 2,                 // For saving only, the level of nested
+                                    // objects to expand into csv columns
 
     flatten: true,                  // If TRUE, it flattens all items
                                     // currently selected into one row.
 
-    keepUpdated: true,                // If TRUE, it periodically checks if
+    flattenByGroup: 'player',       // If set, there will one row per unique
+                                    // value of desired group (here: 'player')
+
+    keepUpdated: true,              // If TRUE, it periodically checks if
                                     // new items are inserted in the database
                                     // and saves them to file system.
 
-    updateDelay: 20000,       // Number of milliseconds to wait before
+    updateDelay: 20000,             // Number of milliseconds to wait before
                                     // checking for updates in the database.
                                     // Default: 10000
 
