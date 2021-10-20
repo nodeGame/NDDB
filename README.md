@@ -30,7 +30,7 @@ wide test coverage.
 - Iterator: `previous`, `next`, `first`, `last`
 - Tagging: `tag`
 - Event listener / emitter: `on`, `off`, `emit`
-- Saving and Loading: `save`, `saveSync`, `load`, `loadSync`, `setWD`, `getWD`
+- Saving and Loading: `save`, `saveSync`, `load`, `loadSync`, `setWD`, `getWD`, `loadDir`, `loadDirSync`
 
 <!-- The complete NDDB api documentation is available
 [here](http://nodegame.github.com/NDDB/docs/nddb.js.html). -->
@@ -56,7 +56,8 @@ or in the browser add a script tag in the page:
 Create an instance of NDDB:
 
 ```javascript
-let db = new NDDB();
+let db = NDDB.db();
+// let db = new NDDB(); // legacy
 ```
 
 Insert an item into the database:
@@ -324,7 +325,7 @@ consistent set of entries:
 
 ```javascript
 // Let us add some cars to our previous database of paintings.
-let not_art_items = [
+let cars = [
     {
       car: "Ferrari",
       model: "F10",
@@ -556,19 +557,23 @@ let options = {
   }
 }
 
-let nddb = new NDDB(options);
+let nddb = NDDB.db(options);
 
 // or
 
-nddb = new NDDB();
+nddb = NDDB.db();
 nddb.init(options);
 ```
 
 ## Saving and Loading Items
 
 The items in the database can be saved and loaded using the `save` and
-`load` methods, and their synchronous implementations `saveSync` and
+`load` methods, or their synchronous implementations `saveSync` and
 `loadSync`.
+
+The methods `loadDir` and `loadDirSync` load an entire directory.
+
+The following formats are available: `csv`, `json`, and `ndjson`.
 
 ### Saving and loading to file system (node.js environment)
 
@@ -585,14 +590,13 @@ It is possible to specify new formats using the `addFormat` method.
 // SAVING.
 
 // Saving items in JSON format.
-db.save('db.json', function() {
-    console.log("Saved db into 'db.json'");
-});
+db.save('db.json', () => console.log("Saved db into 'db.json'") );
 
 // Saving items in CSV format.
-db.save('db.csv', function() {
-    console.log("Saved db into db.csv'");
-});
+db.save('db.csv', () => console.log("Saved db into db.csv'") );
+
+// Saving items in CSV format.
+db.save('db.ndjson', () => console.log("Saved db into db.ndjson'") );
 
 // Saving items synchronously in CSV format.
 db.saveSync('db.csv');
@@ -617,11 +621,45 @@ db.loadSync('db.csv');
 console.log("Loaded csv file into database");
 
 // Loading 'adapted' items into database.
-db.load('db.csv', function() {
-                   console.log("Loaded csv file into database");
-});
+db.load('db.csv', () => console.log("Loaded csv file into database") );
 
 ```
+
+#### Loading an entire directory
+
+The method `loadDir` and `loadDirSync` load an entire directory.
+
+#### LoadDir Options
+
+In addition to the options of the native load method of the chosen format:
+
+- recursive: if TRUE, it will look into sub-directories. Default: FALSE
+- maxRecLevel: the max level of recursion allowed. Default: 10
+- filter: A filter function or a regex expression to apply to every file name.
+- dirFilter: A filter function or a regex expression to apply to every directory name.
+- onError: What to do in case of an error loading a file: 'continue' will skip the file with errors and go to the next one.
+
+```js
+
+// Load files.
+let opts = {
+  recursive: true,
+  filter: 'bonus',      // All files containing the word 'bonus'.
+  dirFilter: (dir) => {
+    return !dir.indexOf("skip"); // Skip if directory contains word 'skip'.
+  };  
+
+  // Alternative filters:
+
+  // filter: file => file === 'bonus.csv', // Only 'bonus.csv' files.
+  // format: 'csv'     // All 'csv' files.
+};
+
+db.loadDirSync(DATADIR, opts);
+
+```
+
+Note: `loadDir` is not yet fully async. It loads files into the database asynchronously, but scans for files in the file system synchronously.
 
 #### Adding a New Format
 
@@ -646,6 +684,41 @@ db.addFormat('asd', {
 db.save('db.asd');
 ```
 
+### Streaming items to file system (node.js environment)
+
+The `stream` method automatically save items inserted into the database to the file system.
+
+```js
+db.stream();
+// Save items to [db name].[default format], for example: 'nddb.json'.
+```
+
+#### Stream options:
+
+The stream method takes an optional configuration object:
+
+- format:   the format: csv, json, ndbjson.
+- filename: path to file name (default [db name].[format])
+- delay:    milliseconds to wait before copying items to file system (default 10)
+- journal:  if TRUE, items are incapsulated in a data structure that contains information about the operation (insert, update, delete).
+
+### Journaling operations to file system (node.js environment)
+
+The `journal` method keeps track of all operations (not just inserts).
+
+```js
+db.journal();
+// Save items to [db name].journal, for example: 'nddb.journal'.
+```
+This method is wrapper for the stream method with the journal flag TRUE.
+
+Items are saved in ndjson format and can they imported in a new database with the `importJournal` method.
+
+```js
+db.importJournal();
+// All operations (inserts, updates, deletes) replayed.
+```
+
 ### CSV Advanced Options
 
 #### Specifying an Adapter
@@ -660,12 +733,14 @@ let options = {
         A: function(item) { return item.A * 2; },
 
         // Rename a property (must add shorterName to a custom header).
-        shorterName: 'moreComplexAndLongerName'
+        shortName: 'muchLongerName'
     }
 };
-db.save('db2.csv', options, function() {
-    console.log("Saved db as csv into 'db2.csv', where numbers in column 'A'" +
-                "were doubled");
+
+db.save('db2.csv', options, () => {
+    console.log("Saved db as csv into 'db2.csv'");
+    console.log("Numbers in column 'A' were doubled");
+    console.log("Values in column 'shortName' are taken from column 'muchLongerName'");
 });
 
 
@@ -677,34 +752,15 @@ options = {
     }
 };
 
-db.load('db2.csv', options, function() {
-                   console.log("Loaded csv file into database");
+db.load('db2.csv', options, () => {
+   console.log("Loaded csv file into database");
+   console.log("Numbers in column 'A' were doubled");
 });
 ```
 
-#### Saving Updates
+#### Saving Updates Only
 
-To automatically save to the file system every new entry added to the database (as well as views and hashes) use the `keepUpdated` flag. This feature is especially useful for incremental processes, such as logs.
-
-Let's assume that objects containing user comments are added to the database at random intervals. Here is the code snippet to automatically save them:
-
-```js
-// Create a new 'comment' view and save all updates to CSV file.
-db.view('comment').save('comments.csv', {
-
-    // Specify a custom header.
-    header: [ 'timestamp', 'user', 'comment' ],
-
-    // Incrementally save to the same csv file all new entries.
-    keepUpdated: true,  
-
-    // As new items are generally clustered in time, it is good to add some
-    // delay before saving the updates. Default: 10000 milliseconds
-    updateDelay: 5000    
-});
-```
-
-Alternatively, if you know already when a new set of comments are added to the database, you can manually control when to save the new updates, using the `updatesOnly` flag.
+If you know already when a new set of items are added to the database, you can save incremental updates using the `updatesOnly` flag.
 
 ```js
 // Feedback view already created.

@@ -1,8 +1,8 @@
 # NDDB change log
 
-## 2.5.0
+## 3.0.0
  - Code for file system operations refactored.
- - New method: NDDB.stream() replaces keepUpdated
+ - New method: NDDB.stream() replaces keepUpdated flag.
  - New method: NDDB.journal() streams all database operations.
  - New method: NDDB.importJournal() restores a db, replaying all operations.
  - New methods: NDDB.loadDir(), NDDB.loadDirSync() load all files in a directory.
@@ -10,6 +10,7 @@
  - New static method: NDDB.convert() NDDB.convertSync() convert from a format to another.
  - New static method: NDDB.load|loadSync|save|saveSync|loadDir|loadDirSync
  - New format: NDJSON.
+ - Dropped: keepUpdated flag.
 
 ## 2.0.0
  - `#NDDB.setWD` is applied to all views and hashes.
