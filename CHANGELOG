@@ -1,5 +1,8 @@
 # NDDB change log
 
+## 3.0.1
+ - Readme updated.
+
 ## 3.0.0
  - Code for file system operations refactored.
  - New method: NDDB.stream() replaces keepUpdated flag.
