@@ -912,10 +912,6 @@ db.getWD(); // /home/this/user/on/that/dir/
     flattenByGroup: 'player',       // If set, there will one row per unique
                                     // value of desired group (here: 'player')
 
-    keepUpdated: true,              // If TRUE, it periodically checks if
-                                    // new items are inserted in the database
-                                    // and saves them to file system.
-
     updateDelay: 20000,             // Number of milliseconds to wait before
                                     // checking for updates in the database.
                                     // Default: 10000
