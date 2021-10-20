@@ -629,15 +629,15 @@ db.load('db.csv', () => console.log("Loaded csv file into database") );
 
 The method `loadDir` and `loadDirSync` load an entire directory.
 
-#### LoadDir Options
+#### loadDir Options
 
 In addition to the options of the native load method of the chosen format:
 
-- recursive: if TRUE, it will look into sub-directories. Default: FALSE
-- maxRecLevel: the max level of recursion allowed. Default: 10
-- filter: A filter function or a regex expression to apply to every file name.
-- dirFilter: A filter function or a regex expression to apply to every directory name.
-- onError: What to do in case of an error loading a file: 'continue' will skip the file with errors and go to the next one.
+- `recursive`: if TRUE, it will look into sub-directories. Default: FALSE
+- `maxRecLevel`: the max level of recursion allowed. Default: 10
+- `filter`: A filter function or a regex expression to apply to every file name.
+- `dirFilter`: A filter function or a regex expression to apply to every directory name.
+- `onError`: What to do in case of an error loading a file: 'continue' will skip the file with errors and go to the next one.
 
 ```js
 
@@ -646,7 +646,7 @@ let opts = {
   recursive: true,
   filter: 'bonus',      // All files containing the word 'bonus'.
   dirFilter: (dir) => {
-    return !dir.indexOf("skip"); // Skip if directory contains word 'skip'.
+    return !~dir.indexOf("skip"); // Skip if directory contains word 'skip'.
   };  
 
   // Alternative filters:
@@ -697,10 +697,10 @@ db.stream();
 
 The stream method takes an optional configuration object:
 
-- format:   the format: csv, json, ndbjson.
-- filename: path to file name (default [db name].[format])
-- delay:    milliseconds to wait before copying items to file system (default 10)
-- journal:  if TRUE, items are incapsulated in a data structure that contains information about the operation (insert, update, delete).
+- `format`:   the format: csv, json, ndbjson.
+- `filename`: path to file name (default [db name].[format])
+- `delay`:    milliseconds to wait before copying items to file system (default 10)
+- `journal`:  if TRUE, items are incapsulated in a data structure that contains information about the operation (insert, update, delete).
 
 ### Journaling operations to file system (node.js environment)
 
