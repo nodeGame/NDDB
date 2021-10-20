@@ -846,9 +846,9 @@ db.getWD(); // /home/this/user/on/that/dir/
     mode: 0777,                     // The permission given to the file.
                                     // Default: 0666
 
-    // Options below are processed when the CSV format is detected.
+    // Options below are CSV ONLY:
 
-    header: true,                  // Loading:
+    header: true,                   // Loading:
                                     //  - true: use first line of
                                     //      file as key names (default)
                                     //  - false: use [ 'X1'...'XN' ]
@@ -892,16 +892,22 @@ db.getWD(); // /home/this/user/on/that/dir/
     quote: '"',                     // The character used as quote.
                                     // Default: '"'.
 
-    commentchar: '',                // The character used for comments.
-                                    // Default: ''.
-
-    nestedQuotes: false,            // TRUE, if nested quotes allowed.
-                                    // Default FALSE.
 
     escapeCharacter: '\\',          // The char that should be skipped.
-                                    // Default: \.
+                                    // Default: \. (load only)
 
-    // API experimental (syntax may change), SAVE ONLY.
+    lineBreak: '\n',                // Line break character. Default: system's
+                                    // default.
+
+    bufferSize: 128 * 1024,         // Number of bytes to read at once.
+                                    // Default: 128 * 1024.
+
+
+    // SAVE ONLY.
+
+    bool2num: true,                 // If TRUE, booleans are converted to 0/1.
+
+    na: 'NA',                       // Value for missing fields. Default: 'NA'.
 
     objectLevel: 2,                 // For saving only, the level of nested
                                     // objects to expand into csv columns
@@ -912,9 +918,12 @@ db.getWD(); // /home/this/user/on/that/dir/
     flattenByGroup: 'player',       // If set, there will one row per unique
                                     // value of desired group (here: 'player')
 
+    updatesOnly: true,              // If TRUE, saves only items that were
+                                    // inserted into the database after
+                                    // a file with the same name was last saved.
+
     updateDelay: 20000,             // Number of milliseconds to wait before
-                                    // checking for updates in the database.
-                                    // Default: 10000
+                                    // saving updates. Default: 10000.
 
 }
 ```
