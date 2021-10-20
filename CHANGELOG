@@ -1,5 +1,10 @@
 # NDDB change log
 
+## 2.5.0
+ - Code for file system operations refactored.
+ - New method: NDDB.stream() replaces keepUpdated
+ - New static methods: NDDB.loadDir.
+
 ## 2.0.0
  - `#NDDB.setWD` is applied to all views and hashes.
  - New emit events: 'setwd', 'load', 'save'.
