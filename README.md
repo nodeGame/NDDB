@@ -633,11 +633,11 @@ The method `loadDir` and `loadDirSync` load an entire directory.
 
 In addition to the options of the native load method of the chosen format:
 
-- `recursive`: if TRUE, it will look into sub-directories. Default: FALSE
-- `maxRecLevel`: the max level of recursion allowed. Default: 10
+- `recursive`: if TRUE, it will look into sub-directories. Default: FALSE.
+- `maxRecLevel`: the max level of recursion allowed. Default: 10.
 - `filter`: A filter function or a regex expression to apply to every file name.
 - `dirFilter`: A filter function or a regex expression to apply to every directory name.
-- `onError`: What to do in case of an error loading a file: 'continue' will skip the file with errors and go to the next one.
+- `onError`: What to do in case of errors: 'continue' will skip the file with errors and go to the next one.
 
 ```js
 
