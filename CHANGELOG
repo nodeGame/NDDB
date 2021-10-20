@@ -3,7 +3,13 @@
 ## 2.5.0
  - Code for file system operations refactored.
  - New method: NDDB.stream() replaces keepUpdated
- - New static methods: NDDB.loadDir.
+ - New method: NDDB.journal() streams all database operations.
+ - New method: NDDB.importJournal() restores a db, replaying all operations.
+ - New methods: NDDB.loadDir(), NDDB.loadDirSync() load all files in a directory.
+ - New static method: NDDB.db() creates a new database.
+ - New static method: NDDB.convert() NDDB.convertSync() convert from a format to another.
+ - New static method: NDDB.load|loadSync|save|saveSync|loadDir|loadDirSync
+ - New format: NDJSON.
 
 ## 2.0.0
  - `#NDDB.setWD` is applied to all views and hashes.
@@ -50,7 +56,7 @@
 
 ## 1.13.0
   - Speeded-up method `#NDDBIndex.getAllKeys()`.
-  
+
 ## 1.12.0
   - Fix bug loading csv files: unquoted numbers are parsed as number when loading.
 
