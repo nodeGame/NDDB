@@ -1,7 +1,7 @@
 {
   "name": "NDDB",
   "description": "Powerful and versatile 100% javascript object database",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "keywords": [
     "db",
     "no-sql",
