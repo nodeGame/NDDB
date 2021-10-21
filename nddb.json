@@ -1,8 +1,0 @@
-{"a":1,"b":2,"s":"also dice \"Hello!\"\r\n OK!"}
-{"a":2,"b":3,"n":"!?_null","m":"!?_undefined","f":"!?_function() { return 1; }"}
-{"d":{"c":{"$ref":"$"}}}
-{"c":{"d":{"$ref":"$"}}}
-{"a":1,"b":2,"s":"also dice \"Hello!\"\r\n OK!"}
-{"a":2,"b":3,"n":"!?_null","m":"!?_undefined","f":"!?_function() { return 1; }"}
-{"d":{"c":{"$ref":"$"}}}
-{"c":{"d":{"$ref":"$"}}}

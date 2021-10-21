@@ -199,7 +199,7 @@
 
         // ### __update.indexes
         // If TRUE, rebuild indexes on every insert and remove
-        this.__update.indexes = false;
+        this.__update.indexes = true;
 
         // ### __update.sort
         // If TRUE, sort db on every insert and remove
