@@ -10,8 +10,9 @@ module.exports = NDDB;
 const path = require('path');
 
 // Lib
-require('./lib/static.js');
 require('./lib/fs.js');
+// Static needs the format to be loaded already.
+require('./lib/static.js');
 
 
 // Cycle/Decycle
