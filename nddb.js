@@ -710,7 +710,15 @@
                 errMsg = 'options.hooks must be object or undefined';
                 this.throwErr('TypeError', 'init', errMsg);
             }
-            this.hooks = options.hooks;
+            for (i in options.hooks) {
+                if (options.hooks.hasOwnProperty(i)) {
+                    if (!this.hooks[i]) {
+                        errMsg = 'options.hooks unknown hook ' + i;
+                        this.throwErr('TypeError', 'init', errMsg);
+                    }
+                    this.hooks[i] = options.hooks[i];
+                }
+            }
         }
 
         if (options.globalCompare) {
