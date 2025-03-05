@@ -13,7 +13,13 @@
     if ('undefined' !== typeof module &&
         'undefined' !== typeof module.exports) {
 
-        J = module.parent.exports.JSUS || require('JSUS').JSUS;
+        if (module.parents && module.parent.exports) {
+            J = module.parent.exports.JSUS;
+        }
+        else {
+            J = require('JSUS').JSUS;
+        }
+
         module.exports = NDDB;
         // Backward compatibility.
         module.exports.NDDB = NDDB;
